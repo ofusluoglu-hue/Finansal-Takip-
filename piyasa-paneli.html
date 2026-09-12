@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Günlük Özet</title>
+<style>
+  :root{
+    --bg:#0A0D12;
+    --panel:#12161D;
+    --panel-2:#161B23;
+    --border:#212832;
+    --text:#EDEFF2;
+    --muted:#7C8695;
+    --muted-2:#565F6C;
+    --up:#33C07C;
+    --down:#FF5C5C;
+    --amber:#E7A83B;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:1400px;
+    margin:0 auto;
+    padding:28px 20px 60px;
+  }
+  .layout{
+    display:flex;
+    align-items:flex-start;
+    gap:20px;
+  }
+  .sidebar{
+    width:230px;
+    flex:0 0 230px;
+  }
+  .main{
+    flex:1;
+    min-width:0;
+  }
+  @media (max-width:900px){
+    .layout{flex-direction:column;}
+    .sidebar{width:100%;flex:none;}
+    .main{width:100%;}
+  }
+  .nav-panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:8px;
+    position:sticky;
+    top:20px;
+  }
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:11px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    color:var(--muted);
+    font-size:13px;
+    font-weight:600;
+    border-left:2px solid transparent;
+    transition:background .15s, color .15s;
+  }
+  .nav-item + .nav-item{margin-top:2px;}
+  .nav-item svg{
+    width:17px;height:17px;
+    flex-shrink:0;
+    opacity:.85;
+  }
+  .nav-item:hover{
+    background:#171c25;
+    color:var(--text);
+  }
+  .nav-item.active{
+    background:#1a212b;
+    color:var(--text);
+    border-left:2px solid var(--amber);
+  }
+  .nav-item.active svg{opacity:1;stroke:var(--amber);}
+
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  .sidebar-panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 17px;
+  }
+  .sidebar-title{
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .sidebar-caption{
+    font-size:11.5px;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .sidebar-empty{
+    font-size:12px;
+    color:var(--muted-2);
+    line-height:1.6;
+    padding:10px 0;
+  }
+  .debt-list{display:flex;flex-direction:column;}
+  .debt-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:8px;
+    padding:9px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .debt-row:last-child{border-bottom:none;}
+  .debt-label{
+    font-size:12px;
+    color:var(--muted);
+  }
+  .debt-value{
+    font-size:13px;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+    text-align:right;
+  }
+  .debt-row.total{
+    margin-top:2px;
+    padding-top:12px;
+    border-top:1px solid #2a3140;
+    border-bottom:none;
+  }
+  .debt-row.total .debt-label{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--text);
+  }
+  .debt-row.total .debt-value{
+    font-size:16px;
+    color:var(--down);
+  }
+  .debt-row .debt-value.neg{color:var(--down);}
+  .debt-asof{
+    font-size:10.5px;
+    color:var(--muted-2);
+    margin-top:12px;
+  }
+
+  .page-head{margin-bottom:20px;}
+  .page-head h1{
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 4px;
+    letter-spacing:-0.01em;
+  }
+  .page-head p{
+    margin:0;
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  .summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:12px;
+    margin-bottom:22px;
+  }
+  @media (max-width:900px){
+    .summary-grid{grid-template-columns:repeat(2, 1fr);}
+  }
+  .summary-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px 17px;
+  }
+  .summary-label{
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  .summary-value{
+    font-size:21px;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+  }
+  .summary-value.pos{color:var(--up);}
+  .summary-value.neg{color:var(--down);}
+  .summary-sub{
+    font-size:11.5px;
+    color:var(--muted-2);
+    margin-top:6px;
+  }
+
+  .section-panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:16px;
+  }
+  .section-title{
+    font-size:14px;
+    font-weight:700;
+    margin-bottom:14px;
+  }
+  .table-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    font-size:12.5px;
+  }
+  .table-row:last-child{border-bottom:none;}
+  .table-row .r-label{color:var(--text);font-weight:600;}
+  .table-row .r-sub{color:var(--muted-2);font-size:11px;margin-top:2px;}
+  .table-row .r-value{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;}
+  .table-row .r-value.muted{font-weight:500;color:var(--muted);}
+
+  .bar-row{margin-bottom:14px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-head{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    margin-bottom:6px;
+  }
+  .bar-head .name{color:var(--text);font-weight:600;}
+  .bar-head .val{color:var(--muted);font-variant-numeric:tabular-nums;}
+  .bar-track{
+    height:7px;
+    border-radius:4px;
+    background:#1b212a;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    border-radius:4px;
+    background:var(--amber);
+  }
+
+  .goal-item{
+    display:flex;
+    gap:10px;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    font-size:12.5px;
+  }
+  .goal-item:last-child{border-bottom:none;}
+  .goal-owner{
+    flex:0 0 60px;
+    color:var(--muted-2);
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    padding-top:1px;
+  }
+  .goal-text{color:var(--text);line-height:1.5;}
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:26px;
+    flex-wrap:wrap;
+  }
+  .title-block h1{
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 4px;
+    letter-spacing:-0.01em;
+  }
+  .title-block p{
+    margin:0;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .status{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--up);
+    box-shadow:0 0 0 3px rgba(51,192,124,0.15);
+    transition:background .2s, box-shadow .2s;
+  }
+  .dot.err{
+    background:var(--down);
+    box-shadow:0 0 0 3px rgba(255,92,92,0.15);
+  }
+  .dot.loading{
+    background:var(--amber);
+    box-shadow:0 0 0 3px rgba(231,168,59,0.15);
+    animation:pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:.35;}
+  }
+  .refresh-btn{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:12.5px;
+    padding:7px 12px;
+    border-radius:7px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:border-color .15s, background .15s;
+  }
+  .refresh-btn:hover{
+    border-color:#333d4a;
+    background:#1a2029;
+  }
+  .refresh-btn svg{
+    width:13px;height:13px;
+    transition:transform .5s ease;
+  }
+  .refresh-btn.spinning svg{
+    transform:rotate(360deg);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:12px;
+  }
+  @media (max-width:980px){
+    .grid{grid-template-columns:repeat(3, 1fr);}
+  }
+  @media (max-width:560px){
+    .grid{grid-template-columns:repeat(2, 1fr);}
+    .wrap{padding:20px 14px 40px;}
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-left:3px solid var(--border);
+    border-radius:10px;
+    padding:14px 15px 13px;
+    min-height:96px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:10px;
+    transition:border-left-color .3s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .card.up{border-left-color:var(--up);}
+  .card.down{border-left-color:var(--down);}
+
+  .card-label{
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .stale-tag{
+    font-size:9.5px;
+    font-weight:600;
+    letter-spacing:.02em;
+    text-transform:none;
+    color:var(--muted-2);
+    background:#1c222b;
+    border:1px solid var(--border);
+    padding:1px 5px;
+    border-radius:4px;
+  }
+
+  .card-value{
+    font-size:22px;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:-0.01em;
+    color:var(--text);
+    line-height:1.1;
+    min-height:26px;
+  }
+  .card-value.skeleton{
+    color:transparent;
+    background:linear-gradient(90deg,#1a1f27 25%,#232a34 37%,#1a1f27 63%);
+    background-size:400% 100%;
+    animation:shimmer 1.4s ease infinite;
+    border-radius:5px;
+    display:inline-block;
+    width:70%;
+  }
+  @keyframes shimmer{
+    0%{background-position:100% 50%;}
+    100%{background-position:0 50%;}
+  }
+
+  .card-change{
+    font-size:12.5px;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .card-change.up{color:var(--up);}
+  .card-change.down{color:var(--down);}
+  .card-change.flat{color:var(--muted);}
+  .arrow{font-size:10px;line-height:1;}
+
+  .footnote{
+    margin-top:22px;
+    font-size:11.5px;
+    color:var(--muted-2);
+    line-height:1.6;
+  }
+  .footnote b{color:var(--muted);}
+
+  .file-warning{
+    background:#2a1f12;
+    border:1px solid #4a3319;
+    color:#f0b458;
+    padding:12px 15px;
+    border-radius:9px;
+    font-size:12.5px;
+    line-height:1.6;
+    margin-bottom:18px;
+    display:none;
+  }
+  .file-warning b{color:#ffd27a;}
+  .file-warning code{
+    background:#1c150c;
+    padding:1px 5px;
+    border-radius:4px;
+    font-size:11.5px;
+  }
+
+  .card{cursor:pointer;}
+  .card.selected{
+    border-color:#3a4453;
+    box-shadow:0 0 0 1px #3a4453 inset;
+  }
+  .card:hover{border-color:#2b3340;}
+
+  .chart-panel{
+    margin-top:20px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px 20px 16px;
+  }
+  .chart-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .chart-title-row{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .chart-title{
+    font-size:15px;
+    font-weight:700;
+  }
+  .chart-sub{
+    font-size:12px;
+    color:var(--muted);
+  }
+  .chart-controls{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .period-toggle{
+    display:flex;
+    background:#161B23;
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:2px;
+  }
+  .period-btn{
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:600;
+    padding:5px 11px;
+    border-radius:5px;
+    cursor:pointer;
+  }
+  .period-btn.active{
+    background:#242c38;
+    color:var(--text);
+  }
+  .chart-close{
+    border:1px solid var(--border);
+    background:var(--panel-2);
+    color:var(--muted);
+    width:26px;height:26px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:14px;
+    line-height:1;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .chart-close:hover{color:var(--text);border-color:#333d4a;}
+
+  .chart-body{
+    position:relative;
+    height:200px;
+  }
+  .chart-body svg{width:100%;height:100%;display:block;}
+  .chart-loading{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--muted);
+    font-size:12.5px;
+  }
+  .chart-empty{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--muted-2);
+    font-size:12.5px;
+    text-align:center;
+    padding:0 30px;
+  }
+  .axis-label{
+    fill:var(--muted-2);
+    font-size:10px;
+    font-family:inherit;
+  }
+
+  .news-panel{
+    margin-top:20px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px 20px 8px;
+  }
+  .news-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .news-title{
+    font-size:15px;
+    font-weight:700;
+  }
+  .news-sub{
+    font-size:11.5px;
+    color:var(--muted-2);
+  }
+  .news-cols{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+  }
+  @media (max-width:900px){
+    .news-cols{grid-template-columns:1fr;}
+  }
+  .news-col-title{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:8px;
+  }
+  .news-items{min-height:20px;}
+  .news-item{
+    display:block;
+    padding:9px 0;
+    border-bottom:1px solid var(--border);
+    font-size:12.5px;
+    color:var(--text);
+    text-decoration:none;
+    line-height:1.45;
+  }
+  .news-col .news-item:last-child{border-bottom:none;}
+  .news-item:hover{color:var(--amber);}
+  .news-source{
+    display:block;
+    font-size:10.5px;
+    color:var(--muted-2);
+    margin-top:3px;
+  }
+  .news-loading, .news-empty{
+    font-size:12px;
+    color:var(--muted-2);
+    padding:8px 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="layout">
+
+  <div class="sidebar">
+    <div class="nav-panel" id="navPanel">
+      <div class="nav-item active" data-tab="gunluk" onclick="switchTab('gunluk')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg>
+        <span>Günlük Makro Özet</span>
+      </div>
+      <div class="nav-item" data-tab="finansal" onclick="switchTab('finansal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
+        <span>Güncel Finansal Durumum</span>
+      </div>
+      <div class="nav-item" data-tab="yatirim" onclick="switchTab('yatirim')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 7l-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
+        <span>Yatırımlarım</span>
+      </div>
+      <div class="nav-item" data-tab="borclar" onclick="switchTab('borclar')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        <span>Borçlarım</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+
+  <!-- ================= TAB: GÜNLÜK MAKRO ÖZET ================= -->
+  <div class="tab-panel active" id="tab-gunluk">
+
+  <div class="file-warning" id="fileWarning">
+    <b>⚠ Bu dosyayı doğrudan bilgisayarından açtın (file://).</b> Tarayıcılar bu şekilde açılan sayfalarda internetten veri çekmeyi güvenlik gereği engeller, bu yüzden hiçbir kart/grafik/haber gelmez. Çözüm: dosyayı basit bir yerel sunucu üzerinden aç — örneğin klasörde terminalde <code>python3 -m http.server 8000</code> yazıp tarayıcıda <code>http://localhost:8000/piyasa-paneli.html</code> adresini aç, ya da dosyayı bir hosting'e (GitHub Pages, Netlify Drop vb.) yükle.
+  </div>
+
+  <div class="topbar">
+    <div class="title-block">
+      <h1>Günlük Özet</h1>
+      <p>Endeksler, faiz, döviz, emtia, kripto ve güncel haberler</p>
+    </div>
+    <div class="status">
+      <span id="statusDot" class="dot loading"></span>
+      <span id="statusText">Veriler alınıyor…</span>
+      <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M21 12a9 9 0 1 1-2.6-6.36M21 4v5h-5"/>
+        </svg>
+        Yenile
+      </button>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="chart-panel" id="chartPanel">
+    <div class="chart-head">
+      <div class="chart-title-row">
+        <span class="chart-title" id="chartTitle">—</span>
+        <span class="chart-sub" id="chartSub"></span>
+      </div>
+      <div class="chart-controls">
+        <div class="period-toggle">
+          <button class="period-btn active" id="btnDaily" onclick="setPeriod('daily')">Günlük</button>
+          <button class="period-btn" id="btnWeekly" onclick="setPeriod('weekly')">Haftalık</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart-body" id="chartBody">
+      <div class="chart-loading" id="chartLoading" style="display:none;">Grafik yükleniyor…</div>
+      <div class="chart-empty" id="chartEmpty" style="display:none;">Bu veri için geçmiş grafik alınamadı.</div>
+      <svg id="chartSvg" viewBox="0 0 600 200" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
+  <div class="news-panel">
+    <div class="news-head">
+      <span class="news-title">Güncel Haberler</span>
+      <span class="news-sub" id="newsUpdated"></span>
+    </div>
+    <div class="news-cols">
+      <div class="news-col">
+        <div class="news-col-title">Bitcoin</div>
+        <div class="news-items" id="news-btc"><div class="news-loading">Yükleniyor…</div></div>
+      </div>
+      <div class="news-col">
+        <div class="news-col-title">Altın</div>
+        <div class="news-items" id="news-gold"><div class="news-loading">Yükleniyor…</div></div>
+      </div>
+      <div class="news-col">
+        <div class="news-col-title">ABD Borsaları</div>
+        <div class="news-items" id="news-us"><div class="news-loading">Yükleniyor…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <b>Not:</b> Endeks, tahvil, döviz ve emtia verileri halka açık piyasa kaynaklarından; BTC/ETH verileri CoinGecko'dan canlı çekilir. Kaynağa anlık ulaşılamazsa kart üzerinde "gecikmeli" etiketiyle en son bilinen değer gösterilir. Haberler Google News'ten çekilir ve 5 dakikada bir yenilenir.
+  </div>
+
+  </div>
+  <!-- ================= /TAB: GÜNLÜK MAKRO ÖZET ================= -->
+
+  <!-- ================= TAB: GÜNCEL FİNANSAL DURUMUM ================= -->
+  <div class="tab-panel" id="tab-finansal">
+    <div class="page-head">
+      <h1>Güncel Finansal Durumum</h1>
+      <p>Excel verisi · 11.09.2026 itibarıyla</p>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">Toplam Varlık</div>
+        <div class="summary-value">₺9.746.084</div>
+        <div class="summary-sub">Gayrimenkul, araç, arsa ve yatırımlar</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Toplam Borç</div>
+        <div class="summary-value neg">₺405.623</div>
+        <div class="summary-sub">Kredi, kredi kartı, KMH, nakit açığı</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Net Değer</div>
+        <div class="summary-value pos">₺9.340.461</div>
+        <div class="summary-sub">Varlık − Borç</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Yatırım / Borç Oranı</div>
+        <div class="summary-value">%25,9</div>
+        <div class="summary-sub">Yatırım toplamı ₺79.895</div>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Aylık Nakit Akışı</div>
+      <div class="table-row">
+        <div><div class="r-label">Aylık Ev Geliri</div><div class="r-sub">Elif Maaş ₺100.000 · Faruk Gelir ₺0</div></div>
+        <div class="r-value pos">₺100.000</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Aylık Kredi Taksit Ödemesi</div><div class="r-sub">6 kredi toplamı</div></div>
+        <div class="r-value neg">₺81.683</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Nakit Hesap Bakiyesi</div></div>
+        <div class="r-value neg">-₺9.400</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Acil Durum Fonu Hedefi</div></div>
+        <div class="r-value muted">₺300.000</div>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Varlık Dağılımı</div>
+      <div class="table-row">
+        <div class="r-label">Daire 2+1 (Gaziosmanpaşa)</div>
+        <div class="r-value">₺7.000.000</div>
+      </div>
+      <div class="table-row">
+        <div class="r-label">Otomobil (Astra-H 2007)</div>
+        <div class="r-value">₺350.000</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Arsalar</div><div class="r-sub">Ayaş, İç Kale x2, Çankırı Çerkeş</div></div>
+        <div class="r-value">₺2.130.584</div>
+      </div>
+      <div class="table-row">
+        <div class="r-label">Yatırımlar (Kripto + ETF + BIST)</div>
+        <div class="r-value">₺79.895</div>
+      </div>
+      <div class="table-row">
+        <div class="r-label" style="font-weight:700;">Toplam Varlık</div>
+        <div class="r-value" style="color:var(--up);">₺9.746.084</div>
+      </div>
+    </div>
+  </div>
+  <!-- ================= /TAB: GÜNCEL FİNANSAL DURUMUM ================= -->
+
+  <!-- ================= TAB: YATIRIMLARIM ================= -->
+  <div class="tab-panel" id="tab-yatirim">
+    <div class="page-head">
+      <h1>Yatırımlarım</h1>
+      <p>Excel verisi · 11.09.2026 itibarıyla</p>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">Toplam Yatırım</div>
+        <div class="summary-value">₺79.895</div>
+        <div class="summary-sub">Kripto + ABD ETF + BIST</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Yatırım / Borç Oranı</div>
+        <div class="summary-value">%25,9</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Portföy Getirisi</div>
+        <div class="summary-value muted" style="color:var(--muted);font-size:14px;">Excel'de veri yok</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Yaklaşan Hedef</div>
+        <div class="summary-value" style="font-size:14px;">Haz 2027 · Ort. $30.000</div>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Portföy Dağılımı</div>
+      <div class="bar-row">
+        <div class="bar-head"><span class="name">ABD ETF</span><span class="val">₺52.320 · %65</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:65%;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span class="name">Kripto</span><span class="val">₺20.075 · %25</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--up);"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span class="name">BIST (Elif)</span><span class="val">₺7.500 · %10</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:10%;background:#6C8EEF;"></div></div>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Yatırım Hedefleri</div>
+      <div class="goal-item">
+        <div class="goal-owner">Ortak</div>
+        <div class="goal-text">Haziran 2027 — Yatırım portföyü ortalama 30 Bin Dolar</div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-owner">Ortak</div>
+        <div class="goal-text">Mayıs 2028 — Yatırım portföyü ortalama 80 Bin Dolar</div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-owner">Ortak</div>
+        <div class="goal-text">Ocak 2030 — Yatırım portföyü ortalama 200 Bin Dolar</div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-owner">Faruk</div>
+        <div class="goal-text">Aralık 2026 — Borçların bitirilmiş olması</div>
+      </div>
+    </div>
+  </div>
+  <!-- ================= /TAB: YATIRIMLARIM ================= -->
+
+  <!-- ================= TAB: BORÇLARIM ================= -->
+  <div class="tab-panel" id="tab-borclar">
+    <div class="page-head">
+      <h1>Borçlarım</h1>
+      <p>Excel verisi · 11.09.2026 itibarıyla</p>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">Toplam Borç</div>
+        <div class="summary-value neg">₺405.623</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Kredi (Bugün Kapatılırsa)</div>
+        <div class="summary-value">₺228.239</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Kredi Kartı Borcu</div>
+        <div class="summary-value">₺125.510</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">KMH Borcu</div>
+        <div class="summary-value">₺42.474</div>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Kredi Detayları</div>
+      <div class="table-row">
+        <div><div class="r-label">Garanti (23. gün) %1,99</div><div class="r-sub">Kalan taksit: 31</div></div>
+        <div class="r-value">₺46.307</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">On Bank (17. gün) %2,99</div><div class="r-sub">Kalan taksit: 11</div></div>
+        <div class="r-value">₺96.324</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Enpara (10. gün) %0,00</div><div class="r-sub">Kalan taksit: 3</div></div>
+        <div class="r-value">₺25.500</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Vakıfbank (8. gün) %2,49</div><div class="r-sub">Kalan taksit: 1</div></div>
+        <div class="r-value">₺8.880</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Akbank %0,99 (Faruk)</div><div class="r-sub">Kalan taksit: 1</div></div>
+        <div class="r-value">₺25.614</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Akbank %0,99 (Elif)</div><div class="r-sub">Kalan taksit: 1</div></div>
+        <div class="r-value">₺25.614</div>
+      </div>
+      <div class="table-row">
+        <div class="r-label" style="font-weight:700;">Bugün Kapatılırsa Toplam</div>
+        <div class="r-value" style="color:var(--down);">₺228.239</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label" style="font-weight:700;">Faizli Toplam Tutar</div><div class="r-sub">Vade sonuna kadar ödenecek toplam</div></div>
+        <div class="r-value muted">₺269.076</div>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Diğer Borçlar</div>
+      <div class="table-row">
+        <div class="r-label">Kredi Kartı (Akbank)</div>
+        <div class="r-value">₺125.510</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">KMH (Abim Euro Elden)</div></div>
+        <div class="r-value">₺42.474</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Nakit Hesap</div></div>
+        <div class="r-value neg">-₺9.400</div>
+      </div>
+      <div class="table-row">
+        <div><div class="r-label">Eylül Ödenmeyen Kredi Kartları</div><div class="r-sub">Vakıf ₺8.880 · Akbank ₺29.750 · Enpara ₺8.400</div></div>
+        <div class="r-value muted">₺47.030</div>
+      </div>
+      <div class="table-row">
+        <div class="r-label">Borcun Bitcoin Karşılığı</div>
+        <div class="r-value muted">≈0,0611 BTC</div>
+      </div>
+    </div>
+  </div>
+  <!-- ================= /TAB: BORÇLARIM ================= -->
+
+  </div>
+</div>
+</div>
+
+<script>
+const CARDS = [
+  { key:'sp500',  label:'S&P 500',      source:'yahoo',    symbol:'^GSPC',    fmt:'index',   fallback:{price:7637.70, chg:-0.47} },
+  { key:'ndx',    label:'NASDAQ 100',   source:'yahoo',    symbol:'^NDX',     fmt:'index',   fallback:{price:26256.66, chg:-0.62} },
+  { key:'dji',    label:'DOW JONES',    source:'yahoo',    symbol:'^DJI',     fmt:'index',   fallback:{price:52380.66, chg:-0.77} },
+  { key:'vix',    label:'VIX (KORKU)',  source:'yahoo',    symbol:'^VIX',     fmt:'index2',  fallback:{price:16.46, chg:4.71} },
+  { key:'us2y',   label:'2Y HAZİNE',    source:'fred',     symbol:'DGS2',     fmt:'yield',   fallback:{price:4.43, chg:0.04, bp:true} },
+  { key:'us10y',  label:'10Y HAZİNE',   source:'fred',     symbol:'DGS10',    fmt:'yield',   fallback:{price:4.83, chg:0.03, bp:true} },
+  { key:'dxy',    label:'DOLAR (DXY)',  source:'yahoo',    symbol:'DX-Y.NYB', fmt:'index2',  fallback:{price:98.80, chg:-0.02} },
+  { key:'btc',    label:'BİTCOİN',      source:'coingecko',symbol:'bitcoin',  fmt:'usd0',    fallback:{price:78170.59, chg:-0.15} },
+  { key:'eth',    label:'ETHEREUM',     source:'coingecko',symbol:'ethereum', fmt:'usd2',    fallback:{price:3120.40, chg:0.85} },
+  { key:'gold',   label:'ALTIN (ONS)',  source:'yahoo',    symbol:'GC=F',     fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
+  { key:'brent',  label:'BRENT PETROL', source:'yahoo',    symbol:'BZ=F',     fmt:'usd2',    fallback:{price:101.60, chg:0.39} },
+  { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
+];
+
+const PROXY = 'https://api.allorigins.win/raw?url=';
+const grid = document.getElementById('grid');
+const state = {};
+
+function buildCards(){
+  CARDS.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.id = 'card-'+c.key;
+    el.innerHTML = `
+      <div class="card-label"><span>${c.label}</span><span class="stale-tag" id="stale-${c.key}" style="display:none;">gecikmeli</span></div>
+      <div class="card-value skeleton" id="val-${c.key}">0</div>
+      <div class="card-change flat" id="chg-${c.key}"><span class="arrow">–</span><span>—</span></div>
+    `;
+    el.addEventListener('click', ()=> openChart(c.key));
+    grid.appendChild(el);
+  });
+}
+
+function fmtNumber(n, decimals){
+  return n.toLocaleString('tr-TR', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
+}
+
+function renderCard(cfg, price, chgPct, stale){
+  const cardEl = document.getElementById('card-'+cfg.key);
+  const valEl = document.getElementById('val-'+cfg.key);
+  const chgEl = document.getElementById('chg-'+cfg.key);
+  const staleEl = document.getElementById('stale-'+cfg.key);
+
+  valEl.classList.remove('skeleton');
+
+  let valueStr;
+  switch(cfg.fmt){
+    case 'index': valueStr = fmtNumber(price, 2); break;
+    case 'index2': valueStr = fmtNumber(price, 2); break;
+    case 'yield': valueStr = '%' + fmtNumber(price, 2); break;
+    case 'usd0': valueStr = fmtNumber(price, 2); break;
+    case 'usd2': valueStr = fmtNumber(price, 2); break;
+    default: valueStr = fmtNumber(price, 2);
+  }
+  valEl.textContent = valueStr;
+
+  const isBp = cfg.fallback.bp;
+  const dir = chgPct > 0.005 ? 'up' : (chgPct < -0.005 ? 'down' : 'flat');
+  cardEl.classList.remove('up','down');
+  if(dir!=='flat') cardEl.classList.add(dir);
+
+  chgEl.classList.remove('up','down','flat');
+  chgEl.classList.add(dir);
+  const arrow = dir==='up' ? '▲' : (dir==='down' ? '▼' : '–');
+  const sign = chgPct > 0 ? '+' : '';
+  const chgLabel = isBp
+    ? `${sign}${Math.round(chgPct*100)} bp`
+    : `${sign}%${fmtNumber(Math.abs(chgPct)===chgPct?chgPct:chgPct,2)}`;
+  chgEl.innerHTML = `<span class="arrow">${arrow}</span><span>${chgLabel}</span>`;
+
+  staleEl.style.display = stale ? 'inline-block' : 'none';
+}
+
+async function fetchYahoo(symbol){
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d`;
+  const res = await fetch(PROXY + encodeURIComponent(url));
+  if(!res.ok) throw new Error('yahoo fetch failed');
+  const data = await res.json();
+  const result = data.chart.result[0];
+  const meta = result.meta;
+  const price = meta.regularMarketPrice;
+  const prevClose = meta.chartPreviousClose ?? meta.previousClose;
+  const chgPct = ((price - prevClose) / prevClose) * 100;
+  return { price, chgPct };
+}
+
+async function fetchFred(seriesId){
+  const url = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${seriesId}`;
+  const res = await fetch(PROXY + encodeURIComponent(url));
+  if(!res.ok) throw new Error('fred fetch failed');
+  const text = await res.text();
+  const lines = text.trim().split('\n').slice(1);
+  const clean = lines.filter(l => !l.trim().endsWith(',.') && l.trim().length>0);
+  const last = clean[clean.length-1].split(',');
+  const prev = clean[clean.length-2].split(',');
+  const price = parseFloat(last[1]);
+  const prevVal = parseFloat(prev[1]);
+  const chgPct = (price - prevVal) * 100; // basis points for a yield series
+  return { price, chgPct };
+}
+
+async function fetchCoingecko(ids){
+  const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('coingecko fetch failed');
+  return res.json();
+}
+
+async function refreshAll(){
+  const dot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+  dot.className = 'dot loading';
+  statusText.textContent = 'Veriler alınıyor…';
+
+  let anyError = false;
+  let lastErrorMsg = '';
+
+  // Coingecko batch first
+  let cgData = null;
+  try{
+    cgData = await fetchCoingecko(['bitcoin','ethereum']);
+  }catch(e){ anyError = true; lastErrorMsg = e.message || String(e); }
+
+  await Promise.all(CARDS.map(async cfg=>{
+    try{
+      if(cfg.source === 'coingecko'){
+        if(!cgData) throw new Error('no cg data');
+        const d = cgData[cfg.symbol];
+        if(!d) throw new Error('missing coin');
+        renderCard(cfg, d.usd, d.usd_24h_change, false);
+      } else if(cfg.source === 'yahoo'){
+        const { price, chgPct } = await fetchYahoo(cfg.symbol);
+        renderCard(cfg, price, chgPct, false);
+      } else if(cfg.source === 'fred'){
+        const { price, chgPct } = await fetchFred(cfg.symbol);
+        renderCard(cfg, price, chgPct, false);
+      }
+    }catch(e){
+      anyError = true;
+      lastErrorMsg = e.message || String(e);
+      renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
+    }
+  }));
+
+  if(location.protocol === 'file:'){
+    document.getElementById('fileWarning').style.display = 'block';
+  }
+
+  if(anyError){
+    dot.className = 'dot err';
+    statusText.textContent = `Bazı veriler alınamadı (${lastErrorMsg}) · ` + new Date().toLocaleTimeString('tr-TR');
+  } else {
+    dot.className = 'dot';
+    statusText.textContent = 'Canlı · güncellendi ' + new Date().toLocaleTimeString('tr-TR');
+  }
+}
+
+function manualRefresh(){
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  refreshAll().finally(()=> setTimeout(()=>btn.classList.remove('spinning'), 500));
+}
+
+// ---------- Detay grafiği ----------
+let currentKey = null;
+let currentPeriod = 'daily';
+
+function openChart(key){
+  currentKey = key;
+  document.querySelectorAll('.card').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('card-'+key).classList.add('selected');
+
+  const cfg = CARDS.find(c=>c.key===key);
+  document.getElementById('chartTitle').textContent = cfg.label;
+  loadChart(cfg, currentPeriod);
+}
+
+function setPeriod(period){
+  currentPeriod = period;
+  document.getElementById('btnDaily').classList.toggle('active', period==='daily');
+  document.getElementById('btnWeekly').classList.toggle('active', period==='weekly');
+  if(currentKey){
+    const cfg = CARDS.find(c=>c.key===currentKey);
+    loadChart(cfg, period);
+  }
+}
+
+async function loadChart(cfg, period){
+  const loadingEl = document.getElementById('chartLoading');
+  const emptyEl = document.getElementById('chartEmpty');
+  const svgEl = document.getElementById('chartSvg');
+  const subEl = document.getElementById('chartSub');
+
+  svgEl.innerHTML = '';
+  emptyEl.style.display = 'none';
+  loadingEl.style.display = 'flex';
+  subEl.textContent = period==='daily' ? 'Son 30 gün · günlük' : 'Son 12 ay · haftalık';
+
+  try{
+    const points = await fetchHistory(cfg, period);
+    loadingEl.style.display = 'none';
+    if(!points || points.length < 2){
+      emptyEl.style.display = 'flex';
+      return;
+    }
+    drawChart(svgEl, points);
+  }catch(e){
+    loadingEl.style.display = 'none';
+    emptyEl.style.display = 'flex';
+  }
+}
+
+async function fetchHistory(cfg, period){
+  if(cfg.source === 'yahoo'){
+    const interval = period === 'daily' ? '1d' : '1wk';
+    const range = period === 'daily' ? '1mo' : '1y';
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(cfg.symbol)}?range=${range}&interval=${interval}`;
+    const res = await fetch(PROXY + encodeURIComponent(url));
+    const data = await res.json();
+    const result = data.chart.result[0];
+    const ts = result.timestamp || [];
+    const closes = result.indicators.quote[0].close || [];
+    return ts.map((t,i)=>({ t: t*1000, v: closes[i] })).filter(p=>p.v!=null);
+  }
+
+  if(cfg.source === 'coingecko'){
+    const days = period === 'daily' ? 30 : 365;
+    const url = `https://api.coingecko.com/api/v3/coin/${cfg.symbol}/market_chart?vs_currency=usd&days=${days}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    let pts = (data.prices || []).map(p=>({ t:p[0], v:p[1] }));
+    if(period === 'weekly'){
+      pts = pts.filter((_,i)=> i % 7 === 0);
+    }
+    return pts;
+  }
+
+  if(cfg.source === 'fred'){
+    const cosd = period === 'daily'
+      ? new Date(Date.now() - 45*24*3600*1000).toISOString().slice(0,10)
+      : new Date(Date.now() - 450*24*3600*1000).toISOString().slice(0,10);
+    const url = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${cfg.symbol}&cosd=${cosd}`;
+    const res = await fetch(PROXY + encodeURIComponent(url));
+    const text = await res.text();
+    const lines = text.trim().split('\n').slice(1);
+    let pts = lines
+      .map(l=>l.split(','))
+      .filter(cols=> cols.length===2 && cols[1].trim() !== '.' && cols[1].trim() !== '')
+      .map(cols=>({ t: new Date(cols[0]).getTime(), v: parseFloat(cols[1]) }));
+    if(period === 'weekly'){
+      pts = pts.filter((_,i)=> i % 5 === 0);
+    }
+    return pts;
+  }
+
+  return [];
+}
+
+function drawChart(svgEl, points){
+  const W = 600, H = 200, PAD_L = 44, PAD_R = 10, PAD_T = 14, PAD_B = 22;
+  const vals = points.map(p=>p.v);
+  const min = Math.min(...vals);
+  const max = Math.max(...vals);
+  const range = (max - min) || 1;
+
+  const x = i => PAD_L + (i/(points.length-1)) * (W - PAD_L - PAD_R);
+  const y = v => PAD_T + (1 - (v - min)/range) * (H - PAD_T - PAD_B);
+
+  const up = points[points.length-1].v >= points[0].v;
+  const lineColor = up ? '#33C07C' : '#FF5C5C';
+  const fillColor = up ? 'rgba(51,192,124,0.12)' : 'rgba(255,92,92,0.12)';
+
+  const linePath = points.map((p,i)=> `${i===0?'M':'L'} ${x(i).toFixed(2)} ${y(p.v).toFixed(2)}`).join(' ');
+  const areaPath = `${linePath} L ${x(points.length-1).toFixed(2)} ${H-PAD_B} L ${x(0).toFixed(2)} ${H-PAD_B} Z`;
+
+  const fmtDate = (t)=> new Date(t).toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit'});
+
+  const gridLines = [0.25, 0.5, 0.75].map(frac=>{
+    const yy = PAD_T + frac*(H-PAD_T-PAD_B);
+    return `<line x1="${PAD_L}" y1="${yy}" x2="${W-PAD_R}" y2="${yy}" stroke="#1b212a" stroke-width="1"/>`;
+  }).join('');
+
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.innerHTML = `
+    ${gridLines}
+    <path d="${areaPath}" fill="${fillColor}" stroke="none"/>
+    <path d="${linePath}" fill="none" stroke="${lineColor}" stroke-width="1.8"/>
+    <text class="axis-label" x="${PAD_L}" y="${H-6}" text-anchor="start">${fmtDate(points[0].t)}</text>
+    <text class="axis-label" x="${W-PAD_R}" y="${H-6}" text-anchor="end">${fmtDate(points[points.length-1].t)}</text>
+    <text class="axis-label" x="${PAD_L-6}" y="${PAD_T+4}" text-anchor="end">${max.toLocaleString('tr-TR',{maximumFractionDigits:2})}</text>
+    <text class="axis-label" x="${PAD_L-6}" y="${H-PAD_B}" text-anchor="end">${min.toLocaleString('tr-TR',{maximumFractionDigits:2})}</text>
+  `;
+}
+
+// ---------- Güncel Haberler ----------
+const NEWS_FEEDS = [
+  { key:'btc',  query:'Bitcoin' },
+  { key:'gold', query:'Altın ons Fed' },
+  { key:'us',   query:'ABD borsa Wall Street S&P 500' },
+];
+
+const NEWS_PROXIES = [
+  'https://api.allorigins.win/raw?url=',
+  'https://corsproxy.io/?url=',
+  'https://api.codetabs.com/v1/proxy?quest=',
+];
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+async function fetchWithFallback(url){
+  let lastErr;
+  for(const proxy of NEWS_PROXIES){
+    try{
+      const res = await fetch(proxy + encodeURIComponent(url));
+      if(res.ok) return res;
+    }catch(e){ lastErr = e; }
+  }
+  throw lastErr || new Error('all proxies failed');
+}
+
+async function fetchNews(query){
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=tr&gl=TR&ceid=TR:tr`;
+  const res = await fetchWithFallback(url);
+  const text = await res.text();
+  const xml = new DOMParser().parseFromString(text, 'text/xml');
+  const items = Array.from(xml.querySelectorAll('item')).slice(0, 4);
+  return items.map(it => ({
+    title: it.querySelector('title')?.textContent || '',
+    link: it.querySelector('link')?.textContent || '#',
+    source: it.querySelector('source')?.textContent || '',
+  }));
+}
+
+function fallbackNewsLink(query){
+  const searchUrl = `https://news.google.com/search?q=${encodeURIComponent(query)}&hl=tr&gl=TR&ceid=TR:tr`;
+  return `
+    <a class="news-item" href="${searchUrl}" target="_blank" rel="noopener">
+      Güncel haberleri görüntülemek için tıklayın
+      <span class="news-source">Google News</span>
+    </a>
+  `;
+}
+
+async function loadNews(){
+  await Promise.all(NEWS_FEEDS.map(async feed=>{
+    const container = document.getElementById('news-'+feed.key);
+    try{
+      const items = await fetchNews(feed.query);
+      if(!items.length){
+        container.innerHTML = fallbackNewsLink(feed.query);
+        return;
+      }
+      container.innerHTML = items.map(it => `
+        <a class="news-item" href="${it.link}" target="_blank" rel="noopener">
+          ${escapeHtml(it.title)}
+          <span class="news-source">${escapeHtml(it.source)}</span>
+        </a>
+      `).join('');
+    }catch(e){
+      container.innerHTML = fallbackNewsLink(feed.query);
+    }
+  }));
+  document.getElementById('newsUpdated').textContent = 'güncellendi ' + new Date().toLocaleTimeString('tr-TR');
+}
+
+// ---------- Sekme geçişi ----------
+function switchTab(tabId){
+  document.querySelectorAll('.tab-panel').forEach(el=> el.classList.remove('active'));
+  document.getElementById('tab-'+tabId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el=> el.classList.toggle('active', el.dataset.tab === tabId));
+}
+
+buildCards();
+if(location.protocol === 'file:'){
+  document.getElementById('fileWarning').style.display = 'block';
+}
+refreshAll();
+setInterval(refreshAll, 10000);
+loadNews();
+setInterval(loadNews, 300000);
+openChart('btc');
+</script>
+</body>
+</html>
