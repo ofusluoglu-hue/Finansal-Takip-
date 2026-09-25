@@ -1601,7 +1601,9 @@ async function refreshMarketData(){
       lastErrorMsg = e.message || String(e);
       renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
     }
-    await sleep(350); // istekler arasına kısa bir bekleme koyuyoruz
+    // Twelve Data ücretsiz planı dakikada 8 istekle sınırlı — o kaynaktan gelen kartlar için
+    // uzun bir bekleme koyuyoruz ki bir dakikalık pencereye 8'den fazla istek düşmesin.
+    await sleep(cfg.source === 'twelvedata' ? 8000 : 350);
   }
 
   if(location.protocol === 'file:'){
@@ -1617,8 +1619,16 @@ async function refreshMarketData(){
   }
 }
 
+let _refreshInProgress = false;
+
 async function refreshAll(){
-  await refreshMarketData();
+  if(_refreshInProgress) return; // önceki döngü (Twelve Data dakika limiti yüzünden 1 dakikadan uzun sürebiliyor) bitmeden yenisini başlatma
+  _refreshInProgress = true;
+  try{
+    await refreshMarketData();
+  }finally{
+    _refreshInProgress = false;
+  }
 }
 
 function manualRefresh(){
@@ -2767,7 +2777,7 @@ if(location.protocol === 'file:'){
 }
 refreshAll();
 setInterval(refreshCrypto, 10000);
-setInterval(refreshAll, 45000);
+setInterval(refreshAll, 120000);
 loadNews();
 setInterval(loadNews, 300000);
 openChart('btc');
