@@ -1383,13 +1383,8 @@
 
 <script>
 const CARDS = [
-  { key:'sp500',  label:'S&P 500',      source:'twelvedata', symbol:'SPX',     fmt:'index',   fallback:{price:7637.70, chg:-0.47} },
-  { key:'ndx',    label:'NASDAQ 100',   source:'twelvedata', symbol:'NDX',     fmt:'index',   fallback:{price:26256.66, chg:-0.62} },
-  { key:'dji',    label:'DOW JONES',    source:'twelvedata', symbol:'DJI',     fmt:'index',   fallback:{price:52380.66, chg:-0.77} },
-  { key:'vix',    label:'VIX (KORKU ENDEKSİ)',  source:'twelvedata', symbol:'VIX', fmt:'index2', fallback:{price:16.46, chg:4.71} },
-  { key:'us2y',   label:'2Y HAZİNE',    source:'fred',     symbol:'DGS2',     fmt:'yield',   fallback:{price:4.43, chg:0.04, bp:true} },
-  { key:'us10y',  label:'10Y HAZİNE',   source:'fred',     symbol:'DGS10',    fmt:'yield',   fallback:{price:4.83, chg:0.03, bp:true} },
-  { key:'dxy',    label:'DOLAR (DXY)',  source:'twelvedata', symbol:'DXY',     fmt:'index2',  fallback:{price:98.80, chg:-0.02} },
+  { key:'sp500',  label:'S&P 500 (VOO)',  source:'twelvedata', symbol:'VOO',     fmt:'usd2',   fallback:{price:590.00, chg:-0.47} },
+  { key:'ndx',    label:'NASDAQ 100 (QQQM)', source:'twelvedata', symbol:'QQQM', fmt:'usd2',   fallback:{price:210.00, chg:-0.62} },
   { key:'usdtry', label:'DOLAR/TL',     source:'twelvedata', symbol:'USD/TRY', fmt:'usd2',    fallback:{price:34.50, chg:0.05} },
   { key:'eurtry', label:'EURO/TL',      source:'twelvedata', symbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
   { key:'btc',    label:'BİTCOİN',      source:'coingecko',symbol:'bitcoin',  fmt:'usd0',    fallback:{price:78170.59, chg:-0.15} },
@@ -1397,6 +1392,11 @@ const CARDS = [
   { key:'gold',   label:'ALTIN (ONS)',  source:'yahoo',    symbol:'GC=F',     fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
   { key:'brent',  label:'BRENT PETROL', source:'yahoo',    symbol:'BZ=F',     fmt:'usd2',    fallback:{price:101.60, chg:0.39} },
   { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
+  { key:'ura',    label:'GLOBAL X URANIUM (URA)', source:'twelvedata', symbol:'URA', fmt:'usd2', fallback:{price:38.00, chg:0.30} },
+  { key:'nlr',    label:'VANECK URANIUM+NUCLEAR (NLR)', source:'twelvedata', symbol:'NLR', fmt:'usd2', fallback:{price:110.00, chg:0.25} },
+  { key:'rexc',   label:'SPROTT RARE EARTHS EX-CHINA (REXC)', source:'twelvedata', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
+  { key:'remx',   label:'VANECK RARE EARTH (REMX)', source:'twelvedata', symbol:'REMX', fmt:'usd2', fallback:{price:68.00, chg:0.20} },
+  { key:'xle',    label:'ENERGY SELECT SPDR (XLE)', source:'twelvedata', symbol:'XLE', fmt:'usd2', fallback:{price:95.00, chg:0.10} },
 ];
 
 const grid = document.getElementById('grid');
@@ -1814,7 +1814,7 @@ function escapeHtml(str){
 function fetchWithTimeout(url, ms = 7000){
   const controller = new AbortController();
   const timer = setTimeout(()=> controller.abort(), ms);
-  return fetch(url, { signal: controller.signal }).finally(()=> clearTimeout(timer));
+  return fetch(url, { signal: controller.signal, cache: 'no-store' }).finally(()=> clearTimeout(timer));
 }
 
 async function fetchWithFallback(url){
