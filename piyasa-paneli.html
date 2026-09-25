@@ -1383,8 +1383,11 @@
 
 <script>
 const CARDS = [
-  { key:'sp500',  label:'S&P 500 (VOO)',  source:'twelvedata', symbol:'VOO',     fmt:'usd2',   fallback:{price:590.00, chg:-0.47} },
-  { key:'ndx',    label:'NASDAQ 100 (QQQM)', source:'twelvedata', symbol:'QQQM', fmt:'usd2',   fallback:{price:210.00, chg:-0.62} },
+  { key:'ndx',    label:'QQQM ETF (NASDAQ 100)', source:'twelvedata', symbol:'QQQM', fmt:'usd2',   fallback:{price:210.00, chg:-0.62} },
+  { key:'sp500',  label:'VOO ETF (S&P 500)',  source:'twelvedata', symbol:'VOO',     fmt:'usd2',   fallback:{price:590.00, chg:-0.47} },
+  { key:'ura',    label:'GLOBAL X URANIUM (URA)', source:'twelvedata', symbol:'URA', fmt:'usd2', fallback:{price:38.00, chg:0.30} },
+  { key:'nlr',    label:'VANECK URANIUM+NUCLEAR (NLR)', source:'twelvedata', symbol:'NLR', fmt:'usd2', fallback:{price:110.00, chg:0.25} },
+  { key:'xle',    label:'ENERGY SELECT SPDR (XLE)', source:'twelvedata', symbol:'XLE', fmt:'usd2', fallback:{price:95.00, chg:0.10} },
   { key:'usdtry', label:'DOLAR/TL',     source:'twelvedata', symbol:'USD/TRY', fmt:'usd2',    fallback:{price:34.50, chg:0.05} },
   { key:'eurtry', label:'EURO/TL',      source:'twelvedata', symbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
   { key:'btc',    label:'BİTCOİN',      source:'coingecko',symbol:'bitcoin',  fmt:'usd0',    fallback:{price:78170.59, chg:-0.15} },
@@ -1392,11 +1395,8 @@ const CARDS = [
   { key:'gold',   label:'ALTIN (ONS)',  source:'yahoo',    symbol:'GC=F',     fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
   { key:'brent',  label:'BRENT PETROL', source:'yahoo',    symbol:'BZ=F',     fmt:'usd2',    fallback:{price:101.60, chg:0.39} },
   { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
-  { key:'ura',    label:'GLOBAL X URANIUM (URA)', source:'twelvedata', symbol:'URA', fmt:'usd2', fallback:{price:38.00, chg:0.30} },
-  { key:'nlr',    label:'VANECK URANIUM+NUCLEAR (NLR)', source:'twelvedata', symbol:'NLR', fmt:'usd2', fallback:{price:110.00, chg:0.25} },
   { key:'rexc',   label:'SPROTT RARE EARTHS EX-CHINA (REXC)', source:'twelvedata', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
   { key:'remx',   label:'VANECK RARE EARTH (REMX)', source:'twelvedata', symbol:'REMX', fmt:'usd2', fallback:{price:68.00, chg:0.20} },
-  { key:'xle',    label:'ENERGY SELECT SPDR (XLE)', source:'twelvedata', symbol:'XLE', fmt:'usd2', fallback:{price:95.00, chg:0.10} },
 ];
 
 const grid = document.getElementById('grid');
