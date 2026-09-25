@@ -427,6 +427,50 @@
   .card-change.flat{color:var(--muted);}
   .arrow{font-size:10px;line-height:1;}
 
+  /* ---- VIX rejim rozeti ve not ---- */
+  .regime-badge{
+    font-size:9.5px;
+    font-weight:800;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    padding:2.5px 8px;
+    border-radius:20px;
+    white-space:nowrap;
+  }
+  .regime-badge.calm{
+    color:#8FE3BC;
+    background:rgba(51,192,124,0.14);
+    border:1px solid rgba(51,192,124,0.35);
+  }
+  .regime-badge.normal{
+    color:#8FB4FF;
+    background:rgba(108,142,239,0.16);
+    border:1px solid rgba(108,142,239,0.4);
+  }
+  .regime-badge.fear{
+    color:#F4C871;
+    background:rgba(231,168,59,0.16);
+    border:1px solid rgba(231,168,59,0.42);
+  }
+  .regime-badge.panic{
+    color:#FF9494;
+    background:rgba(255,92,92,0.16);
+    border:1px solid rgba(255,92,92,0.42);
+  }
+  .card-note{
+    font-size:11px;
+    line-height:1.3;
+    color:var(--muted);
+    margin-top:2px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .card-value.calm{color:#8FE3BC;}
+  .card-value.normal{color:#8FB4FF;}
+  .card-value.fear{color:#F4C871;}
+  .card-value.panic{color:#FF9494;}
+
   .footnote{
     margin-top:22px;
     font-size:11.5px;
@@ -615,7 +659,279 @@
     color:var(--muted-2);
     padding:8px 0;
   }
+
+  /* ---- AI Finans ---- */
+  .ai-form{
+    display:flex;
+    gap:10px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .ai-input{
+    flex:1;
+    min-width:240px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:9px;
+    color:var(--text);
+    font-size:13.5px;
+    font-family:inherit;
+    padding:12px 14px;
+    resize:vertical;
+    min-height:46px;
+  }
+  .ai-input:focus{outline:none;border-color:#3a4453;}
+  .ai-input::placeholder{color:var(--muted-2);}
+  .ai-btn{
+    background:var(--amber);
+    border:none;
+    color:#1a1205;
+    font-size:13px;
+    font-weight:700;
+    font-family:inherit;
+    padding:12px 20px;
+    border-radius:9px;
+    cursor:pointer;
+    align-self:flex-start;
+  }
+  .ai-btn:hover{filter:brightness(1.07);}
+  .ai-btn:disabled{opacity:.5;cursor:default;}
+
+  .ai-chips{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .ai-chip{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--muted);
+    font-size:11.5px;
+    font-family:inherit;
+    padding:6px 11px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .ai-chip:hover{color:var(--text);border-color:#3a4453;}
+
+  .ai-answer{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px 22px;
+    font-size:13.5px;
+    line-height:1.7;
+    white-space:pre-wrap;
+    min-height:60px;
+  }
+  .ai-answer:empty{display:none;}
+  .ai-answer h3{
+    font-size:14px;
+    margin:16px 0 8px;
+    color:var(--amber);
+  }
+  .ai-answer strong{color:#fff;}
+
+  .ai-score-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:14px 16px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    margin-bottom:16px;
+  }
+  .ai-score-num{
+    font-size:30px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+    line-height:1;
+  }
+  .ai-score-num.good{color:var(--up);}
+  .ai-score-num.mid{color:var(--amber);}
+  .ai-score-num.bad{color:var(--down);}
+  .ai-score-meta{font-size:12px;color:var(--muted);}
+  .ai-score-verdict{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+
+  .ai-setup{
+    background:#2a1f12;
+    border:1px solid #4a3319;
+    color:#f0b458;
+    padding:14px 16px;
+    border-radius:10px;
+    font-size:12.5px;
+    line-height:1.65;
+    margin-bottom:18px;
+  }
+  .ai-setup b{color:#ffd27a;}
+  .ai-setup code{
+    background:#1c150c;
+    padding:1px 5px;
+    border-radius:4px;
+    font-size:11.5px;
+    word-break:break-all;
+  }
+  .ai-disclaimer{
+    font-size:11.5px;
+    color:var(--muted-2);
+    line-height:1.6;
+    margin-top:16px;
+  }
+  .ai-thinking{
+    color:var(--muted);
+    font-size:13px;
+    padding:8px 0;
+  }
+
+  /* ---- Kredi Ekle ---- */
+  .loan-add-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-bottom:6px;
+  }
+  .loan-file-label{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:12.5px;
+    font-family:inherit;
+    padding:10px 16px;
+    border-radius:9px;
+    cursor:pointer;
+  }
+  .loan-file-label:hover{border-color:#3a4453;}
+  .loan-file-name{font-size:12px;color:var(--muted);}
+  .loan-preview{
+    margin-top:14px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+  }
+  .loan-preview-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:12.5px;
+    padding:5px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .loan-preview-row:last-child{border-bottom:none;}
+  .loan-preview-actions{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+  }
+  .loan-btn-save{
+    background:var(--up);
+    border:none;
+    color:#08220f;
+    font-weight:700;
+    font-size:12.5px;
+    padding:9px 16px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .loan-btn-cancel{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    font-size:12.5px;
+    padding:9px 16px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .loan-delete-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--down);
+    font-size:11px;
+    padding:4px 9px;
+    border-radius:6px;
+    cursor:pointer;
+    margin-left:auto;
+  }
+  .loan-delete-btn:hover{border-color:var(--down);}
+  .loan-card-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .bank-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#1c222b;
+    border:1px solid var(--border);
+    color:var(--muted);
+    font-size:10.5px;
+    font-weight:600;
+    padding:3px 10px;
+    border-radius:20px;
+    margin-top:4px;
+  }
+  .bank-chip .dot{width:4px;height:4px;border-radius:50%;background:var(--muted-2);}
+
+  .top-summary .summary-label{font-size:13.5px;}
+  .top-summary .summary-value{font-size:32px;}
+  .top-summary .summary-sub{font-size:13px;}
+
+  .led-dot{
+    display:inline-block;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    margin-right:6px;
+    position:relative;
+    top:-1px;
+  }
+  .led-dot.green{background:var(--up); box-shadow:0 0 5px rgba(51,192,124,0.75);}
+  .led-dot.red{background:var(--down); box-shadow:0 0 5px rgba(255,92,92,0.75);}
+
+  .ai-score-num.purple{color:#C9A6FF;}
+  .ai-score-num.blue{color:#6EC3FF;}
+  .ai-score-num.teal{color:#5EEAD4;}
+  .ai-score-num.teal{color:#5EEAD4;}
+
+  .grand-total-panel{
+    display:flex;
+    align-items:center;
+    gap:28px;
+    flex-wrap:wrap;
+  }
+  .grand-total-left{
+    flex:0 0 auto;
+    padding-right:24px;
+    border-right:1px solid var(--border);
+  }
+  .grand-total-right{
+    flex:1;
+    min-width:240px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .grand-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .grand-row .r-value{font-size:17px;font-weight:700;}
+  @media (max-width:640px){
+    .grand-total-left{border-right:none;border-bottom:1px solid var(--border);padding-right:0;padding-bottom:14px;width:100%;}
+  }
+
+  .section-divider{
+    height:1px;
+    background:var(--border);
+    margin:20px 0 18px;
+  }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -638,6 +954,10 @@
       <div class="nav-item" data-tab="borclar" onclick="switchTab('borclar')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
         <span>Borçlarım</span>
+      </div>
+      <div class="nav-item" data-tab="ai" onclick="switchTab('ai')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg>
+        <span>AI Finans</span>
       </div>
     </div>
   </div>
@@ -863,89 +1183,199 @@
   <div class="tab-panel" id="tab-borclar">
     <div class="page-head">
       <h1>Borçlarım</h1>
-      <p>Excel verisi · 11.09.2026 itibarıyla</p>
     </div>
 
-    <div class="summary-grid">
-      <div class="summary-card">
-        <div class="summary-label">Toplam Borç</div>
-        <div class="summary-value neg">₺405.623</div>
+    <div class="section-panel grand-total-panel">
+      <div class="grand-total-left">
+        <div class="summary-label" style="font-size:13.5px;">Toplam Borç</div>
+        <div class="summary-value neg" style="font-size:38px;" id="grandTotal">—</div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">Kredi (Bugün Kapatılırsa)</div>
-        <div class="summary-value">₺228.239</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Kredi Kartı Borcu</div>
-        <div class="summary-value">₺125.510</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">KMH Borcu</div>
-        <div class="summary-value">₺42.474</div>
-      </div>
-    </div>
-
-    <div class="section-panel">
-      <div class="section-title">Kredi Detayları</div>
-      <div class="table-row">
-        <div><div class="r-label">Garanti (23. gün) %1,99</div><div class="r-sub">Kalan taksit: 31</div></div>
-        <div class="r-value">₺46.307</div>
-      </div>
-      <div class="table-row">
-        <div><div class="r-label">On Bank (17. gün) %2,99</div><div class="r-sub">Kalan taksit: 11</div></div>
-        <div class="r-value">₺96.324</div>
-      </div>
-      <div class="table-row">
-        <div><div class="r-label">Enpara (10. gün) %0,00</div><div class="r-sub">Kalan taksit: 3</div></div>
-        <div class="r-value">₺25.500</div>
-      </div>
-      <div class="table-row">
-        <div><div class="r-label">Vakıfbank (8. gün) %2,49</div><div class="r-sub">Kalan taksit: 1</div></div>
-        <div class="r-value">₺8.880</div>
-      </div>
-      <div class="table-row">
-        <div><div class="r-label">Akbank %0,99 (Faruk)</div><div class="r-sub">Kalan taksit: 1</div></div>
-        <div class="r-value">₺25.614</div>
-      </div>
-      <div class="table-row">
-        <div><div class="r-label">Akbank %0,99 (Elif)</div><div class="r-sub">Kalan taksit: 1</div></div>
-        <div class="r-value">₺25.614</div>
-      </div>
-      <div class="table-row">
-        <div class="r-label" style="font-weight:700;">Bugün Kapatılırsa Toplam</div>
-        <div class="r-value" style="color:var(--down);">₺228.239</div>
-      </div>
-      <div class="table-row">
-        <div><div class="r-label" style="font-weight:700;">Faizli Toplam Tutar</div><div class="r-sub">Vade sonuna kadar ödenecek toplam</div></div>
-        <div class="r-value muted">₺269.076</div>
+      <div class="grand-total-right">
+        <div class="grand-row">
+          <div>
+            <div class="r-label" style="font-weight:700;">Kredi Borcu</div>
+            <div class="ai-score-meta" id="loansSummaryTarih">—</div>
+          </div>
+          <div class="r-value" id="loansSummaryToplam">—</div>
+        </div>
+        <div class="grand-row">
+          <div>
+            <div class="r-label" style="font-weight:700;">Kredili Mevduat Hesabı -KMH</div>
+            <div class="ai-score-meta" id="kmhSummaryTarih">—</div>
+          </div>
+          <div class="r-value" id="kmhSummaryToplam">—</div>
+        </div>
+        <div class="grand-row">
+          <div>
+            <div class="r-label" style="font-weight:700;">Kredi Kartı Borcu</div>
+            <div class="ai-score-meta" id="kkSummaryTarih">—</div>
+          </div>
+          <div class="r-value" id="kkSummaryToplam">—</div>
+        </div>
+        <div class="grand-row">
+          <div>
+            <div class="r-label" style="font-weight:700;">Elden Nakit Borçlar</div>
+            <div class="ai-score-meta" id="nakitSummaryTarih">—</div>
+          </div>
+          <div class="r-value" id="nakitSummaryToplam">—</div>
+        </div>
       </div>
     </div>
 
     <div class="section-panel">
-      <div class="section-title">Diğer Borçlar</div>
-      <div class="table-row">
-        <div class="r-label">Kredi Kartı (Akbank)</div>
-        <div class="r-value">₺125.510</div>
+      <div class="section-title">Yeni Kredi Ekle</div>
+      <div class="loan-add-row">
+        <label class="loan-file-label" for="loanPdfInput">📄 Ödeme Planı PDF Seç</label>
+        <input type="file" id="loanPdfInput" accept="application/pdf" style="display:none;" onchange="onLoanPdfSelected(event)">
+        <span class="loan-file-name" id="loanFileName">Dosya seçilmedi</span>
       </div>
-      <div class="table-row">
-        <div><div class="r-label">KMH (Abim Euro Elden)</div></div>
-        <div class="r-value">₺42.474</div>
+      <div id="loanExtractStatus"></div>
+      <div id="loanPreviewBox"></div>
+      <div class="ai-disclaimer" style="margin-top:10px;margin-bottom:4px;">
+        PDF, Cloudflare Worker üzerinden Claude'a gönderilip ödeme planı otomatik okunur. Kaydetmeden önce
+        çıkarılan rakamları mutlaka kontrol et — otomatik okuma hata yapabilir. Eklenen krediler yalnızca
+        bu tarayıcıda (localStorage) saklanır, başka cihaza taşınmaz.
       </div>
-      <div class="table-row">
-        <div><div class="r-label">Nakit Hesap</div></div>
-        <div class="r-value neg">-₺9.400</div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-title" style="font-size:13px;">veya Excel Ödeme Planı Yükle</div>
+      <div class="loan-add-row">
+        <input type="text" id="excelBankaAdi" class="ai-input" style="max-width:200px;min-width:160px;" placeholder="Banka adı (ör. Akbank)">
+        <label class="loan-file-label" for="loanExcelInput">📊 Excel Seç (.xlsx)</label>
+        <input type="file" id="loanExcelInput" accept=".xlsx,.xls" style="display:none;" onchange="onLoanExcelSelected(event)">
+        <span class="loan-file-name" id="loanExcelFileName">Dosya seçilmedi</span>
+        <a href="kredi-odeme-plani-sablon.xlsx" download class="loan-file-label" style="text-decoration:none;">⬇ Şablon İndir</a>
       </div>
-      <div class="table-row">
-        <div><div class="r-label">Eylül Ödenmeyen Kredi Kartları</div><div class="r-sub">Vakıf ₺8.880 · Akbank ₺29.750 · Enpara ₺8.400</div></div>
-        <div class="r-value muted">₺47.030</div>
+      <div id="excelExtractStatus"></div>
+      <div class="ai-disclaimer" style="margin-top:10px;">
+        Kabul edilen sütunlar: DURUM, TAKSİT, ÖDEME TARİHİ, ANA PARA TUTARI, FAİZ, BSMV, KKDF, ÖDEME TUTARI
+        (bu sırada olması şart değil, başlıklar bu isimleri içerdiği sürece tanınır). Tüm taksitleri
+        (ödenmiş dahil) eksiksiz gir — kalan anapara zinciri bunlardan hesaplanır.
       </div>
-      <div class="table-row">
-        <div class="r-label">Borcun Bitcoin Karşılığı</div>
-        <div class="r-value muted">≈0,0611 BTC</div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-title">Kredilerim — Canlı Takip</div>
+      <div id="loans-live-container"></div>
+      <div class="card-note" style="margin-top:6px;">
+        Hesap yöntemi: kalan anapara × (aylık faiz oranı / 30) × geçen gün + %KKDF + %BSMV. Bir krediyi
+        kapattığında "✓ Krediyi Kapattım" ile onaylayarak listeden kaldırabilirsin.
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Kredi Kartlarım</div>
+      <div id="kkKartlarContainer"></div>
+      <div class="loan-add-row" style="margin-top:14px;">
+        <select id="kkAdInput" class="ai-input" style="max-width:200px;min-width:160px;">
+          <option value="" disabled selected>Banka seç…</option>
+          <option>Akbank</option>
+          <option>Denizbank</option>
+          <option>Enpara</option>
+          <option>Garanti BBVA</option>
+          <option>Halkbank</option>
+          <option>Hayat Finans</option>
+          <option>İş Bankası</option>
+          <option>ON Bank</option>
+          <option>QNB</option>
+          <option>Tombank</option>
+          <option>Vakıfbank</option>
+          <option>Yapı Kredi</option>
+          <option>Ziraat Bankası</option>
+        </select>
+        <input type="number" step="0.01" id="kkTutarInput" class="ai-input" style="max-width:180px;min-width:140px;" placeholder="Borç tutarı">
+        <button class="ai-btn" onclick="addKKKart()">+ Kart Ekle</button>
+      </div>
+      <div class="ai-disclaimer" style="margin-top:10px;">
+        Rakamlar otomatik hesaplanmaz — her kartın ekstresinden gördüğün güncel borcu elle girip
+        güncellersin. Tarayıcı hafızasında (localStorage) saklanır.
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Kredili Mevduat Hesabı -KMH</div>
+      <div id="kmhKartlarContainer"></div>
+      <div class="loan-add-row" style="margin-top:14px;">
+        <select id="kmhAdInput" class="ai-input" style="max-width:200px;min-width:160px;">
+          <option value="" disabled selected>Banka seç…</option>
+          <option>Akbank</option>
+          <option>Denizbank</option>
+          <option>Enpara</option>
+          <option>Garanti BBVA</option>
+          <option>Halkbank</option>
+          <option>Hayat Finans</option>
+          <option>İş Bankası</option>
+          <option>ON Bank</option>
+          <option>QNB</option>
+          <option>Tombank</option>
+          <option>Vakıfbank</option>
+          <option>Yapı Kredi</option>
+          <option>Ziraat Bankası</option>
+        </select>
+        <input type="number" step="0.01" id="kmhTutarInput" class="ai-input" style="max-width:180px;min-width:140px;" placeholder="Borç tutarı">
+        <button class="ai-btn" onclick="addKMH()">+ KMH Ekle</button>
+      </div>
+      <div class="ai-disclaimer" style="margin-top:10px;">
+        Kredili mevduat hesabı (KMH) borcu — rakamlar otomatik hesaplanmaz, hesap özetinden gördüğün
+        güncel bakiyeyi elle girip güncellersin. Tarayıcı hafızasında (localStorage) saklanır.
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">Elden Nakit Borçlar</div>
+      <div id="nakitKartlarContainer"></div>
+      <div class="loan-add-row" style="margin-top:14px;">
+        <input type="text" id="nakitAdInput" class="ai-input" style="max-width:200px;min-width:160px;" placeholder="Kimden (ör. Abim)">
+        <input type="number" step="0.01" id="nakitTutarInput" class="ai-input" style="max-width:160px;min-width:120px;" placeholder="Borç tutarı">
+        <select id="nakitParaBirimi" class="ai-input" style="max-width:100px;min-width:90px;">
+          <option value="TL">TL</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+        </select>
+        <button class="ai-btn" onclick="addNakit()">+ Nakit Borç Ekle</button>
+      </div>
+      <div class="ai-disclaimer" style="margin-top:10px;">
+        Elden (banka dışı) nakit borçlar — kimden aldığını yazıp tutarı ve para birimini girersin.
+        USD/EUR seçersen güncel kurdan TL karşılığı hesaplanıp kaydedilir. Rakamlar otomatik
+        hesaplanmaz, elle güncellersin. Tarayıcı hafızasında (localStorage) saklanır.
       </div>
     </div>
   </div>
   <!-- ================= /TAB: BORÇLARIM ================= -->
+
+  <!-- ================= TAB: AI FİNANS ================= -->
+  <div class="tab-panel" id="tab-ai">
+    <div class="page-head">
+      <h1>AI Finans</h1>
+      <p>Şirket, sektör ve piyasa sorularını güncel haber taramasıyla birlikte değerlendirir</p>
+    </div>
+
+    <div class="ai-setup" id="aiSetup">
+      <b>⚙ Kurulum gerekiyor.</b> AI özelliğinin çalışması için kendi Cloudflare Worker adresini aşağıdaki kod içinde tanımlaman gerekiyor: dosyada <code>AI_ENDPOINT</code> satırını bul ve Worker adresinle değiştir. API anahtarı Worker'ın içinde saklanır, bu sayfada görünmez.
+    </div>
+
+    <div class="ai-form">
+      <textarea class="ai-input" id="aiInput" rows="2" placeholder="Örn: ASELSAN'ı değerlendir — finansalları, sektör görünümü ve haber akışıyla birlikte skorla"></textarea>
+      <button class="ai-btn" id="aiBtn" onclick="askAI()">Değerlendir</button>
+    </div>
+
+    <div class="ai-chips">
+      <button class="ai-chip" onclick="fillAI('THYAO hissesini finansalları, sektör görünümü ve güncel haberleriyle değerlendir ve skorla')">THYAO değerlendir</button>
+      <button class="ai-chip" onclick="fillAI('NVIDIA (NVDA) için değerleme, büyüme ve risk analizi yap, skorla')">NVDA analizi</button>
+      <button class="ai-chip" onclick="fillAI('Fed faiz kararı öncesi altın ve tahvil piyasası için senaryo analizi yap')">Altın senaryoları</button>
+      <button class="ai-chip" onclick="fillAI('Bitcoin için mevcut makro koşullarda risk/getiri değerlendirmesi yap')">BTC makro görünüm</button>
+      <button class="ai-chip" onclick="fillAI('Savunma sanayi sektörünün 2026 görünümünü ve öne çıkan şirketleri analiz et')">Savunma sanayi</button>
+    </div>
+
+    <div id="aiScoreBox"></div>
+    <div class="ai-answer" id="aiAnswer"></div>
+
+    <div class="ai-disclaimer">
+      Bu bölüm bir analiz aracıdır, yatırım tavsiyesi değildir. Üretilen skorlar ve değerlendirmeler, modelin kamuya açık bilgi ve haber taramasına dayalı yorumudur; hata veya eksik içerebilir, kesin bir al/sat talimatı olarak okunmamalıdır. Yatırım kararlarını kendi araştırman ve gerekiyorsa lisanslı bir danışmanla birlikte vermelisin.
+    </div>
+  </div>
+  <!-- ================= /TAB: AI FİNANS ================= -->
 
   </div>
 </div>
@@ -953,13 +1383,15 @@
 
 <script>
 const CARDS = [
-  { key:'sp500',  label:'S&P 500',      source:'yahoo',    symbol:'^GSPC',    fmt:'index',   fallback:{price:7637.70, chg:-0.47} },
-  { key:'ndx',    label:'NASDAQ 100',   source:'yahoo',    symbol:'^NDX',     fmt:'index',   fallback:{price:26256.66, chg:-0.62} },
-  { key:'dji',    label:'DOW JONES',    source:'yahoo',    symbol:'^DJI',     fmt:'index',   fallback:{price:52380.66, chg:-0.77} },
-  { key:'vix',    label:'VIX (KORKU)',  source:'yahoo',    symbol:'^VIX',     fmt:'index2',  fallback:{price:16.46, chg:4.71} },
+  { key:'sp500',  label:'S&P 500',      source:'twelvedata', symbol:'SPX',     fmt:'index',   fallback:{price:7637.70, chg:-0.47} },
+  { key:'ndx',    label:'NASDAQ 100',   source:'twelvedata', symbol:'NDX',     fmt:'index',   fallback:{price:26256.66, chg:-0.62} },
+  { key:'dji',    label:'DOW JONES',    source:'twelvedata', symbol:'DJI',     fmt:'index',   fallback:{price:52380.66, chg:-0.77} },
+  { key:'vix',    label:'VIX (KORKU ENDEKSİ)',  source:'twelvedata', symbol:'VIX', fmt:'index2', fallback:{price:16.46, chg:4.71} },
   { key:'us2y',   label:'2Y HAZİNE',    source:'fred',     symbol:'DGS2',     fmt:'yield',   fallback:{price:4.43, chg:0.04, bp:true} },
   { key:'us10y',  label:'10Y HAZİNE',   source:'fred',     symbol:'DGS10',    fmt:'yield',   fallback:{price:4.83, chg:0.03, bp:true} },
-  { key:'dxy',    label:'DOLAR (DXY)',  source:'yahoo',    symbol:'DX-Y.NYB', fmt:'index2',  fallback:{price:98.80, chg:-0.02} },
+  { key:'dxy',    label:'DOLAR (DXY)',  source:'twelvedata', symbol:'DXY',     fmt:'index2',  fallback:{price:98.80, chg:-0.02} },
+  { key:'usdtry', label:'DOLAR/TL',     source:'twelvedata', symbol:'USD/TRY', fmt:'usd2',    fallback:{price:34.50, chg:0.05} },
+  { key:'eurtry', label:'EURO/TL',      source:'twelvedata', symbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
   { key:'btc',    label:'BİTCOİN',      source:'coingecko',symbol:'bitcoin',  fmt:'usd0',    fallback:{price:78170.59, chg:-0.15} },
   { key:'eth',    label:'ETHEREUM',     source:'coingecko',symbol:'ethereum', fmt:'usd2',    fallback:{price:3120.40, chg:0.85} },
   { key:'gold',   label:'ALTIN (ONS)',  source:'yahoo',    symbol:'GC=F',     fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
@@ -967,9 +1399,9 @@ const CARDS = [
   { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
 ];
 
-const PROXY = 'https://api.allorigins.win/raw?url=';
 const grid = document.getElementById('grid');
 const state = {};
+let _fxRates = { USD: null, EUR: null }; // Elden Nakit Borçlar döviz çevrimi için son bilinen kurlar
 
 function buildCards(){
   CARDS.forEach(c=>{
@@ -977,13 +1409,38 @@ function buildCards(){
     el.className = 'card';
     el.id = 'card-'+c.key;
     el.innerHTML = `
-      <div class="card-label"><span>${c.label}</span><span class="stale-tag" id="stale-${c.key}" style="display:none;">gecikmeli</span></div>
+      <div class="card-label">
+        <span>${c.label}</span>
+        <span class="regime-badge" id="badge-${c.key}" style="display:none;"></span>
+        <span class="stale-tag" id="stale-${c.key}" style="display:none;">gecikmeli</span>
+      </div>
       <div class="card-value skeleton" id="val-${c.key}">0</div>
       <div class="card-change flat" id="chg-${c.key}"><span class="arrow">–</span><span>—</span></div>
+      <div class="card-note" id="note-${c.key}" style="display:none;"></div>
     `;
     el.addEventListener('click', ()=> openChart(c.key));
     grid.appendChild(el);
   });
+}
+
+// VIX seviyesine göre piyasa rejimi, rengi ve yorumu
+function vixRegime(vix, chgPct){
+  let key, label;
+  if(vix < 12){
+    key = 'calm';   label = 'AŞIRI SAKİN';
+  } else if(vix < 20){
+    key = 'normal'; label = 'NORMAL';
+  } else if(vix < 30){
+    key = 'fear';   label = 'KORKU';
+  } else {
+    key = 'panic';  label = 'AŞIRI KORKU';
+  }
+
+  const yon = chgPct > 0.005 ? '▲' : (chgPct < -0.005 ? '▼' : '—');
+  const oran = fmtNumber(Math.abs(chgPct), 1);
+  const note = chgPct === 0 ? 'Dün yatay' : `Dün ${yon} %${oran}`;
+
+  return { key, label, note };
 }
 
 function fmtNumber(n, decimals){
@@ -995,6 +1452,10 @@ function renderCard(cfg, price, chgPct, stale){
   const valEl = document.getElementById('val-'+cfg.key);
   const chgEl = document.getElementById('chg-'+cfg.key);
   const staleEl = document.getElementById('stale-'+cfg.key);
+
+  // Elden Nakit Borçlar'daki döviz çevrimi için güncel kuru sakla (stale/gecikmeli olsa bile son bilinen kur kullanılır)
+  if(cfg.key === 'usdtry') _fxRates.USD = price;
+  if(cfg.key === 'eurtry') _fxRates.EUR = price;
 
   valEl.classList.remove('skeleton');
 
@@ -1023,13 +1484,29 @@ function renderCard(cfg, price, chgPct, stale){
     : `${sign}%${fmtNumber(Math.abs(chgPct)===chgPct?chgPct:chgPct,2)}`;
   chgEl.innerHTML = `<span class="arrow">${arrow}</span><span>${chgLabel}</span>`;
 
+  // VIX: rejim rozeti, renk ve açıklama notu
+  if(cfg.key === 'vix'){
+    const badgeEl = document.getElementById('badge-vix');
+    const noteEl = document.getElementById('note-vix');
+    const r = vixRegime(price, chgPct);
+
+    badgeEl.className = 'regime-badge ' + r.key;
+    badgeEl.textContent = r.label;
+    badgeEl.style.display = 'inline-block';
+
+    valEl.classList.remove('calm','normal','fear','panic');
+    valEl.classList.add(r.key);
+
+    noteEl.textContent = r.note;
+    noteEl.style.display = 'block';
+  }
+
   staleEl.style.display = stale ? 'inline-block' : 'none';
 }
 
 async function fetchYahoo(symbol){
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d`;
-  const res = await fetch(PROXY + encodeURIComponent(url));
-  if(!res.ok) throw new Error('yahoo fetch failed');
+  const res = await fetchWithFallback(url);
   const data = await res.json();
   const result = data.chart.result[0];
   const meta = result.meta;
@@ -1041,8 +1518,7 @@ async function fetchYahoo(symbol){
 
 async function fetchFred(seriesId){
   const url = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${seriesId}`;
-  const res = await fetch(PROXY + encodeURIComponent(url));
-  if(!res.ok) throw new Error('fred fetch failed');
+  const res = await fetchWithFallback(url);
   const text = await res.text();
   const lines = text.trim().split('\n').slice(1);
   const clean = lines.filter(l => !l.trim().endsWith(',.') && l.trim().length>0);
@@ -1054,14 +1530,45 @@ async function fetchFred(seriesId){
   return { price, chgPct };
 }
 
+async function fetchTwelveData(symbol){
+  const url = MY_WORKER + '/td?symbol=' + encodeURIComponent(symbol);
+  const res = await fetchWithTimeout(url);
+  const data = await res.json();
+  if(!res.ok || data.status === 'error' || data.code){
+    throw new Error(data.message || ('twelvedata hata ' + res.status));
+  }
+  const price = parseFloat(data.close);
+  const chgPct = parseFloat(data.percent_change);
+  if(isNaN(price)) throw new Error('twelvedata geçersiz veri');
+  return { price, chgPct: isNaN(chgPct) ? 0 : chgPct };
+}
+
 async function fetchCoingecko(ids){
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`;
-  const res = await fetch(url);
+  const res = await fetchWithTimeout(url);
   if(!res.ok) throw new Error('coingecko fetch failed');
   return res.json();
 }
 
-async function refreshAll(){
+function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+
+async function refreshCrypto(){
+  try{
+    const cgData = await fetchCoingecko(['bitcoin','ethereum']);
+    CARDS.filter(c=>c.source==='coingecko').forEach(cfg=>{
+      const d = cgData[cfg.symbol];
+      if(d) renderCard(cfg, d.usd, d.usd_24h_change, false);
+      else renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
+    });
+  }catch(e){
+    CARDS.filter(c=>c.source==='coingecko').forEach(cfg=>{
+      renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
+    });
+    throw e;
+  }
+}
+
+async function refreshMarketData(){
   const dot = document.getElementById('statusDot');
   const statusText = document.getElementById('statusText');
   dot.className = 'dot loading';
@@ -1070,24 +1577,23 @@ async function refreshAll(){
   let anyError = false;
   let lastErrorMsg = '';
 
-  // Coingecko batch first
-  let cgData = null;
   try{
-    cgData = await fetchCoingecko(['bitcoin','ethereum']);
+    await refreshCrypto();
   }catch(e){ anyError = true; lastErrorMsg = e.message || String(e); }
 
-  await Promise.all(CARDS.map(async cfg=>{
+  // Yahoo/FRED kaynaklı kartları aynı anda değil, aralıklı (kademeli) çekiyoruz —
+  // ücretsiz CORS proxy'leri eş zamanlı yoğun istekte otomatik engelleme yapabiliyor.
+  const marketCards = CARDS.filter(c => c.source === 'yahoo' || c.source === 'fred' || c.source === 'twelvedata');
+  for(const cfg of marketCards){
     try{
-      if(cfg.source === 'coingecko'){
-        if(!cgData) throw new Error('no cg data');
-        const d = cgData[cfg.symbol];
-        if(!d) throw new Error('missing coin');
-        renderCard(cfg, d.usd, d.usd_24h_change, false);
-      } else if(cfg.source === 'yahoo'){
+      if(cfg.source === 'yahoo'){
         const { price, chgPct } = await fetchYahoo(cfg.symbol);
         renderCard(cfg, price, chgPct, false);
       } else if(cfg.source === 'fred'){
         const { price, chgPct } = await fetchFred(cfg.symbol);
+        renderCard(cfg, price, chgPct, false);
+      } else if(cfg.source === 'twelvedata'){
+        const { price, chgPct } = await fetchTwelveData(cfg.symbol);
         renderCard(cfg, price, chgPct, false);
       }
     }catch(e){
@@ -1095,7 +1601,8 @@ async function refreshAll(){
       lastErrorMsg = e.message || String(e);
       renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
     }
-  }));
+    await sleep(350); // istekler arasına kısa bir bekleme koyuyoruz
+  }
 
   if(location.protocol === 'file:'){
     document.getElementById('fileWarning').style.display = 'block';
@@ -1108,6 +1615,10 @@ async function refreshAll(){
     dot.className = 'dot';
     statusText.textContent = 'Canlı · güncellendi ' + new Date().toLocaleTimeString('tr-TR');
   }
+}
+
+async function refreshAll(){
+  await refreshMarketData();
 }
 
 function manualRefresh(){
@@ -1156,8 +1667,10 @@ async function loadChart(cfg, period){
     loadingEl.style.display = 'none';
     if(!points || points.length < 2){
       emptyEl.style.display = 'flex';
+      lastChartPoints = null;
       return;
     }
+    lastChartPoints = points;
     drawChart(svgEl, points);
   }catch(e){
     loadingEl.style.display = 'none';
@@ -1170,7 +1683,7 @@ async function fetchHistory(cfg, period){
     const interval = period === 'daily' ? '1d' : '1wk';
     const range = period === 'daily' ? '1mo' : '1y';
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(cfg.symbol)}?range=${range}&interval=${interval}`;
-    const res = await fetch(PROXY + encodeURIComponent(url));
+    const res = await fetchWithFallback(url);
     const data = await res.json();
     const result = data.chart.result[0];
     const ts = result.timestamp || [];
@@ -1179,15 +1692,28 @@ async function fetchHistory(cfg, period){
   }
 
   if(cfg.source === 'coingecko'){
-    const days = period === 'daily' ? 30 : 365;
-    const url = `https://api.coingecko.com/api/v3/coin/${cfg.symbol}/market_chart?vs_currency=usd&days=${days}`;
-    const res = await fetch(url);
+    const symbolMap = { bitcoin: 'BTCUSDT', ethereum: 'ETHUSDT' };
+    const symbol = symbolMap[cfg.symbol];
+    const interval = period === 'daily' ? '1d' : '1w';
+    const limit = period === 'daily' ? 30 : 52;
+    const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
+    const res = await fetchWithTimeout(url);
+    if(!res.ok) throw new Error('binance fetch failed');
     const data = await res.json();
-    let pts = (data.prices || []).map(p=>({ t:p[0], v:p[1] }));
-    if(period === 'weekly'){
-      pts = pts.filter((_,i)=> i % 7 === 0);
-    }
-    return pts;
+    return data.map(k => ({ t: k[6], v: parseFloat(k[4]) }));
+  }
+
+  if(cfg.source === 'twelvedata'){
+    const interval = period === 'daily' ? '1day' : '1week';
+    const outputsize = period === 'daily' ? 30 : 52;
+    const url = MY_WORKER + '/td-series?symbol=' + encodeURIComponent(cfg.symbol) + '&interval=' + interval + '&outputsize=' + outputsize;
+    const res = await fetchWithTimeout(url);
+    const data = await res.json();
+    if(!res.ok || data.status === 'error' || !Array.isArray(data.values)) throw new Error('twelvedata geçmiş alınamadı');
+    return data.values
+      .map(v => ({ t: new Date(v.datetime).getTime(), v: parseFloat(v.close) }))
+      .filter(p => !isNaN(p.v))
+      .reverse();
   }
 
   if(cfg.source === 'fred'){
@@ -1195,7 +1721,7 @@ async function fetchHistory(cfg, period){
       ? new Date(Date.now() - 45*24*3600*1000).toISOString().slice(0,10)
       : new Date(Date.now() - 450*24*3600*1000).toISOString().slice(0,10);
     const url = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${cfg.symbol}&cosd=${cosd}`;
-    const res = await fetch(PROXY + encodeURIComponent(url));
+    const res = await fetchWithFallback(url);
     const text = await res.text();
     const lines = text.trim().split('\n').slice(1);
     let pts = lines
@@ -1212,7 +1738,10 @@ async function fetchHistory(cfg, period){
 }
 
 function drawChart(svgEl, points){
-  const W = 600, H = 200, PAD_L = 44, PAD_R = 10, PAD_T = 14, PAD_B = 22;
+  const box = svgEl.parentElement.getBoundingClientRect();
+  const W = Math.max(Math.round(box.width), 300);
+  const H = Math.max(Math.round(box.height), 160);
+  const PAD_L = 56, PAD_R = 14, PAD_T = 16, PAD_B = 24;
   const vals = points.map(p=>p.v);
   const min = Math.min(...vals);
   const max = Math.max(...vals);
@@ -1236,16 +1765,27 @@ function drawChart(svgEl, points){
   }).join('');
 
   svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.setAttribute('preserveAspectRatio', 'none');
   svgEl.innerHTML = `
     ${gridLines}
     <path d="${areaPath}" fill="${fillColor}" stroke="none"/>
     <path d="${linePath}" fill="none" stroke="${lineColor}" stroke-width="1.8"/>
     <text class="axis-label" x="${PAD_L}" y="${H-6}" text-anchor="start">${fmtDate(points[0].t)}</text>
     <text class="axis-label" x="${W-PAD_R}" y="${H-6}" text-anchor="end">${fmtDate(points[points.length-1].t)}</text>
-    <text class="axis-label" x="${PAD_L-6}" y="${PAD_T+4}" text-anchor="end">${max.toLocaleString('tr-TR',{maximumFractionDigits:2})}</text>
-    <text class="axis-label" x="${PAD_L-6}" y="${H-PAD_B}" text-anchor="end">${min.toLocaleString('tr-TR',{maximumFractionDigits:2})}</text>
+    <text class="axis-label" x="${PAD_L-8}" y="${PAD_T+4}" text-anchor="end">${max.toLocaleString('tr-TR',{maximumFractionDigits:2})}</text>
+    <text class="axis-label" x="${PAD_L-8}" y="${H-PAD_B}" text-anchor="end">${min.toLocaleString('tr-TR',{maximumFractionDigits:2})}</text>
   `;
 }
+
+let lastChartPoints = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(window._chartResizeTimer);
+  window._chartResizeTimer = setTimeout(()=>{
+    if(lastChartPoints){
+      drawChart(document.getElementById('chartSvg'), lastChartPoints);
+    }
+  }, 200);
+});
 
 // ---------- Güncel Haberler ----------
 const NEWS_FEEDS = [
@@ -1254,11 +1794,16 @@ const NEWS_FEEDS = [
   { key:'us',   query:'ABD borsa Wall Street S&P 500' },
 ];
 
+// Kendi Cloudflare Worker adresin (en güvenilir kaynak — ilk sırada denenir).
+// Worker'ı kurduktan sonra aşağıdaki adresi kendi adresinle değiştir.
+const MY_WORKER = 'https://weathered-dream-54b3.ofusluoglu.workers.dev';
+
 const NEWS_PROXIES = [
+  MY_WORKER + '/proxy?url=',
   'https://api.allorigins.win/raw?url=',
   'https://corsproxy.io/?url=',
   'https://api.codetabs.com/v1/proxy?quest=',
-];
+].filter(p => !p.includes('SENIN-WORKER-ADRESIN'));
 
 function escapeHtml(str){
   const div = document.createElement('div');
@@ -1266,11 +1811,17 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+function fetchWithTimeout(url, ms = 7000){
+  const controller = new AbortController();
+  const timer = setTimeout(()=> controller.abort(), ms);
+  return fetch(url, { signal: controller.signal }).finally(()=> clearTimeout(timer));
+}
+
 async function fetchWithFallback(url){
   let lastErr;
   for(const proxy of NEWS_PROXIES){
     try{
-      const res = await fetch(proxy + encodeURIComponent(url));
+      const res = await fetchWithTimeout(proxy + encodeURIComponent(url));
       if(res.ok) return res;
     }catch(e){ lastErr = e; }
   }
@@ -1278,16 +1829,38 @@ async function fetchWithFallback(url){
 }
 
 async function fetchNews(query){
-  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=tr&gl=TR&ceid=TR:tr`;
-  const res = await fetchWithFallback(url);
-  const text = await res.text();
-  const xml = new DOMParser().parseFromString(text, 'text/xml');
-  const items = Array.from(xml.querySelectorAll('item')).slice(0, 4);
-  return items.map(it => ({
-    title: it.querySelector('title')?.textContent || '',
-    link: it.querySelector('link')?.textContent || '#',
-    source: it.querySelector('source')?.textContent || '',
-  }));
+  const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=tr&gl=TR&ceid=TR:tr`;
+
+  // 1) rss2json: RSS'i doğrudan JSON'a çevirir, CORS sorunu yaşamaz.
+  try{
+    const r2jUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+    const res = await fetchWithTimeout(r2jUrl);
+    const data = await res.json();
+    if(data && data.status === 'ok' && Array.isArray(data.items) && data.items.length){
+      return data.items.slice(0, 4).map(it => ({
+        title: (it.title || '').split(' - ').slice(0, -1).join(' - ') || it.title || '',
+        link: it.link || '#',
+        source: it.author || (it.title || '').split(' - ').pop() || '',
+      }));
+    }
+  }catch(e){ /* alttaki yönteme düş */ }
+
+  // 2) Yedek: ham RSS XML, proxy zinciri üzerinden
+  try{
+    const res = await fetchWithFallback(feedUrl);
+    const text = await res.text();
+    const xml = new DOMParser().parseFromString(text, 'text/xml');
+    const items = Array.from(xml.querySelectorAll('item')).slice(0, 4);
+    if(items.length){
+      return items.map(it => ({
+        title: it.querySelector('title')?.textContent || '',
+        link: it.querySelector('link')?.textContent || '#',
+        source: it.querySelector('source')?.textContent || '',
+      }));
+    }
+  }catch(e){ /* aşağıda boş döner */ }
+
+  return [];
 }
 
 function fallbackNewsLink(query){
@@ -1322,6 +1895,861 @@ async function loadNews(){
   document.getElementById('newsUpdated').textContent = 'güncellendi ' + new Date().toLocaleTimeString('tr-TR');
 }
 
+// ---------- AI Finans ----------
+// AI uç noktası — yukarıdaki MY_WORKER adresini tanımladığında otomatik çalışır.
+const AI_ENDPOINT = MY_WORKER + '/ai';
+
+function fillAI(text){
+  document.getElementById('aiInput').value = text;
+  document.getElementById('aiInput').focus();
+}
+
+function renderScore(score, verdict){
+  const box = document.getElementById('aiScoreBox');
+  if(score == null){ box.innerHTML = ''; return; }
+  const cls = score >= 70 ? 'good' : (score >= 45 ? 'mid' : 'bad');
+  box.innerHTML = `
+    <div class="ai-score-row">
+      <div class="ai-score-num ${cls}">${score}<span style="font-size:14px;color:var(--muted-2);">/100</span></div>
+      <div>
+        <div class="ai-score-verdict">${escapeHtml(verdict || '')}</div>
+        <div class="ai-score-meta">Modelin kamuya açık bilgi ve haber taramasına dayalı değerlendirmesi · yatırım tavsiyesi değildir</div>
+      </div>
+    </div>
+  `;
+}
+
+function formatAIText(text){
+  // Basit markdown: **kalın** ve ## başlık
+  return escapeHtml(text)
+    .replace(/^##\s*(.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
+const AI_SYSTEM_PROMPT = `Sen bir finans ve piyasa analiz asistanısın. Türkçe yanıt ver.
+
+Bir şirket, varlık veya sektör sorulduğunda şu yapıda analiz yap:
+
+## Özet
+Kısa durum tespiti (2-3 cümle).
+
+## Finansal Görünüm
+Bilinen finansal veriler: büyüme, kârlılık, borçluluk, marjlar. Rakam biliyorsan ver, bilmiyorsan "güncel veriye bakılmalı" de — uydurma.
+
+## Değerleme
+Pahalı/ucuz/makul tartışması. F/K, PD/DD gibi çarpanlar biliniyorsa belirt. Fiyatlanmış beklentiler nedir?
+
+## Sektör ve Haber Akışı
+Sektörün genel gidişatı, düzenleyici/jeopolitik faktörler, öne çıkan son gelişmeler.
+
+## Riskler
+En az 3 somut risk maddesi.
+
+## Skor
+SKOR: [0-100 arası bir sayı]
+KARAR: [Cazip / Makul / Temkinli / Riskli] — tek kelimelik etiket
+Ardından skorun gerekçesini 2-3 cümleyle açıkla.
+
+Kurallar:
+- Emin olmadığın rakamı uydurma; bilgin eskimiş olabileceğini belirt.
+- Kesin al/sat emri verme; senaryo ve olasılık dilinde konuş.
+- Dengeli ol: hem yükseliş hem düşüş argümanını sun.
+- Yanıtın sonunda bunun yatırım tavsiyesi olmadığını bir cümleyle hatırlat.`;
+
+async function askAI(){
+  const input = document.getElementById('aiInput');
+  const answerEl = document.getElementById('aiAnswer');
+  const btn = document.getElementById('aiBtn');
+  const question = input.value.trim();
+  if(!question) return;
+
+  if(AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
+    answerEl.innerHTML = '<span style="color:var(--amber);">AI uç noktası henüz tanımlanmamış. Dosyadaki AI_ENDPOINT satırını kendi Cloudflare Worker adresinle değiştirmen gerekiyor.</span>';
+    return;
+  }
+
+  btn.disabled = true;
+  renderScore(null);
+  answerEl.innerHTML = '<div class="ai-thinking">Analiz ediliyor, haberler taranıyor…</div>';
+
+  try{
+    const res = await fetch(AI_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: AI_SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: question }],
+      }),
+    });
+
+    if(!res.ok) throw new Error('AI isteği başarısız (' + res.status + ')');
+    const data = await res.json();
+
+    const text = (data.content || [])
+      .map(b => b.type === 'text' ? b.text : '')
+      .filter(Boolean)
+      .join('\n');
+
+    if(!text) throw new Error('Boş yanıt döndü');
+
+    // Skor ve kararı ayıkla
+    const scoreMatch = text.match(/SKOR:\s*\**\s*(\d{1,3})/i);
+    const verdictMatch = text.match(/KARAR:\s*\**\s*([^\n*]+)/i);
+    const score = scoreMatch ? Math.min(100, parseInt(scoreMatch[1], 10)) : null;
+    const verdict = verdictMatch ? verdictMatch[1].trim().replace(/^[—–-]\s*/, '') : '';
+
+    renderScore(score, verdict);
+    answerEl.innerHTML = formatAIText(text);
+  }catch(e){
+    renderScore(null);
+    answerEl.innerHTML = '<span style="color:var(--down);">Analiz alınamadı: ' + escapeHtml(e.message || String(e)) + '</span>';
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+// Enter ile gönder (Shift+Enter yeni satır)
+document.getElementById('aiInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    askAI();
+  }
+});
+
+if(!AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
+  document.getElementById('aiSetup').style.display = 'none';
+}
+
+// ---------- Kredilerim — canlı erken kapama hesaplayıcı ----------
+// Ortak formül: kalan anapara × (aylık faiz oranı / 30) × geçen gün + %15 KKDF + %15 BSMV.
+// KKDF ve BSMV oranları (%15/%15) tüketici kredilerinde Türkiye'de yasal/standart orandır;
+// Garanti'de bu, bankanın PDF'indeki "Bugünkü Kredi Borcu" (44.475,42 ₺) ile tam eşleşerek doğrulandı.
+//
+// İki mod var:
+//  - 'schedule': tüm ödeme planı bilinen krediler (ör. Garanti, On Bank) — taban tarih/anapara otomatik ilerler.
+//  - 'anchor'  : tek bir referans nokta bilinen krediler — taban tarih/anapara sabittir,
+//                bir sonraki ödemeden sonra kullanıcı tarafından elle güncellenmesi gerekir.
+const LOANS = [
+  {
+    id: 'garanti',
+    ad: 'Garanti BBVA',
+    faizOraniAylik: 1.99,
+    kkdfOrani: 15,
+    bsmvOrani: 15,
+    mode: 'schedule',
+    kaynakNotu: `Garanti BBVA'nın 19.09.2026 tarihli ödeme planı PDF'i — "Bugünkü Kredi Borcu" (44.475,42 ₺) ile tam eşleşerek doğrulandı.`,
+    schedule: [
+      { tarih:'2026-04-15', kalanAnapara:48854.76 },
+      { tarih:'2026-05-05', kalanAnapara:47582.32 },
+      { tarih:'2026-06-01', kalanAnapara:46576.51 },
+      { tarih:'2026-07-07', kalanAnapara:45893.38 },
+      { tarih:'2026-08-21', kalanAnapara:45483.42 },
+      { tarih:'2026-09-15', kalanAnapara:44322.54 },
+      { tarih:'2026-10-23', kalanAnapara:43508.99 },
+      { tarih:'2026-11-23', kalanAnapara:42483.29 },
+      { tarih:'2026-12-23', kalanAnapara:41431.06 },
+      { tarih:'2027-01-23', kalanAnapara:40351.61 },
+      { tarih:'2027-02-23', kalanAnapara:39244.24 },
+      { tarih:'2027-03-23', kalanAnapara:38108.21 },
+      { tarih:'2027-04-23', kalanAnapara:36942.79 },
+      { tarih:'2027-05-23', kalanAnapara:35747.22 },
+      { tarih:'2027-06-23', kalanAnapara:34520.74 },
+      { tarih:'2027-07-23', kalanAnapara:33262.51 },
+      { tarih:'2027-08-23', kalanAnapara:31971.74 },
+      { tarih:'2027-09-23', kalanAnapara:30647.59 },
+      { tarih:'2027-10-23', kalanAnapara:29289.17 },
+      { tarih:'2027-11-23', kalanAnapara:27895.61 },
+      { tarih:'2027-12-23', kalanAnapara:26466.00 },
+      { tarih:'2028-01-23', kalanAnapara:24999.40 },
+      { tarih:'2028-02-23', kalanAnapara:23494.86 },
+      { tarih:'2028-03-23', kalanAnapara:21951.40 },
+      { tarih:'2028-04-23', kalanAnapara:20368.00 },
+      { tarih:'2028-05-23', kalanAnapara:18743.65 },
+      { tarih:'2028-06-23', kalanAnapara:17077.28 },
+      { tarih:'2028-07-23', kalanAnapara:15367.81 },
+      { tarih:'2028-08-23', kalanAnapara:13614.10 },
+      { tarih:'2028-09-23', kalanAnapara:11815.03 },
+      { tarih:'2028-10-23', kalanAnapara:9969.42 },
+      { tarih:'2028-11-23', kalanAnapara:8076.06 },
+      { tarih:'2028-12-23', kalanAnapara:6133.72 },
+      { tarih:'2029-01-23', kalanAnapara:4141.13 },
+      { tarih:'2029-02-23', kalanAnapara:2096.99 },
+      { tarih:'2029-03-23', kalanAnapara:0.00 },
+    ],
+  },
+  {
+    id: 'onbank',
+    ad: 'On Bank',
+    faizOraniAylik: 2.99,
+    kkdfOrani: 15,
+    bsmvOrani: 15,
+    mode: 'schedule',
+    // Kaynak: kullanıcının yüklediği ONBANK_KREDİ_.xlsx — 12 taksitlik tam ödeme planı.
+    // Doğrulama: 1. ve 2. taksit (anapara+faiz+KKDF+BSMV) daha önce kullanıcının elle bildirdiği
+    // rakamlarla birebir eşleşti; toplam anapara tam ₺100.000,00 çıktı (Excel'deki kredi tutarıyla uyumlu).
+    schedule: [
+      { tarih:'2026-08-17', kalanAnapara:93301.53 },
+      { tarih:'2026-09-17', kalanAnapara:86342.70 },
+      { tarih:'2026-10-19', kalanAnapara:79113.38 },
+      { tarih:'2026-11-17', kalanAnapara:71603.04 },
+      { tarih:'2026-12-17', kalanAnapara:63800.78 },
+      { tarih:'2027-01-18', kalanAnapara:55695.25 },
+      { tarih:'2027-02-17', kalanAnapara:47274.65 },
+      { tarih:'2027-03-17', kalanAnapara:38526.75 },
+      { tarih:'2027-04-19', kalanAnapara:29438.81 },
+      { tarih:'2027-05-20', kalanAnapara:19997.62 },
+      { tarih:'2027-06-17', kalanAnapara:10189.46 },
+      { tarih:'2027-07-19', kalanAnapara:0.00 },
+    ],
+    kaynakNotu: `On Bank ödeme planı Excel'inden (ONBANK_KREDİ_.xlsx) otomatik işlendi — taban tarih/anapara ay geçtikçe kendiliğinden ilerler.`,
+  },
+];
+
+function loanGuncelBorc(loan, now = new Date()){
+  const bugun = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // saat bilgisini at, sadece takvim günü
+  let tabanTarih, kalanAnapara, kalanTaksit;
+
+  if(loan.mode === 'schedule'){
+    const sch = loan.schedule;
+    let baseIdx = -1;
+    for(let i=0;i<sch.length;i++){
+      if(new Date(sch[i].tarih + 'T00:00:00') <= bugun) baseIdx = i; else break;
+    }
+    if(baseIdx === -1) return null;
+    tabanTarih = sch[baseIdx].tarih;
+    kalanAnapara = sch[baseIdx].kalanAnapara;
+    kalanTaksit = sch.length - (baseIdx + 1);
+  } else { // 'anchor'
+    tabanTarih = loan.tabanTarih;
+    kalanAnapara = loan.kalanAnaparaTaban;
+    kalanTaksit = loan.kalanTaksitSayisi;
+  }
+
+  const tabanDate = new Date(tabanTarih + 'T00:00:00');
+  const gun = Math.max(0, Math.round((bugun - tabanDate) / 86400000));
+  const gunlukOran = loan.faizOraniAylik / 100 / 30;
+  const faiz = kalanAnapara * gunlukOran * gun;
+  const fon = faiz * (loan.kkdfOrani / 100);
+  const vergi = faiz * (loan.bsmvOrani / 100);
+  const toplam = kalanAnapara + faiz + fon + vergi;
+
+  return { kalanAnapara, gun, faiz, fon, vergi, toplam, tabanTarih, kalanTaksit };
+}
+
+// ---------- Kullanıcının eklediği krediler + kapattığı krediler (tarayıcı localStorage'ı) ----------
+const CUSTOM_LOANS_KEY = 'ft_custom_loans_v1';
+const CLOSED_LOANS_KEY = 'ft_closed_loans_v1'; // sabit kodlu (Garanti/On Bank gibi) kredilerden kullanıcının "kapattım" dediklerinin id listesi
+
+function loadCustomLoans(){
+  try{
+    const raw = localStorage.getItem(CUSTOM_LOANS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+
+function saveCustomLoans(list){
+  try{ localStorage.setItem(CUSTOM_LOANS_KEY, JSON.stringify(list)); }catch(e){ /* yok say */ }
+}
+
+function loadClosedLoanIds(){
+  try{
+    const raw = localStorage.getItem(CLOSED_LOANS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+
+function saveClosedLoanIds(list){
+  try{ localStorage.setItem(CLOSED_LOANS_KEY, JSON.stringify(list)); }catch(e){ /* yok say */ }
+}
+
+function getAllLoans(){
+  const closed = loadClosedLoanIds();
+  const builtIn = LOANS.filter(l => !closed.includes(l.id));
+  return builtIn.concat(loadCustomLoans());
+}
+
+// Bir krediyi "kapattım" diye işaretler — sabit kodlu kredilerde gizler, PDF'ten eklenenlerde tamamen siler.
+function closeLoan(id, isCustom){
+  const onayMetni = 'Bu krediyi kapattığını onaylıyor musun? Liste ve toplamlardan kaldırılacak. Bu işlem geri alınamaz (istersen kredi dosyasını tekrar yükleyebilirsin).';
+  showConfirmModal(onayMetni, () => {
+    if(isCustom){
+      saveCustomLoans(loadCustomLoans().filter(l => l.id !== id));
+    } else {
+      const closed = loadClosedLoanIds();
+      if(!closed.includes(id)) closed.push(id);
+      saveClosedLoanIds(closed);
+    }
+    updateGarantiLive();
+  });
+}
+
+function updateGarantiLive(){
+  const container = document.getElementById('loans-live-container');
+  container.innerHTML = '';
+  let liveToplam = 0;
+  let anyLoan = false;
+
+  getAllLoans().forEach(loan => {
+    const r = loanGuncelBorc(loan);
+    if(!r) return;
+
+    anyLoan = true;
+    liveToplam += r.toplam;
+
+    const simdi = new Date();
+    const simdiStr = simdi.toLocaleDateString('tr-TR') + ' ' + simdi.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+    const aySayisi = loan.mode === 'schedule' ? loan.schedule.length : (loan.toplamTaksitSayisi || r.kalanTaksit);
+    const oranStr = String(loan.faizOraniAylik).replace('.', ',');
+
+    const block = document.createElement('div');
+    block.style.marginBottom = '10px';
+    block.innerHTML = `
+      <div class="ai-score-row loan-card-head">
+        <div class="ai-score-num mid" style="font-size:24px;">₺${fmtNumber(r.toplam, 2)}</div>
+        <div>
+          <div class="ai-score-verdict">${escapeHtml(loan.ad)} Kredi Borcu (%${oranStr} ${aySayisi} Ay)</div>
+          <div class="ai-score-meta"><span class="led-dot green"></span>${simdiStr} · Kalan Taksit: ${r.kalanTaksit}</div>
+        </div>
+        <button class="loan-delete-btn" onclick="closeLoan('${loan.id}', ${!!loan.custom})">✓ Krediyi Kapattım</button>
+      </div>
+    `;
+    container.appendChild(block);
+  });
+
+  if(!anyLoan){
+    container.innerHTML = '<div class="ai-disclaimer">Aktif kredi yok — yukarıdan yeni bir ödeme planı ekleyebilirsin.</div>';
+  }
+
+  const now = new Date();
+  const nowStr = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+  document.getElementById('loansSummaryToplam').textContent = anyLoan ? '₺' + fmtNumber(liveToplam, 0) : '—';
+  document.getElementById('loansSummaryTarih').innerHTML = anyLoan
+    ? `<span class="led-dot green"></span>${nowStr}`
+    : 'aktif kredi yok';
+
+  _bTotals.loans = anyLoan ? liveToplam : 0;
+  refreshGrandTotal();
+}
+
+let _bTotals = { loans: 0, kk: 0, kmh: 0, nakit: 0 };
+
+function refreshGrandTotal(){
+  const toplam = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
+  const el = document.getElementById('grandTotal');
+  if(el) el.textContent = '₺' + fmtNumber(toplam, 0);
+}
+
+// ---------- Özel onay/uyarı penceresi (native confirm/alert bazı önizleme ortamlarında çalışmıyor) ----------
+function showConfirmModal(message, onYes){
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.62);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;';
+  overlay.innerHTML = `
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px 24px;max-width:360px;width:100%;text-align:center;">
+      <div style="font-size:13.5px;color:var(--text);margin-bottom:18px;line-height:1.55;">${escapeHtml(message)}</div>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button id="__confirmYes" class="loan-btn-save">Evet, Onayla</button>
+        <button id="__confirmNo" class="loan-btn-cancel">Vazgeç</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#__confirmYes').onclick = () => { overlay.remove(); onYes(); };
+  overlay.querySelector('#__confirmNo').onclick = () => { overlay.remove(); };
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.remove(); });
+}
+
+function showAlertModal(message){
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.62);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;';
+  overlay.innerHTML = `
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px 24px;max-width:340px;width:100%;text-align:center;">
+      <div style="font-size:13.5px;color:var(--text);margin-bottom:18px;line-height:1.55;">${escapeHtml(message)}</div>
+      <button id="__alertOk" class="loan-btn-save">Tamam</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#__alertOk').onclick = () => overlay.remove();
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.remove(); });
+}
+
+function isBugun(d){
+  const n = new Date();
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+}
+
+function ledDateHtml(dateIso){
+  const d = new Date(dateIso);
+  const tarihStr = d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+  const renk = isBugun(d) ? 'green' : 'red';
+  return `<span class="led-dot ${renk}"></span>${tarihStr}`;
+}
+
+// ---------- Ortak: manuel borç listesi (kredi kartı / KMH aynı mantığı paylaşır) ----------
+function manuelListeYukle(key){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+
+function manuelListeKaydet(key, list){
+  try{ localStorage.setItem(key, JSON.stringify(list)); }catch(e){ /* yok say */ }
+}
+
+function manuelListeRender(opts){
+  const { key, containerId, summaryToplamId, summaryTarihId, prefix, renkClass, etiketSonek, bTotalKey } = opts;
+  const container = document.getElementById(containerId);
+  const list = manuelListeYukle(key);
+
+  if(!list.length){
+    container.innerHTML = '<div class="ai-disclaimer">Henüz eklenmedi — aşağıdan ekleyebilirsin.</div>';
+    document.getElementById(summaryToplamId).textContent = '—';
+    document.getElementById(summaryTarihId).textContent = 'henüz girilmedi';
+    _bTotals[bTotalKey] = 0;
+    refreshGrandTotal();
+    return;
+  }
+
+  container.innerHTML = list.map(item => `
+    <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
+      <div class="ai-score-num ${renkClass}" style="font-size:24px;">₺${fmtNumber(item.tutar, 2)}</div>
+      <div>
+        <div class="ai-score-verdict">${escapeHtml(item.ad)} ${etiketSonek}</div>
+        ${item.paraBirimi && item.paraBirimi !== 'TL' ? `<div class="ai-score-meta">${fmtNumber(item.orijinalTutar,2)} ${item.paraBirimi} · kur ${fmtNumber(item.kur,4)}</div>` : ''}
+        <div class="ai-score-meta">${ledDateHtml(item.tarih)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
+        <input type="number" step="0.01" id="${prefix}-edit-${item.id}" class="ai-input" style="width:120px;padding:6px 8px;font-size:12px;" placeholder="yeni tutar">
+        <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="manuelListeGuncelle('${key}','${prefix}','${item.id}')">Güncelle</button>
+        <button class="loan-delete-btn" style="margin-left:0;" onclick="manuelListeSil('${key}','${prefix}','${item.id}')">✓ Borcu Kapattım</button>
+      </div>
+    </div>
+  `).join('');
+
+  const toplam = list.reduce((sum, k) => sum + k.tutar, 0);
+  const enSonTarih = list.reduce((latest, k) => {
+    const t = new Date(k.tarih);
+    return (!latest || t > latest) ? t : latest;
+  }, null);
+  document.getElementById(summaryToplamId).textContent = '₺' + fmtNumber(toplam, 0);
+  document.getElementById(summaryTarihId).innerHTML = enSonTarih
+    ? `<span class="led-dot ${isBugun(enSonTarih) ? 'green' : 'red'}"></span>${enSonTarih.toLocaleDateString('tr-TR')} ${enSonTarih.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})}`
+    : '—';
+
+  _bTotals[bTotalKey] = toplam;
+  refreshGrandTotal();
+}
+
+function manuelListeEkle(opts){
+  const { key, adInputId, tutarInputId, renderFn, adBosMesaji } = opts;
+  const adInput = document.getElementById(adInputId);
+  const tutarInput = document.getElementById(tutarInputId);
+  const ad = adInput.value.trim();
+  const tutar = parseFloat(tutarInput.value);
+
+  if(!ad){ showAlertModal(adBosMesaji || 'Lütfen bir isim gir.'); return; }
+  if(isNaN(tutar) || tutar < 0){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+
+  const list = manuelListeYukle(key);
+  list.push({ id: 'm-' + Date.now(), ad, tutar, tarih: new Date().toISOString() });
+  manuelListeKaydet(key, list);
+
+  if(adInput.tagName === 'SELECT'){ adInput.selectedIndex = 0; } else { adInput.value = ''; }
+  tutarInput.value = '';
+  renderFn();
+}
+
+function rerenderByPrefix(prefix){
+  if(prefix === 'kk') renderKKKartlari();
+  else if(prefix === 'kmh') renderKMH();
+  else if(prefix === 'nakit') renderNakit();
+}
+
+function manuelListeGuncelle(key, prefix, id){
+  const input = document.getElementById(prefix + '-edit-' + id);
+  const val = parseFloat(input.value);
+  if(isNaN(val) || val < 0){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+
+  const list = manuelListeYukle(key);
+  const item = list.find(k => k.id === id);
+  if(!item) return;
+  item.tutar = val;
+  item.tarih = new Date().toISOString();
+  if(item.paraBirimi){ item.paraBirimi = 'TL'; item.orijinalTutar = null; item.kur = null; } // elle girilen TL rakamı esas alınır
+  manuelListeKaydet(key, list);
+
+  rerenderByPrefix(prefix);
+}
+
+function manuelListeSil(key, prefix, id){
+  showConfirmModal('Bu kaydı listeden silmek istediğine emin misin?', () => {
+    manuelListeKaydet(key, manuelListeYukle(key).filter(k => k.id !== id));
+    rerenderByPrefix(prefix);
+  });
+}
+
+// ---------- Kredi Kartlarım ----------
+const KK_KARTLARI_KEY = 'ft_kredi_kartlari_v1';
+
+function addKKKart(){
+  manuelListeEkle({ key: KK_KARTLARI_KEY, adInputId: 'kkAdInput', tutarInputId: 'kkTutarInput', renderFn: renderKKKartlari });
+}
+
+function renderKKKartlari(){
+  manuelListeRender({
+    key: KK_KARTLARI_KEY,
+    containerId: 'kkKartlarContainer',
+    summaryToplamId: 'kkSummaryToplam',
+    summaryTarihId: 'kkSummaryTarih',
+    prefix: 'kk',
+    renkClass: 'purple',
+    etiketSonek: 'Kredi Kartı Borcu',
+    bTotalKey: 'kk',
+  });
+}
+
+// ---------- KMH Borçlarım ----------
+const KMH_KEY = 'ft_kmh_v1';
+
+function addKMH(){
+  manuelListeEkle({ key: KMH_KEY, adInputId: 'kmhAdInput', tutarInputId: 'kmhTutarInput', renderFn: renderKMH });
+}
+
+function renderKMH(){
+  manuelListeRender({
+    key: KMH_KEY,
+    containerId: 'kmhKartlarContainer',
+    summaryToplamId: 'kmhSummaryToplam',
+    summaryTarihId: 'kmhSummaryTarih',
+    prefix: 'kmh',
+    renkClass: 'blue',
+    etiketSonek: 'KMH Borcu',
+    bTotalKey: 'kmh',
+  });
+}
+
+// ---------- Elden Nakit Borçlar ----------
+const NAKIT_KEY = 'ft_elden_nakit_v1';
+
+function addNakit(){
+  const adInput = document.getElementById('nakitAdInput');
+  const tutarInput = document.getElementById('nakitTutarInput');
+  const paraBirimiInput = document.getElementById('nakitParaBirimi');
+  const ad = adInput.value.trim();
+  const girilenTutar = parseFloat(tutarInput.value);
+  const paraBirimi = paraBirimiInput.value;
+
+  if(!ad){ showAlertModal('Lütfen kimden aldığını yaz.'); return; }
+  if(isNaN(girilenTutar) || girilenTutar < 0){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+
+  let tlTutar = girilenTutar;
+  let kur = null;
+  if(paraBirimi !== 'TL'){
+    kur = _fxRates[paraBirimi];
+    if(!kur){ showAlertModal('Güncel ' + paraBirimi + '/TL kuru henüz yüklenmedi — birkaç saniye sonra tekrar dene.'); return; }
+    tlTutar = girilenTutar * kur;
+  }
+
+  const list = manuelListeYukle(NAKIT_KEY);
+  list.push({
+    id: 'm-' + Date.now(),
+    ad,
+    tutar: Math.round(tlTutar * 100) / 100,
+    paraBirimi,
+    orijinalTutar: paraBirimi !== 'TL' ? girilenTutar : null,
+    kur,
+    tarih: new Date().toISOString(),
+  });
+  manuelListeKaydet(NAKIT_KEY, list);
+
+  adInput.value = '';
+  tutarInput.value = '';
+  paraBirimiInput.selectedIndex = 0;
+  renderNakit();
+}
+
+function renderNakit(){
+  manuelListeRender({
+    key: NAKIT_KEY,
+    containerId: 'nakitKartlarContainer',
+    summaryToplamId: 'nakitSummaryToplam',
+    summaryTarihId: 'nakitSummaryTarih',
+    prefix: 'nakit',
+    renkClass: 'teal',
+    etiketSonek: 'Elden Nakit Borcu',
+    bTotalKey: 'nakit',
+  });
+}
+
+// ---------- PDF'ten kredi ekleme ----------
+let pendingExtractedLoan = null;
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function onLoanPdfSelected(event){
+  const file = event.target.files[0];
+  const nameEl = document.getElementById('loanFileName');
+  const statusEl = document.getElementById('loanExtractStatus');
+  const previewEl = document.getElementById('loanPreviewBox');
+  previewEl.innerHTML = '';
+  pendingExtractedLoan = null;
+
+  if(!file){ nameEl.textContent = 'Dosya seçilmedi'; return; }
+  nameEl.textContent = file.name;
+
+  if(AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
+    statusEl.innerHTML = '<div class="ai-thinking" style="color:var(--amber);">AI uç noktası tanımlanmamış — önce MY_WORKER adresini ayarla.</div>';
+    return;
+  }
+
+  statusEl.innerHTML = '<div class="ai-thinking">PDF okunuyor ve ödeme planı analiz ediliyor…</div>';
+
+  try{
+    const base64 = await fileToBase64(file);
+    const res = await fetch(MY_WORKER + '/extract-loan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pdfBase64: base64, mediaType: file.type || 'application/pdf' }),
+    });
+    const data = await res.json();
+
+    if(!res.ok || data.error){
+      statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Okunamadı: ' + escapeHtml(data.error || ('HTTP ' + res.status)) + '</div>';
+      return;
+    }
+    if(data.hata){
+      statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">' + escapeHtml(data.hata) + '</div>';
+      return;
+    }
+    if(!Array.isArray(data.schedule) || data.schedule.length < 1){
+      statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Ödeme planı tablosu bulunamadı — belgeyi kontrol et.</div>';
+      return;
+    }
+
+    data.kaynak = 'pdf';
+    pendingExtractedLoan = data;
+    statusEl.innerHTML = '';
+    renderLoanPreview(data);
+  }catch(e){
+    statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Hata: ' + escapeHtml(e.message || String(e)) + '</div>';
+  }
+}
+
+function renderLoanPreview(data){
+  const previewEl = document.getElementById('loanPreviewBox');
+  const ilkSatir = data.schedule[0];
+  const sonSatir = data.schedule[data.schedule.length - 1];
+
+  let dogrulamaHtml = '';
+  if(data.dogrulamaTutari != null && data.dogrulamaTarihi){
+    dogrulamaHtml = `
+      <div class="loan-preview-row">
+        <span class="r-label">Belgedeki doğrulama tutarı</span>
+        <span>₺${fmtNumber(data.dogrulamaTutari, 2)} (${data.dogrulamaTarihi.split('-').reverse().join('.')})</span>
+      </div>`;
+  }
+
+  previewEl.innerHTML = `
+    <div class="loan-preview">
+      <div class="loan-preview-row"><span class="r-label">Banka</span><span>${escapeHtml(data.banka || '—')}</span></div>
+      <div class="loan-preview-row"><span class="r-label">Aylık Faiz Oranı</span><span>%${data.faizOraniAylik ?? '—'}</span></div>
+      <div class="loan-preview-row"><span class="r-label">KKDF / BSMV</span><span>%${data.kkdfOrani ?? '—'} / %${data.bsmvOrani ?? '—'}</span></div>
+      <div class="loan-preview-row"><span class="r-label">Orijinal Anapara</span><span>${data.orijinalAnapara != null ? '₺'+fmtNumber(data.orijinalAnapara,2) : '—'}</span></div>
+      <div class="loan-preview-row"><span class="r-label">Ödeme Planı Satır Sayısı</span><span>${data.schedule.length}</span></div>
+      <div class="loan-preview-row"><span class="r-label">İlk Satır</span><span>${ilkSatir.tarih.split('-').reverse().join('.')} · ₺${fmtNumber(ilkSatir.kalanAnapara,2)}</span></div>
+      <div class="loan-preview-row"><span class="r-label">Son Satır</span><span>${sonSatir.tarih.split('-').reverse().join('.')} · ₺${fmtNumber(sonSatir.kalanAnapara,2)}</span></div>
+      ${dogrulamaHtml}
+      <div class="loan-preview-actions">
+        <button class="loan-btn-save" onclick="saveExtractedLoan()">✓ Doğru, Kaydet</button>
+        <button class="loan-btn-cancel" onclick="cancelLoanPreview()">İptal</button>
+      </div>
+    </div>
+  `;
+}
+
+function cancelLoanPreview(){
+  pendingExtractedLoan = null;
+  document.getElementById('loanPreviewBox').innerHTML = '';
+  document.getElementById('loanPdfInput').value = '';
+  document.getElementById('loanFileName').textContent = 'Dosya seçilmedi';
+  document.getElementById('loanExcelInput').value = '';
+  document.getElementById('loanExcelFileName').textContent = 'Dosya seçilmedi';
+  document.getElementById('excelBankaAdi').value = '';
+  document.getElementById('excelExtractStatus').innerHTML = '';
+}
+
+function saveExtractedLoan(){
+  if(!pendingExtractedLoan) return;
+  const data = pendingExtractedLoan;
+
+  const kaynakMetni = data.kaynak === 'excel'
+    ? `Excel ödeme planından işlendi (kullanıcı onayıyla kaydedildi).`
+    : `PDF'ten otomatik çıkarıldı (Claude ile okundu, kullanıcı onayıyla kaydedildi).`;
+
+  const newLoan = {
+    id: 'custom-' + Date.now(),
+    ad: data.banka || 'Adsız Kredi',
+    faizOraniAylik: data.faizOraniAylik,
+    kkdfOrani: data.kkdfOrani ?? 15,
+    bsmvOrani: data.bsmvOrani ?? 15,
+    mode: 'schedule',
+    schedule: data.schedule,
+    custom: true,
+    kaynakNotu: kaynakMetni +
+      (data.dogrulamaTutari != null ? ` Belgedeki doğrulama tutarı: ₺${fmtNumber(data.dogrulamaTutari,2)} (${(data.dogrulamaTarihi||'').split('-').reverse().join('.')})` : ''),
+  };
+
+  const list = loadCustomLoans();
+  list.push(newLoan);
+  saveCustomLoans(list);
+
+  cancelLoanPreview();
+  updateGarantiLive();
+}
+
+// ---------- Excel'den kredi ekleme ----------
+function normalizeHeaderTR(s){
+  return String(s == null ? '' : s)
+    .toLocaleUpperCase('tr-TR')
+    .replace(/İ/g, 'I').replace(/Ğ/g, 'G').replace(/Ü/g, 'U')
+    .replace(/Ş/g, 'S').replace(/Ö/g, 'O').replace(/Ç/g, 'C')
+    .trim();
+}
+
+function excelTarihToISO(cell){
+  let d = null;
+  if(cell instanceof Date){
+    d = cell;
+  } else if(typeof cell === 'number'){
+    // Excel seri tarih numarası (nadiren, cellDates kapalıysa)
+    d = new Date(Date.UTC(1899, 11, 30) + cell * 86400000);
+  } else if(typeof cell === 'string'){
+    const m = cell.trim().match(/^(\d{1,2})[.\/](\d{1,2})[.\/](\d{4})$/);
+    if(m) d = new Date(Date.UTC(+m[3], +m[2]-1, +m[1]));
+  }
+  if(!d || isNaN(d.getTime())) return null;
+  const y = d.getUTCFullYear(), mo = String(d.getUTCMonth()+1).padStart(2,'0'), da = String(d.getUTCDate()).padStart(2,'0');
+  return `${y}-${mo}-${da}`;
+}
+
+async function onLoanExcelSelected(event){
+  const file = event.target.files[0];
+  const nameEl = document.getElementById('loanExcelFileName');
+  const statusEl = document.getElementById('excelExtractStatus');
+  const bankaInput = document.getElementById('excelBankaAdi');
+  document.getElementById('loanPreviewBox').innerHTML = '';
+  pendingExtractedLoan = null;
+
+  if(!file){ nameEl.textContent = 'Dosya seçilmedi'; return; }
+  nameEl.textContent = file.name;
+
+  if(!bankaInput.value.trim()){
+    statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Önce banka adını gir.</div>';
+    return;
+  }
+
+  if(typeof XLSX === 'undefined'){
+    statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Excel okuma kütüphanesi yüklenemedi — internet bağlantısını kontrol et.</div>';
+    return;
+  }
+
+  statusEl.innerHTML = '<div class="ai-thinking">Excel okunuyor…</div>';
+
+  try{
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array', cellDates: true });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+
+    // Başlık satırını bul: "TAKSIT" ve "ANA PARA" içeren bir satır
+    let headerIdx = -1, colTarih=-1, colAnapara=-1, colFaiz=-1, colBsmv=-1, colKkdf=-1;
+    for(let i=0; i<rows.length; i++){
+      const row = rows[i] || [];
+      const norm = row.map(normalizeHeaderTR);
+      const hasTaksit = norm.some(h => h.includes('TAKSIT'));
+      const hasAnapara = norm.some(h => h.includes('ANA PARA'));
+      if(hasTaksit && hasAnapara){
+        headerIdx = i;
+        norm.forEach((h, idx) => {
+          if(h.includes('ODEME TARIHI') || h === 'TARIH') colTarih = idx;
+          else if(h.includes('ANA PARA')) colAnapara = idx;
+          else if(h.includes('FAIZ')) colFaiz = idx;
+          else if(h.includes('BSMV') || h.includes('BMSV')) colBsmv = idx;
+          else if(h.includes('KKDF')) colKkdf = idx;
+        });
+        break;
+      }
+    }
+
+    if(headerIdx === -1 || colTarih === -1 || colAnapara === -1){
+      statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Beklenen sütun başlıkları (TAKSİT, ÖDEME TARİHİ, ANA PARA TUTARI) bulunamadı.</div>';
+      return;
+    }
+
+    const dataRows = [];
+    for(let i = headerIdx + 1; i < rows.length; i++){
+      const row = rows[i];
+      if(!row) break;
+      const tarihIso = excelTarihToISO(row[colTarih]);
+      const anapara = row[colAnapara];
+      if(!tarihIso || anapara == null || anapara === '') break;
+      dataRows.push({
+        tarih: tarihIso,
+        anapara: Number(anapara),
+        faiz: Number(row[colFaiz] ?? 0),
+        bsmv: Number(row[colBsmv] ?? 0),
+        kkdf: Number(row[colKkdf] ?? 0),
+      });
+    }
+
+    if(dataRows.length < 1){
+      statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Hiç veri satırı okunamadı — dosyayı kontrol et.</div>';
+      return;
+    }
+
+    const totalAnapara = dataRows.reduce((s, r) => s + r.anapara, 0);
+    let kalan = totalAnapara;
+    const schedule = dataRows.map(r => {
+      kalan -= r.anapara;
+      return { tarih: r.tarih, kalanAnapara: Math.round(kalan * 100) / 100 };
+    });
+
+    const ilk = dataRows[0];
+    const faizOraniAylik = ilk.faiz > 0 ? Math.round((ilk.faiz / totalAnapara) * 10000) / 100 : null;
+    const kkdfOrani = ilk.faiz > 0 ? Math.round((ilk.kkdf / ilk.faiz) * 100) : 15;
+    const bsmvOrani = ilk.faiz > 0 ? Math.round((ilk.bsmv / ilk.faiz) * 100) : 15;
+
+    if(!faizOraniAylik){
+      statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">FAİZ sütunu okunamadı, faiz oranı hesaplanamadı.</div>';
+      return;
+    }
+
+    pendingExtractedLoan = {
+      banka: bankaInput.value.trim(),
+      faizOraniAylik,
+      kkdfOrani,
+      bsmvOrani,
+      orijinalAnapara: Math.round(totalAnapara * 100) / 100,
+      dogrulamaTarihi: null,
+      dogrulamaTutari: null,
+      schedule,
+      kaynak: 'excel',
+    };
+
+    statusEl.innerHTML = '';
+    renderLoanPreview(pendingExtractedLoan);
+  }catch(e){
+    statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Hata: ' + escapeHtml(e.message || String(e)) + '</div>';
+  }
+}
+
 // ---------- Sekme geçişi ----------
 function switchTab(tabId){
   document.querySelectorAll('.tab-panel').forEach(el=> el.classList.remove('active'));
@@ -1330,11 +2758,16 @@ function switchTab(tabId){
 }
 
 buildCards();
+updateGarantiLive();
+renderKKKartlari();
+renderKMH();
+renderNakit();
 if(location.protocol === 'file:'){
   document.getElementById('fileWarning').style.display = 'block';
 }
 refreshAll();
-setInterval(refreshAll, 10000);
+setInterval(refreshCrypto, 10000);
+setInterval(refreshAll, 45000);
 loadNews();
 setInterval(loadNews, 300000);
 openChart('btc');
