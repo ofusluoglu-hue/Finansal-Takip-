@@ -1473,7 +1473,9 @@ function vixRegime(vix, chgPct){
 }
 
 function fmtNumber(n, decimals){
-  return n.toLocaleString('tr-TR', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
+  const num = Number(n);
+  if(!isFinite(num)) return '0' + (decimals > 0 ? ',' + '0'.repeat(decimals) : '');
+  return num.toLocaleString('tr-TR', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
 }
 
 function renderCard(cfg, price, chgPct, stale){
@@ -2618,18 +2620,26 @@ function addNakit(){
 
 // Bir nakit kaydın güncel TL karşılığını hesaplar — döviz ise o anki kurdan, yoksa doğrudan girilen tutardan.
 function nakitTLHesapla(item){
+  // Eski format (bu özellik güncellenmeden önce eklenmiş) kayıtlarla uyumluluk:
+  // o zaman "girilenTutar" yerine "tutar" (TL karşılığı) ve "orijinalTutar" alanları kullanılıyordu.
+  const girilenTutar = item.girilenTutar != null
+    ? Number(item.girilenTutar)
+    : Number(item.orijinalTutar != null ? item.orijinalTutar : item.tutar) || 0;
+
   if(item.paraBirimi === 'TL' || !item.paraBirimi){
-    return { tutarTL: item.girilenTutar, kur: null, canliKur: true };
+    return { tutarTL: girilenTutar, kur: null, canliKur: true, girilenTutar };
   }
   const canliKur = _fxRates[item.paraBirimi];
   if(canliKur){
-    return { tutarTL: item.girilenTutar * canliKur, kur: canliKur, canliKur: true };
+    return { tutarTL: girilenTutar * canliKur, kur: canliKur, canliKur: true, girilenTutar };
   }
-  // Güncel kur şu an elde değilse, kaydedilen en son bilinen kuru geçici olarak kullan
-  if(item.sonKur){
-    return { tutarTL: item.girilenTutar * item.sonKur, kur: item.sonKur, canliKur: false };
+  // Güncel kur şu an elde değilse, kaydedilen en son bilinen kuru (ya da eski "kur" alanını) geçici olarak kullan
+  const sonKur = item.sonKur || item.kur || null;
+  if(sonKur){
+    return { tutarTL: girilenTutar * sonKur, kur: sonKur, canliKur: false, girilenTutar };
   }
-  return { tutarTL: item.girilenTutar, kur: null, canliKur: false };
+  // Hiçbir kur bilgisi yoksa (çok eski kayıt), önceden hesaplanmış TL tutarını olduğu gibi göster
+  return { tutarTL: item.tutar != null ? Number(item.tutar) || 0 : girilenTutar, kur: null, canliKur: false, girilenTutar };
 }
 
 function renderNakit(){
@@ -2649,30 +2659,35 @@ function renderNakit(){
   let enSonTarih = null;
 
   container.innerHTML = list.map(item => {
-    const { tutarTL, kur, canliKur } = nakitTLHesapla(item);
-    toplam += tutarTL;
-    const t = new Date(item.tarih);
-    if(!enSonTarih || t > enSonTarih) enSonTarih = t;
+    try{
+      const { tutarTL, kur, canliKur, girilenTutar } = nakitTLHesapla(item);
+      toplam += tutarTL;
+      const t = new Date(item.tarih);
+      if(!enSonTarih || t > enSonTarih) enSonTarih = t;
 
-    const dovizNotu = item.paraBirimi !== 'TL'
-      ? `${fmtNumber(item.girilenTutar, 2)} ${item.paraBirimi} · kur ${kur ? fmtNumber(kur, 4) : '—'}${canliKur ? ' (güncel)' : ' (son bilinen)'}`
-      : '';
+      const dovizNotu = item.paraBirimi !== 'TL'
+        ? `${fmtNumber(girilenTutar, 2)} ${item.paraBirimi} · kur ${kur ? fmtNumber(kur, 4) : '—'}${canliKur ? ' (güncel)' : ' (son bilinen)'}`
+        : '';
 
-    return `
-      <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
-        <div class="ai-score-num teal" style="font-size:24px;">₺${fmtNumber(tutarTL, 2)}</div>
-        <div>
-          <div class="ai-score-verdict">${escapeHtml(item.ad)} Elden Nakit Borcu</div>
-          ${dovizNotu ? `<div class="ai-score-meta">${escapeHtml(dovizNotu)}</div>` : ''}
-          <div class="ai-score-meta">${ledDateHtml(item.tarih)}</div>
+      return `
+        <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
+          <div class="ai-score-num teal" style="font-size:24px;">₺${fmtNumber(tutarTL, 2)}</div>
+          <div>
+            <div class="ai-score-verdict">${escapeHtml(item.ad || '')} Elden Nakit Borcu</div>
+            ${dovizNotu ? `<div class="ai-score-meta">${escapeHtml(dovizNotu)}</div>` : ''}
+            <div class="ai-score-meta">${ledDateHtml(item.tarih)}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
+            <input type="number" step="0.01" id="nakit-edit-${item.id}" class="ai-input" style="width:120px;padding:6px 8px;font-size:12px;" placeholder="yeni tutar (${item.paraBirimi})">
+            <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="nakitGuncelle('${item.id}')">Güncelle</button>
+            <button class="loan-delete-btn" style="margin-left:0;" onclick="manuelListeSil('${NAKIT_KEY}','nakit','${item.id}')">✓ Borcu Kapattım</button>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
-          <input type="number" step="0.01" id="nakit-edit-${item.id}" class="ai-input" style="width:120px;padding:6px 8px;font-size:12px;" placeholder="yeni tutar (${item.paraBirimi})">
-          <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="nakitGuncelle('${item.id}')">Güncelle</button>
-          <button class="loan-delete-btn" style="margin-left:0;" onclick="manuelListeSil('${NAKIT_KEY}','nakit','${item.id}')">✓ Borcu Kapattım</button>
-        </div>
-      </div>
-    `;
+      `;
+    }catch(e){
+      console.error('Nakit kaydı çizilemedi:', item, e);
+      return '';
+    }
   }).join('');
 
   document.getElementById('nakitSummaryToplam').textContent = '₺' + fmtNumber(toplam, 0);
