@@ -1396,8 +1396,6 @@ const CARDS = [
   { key:'ura',    label:'URA ETF (Global X Uranium)', source:'twelvedata', symbol:'URA', fmt:'usd2', fallback:{price:38.00, chg:0.30} },
   { key:'nlr',    label:'NLR ETF (VanEck Uranium+Nuclear)', source:'twelvedata', symbol:'NLR', fmt:'usd2', fallback:{price:110.00, chg:0.25} },
   { key:'xle',    label:'XLE ETF (Energy Select SPDR)', source:'twelvedata', symbol:'XLE', fmt:'usd2', fallback:{price:95.00, chg:0.10} },
-  { key:'rexc',   label:'REXC ETF (Sprott Rare Earths Ex-China)', source:'twelvedata', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
-  { key:'remx',   label:'REMX ETF (VanEck Rare Earth)', source:'twelvedata', symbol:'REMX', fmt:'usd2', fallback:{price:68.00, chg:0.20} },
   { key:'usdtry', label:'DOLAR/TL',     source:'twelvedata', symbol:'USD/TRY', fmt:'usd2',    fallback:{price:34.50, chg:0.05} },
   { key:'eurtry', label:'EURO/TL',      source:'twelvedata', symbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
   { key:'gold',   label:'ALTIN (ONS)',  source:'yahoo',    symbol:'GC=F',     fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
@@ -1409,6 +1407,8 @@ const CARDS = [
   { key:'aave',   label:'AAVE',         source:'coingecko',symbol:'aave',     fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
   { key:'sol',    label:'SOL',          source:'coingecko',symbol:'solana',   fmt:'usd2',    fallback:{price:150.00, chg:0.50} },
   { key:'nvda',   label:'NVDA',         source:'twelvedata', symbol:'NVDA',   fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
+  { key:'rexc',   label:'REXC ETF (Sprott Rare Earths Ex-China)', source:'twelvedata', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
+  { key:'remx',   label:'REMX ETF (VanEck Rare Earth)', source:'twelvedata', symbol:'REMX', fmt:'usd2', fallback:{price:68.00, chg:0.20} },
 ];
 
 const grid = document.getElementById('grid');
@@ -1555,6 +1555,18 @@ async function fetchTwelveData(symbol){
   return { price, chgPct: isNaN(chgPct) ? 0 : chgPct };
 }
 
+// Birden fazla sembolü TEK istekte çeker (Twelve Data'nın toplu sorgu özelliği) —
+// dakika kredisi yine sembol başına düşülür ama tek HTTP isteği olduğu için art arda
+// bekleme gerekmez, sonuçlar aynı anda gelir.
+async function fetchTwelveDataBatch(symbols){
+  const url = MY_WORKER + '/td?symbol=' + encodeURIComponent(symbols.join(','));
+  const res = await fetchWithTimeout(url, 12000);
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.message || ('twelvedata hata ' + res.status));
+  // Tek sembol istenirse Twelve Data düz obje döner; birden fazla istenirse sembol->obje haritası döner.
+  return symbols.length === 1 ? { [symbols[0]]: data } : data;
+}
+
 async function fetchCoingecko(ids){
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`;
   for(let attempt = 1; attempt <= 2; attempt++){
@@ -1602,10 +1614,37 @@ async function refreshMarketData(){
     await refreshCrypto();
   }catch(e){ anyError = true; lastErrorMsg = e.message || String(e); }
 
-  // Yahoo/FRED kaynaklı kartları aynı anda değil, aralıklı (kademeli) çekiyoruz —
-  // ücretsiz CORS proxy'leri eş zamanlı yoğun istekte otomatik engelleme yapabiliyor.
-  const marketCards = CARDS.filter(c => c.source === 'yahoo' || c.source === 'fred' || c.source === 'twelvedata');
-  for(const cfg of marketCards){
+  // ---- Twelve Data kartları: 8'erli gruplar halinde TOPLU (tek istekte) çekiyoruz ----
+  // Ücretsiz plan dakikada 8 kredi ile sınırlı; 8'li bir grup tek istekte anında gelir,
+  // bir sonraki grup öncesi sadece dakika penceresi dolsun diye bekleriz.
+  const TD_CHUNK = 8;
+  const tdCards = CARDS.filter(c => c.source === 'twelvedata');
+  for(let i = 0; i < tdCards.length; i += TD_CHUNK){
+    const chunk = tdCards.slice(i, i + TD_CHUNK);
+    try{
+      const batch = await fetchTwelveDataBatch(chunk.map(c => c.symbol));
+      chunk.forEach(cfg => {
+        const d = batch[cfg.symbol];
+        const price = d ? parseFloat(d.close) : NaN;
+        if(d && !d.code && !isNaN(price)){
+          renderCard(cfg, price, parseFloat(d.percent_change) || 0, false);
+        } else {
+          anyError = true;
+          lastErrorMsg = (d && d.message) || 'twelvedata veri yok';
+          renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
+        }
+      });
+    }catch(e){
+      anyError = true;
+      lastErrorMsg = e.message || String(e);
+      chunk.forEach(cfg => renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true));
+    }
+    if(i + TD_CHUNK < tdCards.length) await sleep(61000); // sonraki 8'lik grup için dakika penceresinin dolmasını bekle
+  }
+
+  // ---- Yahoo/FRED kaynaklı kartlar: az sayıda, art arda (aralıklı) ----
+  const otherCards = CARDS.filter(c => c.source === 'yahoo' || c.source === 'fred');
+  for(const cfg of otherCards){
     try{
       if(cfg.source === 'yahoo'){
         const { price, chgPct } = await fetchYahoo(cfg.symbol);
@@ -1613,18 +1652,13 @@ async function refreshMarketData(){
       } else if(cfg.source === 'fred'){
         const { price, chgPct } = await fetchFred(cfg.symbol);
         renderCard(cfg, price, chgPct, false);
-      } else if(cfg.source === 'twelvedata'){
-        const { price, chgPct } = await fetchTwelveData(cfg.symbol);
-        renderCard(cfg, price, chgPct, false);
       }
     }catch(e){
       anyError = true;
       lastErrorMsg = e.message || String(e);
       renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
     }
-    // Twelve Data ücretsiz planı dakikada 8 istekle sınırlı — o kaynaktan gelen kartlar için
-    // uzun bir bekleme koyuyoruz ki bir dakikalık pencereye 8'den fazla istek düşmesin.
-    await sleep(cfg.source === 'twelvedata' ? 8000 : 350);
+    await sleep(350);
   }
 
   if(location.protocol === 'file:'){
