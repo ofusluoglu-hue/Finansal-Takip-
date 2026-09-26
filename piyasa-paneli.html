@@ -2056,7 +2056,14 @@ async function askAI(){
       }),
     });
 
-    if(!res.ok) throw new Error('AI isteği başarısız (' + res.status + ')');
+    if(!res.ok){
+      let detail = '';
+      try{
+        const errData = await res.json();
+        detail = errData?.error?.message || errData?.error || errData?.message || JSON.stringify(errData);
+      }catch(e){ /* yanıt JSON değilse boş kalır */ }
+      throw new Error('AI isteği başarısız (' + res.status + ')' + (detail ? ': ' + detail : ''));
+    }
     const data = await res.json();
 
     const text = (data.content || [])
