@@ -1143,63 +1143,54 @@
   <div class="tab-panel" id="tab-yatirim">
     <div class="page-head">
       <h1>Yatırımlarım</h1>
-      <p>Excel verisi · 11.09.2026 itibarıyla</p>
     </div>
 
-    <div class="summary-grid">
+    <div class="summary-grid" style="grid-template-columns:repeat(2,1fr);">
       <div class="summary-card">
         <div class="summary-label">Toplam Yatırım</div>
-        <div class="summary-value">₺79.895</div>
-        <div class="summary-sub">Kripto + ABD ETF + BIST</div>
+        <div class="summary-value" style="color:var(--up);" id="yatirimToplamDeger">—</div>
+        <div class="summary-sub" id="yatirimSummaryTarih">—</div>
       </div>
       <div class="summary-card">
         <div class="summary-label">Yatırım / Borç Oranı</div>
-        <div class="summary-value">%25,9</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Portföy Getirisi</div>
-        <div class="summary-value muted" style="color:var(--muted);font-size:14px;">Excel'de veri yok</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Yaklaşan Hedef</div>
-        <div class="summary-value" style="font-size:14px;">Haz 2027 · Ort. $30.000</div>
+        <div class="summary-value" id="yatirimBorcOrani">—</div>
+        <div class="summary-sub" id="yatirimBorcOraniAlt">—</div>
       </div>
     </div>
 
     <div class="section-panel">
-      <div class="section-title">Portföy Dağılımı</div>
-      <div class="bar-row">
-        <div class="bar-head"><span class="name">ABD ETF</span><span class="val">₺52.320 · %65</span></div>
-        <div class="bar-track"><div class="bar-fill" style="width:65%;"></div></div>
+      <div class="section-title">Yeni Yatırım Ekle</div>
+      <div class="loan-add-row">
+        <select id="yatirimTurSelect" class="ai-input" style="max-width:150px;min-width:130px;" onchange="yatirimTurDegisti()">
+          <option value="etf">ETF / Hisse</option>
+          <option value="kripto">Kripto</option>
+          <option value="altin">Altın (gram)</option>
+        </select>
+
+        <select id="yatirimSembolSelect" class="ai-input" style="max-width:160px;min-width:140px;">
+          <option value="ndx">QQQM ETF (NASDAQ100)</option>
+          <option value="sp500">VOO ETF (S&P500)</option>
+          <option value="ura">URA ETF (Uranyum)</option>
+          <option value="nlr">NLR ETF (Uranyum+Nükleer)</option>
+          <option value="xle">XLE ETF (Enerji)</option>
+          <option value="rexc">REXC ETF (Nadir Toprak)</option>
+          <option value="remx">REMX ETF (Nadir Toprak)</option>
+          <option value="nvda">NVDA (Nvidia)</option>
+        </select>
+
+        <input type="number" step="0.000001" id="yatirimAdetInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Adet">
+        <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram">
+        <button class="ai-btn" onclick="addYatirim()">+ Yatırım Ekle</button>
       </div>
-      <div class="bar-row">
-        <div class="bar-head"><span class="name">Kripto</span><span class="val">₺20.075 · %25</span></div>
-        <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--up);"></div></div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-head"><span class="name">BIST (Elif)</span><span class="val">₺7.500 · %10</span></div>
-        <div class="bar-track"><div class="bar-fill" style="width:10%;background:#6C8EEF;"></div></div>
+      <div class="ai-disclaimer" style="margin-top:10px;">
+        Fiyatlar Günlük Makro Özet'te zaten canlı takip ettiğimiz kartlardan (ekstra istek yapılmadan) alınır.
+        Altın için ons fiyatından gram başına değer hesaplanır. Girdiğin adet/gram tarayıcı hafızasında saklanır.
       </div>
     </div>
 
     <div class="section-panel">
-      <div class="section-title">Yatırım Hedefleri</div>
-      <div class="goal-item">
-        <div class="goal-owner">Ortak</div>
-        <div class="goal-text">Haziran 2027 — Yatırım portföyü ortalama 30 Bin Dolar</div>
-      </div>
-      <div class="goal-item">
-        <div class="goal-owner">Ortak</div>
-        <div class="goal-text">Mayıs 2028 — Yatırım portföyü ortalama 80 Bin Dolar</div>
-      </div>
-      <div class="goal-item">
-        <div class="goal-owner">Ortak</div>
-        <div class="goal-text">Ocak 2030 — Yatırım portföyü ortalama 200 Bin Dolar</div>
-      </div>
-      <div class="goal-item">
-        <div class="goal-owner">Faruk</div>
-        <div class="goal-text">Aralık 2026 — Borçların bitirilmiş olması</div>
-      </div>
+      <div class="section-title">Portföyüm</div>
+      <div id="yatirimListContainer"></div>
     </div>
   </div>
   <!-- ================= /TAB: YATIRIMLARIM ================= -->
@@ -1721,6 +1712,9 @@ async function refreshMarketData(){
   if(location.protocol === 'file:'){
     document.getElementById('fileWarning').style.display = 'block';
   }
+
+  // Tüm fiyatlar (Altın dahil) tazelendi — Yatırımlarım'daki canlı değerleri güncelle
+  if(typeof renderYatirim === 'function') renderYatirim();
 
   if(anyError){
     dot.className = 'dot err';
@@ -2615,6 +2609,164 @@ function renderKMH(){
   });
 }
 
+// ---------- Yatırımlarım (Portföyüm) ----------
+const YATIRIM_KEY = 'ft_yatirimlar_v1';
+
+const ETF_OPTIONS = [
+  { key:'ndx',   label:'QQQM ETF (NASDAQ100)' },
+  { key:'sp500', label:'VOO ETF (S&P500)' },
+  { key:'ura',   label:'URA ETF (Uranyum)' },
+  { key:'nlr',   label:'NLR ETF (Uranyum+Nükleer)' },
+  { key:'xle',   label:'XLE ETF (Enerji)' },
+  { key:'rexc',  label:'REXC ETF (Nadir Toprak)' },
+  { key:'remx',  label:'REMX ETF (Nadir Toprak)' },
+  { key:'nvda',  label:'NVDA (Nvidia)' },
+];
+const KRIPTO_OPTIONS = [
+  { key:'btc',  label:'Bitcoin (BTC)' },
+  { key:'eth',  label:'Ethereum (ETH)' },
+  { key:'hype', label:'HYPE' },
+  { key:'aave', label:'AAVE' },
+  { key:'sol',  label:'Solana (SOL)' },
+];
+const YATIRIM_LABELS = {}; // key -> label, hem ETF hem kripto listesinden doldurulur
+[...ETF_OPTIONS, ...KRIPTO_OPTIONS].forEach(o => YATIRIM_LABELS[o.key] = o.label);
+
+function yatirimTurDegisti(){
+  const tur = document.getElementById('yatirimTurSelect').value;
+  const sembolSelect = document.getElementById('yatirimSembolSelect');
+  const adetInput = document.getElementById('yatirimAdetInput');
+  const gramInput = document.getElementById('yatirimGramInput');
+
+  if(tur === 'altin'){
+    sembolSelect.style.display = 'none';
+    adetInput.style.display = 'none';
+    gramInput.style.display = '';
+  } else {
+    sembolSelect.style.display = '';
+    adetInput.style.display = '';
+    gramInput.style.display = 'none';
+    const options = tur === 'kripto' ? KRIPTO_OPTIONS : ETF_OPTIONS;
+    sembolSelect.innerHTML = options.map(o => `<option value="${o.key}">${escapeHtml(o.label)}</option>`).join('');
+  }
+}
+
+function addYatirim(){
+  const tur = document.getElementById('yatirimTurSelect').value;
+  let item;
+
+  if(tur === 'altin'){
+    const gram = parseFloat(document.getElementById('yatirimGramInput').value);
+    if(isNaN(gram) || gram <= 0){ showAlertModal('Lütfen geçerli bir gram gir.'); return; }
+    item = { id: 'y-' + Date.now(), tur, sembol: 'gold', miktar: gram, tarih: new Date().toISOString() };
+  } else {
+    const sembol = document.getElementById('yatirimSembolSelect').value;
+    const adet = parseFloat(document.getElementById('yatirimAdetInput').value);
+    if(isNaN(adet) || adet <= 0){ showAlertModal('Lütfen geçerli bir adet gir.'); return; }
+    item = { id: 'y-' + Date.now(), tur, sembol, miktar: adet, tarih: new Date().toISOString() };
+  }
+
+  const list = manuelListeYukle(YATIRIM_KEY);
+  list.push(item);
+  manuelListeKaydet(YATIRIM_KEY, list);
+
+  document.getElementById('yatirimAdetInput').value = '';
+  document.getElementById('yatirimGramInput').value = '';
+  renderYatirim();
+}
+
+function deleteYatirim(id){
+  showConfirmModal('Bu yatırımı listeden kaldırmak istediğine emin misin?', () => {
+    manuelListeKaydet(YATIRIM_KEY, manuelListeYukle(YATIRIM_KEY).filter(k => k.id !== id));
+    renderYatirim();
+  });
+}
+
+// Bir yatırım kaydının güncel TL değerini hesaplar — fiyatlar Günlük Özet kartlarının
+// zaten çektiği canlı verilerden (ekstra istek yapılmadan) alınır.
+function yatirimDegerHesapla(item){
+  const usdtry = _fxRates.USD;
+  if(!usdtry) return null;
+
+  if(item.tur === 'altin'){
+    const ons = _lastGoodValues['gold'];
+    if(!ons) return null;
+    const gramFiyatUSD = ons.price / 31.1034768;
+    return { fiyatBirimUSD: gramFiyatUSD, tutarUSD: gramFiyatUSD * item.miktar, tutarTL: gramFiyatUSD * item.miktar * usdtry };
+  }
+
+  const cached = _lastGoodValues[item.sembol];
+  if(!cached) return null;
+  return { fiyatBirimUSD: cached.price, tutarUSD: cached.price * item.miktar, tutarTL: cached.price * item.miktar * usdtry };
+}
+
+function yatirimEtiket(item){
+  if(item.tur === 'altin') return 'Altın';
+  return YATIRIM_LABELS[item.sembol] || item.sembol;
+}
+
+function renderYatirim(){
+  const container = document.getElementById('yatirimListContainer');
+  const list = manuelListeYukle(YATIRIM_KEY);
+
+  const hesaplananlar = list.map(item => ({ item, sonuc: yatirimDegerHesapla(item) }));
+  const toplamYatirim = hesaplananlar.reduce((s, h) => s + (h.sonuc ? h.sonuc.tutarTL : 0), 0);
+
+  if(!list.length){
+    container.innerHTML = '<div class="ai-disclaimer">Henüz yatırım eklenmedi — yukarıdan ekleyebilirsin.</div>';
+  } else {
+    container.innerHTML = hesaplananlar.map(({ item, sonuc }) => {
+      if(!sonuc){
+        return `
+          <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
+            <div class="ai-score-num" style="font-size:24px;color:var(--muted-2);">—</div>
+            <div>
+              <div class="ai-score-verdict">${escapeHtml(yatirimEtiket(item))}</div>
+              <div class="ai-score-meta">Fiyat/kur henüz yüklenmedi — birkaç saniye sonra tekrar dene</div>
+            </div>
+            <button class="loan-delete-btn" style="margin-left:auto;" onclick="deleteYatirim('${item.id}')">Sil</button>
+          </div>
+        `;
+      }
+      const pay = toplamYatirim > 0 ? (sonuc.tutarTL / toplamYatirim * 100) : 0;
+      const miktarStr = item.tur === 'altin' ? `${fmtNumber(item.miktar, 2)} gr` : `${fmtNumber(item.miktar, 6).replace(/,?0+$/,'')} adet`;
+      return `
+        <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
+          <div class="ai-score-num" style="font-size:24px;color:var(--up);">₺${fmtNumber(sonuc.tutarTL, 2)}</div>
+          <div>
+            <div class="ai-score-verdict">${escapeHtml(yatirimEtiket(item))} — ${miktarStr}</div>
+            <div class="ai-score-meta">Birim fiyat $${fmtNumber(sonuc.fiyatBirimUSD, 2)} · Portföy payı %${fmtNumber(pay, 1)}</div>
+          </div>
+          <button class="loan-delete-btn" style="margin-left:auto;" onclick="deleteYatirim('${item.id}')">Sil</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('yatirimToplamDeger').textContent = list.length ? '₺' + fmtNumber(toplamYatirim, 0) : '—';
+  const now = new Date();
+  document.getElementById('yatirimSummaryTarih').textContent = list.length
+    ? now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}) + ' itibarıyla'
+    : 'henüz yatırım eklenmedi';
+
+  // Yatırım / Borç oranı — renk: yatırım borca eşit/fazlaysa yeşil, en az yarısıysa sarı, azsa kırmızı
+  const toplamBorc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
+  const oranEl = document.getElementById('yatirimBorcOrani');
+  const oranAltEl = document.getElementById('yatirimBorcOraniAlt');
+
+  if(toplamBorc <= 0){
+    oranEl.textContent = toplamYatirim > 0 ? 'Borç yok' : '—';
+    oranEl.style.color = toplamYatirim > 0 ? 'var(--up)' : '';
+    oranAltEl.textContent = 'Kayıtlı borç bulunmuyor';
+  } else {
+    const oran = toplamYatirim / toplamBorc;
+    const renk = oran >= 1 ? 'var(--up)' : (oran >= 0.5 ? 'var(--amber)' : 'var(--down)');
+    oranEl.textContent = '%' + fmtNumber(oran * 100, 1);
+    oranEl.style.color = renk;
+    oranAltEl.textContent = `Yatırım ₺${fmtNumber(toplamYatirim,0)} / Borç ₺${fmtNumber(toplamBorc,0)}`;
+  }
+}
+
 // ---------- Elden Nakit Borçlar ----------
 const NAKIT_KEY = 'ft_elden_nakit_v1';
 
@@ -3029,6 +3181,8 @@ updateGarantiLive();
 renderKKKartlari();
 renderKMH();
 renderNakit();
+yatirimTurDegisti();
+renderYatirim();
 if(location.protocol === 'file:'){
   document.getElementById('fileWarning').style.display = 'block';
 }
