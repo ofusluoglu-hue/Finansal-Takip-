@@ -1478,17 +1478,43 @@ function fmtNumber(n, decimals){
   return num.toLocaleString('tr-TR', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
 }
 
+let _lastGoodValues = {}; // her kart için en son gerçekten çekilen (sahte olmayan) değer
+
+// Veri çekilemediğinde: daha önce gerçekten çekilmiş bir değer varsa onu, yoksa "—" gösterir.
+// Koddaki eski/uydurma sabit "fallback" rakamları artık ekranda göstermiyoruz.
+function renderStale(cfg){
+  const son = _lastGoodValues[cfg.key];
+  if(son){
+    renderCard(cfg, son.price, son.chgPct, true);
+  } else {
+    renderCard(cfg, null, null, true);
+  }
+}
+
 function renderCard(cfg, price, chgPct, stale){
   const cardEl = document.getElementById('card-'+cfg.key);
   const valEl = document.getElementById('val-'+cfg.key);
   const chgEl = document.getElementById('chg-'+cfg.key);
   const staleEl = document.getElementById('stale-'+cfg.key);
 
+  // Gerçekten çekilmiş (sahte olmayan) bir değerse hafızaya al — bir sonraki başarısızlıkta buna döneriz
+  if(!stale && isFinite(price)) _lastGoodValues[cfg.key] = { price, chgPct };
+
   // Elden Nakit Borçlar'daki döviz çevrimi için güncel kuru sakla (stale/gecikmeli olsa bile son bilinen kur kullanılır)
-  if(cfg.key === 'usdtry') _fxRates.USD = price;
-  if(cfg.key === 'eurtry') _fxRates.EUR = price;
+  if(cfg.key === 'usdtry' && isFinite(price)) _fxRates.USD = price;
+  if(cfg.key === 'eurtry' && isFinite(price)) _fxRates.EUR = price;
 
   valEl.classList.remove('skeleton');
+
+  // Hiç veri yoksa (ne canlı ne daha önce çekilmiş bir değer) sahte bir sayı uydurmak yerine "—" göster
+  if(price == null || !isFinite(price)){
+    valEl.textContent = '—';
+    chgEl.classList.remove('up','down');
+    chgEl.classList.add('flat');
+    chgEl.innerHTML = `<span class="arrow">–</span><span>—</span>`;
+    staleEl.style.display = stale ? 'inline-block' : 'none';
+    return;
+  }
 
   let valueStr;
   switch(cfg.fmt){
@@ -1619,11 +1645,11 @@ async function refreshCrypto(){
     coinCards.forEach(cfg=>{
       const d = cgData[cfg.symbol];
       if(d) renderCard(cfg, d.usd, d.usd_24h_change, false);
-      else renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
+      else renderStale(cfg);
     });
   }catch(e){
     coinCards.forEach(cfg=>{
-      renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
+      renderStale(cfg);
     });
     throw e;
   }
@@ -1659,13 +1685,13 @@ async function refreshMarketData(){
         } else {
           anyError = true;
           lastErrorMsg = (d && d.message) || 'twelvedata veri yok';
-          renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
+          renderStale(cfg);
         }
       });
     }catch(e){
       anyError = true;
       lastErrorMsg = e.message || String(e);
-      chunk.forEach(cfg => renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true));
+      chunk.forEach(cfg => renderStale(cfg));
     }
     if(i + TD_CHUNK < tdCards.length) await sleep(61000); // sonraki 8'lik grup için dakika penceresinin dolmasını bekle
   }
@@ -1687,7 +1713,7 @@ async function refreshMarketData(){
     }catch(e){
       anyError = true;
       lastErrorMsg = e.message || String(e);
-      renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
+      renderStale(cfg);
     }
     await sleep(350);
   }
