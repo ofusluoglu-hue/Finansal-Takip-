@@ -730,15 +730,32 @@
     padding:20px 22px;
     font-size:13.5px;
     line-height:1.7;
-    white-space:pre-wrap;
     min-height:60px;
   }
   .ai-answer:empty{display:none;}
-  .ai-answer h3{
-    font-size:14px;
-    margin:16px 0 8px;
-    color:var(--amber);
+  .ai-answer p{
+    margin:0 0 14px;
   }
+  .ai-answer p:last-child{margin-bottom:0;}
+  .ai-answer ul{
+    margin:0 0 14px;
+    padding-left:20px;
+  }
+  .ai-answer li{
+    margin-bottom:8px;
+    line-height:1.6;
+  }
+  .ai-answer li:last-child{margin-bottom:0;}
+  .ai-answer h3{
+    font-size:16px;
+    font-weight:800;
+    margin:22px 0 10px;
+    padding-bottom:6px;
+    border-bottom:1px solid var(--border);
+    color:var(--amber);
+    letter-spacing:.01em;
+  }
+  .ai-answer h3:first-child{margin-top:0;}
   .ai-answer strong{color:#fff;}
 
   .ai-score-row{
@@ -1994,10 +2011,59 @@ function renderScore(score, verdict){
 }
 
 function formatAIText(text){
-  // Basit markdown: **kalın** ve ## başlık
-  return escapeHtml(text)
-    .replace(/^##\s*(.+)$/gm, '<h3>$1</h3>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  const rawLines = text.replace(/\r/g, '').split('\n');
+  const blocks = [];
+  let para = [];
+  let list = [];
+
+  function flushPara(){
+    if(para.length){
+      blocks.push('<p>' + para.join(' ') + '</p>');
+      para = [];
+    }
+  }
+  function flushList(){
+    if(list.length){
+      blocks.push('<ul>' + list.map(li => '<li>' + li + '</li>').join('') + '</ul>');
+      list = [];
+    }
+  }
+
+  rawLines.forEach(rawLine => {
+    const line = rawLine.trim();
+
+    if(line === ''){
+      flushPara();
+      flushList();
+      return;
+    }
+
+    const headerMatch = line.match(/^#{2,3}\s*(.+)$/);
+    if(headerMatch){
+      flushPara(); flushList();
+      blocks.push('<h3>' + inlineFormat(headerMatch[1]) + '</h3>');
+      return;
+    }
+
+    const listMatch = line.match(/^[-*•]\s+(.+)$/) || line.match(/^\d+\.\s+(.+)$/);
+    if(listMatch){
+      flushPara();
+      list.push(inlineFormat(listMatch[1]));
+      return;
+    }
+
+    // Düz metin satırı: liste modundaysak listeyi kapat, paragrafa ekle
+    flushList();
+    para.push(inlineFormat(line));
+  });
+  flushPara();
+  flushList();
+
+  return blocks.join('');
+}
+
+function inlineFormat(line){
+  return escapeHtml(line).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
 
 const AI_SYSTEM_PROMPT = `Sen 20+ yıllık deneyimli, kıdemli bir kurumsal portföy yöneticisi/hisse-makro analistisin (eski bir yatırım bankası araştırma direktörü gibi düşün). Türkçe yanıt ver.
