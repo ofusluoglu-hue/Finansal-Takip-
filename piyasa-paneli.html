@@ -1402,9 +1402,13 @@ const CARDS = [
   { key:'eurtry', label:'EURO/TL',      source:'twelvedata', symbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
   { key:'gold',   label:'ALTIN (ONS)',  source:'yahoo',    symbol:'GC=F',     fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
   { key:'brent',  label:'BRENT PETROL', source:'yahoo',    symbol:'BZ=F',     fmt:'usd2',    fallback:{price:101.60, chg:0.39} },
+  { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
   { key:'btc',    label:'BİTCOİN',      source:'coingecko',symbol:'bitcoin',  fmt:'usd0',    fallback:{price:78170.59, chg:-0.15} },
   { key:'eth',    label:'ETHEREUM',     source:'coingecko',symbol:'ethereum', fmt:'usd2',    fallback:{price:3120.40, chg:0.85} },
-  { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
+  { key:'hype',   label:'HYPE',         source:'coingecko',symbol:'hyperliquid', fmt:'usd2', fallback:{price:35.00, chg:0.50} },
+  { key:'aave',   label:'AAVE',         source:'coingecko',symbol:'aave',     fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
+  { key:'sol',    label:'SOL',          source:'coingecko',symbol:'solana',   fmt:'usd2',    fallback:{price:150.00, chg:0.50} },
+  { key:'nvda',   label:'NVDA',         source:'twelvedata', symbol:'NVDA',   fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
 ];
 
 const grid = document.getElementById('grid');
@@ -1553,23 +1557,32 @@ async function fetchTwelveData(symbol){
 
 async function fetchCoingecko(ids){
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`;
-  const res = await fetchWithTimeout(url);
-  if(!res.ok) throw new Error('coingecko fetch failed');
-  return res.json();
+  for(let attempt = 1; attempt <= 2; attempt++){
+    try{
+      const res = await fetchWithTimeout(url, 12000);
+      if(!res.ok) throw new Error('coingecko fetch failed (' + res.status + ')');
+      return await res.json();
+    }catch(e){
+      if(attempt === 2) throw e;
+      await sleep(1200); // ilk deneme başarısız oldu, kısa bekleyip bir kez daha dene
+    }
+  }
 }
 
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 
 async function refreshCrypto(){
+  const coinCards = CARDS.filter(c=>c.source==='coingecko');
+  const ids = coinCards.map(c=>c.symbol);
   try{
-    const cgData = await fetchCoingecko(['bitcoin','ethereum']);
-    CARDS.filter(c=>c.source==='coingecko').forEach(cfg=>{
+    const cgData = await fetchCoingecko(ids);
+    coinCards.forEach(cfg=>{
       const d = cgData[cfg.symbol];
       if(d) renderCard(cfg, d.usd, d.usd_24h_change, false);
       else renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
     });
   }catch(e){
-    CARDS.filter(c=>c.source==='coingecko').forEach(cfg=>{
+    coinCards.forEach(cfg=>{
       renderCard(cfg, cfg.fallback.price, cfg.fallback.chg, true);
     });
     throw e;
@@ -1710,7 +1723,7 @@ async function fetchHistory(cfg, period){
   }
 
   if(cfg.source === 'coingecko'){
-    const symbolMap = { bitcoin: 'BTCUSDT', ethereum: 'ETHUSDT' };
+    const symbolMap = { bitcoin: 'BTCUSDT', ethereum: 'ETHUSDT', hyperliquid: 'HYPEUSDT', aave: 'AAVEUSDT', solana: 'SOLUSDT' };
     const symbol = symbolMap[cfg.symbol];
     const interval = period === 'daily' ? '1d' : '1w';
     const limit = period === 'daily' ? 30 : 52;
