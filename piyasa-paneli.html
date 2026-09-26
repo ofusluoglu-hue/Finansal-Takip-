@@ -1162,9 +1162,10 @@
       <div class="section-title">Yeni Yatırım Ekle</div>
       <div class="loan-add-row">
         <select id="yatirimTurSelect" class="ai-input" style="max-width:150px;min-width:130px;" onchange="yatirimTurDegisti()">
-          <option value="etf">ETF / Hisse</option>
+          <option value="etf">ABD ETF & Hisse</option>
           <option value="kripto">Kripto</option>
-          <option value="altin">Altın (gram)</option>
+          <option value="bist">BİST</option>
+          <option value="emtia">Emtia</option>
         </select>
 
         <select id="yatirimSembolSelect" class="ai-input" style="max-width:160px;min-width:140px;">
@@ -1178,13 +1179,17 @@
           <option value="nvda">NVDA (Nvidia)</option>
         </select>
 
+        <input type="text" id="yatirimBistAdInput" class="ai-input" style="max-width:160px;min-width:130px;display:none;" placeholder="Hisse adı (ör. THYAO)">
         <input type="number" step="0.000001" id="yatirimAdetInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Adet">
-        <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram">
+        <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram (Altın)">
+        <input type="number" step="0.01" id="yatirimBistTutarInput" class="ai-input" style="max-width:140px;min-width:120px;display:none;" placeholder="Güncel değer (TL)">
         <button class="ai-btn" onclick="addYatirim()">+ Yatırım Ekle</button>
       </div>
       <div class="ai-disclaimer" style="margin-top:10px;">
-        Fiyatlar Günlük Makro Özet'te zaten canlı takip ettiğimiz kartlardan (ekstra istek yapılmadan) alınır.
-        Altın için ons fiyatından gram başına değer hesaplanır. Girdiğin adet/gram tarayıcı hafızasında saklanır.
+        ABD ETF/Hisse ve Kripto fiyatları Günlük Makro Özet'te zaten canlı takip ettiğimiz kartlardan (ekstra istek
+        yapılmadan) alınır. Emtia (Altın) ons fiyatından gram başına hesaplanır. <b>BİST için ücretsiz canlı veri
+        kaynağımız olmadığından</b> hisse adını ve güncel TL değerini elle girip elle güncellersin — tıpkı Kredi
+        Kartlarım gibi. Tarayıcı hafızasında (localStorage) saklanır.
       </div>
     </div>
 
@@ -2632,20 +2637,36 @@ const KRIPTO_OPTIONS = [
 const YATIRIM_LABELS = {}; // key -> label, hem ETF hem kripto listesinden doldurulur
 [...ETF_OPTIONS, ...KRIPTO_OPTIONS].forEach(o => YATIRIM_LABELS[o.key] = o.label);
 
+const YATIRIM_KATEGORI_BASLIK = {
+  etf: 'ABD ETF & Hisse',
+  kripto: 'Kripto',
+  bist: 'BİST',
+  emtia: 'Emtia',
+};
+const YATIRIM_KATEGORI_SIRA = ['etf', 'kripto', 'bist', 'emtia'];
+
 function yatirimTurDegisti(){
   const tur = document.getElementById('yatirimTurSelect').value;
   const sembolSelect = document.getElementById('yatirimSembolSelect');
   const adetInput = document.getElementById('yatirimAdetInput');
   const gramInput = document.getElementById('yatirimGramInput');
+  const bistAdInput = document.getElementById('yatirimBistAdInput');
+  const bistTutarInput = document.getElementById('yatirimBistTutarInput');
 
-  if(tur === 'altin'){
-    sembolSelect.style.display = 'none';
-    adetInput.style.display = 'none';
+  sembolSelect.style.display = 'none';
+  adetInput.style.display = 'none';
+  gramInput.style.display = 'none';
+  bistAdInput.style.display = 'none';
+  bistTutarInput.style.display = 'none';
+
+  if(tur === 'emtia'){
     gramInput.style.display = '';
+  } else if(tur === 'bist'){
+    bistAdInput.style.display = '';
+    bistTutarInput.style.display = '';
   } else {
     sembolSelect.style.display = '';
     adetInput.style.display = '';
-    gramInput.style.display = 'none';
     const options = tur === 'kripto' ? KRIPTO_OPTIONS : ETF_OPTIONS;
     sembolSelect.innerHTML = options.map(o => `<option value="${o.key}">${escapeHtml(o.label)}</option>`).join('');
   }
@@ -2655,10 +2676,16 @@ function addYatirim(){
   const tur = document.getElementById('yatirimTurSelect').value;
   let item;
 
-  if(tur === 'altin'){
+  if(tur === 'emtia'){
     const gram = parseFloat(document.getElementById('yatirimGramInput').value);
     if(isNaN(gram) || gram <= 0){ showAlertModal('Lütfen geçerli bir gram gir.'); return; }
     item = { id: 'y-' + Date.now(), tur, sembol: 'gold', miktar: gram, tarih: new Date().toISOString() };
+  } else if(tur === 'bist'){
+    const ad = document.getElementById('yatirimBistAdInput').value.trim();
+    const tutar = parseFloat(document.getElementById('yatirimBistTutarInput').value);
+    if(!ad){ showAlertModal('Lütfen hisse adını yaz.'); return; }
+    if(isNaN(tutar) || tutar < 0){ showAlertModal('Lütfen geçerli bir TL değeri gir.'); return; }
+    item = { id: 'y-' + Date.now(), tur, ad, manuelTutarTL: tutar, tarih: new Date().toISOString() };
   } else {
     const sembol = document.getElementById('yatirimSembolSelect').value;
     const adet = parseFloat(document.getElementById('yatirimAdetInput').value);
@@ -2672,6 +2699,8 @@ function addYatirim(){
 
   document.getElementById('yatirimAdetInput').value = '';
   document.getElementById('yatirimGramInput').value = '';
+  document.getElementById('yatirimBistAdInput').value = '';
+  document.getElementById('yatirimBistTutarInput').value = '';
   renderYatirim();
 }
 
@@ -2682,62 +2711,115 @@ function deleteYatirim(id){
   });
 }
 
+// ETF/Kripto: adet günceller. Emtia: gram günceller. BİST: TL değerini günceller.
+function guncelleYatirim(id){
+  const list = manuelListeYukle(YATIRIM_KEY);
+  const item = list.find(k => k.id === id);
+  if(!item) return;
+
+  const input = document.getElementById('yatirim-edit-' + id);
+  const val = parseFloat(input.value);
+  if(isNaN(val) || val < 0){ showAlertModal('Lütfen geçerli bir değer gir.'); return; }
+
+  if(item.tur === 'bist'){
+    item.manuelTutarTL = val;
+  } else {
+    item.miktar = val;
+  }
+  item.tarih = new Date().toISOString();
+  manuelListeKaydet(YATIRIM_KEY, list);
+  renderYatirim();
+}
+
 // Bir yatırım kaydının güncel TL değerini hesaplar — fiyatlar Günlük Özet kartlarının
-// zaten çektiği canlı verilerden (ekstra istek yapılmadan) alınır.
+// zaten çektiği canlı verilerden (ekstra istek yapılmadan) alınır. BİST elle girilen değeri döner.
 function yatirimDegerHesapla(item){
+  if(item.tur === 'bist'){
+    return { fiyatBirimUSD: null, tutarTL: item.manuelTutarTL || 0, canli: false };
+  }
+
   const usdtry = _fxRates.USD;
   if(!usdtry) return null;
 
-  if(item.tur === 'altin'){
+  if(item.tur === 'emtia'){
     const ons = _lastGoodValues['gold'];
     if(!ons) return null;
     const gramFiyatUSD = ons.price / 31.1034768;
-    return { fiyatBirimUSD: gramFiyatUSD, tutarUSD: gramFiyatUSD * item.miktar, tutarTL: gramFiyatUSD * item.miktar * usdtry };
+    return { fiyatBirimUSD: gramFiyatUSD, tutarTL: gramFiyatUSD * item.miktar * usdtry, canli: true };
   }
 
   const cached = _lastGoodValues[item.sembol];
   if(!cached) return null;
-  return { fiyatBirimUSD: cached.price, tutarUSD: cached.price * item.miktar, tutarTL: cached.price * item.miktar * usdtry };
+  return { fiyatBirimUSD: cached.price, tutarTL: cached.price * item.miktar * usdtry, canli: true };
 }
 
 function yatirimEtiket(item){
-  if(item.tur === 'altin') return 'Altın';
+  if(item.tur === 'emtia') return 'Altın';
+  if(item.tur === 'bist') return item.ad;
   return YATIRIM_LABELS[item.sembol] || item.sembol;
+}
+
+function yatirimSatirHtml(item, toplamYatirim){
+  const sonuc = yatirimDegerHesapla(item);
+
+  if(!sonuc){
+    return `
+      <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
+        <div class="ai-score-num" style="font-size:22px;color:var(--muted-2);">—</div>
+        <div>
+          <div class="ai-score-verdict">${escapeHtml(yatirimEtiket(item))}</div>
+          <div class="ai-score-meta">Fiyat/kur henüz yüklenmedi — birkaç saniye sonra tekrar dene</div>
+        </div>
+        <button class="loan-delete-btn" style="margin-left:auto;" onclick="deleteYatirim('${item.id}')">Sil</button>
+      </div>
+    `;
+  }
+
+  const pay = toplamYatirim > 0 ? (sonuc.tutarTL / toplamYatirim * 100) : 0;
+  let miktarStr, editPlaceholder;
+  if(item.tur === 'emtia'){ miktarStr = `${fmtNumber(item.miktar, 2)} gr`; editPlaceholder = 'yeni gram'; }
+  else if(item.tur === 'bist'){ miktarStr = 'elle girilen değer'; editPlaceholder = 'yeni TL değeri'; }
+  else { miktarStr = `${fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/,'$1').replace(/,$/,'')} adet`; editPlaceholder = 'yeni adet'; }
+
+  const altBilgi = item.tur === 'bist'
+    ? `Elle girilen · Portföy payı %${fmtNumber(pay, 1)}`
+    : `Birim fiyat $${fmtNumber(sonuc.fiyatBirimUSD, 2)} · Portföy payı %${fmtNumber(pay, 1)}`;
+
+  return `
+    <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
+      <div class="ai-score-num" style="font-size:22px;color:var(--up);">₺${fmtNumber(sonuc.tutarTL, 2)}</div>
+      <div>
+        <div class="ai-score-verdict">${escapeHtml(yatirimEtiket(item))} — ${miktarStr}</div>
+        <div class="ai-score-meta">${altBilgi}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
+        <input type="number" step="0.000001" id="yatirim-edit-${item.id}" class="ai-input" style="width:120px;padding:6px 8px;font-size:12px;" placeholder="${editPlaceholder}">
+        <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleYatirim('${item.id}')">Güncelle</button>
+        <button class="loan-delete-btn" style="margin-left:0;" onclick="deleteYatirim('${item.id}')">Sil</button>
+      </div>
+    </div>
+  `;
 }
 
 function renderYatirim(){
   const container = document.getElementById('yatirimListContainer');
   const list = manuelListeYukle(YATIRIM_KEY);
 
-  const hesaplananlar = list.map(item => ({ item, sonuc: yatirimDegerHesapla(item) }));
-  const toplamYatirim = hesaplananlar.reduce((s, h) => s + (h.sonuc ? h.sonuc.tutarTL : 0), 0);
+  const toplamYatirim = list.reduce((s, item) => {
+    const sonuc = yatirimDegerHesapla(item);
+    return s + (sonuc ? sonuc.tutarTL : 0);
+  }, 0);
 
   if(!list.length){
     container.innerHTML = '<div class="ai-disclaimer">Henüz yatırım eklenmedi — yukarıdan ekleyebilirsin.</div>';
   } else {
-    container.innerHTML = hesaplananlar.map(({ item, sonuc }) => {
-      if(!sonuc){
-        return `
-          <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
-            <div class="ai-score-num" style="font-size:24px;color:var(--muted-2);">—</div>
-            <div>
-              <div class="ai-score-verdict">${escapeHtml(yatirimEtiket(item))}</div>
-              <div class="ai-score-meta">Fiyat/kur henüz yüklenmedi — birkaç saniye sonra tekrar dene</div>
-            </div>
-            <button class="loan-delete-btn" style="margin-left:auto;" onclick="deleteYatirim('${item.id}')">Sil</button>
-          </div>
-        `;
-      }
-      const pay = toplamYatirim > 0 ? (sonuc.tutarTL / toplamYatirim * 100) : 0;
-      const miktarStr = item.tur === 'altin' ? `${fmtNumber(item.miktar, 2)} gr` : `${fmtNumber(item.miktar, 6).replace(/,?0+$/,'')} adet`;
+    container.innerHTML = YATIRIM_KATEGORI_SIRA.map(kat => {
+      const katListe = list.filter(item => item.tur === kat);
+      if(!katListe.length) return '';
       return `
-        <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
-          <div class="ai-score-num" style="font-size:24px;color:var(--up);">₺${fmtNumber(sonuc.tutarTL, 2)}</div>
-          <div>
-            <div class="ai-score-verdict">${escapeHtml(yatirimEtiket(item))} — ${miktarStr}</div>
-            <div class="ai-score-meta">Birim fiyat $${fmtNumber(sonuc.fiyatBirimUSD, 2)} · Portföy payı %${fmtNumber(pay, 1)}</div>
-          </div>
-          <button class="loan-delete-btn" style="margin-left:auto;" onclick="deleteYatirim('${item.id}')">Sil</button>
+        <div style="margin-bottom:18px;">
+          <div class="section-title" style="font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;">${YATIRIM_KATEGORI_BASLIK[kat]}</div>
+          ${katListe.map(item => yatirimSatirHtml(item, toplamYatirim)).join('')}
         </div>
       `;
     }).join('');
