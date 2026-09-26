@@ -2104,7 +2104,11 @@ Tek cümlelik gerekçe + "yatırım tavsiyesi değildir" notu aynı cümlede.
 Kurallar:
 - Emin olmadığın rakamı uydurma; bilmiyorsan maddeyi atla.
 - Kesin al/sat emri verme.
-- Toplam yanıt ekranda kaydırmadan (kısa) okunabilecek uzunlukta olsun — mümkün olduğunca özet.`;
+- Toplam yanıt ekranda kaydırmadan (kısa) okunabilecek uzunlukta olsun — mümkün olduğunca özet.
+- Bulduğun haberleri/verileri olduğu gibi sıralama — bir insan analist gibi ELEKTEN GEÇİR: kaynaklar
+  çelişiyorsa hangisine neden güvendiğini kısaca belirt, eski/güncel olmayan veriyi ayıkla, abartılı
+  başlıkları indirgeyerek oku. Puan Kartı'ndaki rakamlar senin bağımsız analitik yargın olmalı —
+  tek bir haberin veya kaynağın tekrarı değil.`;
 
 async function askAI(){
   const input = document.getElementById('aiInput');
@@ -2145,7 +2149,7 @@ async function askAI(){
     const text = (data.content || [])
       .map(b => b.type === 'text' ? b.text : '')
       .filter(Boolean)
-      .join('\n');
+      .join('');
 
     if(!text) throw new Error('Boş yanıt döndü');
 
