@@ -306,6 +306,37 @@
     font-size:12.5px;
     color:var(--muted);
   }
+  .digital-clock{
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+    line-height:1.2;
+  }
+  .digital-clock-fixed{
+    position:fixed;
+    top:16px;
+    right:22px;
+    z-index:500;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:8px 14px;
+  }
+  @media (max-width:900px){
+    .digital-clock-fixed{position:static;margin:0 0 14px auto;width:fit-content;}
+  }
+  .digital-clock-time{
+    font-size:22px;
+    font-weight:800;
+    font-family:'Courier New',ui-monospace,monospace;
+    color:var(--amber);
+    letter-spacing:.03em;
+  }
+  .digital-clock-date{
+    font-size:11px;
+    font-weight:600;
+    color:var(--muted);
+    letter-spacing:.02em;
+  }
   .dot{
     width:7px;height:7px;border-radius:50%;
     background:var(--up);
@@ -1175,6 +1206,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
+<div class="digital-clock digital-clock-fixed">
+  <div class="digital-clock-time" id="digitalClockTime">--:--:--</div>
+  <div class="digital-clock-date" id="digitalClockDate">—</div>
+</div>
 <div class="wrap">
 <div class="layout">
 
@@ -3923,6 +3958,18 @@ setInterval(refreshAll, 60000);
 loadNews();
 setInterval(loadNews, 300000);
 openChart('btc');
+
+// ---------- Dijital saat/tarih (Günlük Özet, sağ üst) ----------
+function tickDigitalClock(){
+  const timeEl = document.getElementById('digitalClockTime');
+  const dateEl = document.getElementById('digitalClockDate');
+  if(!timeEl || !dateEl) return;
+  const now = new Date();
+  timeEl.textContent = now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  dateEl.textContent = now.toLocaleDateString('tr-TR', {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+}
+tickDigitalClock();
+setInterval(tickDigitalClock, 1000);
 </script>
 </body>
 </html>
