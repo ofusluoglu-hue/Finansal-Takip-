@@ -1848,6 +1848,21 @@ async function fetchFinnhub(symbol){
   return { price, chgPct };
 }
 
+// Frankfurter (ECB resmi kurları) — anahtar gerekmez, belgelenmiş bir istek sınırı yok.
+// Günde bir kez (öğleden sonra, CET) güncellenir; değişim yüzdesi bu oturumda daha önce
+// çekilmiş son fiyata göre hesaplanır (Twelve Data'nın "önceki kapanış" bilgisi burada yok).
+async function fetchFrankfurter(baseCcy){
+  const url = `https://api.frankfurter.app/latest?from=${baseCcy}&to=TRY`;
+  const res = await fetchWithTimeout(url, 8000);
+  if(!res.ok) throw new Error('frankfurter hata ' + res.status);
+  const data = await res.json();
+  const price = data?.rates?.TRY;
+  if(!price) throw new Error('frankfurter veri yok');
+  const onceki = _lastGoodValues[baseCcy === 'USD' ? 'usdtry' : 'eurtry'];
+  const chgPct = onceki ? ((price - onceki.price) / onceki.price) * 100 : 0;
+  return { price, chgPct };
+}
+
 async function fetchCoingecko(ids){
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`;
   for(let attempt = 1; attempt <= 2; attempt++){
@@ -1895,9 +1910,9 @@ async function refreshMarketData(){
     await refreshCrypto();
   }catch(e){ anyError = true; lastErrorMsg = e.message || String(e); }
 
-  // ---- Twelve Data: artık sadece Dolar/TL ve Euro/TL burada — ETF/hisseler Finnhub'a taşındı ----
-  // 2 sembol kaldığı için günlük 800 kredi sınırına çok uzağız, yine de temkinli bir aralık koyuyoruz.
-  const TD_MIN_INTERVAL_MS = 5 * 60 * 1000; // 5 dakika → günde en fazla ~576 kredi (2 sembol × 288 tur)
+  // ---- Twelve Data: sadece Dolar/TL ve Euro/TL — ETF/hisseler Finnhub'da. 2 sembol kaldığı için
+  // günlük 800 kredi sınırına çok uzağız, yine de temkinli bir aralık koyuyoruz.
+  const TD_MIN_INTERVAL_MS = 4 * 60 * 1000; // 4 dakika → günde en fazla ~720 kredi (2 sembol × 360 tur), 800 sınırının altında
   const tdCards = CARDS.filter(c => c.source === 'twelvedata');
   const tdSuresiDoldu = (Date.now() - _lastTdFetchTime) >= TD_MIN_INTERVAL_MS;
 
