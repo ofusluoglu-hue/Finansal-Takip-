@@ -1712,7 +1712,7 @@ function renderCard(cfg, price, chgPct, stale){
   const staleEl = document.getElementById('stale-'+cfg.key);
 
   // Gerçekten çekilmiş (sahte olmayan) bir değerse hafızaya al — bir sonraki başarısızlıkta buna döneriz
-  if(!stale && isFinite(price)) _lastGoodValues[cfg.key] = { price, chgPct };
+  if(!stale && isFinite(price)) _lastGoodValues[cfg.key] = { price, chgPct, ts: Date.now() };
 
   // Elden Nakit Borçlar'daki döviz çevrimi için güncel kuru sakla (stale/gecikmeli olsa bile son bilinen kur kullanılır)
   if(cfg.key === 'usdtry' && isFinite(price) && !stale){ _fxRates.USD = price; _fxRatesLive.USD = true; fxKaliciKaydet(); }
@@ -3065,7 +3065,7 @@ function guncelleYatirim(id){
 // zaten çektiği canlı verilerden (ekstra istek yapılmadan) alınır. BİST elle girilen değeri döner.
 function yatirimDegerHesapla(item){
   if(item.tur === 'bist'){
-    return { fiyatBirimUSD: null, tutarTL: item.manuelTutarTL || 0, canli: true };
+    return { fiyatBirimUSD: null, tutarTL: item.manuelTutarTL || 0, canli: true, ts: item.tarih ? new Date(item.tarih).getTime() : Date.now() };
   }
 
   const usdtry = _fxRates.USD;
@@ -3074,10 +3074,10 @@ function yatirimDegerHesapla(item){
   if(usdtry){
     if(item.tur === 'emtia'){
       const ons = _lastGoodValues['gold'];
-      if(ons) sonuc = { fiyatBirimUSD: ons.price / 31.1034768, tutarTL: (ons.price / 31.1034768) * item.miktar * usdtry, canli: true };
+      if(ons) sonuc = { fiyatBirimUSD: ons.price / 31.1034768, tutarTL: (ons.price / 31.1034768) * item.miktar * usdtry, canli: true, ts: ons.ts };
     } else {
       const cached = _lastGoodValues[item.sembol];
-      if(cached) sonuc = { fiyatBirimUSD: cached.price, tutarTL: cached.price * item.miktar * usdtry, canli: true };
+      if(cached) sonuc = { fiyatBirimUSD: cached.price, tutarTL: cached.price * item.miktar * usdtry, canli: true, ts: cached.ts };
     }
   }
 
@@ -3085,12 +3085,13 @@ function yatirimDegerHesapla(item){
     // Az önce başarıyla hesaplandı — bir sonraki geçici başarısızlıkta buna dönebilmek için kalıcı olarak sakla
     item.sonBilinenFiyatUSD = sonuc.fiyatBirimUSD;
     item.sonBilinenTutarTL = sonuc.tutarTL;
+    item.sonBilinenTs = sonuc.ts;
     return sonuc;
   }
 
   // Şu an canlı fiyat/kur yok — ama daha önce başarıyla hesaplanmış bir değer varsa onu göster (sıfırlamak yerine)
   if(item.sonBilinenTutarTL != null){
-    return { fiyatBirimUSD: item.sonBilinenFiyatUSD, tutarTL: item.sonBilinenTutarTL, canli: false };
+    return { fiyatBirimUSD: item.sonBilinenFiyatUSD, tutarTL: item.sonBilinenTutarTL, canli: false, ts: item.sonBilinenTs || null };
   }
 
   return null;
@@ -3141,6 +3142,9 @@ function yatirimSatirHtml(item, toplamYatirim){
     fiyatStr = `$${fmtNumber(sonuc.fiyatBirimUSD, 2)}`;
   }
   const canliMi = sonuc.canli === false;
+  const ledHtml = sonuc.ts
+    ? `<span class="led-dot ${canliMi ? 'red' : 'green'}"></span>${new Date(sonuc.ts).toLocaleDateString('tr-TR')} ${new Date(sonuc.ts).toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})}`
+    : '';
   const metaParts = [adetStr, fiyatStr, `Pay %${fmtNumber(pay, 1)}`].filter(Boolean);
 
   return `
@@ -3148,12 +3152,11 @@ function yatirimSatirHtml(item, toplamYatirim){
       <div class="yatirim-card-top">
         <div class="yatirim-ad">
           ${escapeHtml(yatirimEtiket(item))}
-          ${canliMi ? '<span class="stale-tag">gecikmeli</span>' : ''}
         </div>
         <div class="yatirim-tutar" style="color:${renk};">₺${fmtNumber(sonuc.tutarTL, 2)}</div>
       </div>
       <div class="yatirim-card-bottom">
-        <div class="yatirim-meta">${metaParts.join(' · ')}</div>
+        <div class="yatirim-meta">${metaParts.join(' · ')}${ledHtml ? ' · ' + ledHtml : ''}</div>
         <div class="yatirim-aksiyon">
           <input type="number" step="0.000001" id="yatirim-edit-${item.id}" class="ai-input" style="width:100px;padding:6px 8px;font-size:12px;" placeholder="${editPlaceholder}">
           <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleYatirim('${item.id}')">Güncelle</button>
