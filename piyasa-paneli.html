@@ -3366,10 +3366,10 @@ function renderVarlik(){
   container.innerHTML = list.length
     ? list.map(item => `
         <div class="table-row">
-          <div>
-            <div class="r-label" style="font-size:18px;font-weight:700;">${escapeHtml(item.ad)}</div>
+          <div style="width:220px;flex:0 0 220px;overflow:hidden;text-overflow:ellipsis;">
+            <div class="r-label" style="font-size:18px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(item.ad)}</div>
           </div>
-          <div class="r-sub">${ledSpan(item.tarih)}${escapeHtml(item.tur)} · ${tarihSaatStr(item.tarih)}</div>
+          <div class="r-sub" style="flex:1;">${ledSpan(item.tarih)}${escapeHtml(item.tur)} · ${tarihSaatStr(item.tarih)}</div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <div class="r-value" style="font-size:18px;color:var(--up);">₺${fmtNumber(item.deger, 0)}</div>
             <input type="number" step="0.01" id="varlik-edit-${item.id}" class="ai-input" style="width:110px;padding:6px 8px;font-size:12px;" placeholder="yeni değer">
