@@ -1420,50 +1420,58 @@
         <div class="summary-label" style="font-size:12px;">Toplam Borç</div>
         <div class="summary-value neg" style="font-size:32px;" id="grandTotal">—</div>
       </div>
-      <div class="grand-total-right">
-        <div class="grand-row">
-          <div>
-            <div class="r-label" style="font-weight:700;">Kredi Borcu</div>
-            <div class="ai-score-meta" id="loansSummaryTarih">—</div>
+      <div class="grand-total-right" id="borcKategoriListesi">
+        <div id="borcGrup-loans">
+          <div class="grand-row">
+            <div>
+              <div class="r-label" style="font-weight:700;">Kredi Borcu</div>
+              <div class="ai-score-meta" id="loansSummaryTarih">—</div>
+            </div>
+            <div class="r-value" id="loansSummaryToplam">—</div>
           </div>
-          <div class="r-value" id="loansSummaryToplam">—</div>
-        </div>
-        <div class="yatirim-dagilim-row">
-          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKredi" style="width:0%;background:var(--amber);"></div></div>
-          <div class="yatirim-dagilim-pct" id="borcPctKredi" style="color:var(--amber);">%0</div>
-        </div>
-        <div class="grand-row">
-          <div>
-            <div class="r-label" style="font-weight:700;">Kredili Mevduat Hesabı -KMH</div>
-            <div class="ai-score-meta" id="kmhSummaryTarih">—</div>
+          <div class="yatirim-dagilim-row">
+            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKredi" style="width:0%;background:var(--amber);"></div></div>
+            <div class="yatirim-dagilim-pct" id="borcPctKredi" style="color:var(--amber);">%0</div>
           </div>
-          <div class="r-value" id="kmhSummaryToplam">—</div>
         </div>
-        <div class="yatirim-dagilim-row">
-          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKmh" style="width:0%;background:#6EC3FF;"></div></div>
-          <div class="yatirim-dagilim-pct" id="borcPctKmh" style="color:#6EC3FF;">%0</div>
-        </div>
-        <div class="grand-row">
-          <div>
-            <div class="r-label" style="font-weight:700;">Kredi Kartı Borcu</div>
-            <div class="ai-score-meta" id="kkSummaryTarih">—</div>
+        <div id="borcGrup-kmh">
+          <div class="grand-row">
+            <div>
+              <div class="r-label" style="font-weight:700;">Kredili Mevduat Hesabı -KMH</div>
+              <div class="ai-score-meta" id="kmhSummaryTarih">—</div>
+            </div>
+            <div class="r-value" id="kmhSummaryToplam">—</div>
           </div>
-          <div class="r-value" id="kkSummaryToplam">—</div>
-        </div>
-        <div class="yatirim-dagilim-row">
-          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKk" style="width:0%;background:#C9A6FF;"></div></div>
-          <div class="yatirim-dagilim-pct" id="borcPctKk" style="color:#C9A6FF;">%0</div>
-        </div>
-        <div class="grand-row">
-          <div>
-            <div class="r-label" style="font-weight:700;">Elden Nakit Borçlar</div>
-            <div class="ai-score-meta" id="nakitSummaryTarih">—</div>
+          <div class="yatirim-dagilim-row">
+            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKmh" style="width:0%;background:#6EC3FF;"></div></div>
+            <div class="yatirim-dagilim-pct" id="borcPctKmh" style="color:#6EC3FF;">%0</div>
           </div>
-          <div class="r-value" id="nakitSummaryToplam">—</div>
         </div>
-        <div class="yatirim-dagilim-row">
-          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarNakit" style="width:0%;background:#5EEAD4;"></div></div>
-          <div class="yatirim-dagilim-pct" id="borcPctNakit" style="color:#5EEAD4;">%0</div>
+        <div id="borcGrup-kk">
+          <div class="grand-row">
+            <div>
+              <div class="r-label" style="font-weight:700;">Kredi Kartı Borcu</div>
+              <div class="ai-score-meta" id="kkSummaryTarih">—</div>
+            </div>
+            <div class="r-value" id="kkSummaryToplam">—</div>
+          </div>
+          <div class="yatirim-dagilim-row">
+            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKk" style="width:0%;background:#C9A6FF;"></div></div>
+            <div class="yatirim-dagilim-pct" id="borcPctKk" style="color:#C9A6FF;">%0</div>
+          </div>
+        </div>
+        <div id="borcGrup-nakit">
+          <div class="grand-row">
+            <div>
+              <div class="r-label" style="font-weight:700;">Elden Nakit Borçlar</div>
+              <div class="ai-score-meta" id="nakitSummaryTarih">—</div>
+            </div>
+            <div class="r-value" id="nakitSummaryToplam">—</div>
+          </div>
+          <div class="yatirim-dagilim-row">
+            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarNakit" style="width:0%;background:#5EEAD4;"></div></div>
+            <div class="yatirim-dagilim-pct" id="borcPctNakit" style="color:#5EEAD4;">%0</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2801,10 +2809,10 @@ function refreshGrandTotal(){
 
   // Her kategorinin toplam borca oranını çubuk + yüzde olarak göster
   const oranlar = [
-    { deger: _bTotals.loans || 0, barId: 'borcBarKredi', pctId: 'borcPctKredi' },
-    { deger: _bTotals.kmh || 0,   barId: 'borcBarKmh',   pctId: 'borcPctKmh' },
-    { deger: _bTotals.kk || 0,    barId: 'borcBarKk',    pctId: 'borcPctKk' },
-    { deger: _bTotals.nakit || 0, barId: 'borcBarNakit', pctId: 'borcPctNakit' },
+    { deger: _bTotals.loans || 0, barId: 'borcBarKredi', pctId: 'borcPctKredi', grupId: 'borcGrup-loans' },
+    { deger: _bTotals.kmh || 0,   barId: 'borcBarKmh',   pctId: 'borcPctKmh',   grupId: 'borcGrup-kmh' },
+    { deger: _bTotals.kk || 0,    barId: 'borcBarKk',    pctId: 'borcPctKk',    grupId: 'borcGrup-kk' },
+    { deger: _bTotals.nakit || 0, barId: 'borcBarNakit', pctId: 'borcPctNakit', grupId: 'borcGrup-nakit' },
   ];
   oranlar.forEach(({ deger, barId, pctId }) => {
     const yuzde = toplam > 0 ? (deger / toplam * 100) : 0;
@@ -2813,6 +2821,15 @@ function refreshGrandTotal(){
     if(barEl) barEl.style.width = yuzde.toFixed(1) + '%';
     if(pctEl) pctEl.textContent = '%' + fmtNumber(yuzde, 1);
   });
+
+  // En yüksek borç kalemi en üstte olacak şekilde büyükten küçüğe sırala
+  const listeEl = document.getElementById('borcKategoriListesi');
+  if(listeEl){
+    [...oranlar].sort((a, b) => b.deger - a.deger).forEach(({ grupId }) => {
+      const grupEl = document.getElementById(grupId);
+      if(grupEl) listeEl.appendChild(grupEl);
+    });
+  }
 
   // Güncel Finansal Durumum'daki Toplam Borç/Net Değer kutuları da bu toplama bağlı — tazele
   if(typeof renderVarlik === 'function') renderVarlik();
