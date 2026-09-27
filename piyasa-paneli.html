@@ -1599,24 +1599,24 @@
 
 <script>
 const CARDS = [
-  { key:'ndx',    label:'QQM ETF (NASDAQ100)', source:'twelvedata', symbol:'QQQM', fmt:'usd2',   fallback:{price:210.00, chg:-0.62} },
-  { key:'sp500',  label:'VOO ETF (S&P500)',  source:'twelvedata', symbol:'VOO',     fmt:'usd2',   fallback:{price:590.00, chg:-0.47} },
-  { key:'ura',    label:'URA ETF (Global X Uranium)', source:'twelvedata', symbol:'URA', fmt:'usd2', fallback:{price:38.00, chg:0.30} },
-  { key:'nlr',    label:'NLR ETF (VanEck Uranium+Nuclear)', source:'twelvedata', symbol:'NLR', fmt:'usd2', fallback:{price:110.00, chg:0.25} },
-  { key:'xle',    label:'XLE ETF (Energy Select SPDR)', source:'twelvedata', symbol:'XLE', fmt:'usd2', fallback:{price:95.00, chg:0.10} },
+  { key:'ndx',    label:'QQM ETF (NASDAQ100)', source:'finnhub', symbol:'QQQM', fmt:'usd2',   fallback:{price:210.00, chg:-0.62} },
+  { key:'sp500',  label:'VOO ETF (S&P500)',  source:'finnhub', symbol:'VOO',     fmt:'usd2',   fallback:{price:590.00, chg:-0.47} },
+  { key:'ura',    label:'URA ETF (Global X Uranium)', source:'finnhub', symbol:'URA', fmt:'usd2', fallback:{price:38.00, chg:0.30} },
+  { key:'nlr',    label:'NLR ETF (VanEck Uranium+Nuclear)', source:'finnhub', symbol:'NLR', fmt:'usd2', fallback:{price:110.00, chg:0.25} },
+  { key:'xle',    label:'XLE ETF (Energy Select SPDR)', source:'finnhub', symbol:'XLE', fmt:'usd2', fallback:{price:95.00, chg:0.10} },
   { key:'usdtry', label:'DOLAR/TL',     source:'twelvedata', symbol:'USD/TRY', fmt:'usd2',    fallback:{price:34.50, chg:0.05} },
   { key:'eurtry', label:'EURO/TL',      source:'twelvedata', symbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
   { key:'gold',   label:'ALTIN (ONS)',  source:'yahoo',    symbol:'GC=F',     fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
   { key:'brent',  label:'BRENT PETROL', source:'yahoo',    symbol:'BZ=F',     fmt:'usd2',    fallback:{price:101.60, chg:0.39} },
   { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
-  { key:'rexc',   label:'REXC ETF (Sprott Rare Earths Ex-China)', source:'twelvedata', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
-  { key:'remx',   label:'REMX ETF (VanEck Rare Earth)', source:'twelvedata', symbol:'REMX', fmt:'usd2', fallback:{price:68.00, chg:0.20} },
+  { key:'rexc',   label:'REXC ETF (Sprott Rare Earths Ex-China)', source:'finnhub', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
+  { key:'remx',   label:'REMX ETF (VanEck Rare Earth)', source:'finnhub', symbol:'REMX', fmt:'usd2', fallback:{price:68.00, chg:0.20} },
   { key:'btc',    label:'BİTCOİN',      source:'coingecko',symbol:'bitcoin',  fmt:'usd0',    fallback:{price:78170.59, chg:-0.15} },
   { key:'eth',    label:'ETHEREUM',     source:'coingecko',symbol:'ethereum', fmt:'usd2',    fallback:{price:3120.40, chg:0.85} },
   { key:'hype',   label:'HYPE',         source:'coingecko',symbol:'hyperliquid', fmt:'usd2', fallback:{price:35.00, chg:0.50} },
   { key:'aave',   label:'AAVE',         source:'coingecko',symbol:'aave',     fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
   { key:'sol',    label:'SOL',          source:'coingecko',symbol:'solana',   fmt:'usd2',    fallback:{price:150.00, chg:0.50} },
-  { key:'nvda',   label:'NVDA',         source:'twelvedata', symbol:'NVDA',   fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
+  { key:'nvda',   label:'NVDA',         source:'finnhub', symbol:'NVDA',   fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
 ];
 
 const grid = document.getElementById('grid');
@@ -1812,6 +1812,19 @@ async function fetchTwelveDataBatch(symbols){
   return symbols.length === 1 ? { [symbols[0]]: data } : data;
 }
 
+// Finnhub: günlük kredi tavanı yok (dakikada 60 istek), her sembol ayrı çağrı gerektirir (toplu sorgu yok)
+async function fetchFinnhub(symbol){
+  const url = MY_WORKER + '/fh?symbol=' + encodeURIComponent(symbol);
+  const res = await fetchWithTimeout(url, 8000);
+  const data = await res.json();
+  if(!res.ok || data.error) throw new Error(data.error || ('finnhub hata ' + res.status));
+  const price = data.c; // current price
+  const prevClose = data.pc; // previous close
+  if(!price || !prevClose) throw new Error('finnhub veri yok');
+  const chgPct = ((price - prevClose) / prevClose) * 100;
+  return { price, chgPct };
+}
+
 async function fetchCoingecko(ids){
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`;
   for(let attempt = 1; attempt <= 2; attempt++){
@@ -1859,36 +1872,55 @@ async function refreshMarketData(){
     await refreshCrypto();
   }catch(e){ anyError = true; lastErrorMsg = e.message || String(e); }
 
-  // ---- Twelve Data kartları: 8'erli gruplar halinde TOPLU (tek istekte) çekiyoruz ----
-  // Ücretsiz plan dakikada 8 kredi ile sınırlı; 8'li bir grup tek istekte anında gelir,
-  // bir sonraki grup öncesi sadece dakika penceresi dolsun diye bekleriz.
-  const TD_CHUNK = 8;
+  // ---- Twelve Data: artık sadece Dolar/TL ve Euro/TL burada — ETF/hisseler Finnhub'a taşındı ----
+  // 2 sembol kaldığı için günlük 800 kredi sınırına çok uzağız, yine de temkinli bir aralık koyuyoruz.
+  const TD_MIN_INTERVAL_MS = 5 * 60 * 1000; // 5 dakika → günde en fazla ~576 kredi (2 sembol × 288 tur)
   const tdCards = CARDS.filter(c => c.source === 'twelvedata');
-  for(let i = 0; i < tdCards.length; i += TD_CHUNK){
-    const chunk = tdCards.slice(i, i + TD_CHUNK);
-    try{
-      const batch = await fetchTwelveDataBatch(chunk.map(c => c.symbol));
-      chunk.forEach(cfg => {
-        const d = batch[cfg.symbol];
-        const price = d ? parseFloat(d.close) : NaN;
-        if(d && !d.code && !isNaN(price)){
-          renderCard(cfg, price, parseFloat(d.percent_change) || 0, false);
-        } else {
-          anyError = true;
-          lastErrorMsg = (d && d.message) || 'twelvedata veri yok';
-          renderStale(cfg);
-        }
-      });
-    }catch(e){
-      anyError = true;
-      lastErrorMsg = e.message || String(e);
-      chunk.forEach(cfg => renderStale(cfg));
+  const tdSuresiDoldu = (Date.now() - _lastTdFetchTime) >= TD_MIN_INTERVAL_MS;
+
+  if(tdSuresiDoldu){
+    _lastTdFetchTime = Date.now();
+    const TD_CHUNK = 8;
+    for(let i = 0; i < tdCards.length; i += TD_CHUNK){
+      const chunk = tdCards.slice(i, i + TD_CHUNK);
+      try{
+        const batch = await fetchTwelveDataBatch(chunk.map(c => c.symbol));
+        chunk.forEach(cfg => {
+          const d = batch[cfg.symbol];
+          const price = d ? parseFloat(d.close) : NaN;
+          if(d && !d.code && !isNaN(price)){
+            renderCard(cfg, price, parseFloat(d.percent_change) || 0, false);
+          } else {
+            anyError = true;
+            lastErrorMsg = (d && d.message) || 'twelvedata veri yok';
+            renderStale(cfg);
+          }
+        });
+      }catch(e){
+        anyError = true;
+        lastErrorMsg = e.message || String(e);
+        chunk.forEach(cfg => renderStale(cfg));
+      }
+      if(i + TD_CHUNK < tdCards.length) await sleep(61000);
     }
-    if(i + TD_CHUNK < tdCards.length) await sleep(61000); // sonraki 8'lik grup için dakika penceresinin dolmasını bekle
   }
 
   // Dolar/Euro kuru güncellenmiş olabilir — Elden Nakit Borçlar'ın TL karşılığını tazele
   if(typeof renderNakit === 'function') renderNakit();
+
+  // ---- Finnhub kaynaklı ETF/hisse kartları: günlük tavan yok, her turda tazelenir ----
+  const finnhubCards = CARDS.filter(c => c.source === 'finnhub');
+  for(const cfg of finnhubCards){
+    try{
+      const { price, chgPct } = await fetchFinnhub(cfg.symbol);
+      renderCard(cfg, price, chgPct, false);
+    }catch(e){
+      anyError = true;
+      lastErrorMsg = e.message || String(e);
+      renderStale(cfg);
+    }
+    await sleep(350);
+  }
 
   // ---- Yahoo/FRED kaynaklı kartlar: az sayıda, art arda (aralıklı) ----
   const otherCards = CARDS.filter(c => c.source === 'yahoo' || c.source === 'fred');
@@ -1926,6 +1958,7 @@ async function refreshMarketData(){
 }
 
 let _refreshInProgress = false;
+let _lastTdFetchTime = 0; // Twelve Data'nın günlük kredi limitini korumak için son gerçek çekim zamanı
 
 async function refreshAll(){
   if(_refreshInProgress) return; // önceki döngü (Twelve Data dakika limiti yüzünden 1 dakikadan uzun sürebiliyor) bitmeden yenisini başlatma
@@ -3609,7 +3642,7 @@ if(location.protocol === 'file:'){
   document.getElementById('fileWarning').style.display = 'block';
 }
 refreshAll();
-setInterval(refreshAll, 120000);
+setInterval(refreshAll, 60000);
 loadNews();
 setInterval(loadNews, 300000);
 openChart('btc');
