@@ -1283,7 +1283,6 @@
   <div class="tab-panel" id="tab-finansal">
     <div class="page-head">
       <h1>Güncel Finansal Durumum</h1>
-      <p>Excel verisi · 11.09.2026 itibarıyla</p>
     </div>
 
     <div class="summary-grid finansal-summary-grid">
@@ -3363,10 +3362,10 @@ function renderVarlik(){
     ? list.map(item => `
         <div class="table-row">
           <div>
-            <div class="r-label" style="font-size:16px;font-weight:700;">${escapeHtml(item.ad)}</div>
-            <div class="r-sub">${escapeHtml(item.tur)} · ${ledDateHtml(item.tarih)}</div>
+            <div class="r-label" style="font-size:18px;font-weight:700;">${escapeHtml(item.ad)}</div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <div class="r-sub" style="text-align:right;">${escapeHtml(item.tur)} · ${ledDateHtml(item.tarih)}</div>
             <div class="r-value" style="font-size:18px;color:var(--up);">₺${fmtNumber(item.deger, 0)}</div>
             <input type="number" step="0.01" id="varlik-edit-${item.id}" class="ai-input" style="width:110px;padding:6px 8px;font-size:12px;" placeholder="yeni değer">
             <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleVarlik('${item.id}')">Güncelle</button>
