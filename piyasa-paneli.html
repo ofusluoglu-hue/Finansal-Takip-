@@ -2856,11 +2856,16 @@ function isBugun(d){
   return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
 }
 
-function ledDateHtml(dateIso){
+function ledSpan(dateIso){
+  const renk = isBugun(new Date(dateIso)) ? 'green' : 'red';
+  return `<span class="led-dot ${renk}"></span>`;
+}
+function tarihSaatStr(dateIso){
   const d = new Date(dateIso);
-  const tarihStr = d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
-  const renk = isBugun(d) ? 'green' : 'red';
-  return `<span class="led-dot ${renk}"></span>${tarihStr}`;
+  return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+}
+function ledDateHtml(dateIso){
+  return ledSpan(dateIso) + tarihSaatStr(dateIso);
 }
 
 // ---------- Ortak: manuel borç listesi (kredi kartı / KMH aynı mantığı paylaşır) ----------
@@ -3364,8 +3369,8 @@ function renderVarlik(){
           <div>
             <div class="r-label" style="font-size:18px;font-weight:700;">${escapeHtml(item.ad)}</div>
           </div>
-          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-            <div class="r-sub" style="text-align:right;">${escapeHtml(item.tur)} · ${ledDateHtml(item.tarih)}</div>
+          <div class="r-sub">${ledSpan(item.tarih)}${escapeHtml(item.tur)} · ${tarihSaatStr(item.tarih)}</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <div class="r-value" style="font-size:18px;color:var(--up);">₺${fmtNumber(item.deger, 0)}</div>
             <input type="number" step="0.01" id="varlik-edit-${item.id}" class="ai-input" style="width:110px;padding:6px 8px;font-size:12px;" placeholder="yeni değer">
             <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleVarlik('${item.id}')">Güncelle</button>
