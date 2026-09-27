@@ -2739,6 +2739,7 @@ function updateGarantiLive(){
 }
 
 let _bTotals = { loans: 0, kk: 0, kmh: 0, nakit: 0 };
+let _toplamYatirimTL = 0; // Yatırımlarım toplamı — Güncel Finansal Durumum'daki Toplam Varlık'a dahil edilir
 
 function refreshGrandTotal(){
   const toplam = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
@@ -3175,6 +3176,9 @@ function renderYatirim(){
 
   if(list.length) manuelListeKaydet(YATIRIM_KEY, list); // sonBilinen* alanları güncellenmiş olabilir, kalıcı hale getir
 
+  _toplamYatirimTL = toplamYatirim;
+  if(typeof renderVarlik === 'function') renderVarlik(); // Güncel Finansal Durumum'daki Toplam Varlık/pasta grafiği bu toplama bağlı
+
   // Dağılım grafiği — her kategori kendi satırında, çubuk uzunluğu en büyük kategoriye göre orantılı
   const dagilimEl = document.getElementById('yatirimDagilimBar');
   if(dagilimEl){
@@ -3289,11 +3293,11 @@ function renderVarlik(){
     ? list.map(item => `
         <div class="table-row">
           <div>
-            <div class="r-label">${escapeHtml(item.ad)}</div>
+            <div class="r-label" style="font-size:16px;font-weight:700;">${escapeHtml(item.ad)}</div>
             <div class="r-sub">${escapeHtml(item.tur)} · ${ledDateHtml(item.tarih)}</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <div class="r-value">₺${fmtNumber(item.deger, 0)}</div>
+            <div class="r-value" style="font-size:18px;color:var(--up);">₺${fmtNumber(item.deger, 0)}</div>
             <input type="number" step="0.01" id="varlik-edit-${item.id}" class="ai-input" style="width:110px;padding:6px 8px;font-size:12px;" placeholder="yeni değer">
             <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleVarlik('${item.id}')">Güncelle</button>
             <button class="loan-delete-btn" onclick="deleteVarlik('${item.id}')">Sil</button>
@@ -3313,16 +3317,18 @@ const VARLIK_KATEGORI_RENK = {
   Arsa: 'var(--amber)',
   Dükkan: '#C9A6FF',
   Diğer: '#5EEAD4',
+  'Yatırımlar': '#FF8A65',
 };
 
 // Güncel Finansal Durumum'un üst 4 kutusu: canlı Toplam Varlık / Toplam Borç / Net Değer ve
 // Varlıklarım'ın türe göre dairesel (pasta) dağılım grafiği.
-function renderFinansalOzet(toplamVarlik, varlikListesi){
+function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   const varlikEl = document.getElementById('finansalToplamVarlik');
   const borcEl = document.getElementById('finansalToplamBorc');
   const netEl = document.getElementById('finansalNetDeger');
   if(!varlikEl || !borcEl || !netEl) return; // bu sekme henüz DOM'da değilse sessizce çık
 
+  const toplamVarlik = toplamVarlikListesi + (_toplamYatirimTL || 0);
   const toplamBorc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
   const netDeger = toplamVarlik - toplamBorc;
 
@@ -3331,7 +3337,7 @@ function renderFinansalOzet(toplamVarlik, varlikListesi){
   netEl.textContent = (netDeger < 0 ? '-' : '') + '₺' + fmtNumber(Math.abs(netDeger), 0);
   netEl.className = 'summary-value ' + (netDeger >= 0 ? 'pos' : 'neg');
 
-  // Pasta grafiği: türe göre toplam, conic-gradient ile
+  // Pasta grafiği: türe göre toplam (Varlıklarım kategorileri + Yatırımlar), conic-gradient ile
   const pastaEl = document.getElementById('finansalVarlikPasta');
   const legendEl = document.getElementById('finansalVarlikPastaLegend');
   if(!pastaEl || !legendEl) return;
@@ -3340,6 +3346,7 @@ function renderFinansalOzet(toplamVarlik, varlikListesi){
   (varlikListesi || []).forEach(item => {
     kategoriToplam[item.tur] = (kategoriToplam[item.tur] || 0) + (Number(item.deger) || 0);
   });
+  if(_toplamYatirimTL > 0) kategoriToplam['Yatırımlar'] = _toplamYatirimTL;
   const kategoriler = Object.keys(kategoriToplam).filter(k => kategoriToplam[k] > 0);
 
   if(!kategoriler.length || toplamVarlik <= 0){
