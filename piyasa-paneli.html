@@ -990,12 +990,13 @@
   .grand-total-panel{
     display:flex;
     align-items:center;
-    gap:28px;
+    gap:20px;
     flex-wrap:wrap;
+    padding:14px 16px;
   }
   .grand-total-left{
     flex:0 0 auto;
-    padding-right:24px;
+    padding-right:18px;
     border-right:1px solid var(--border);
   }
   .grand-total-right{
@@ -1003,7 +1004,7 @@
     min-width:240px;
     display:flex;
     flex-direction:column;
-    gap:10px;
+    gap:4px;
   }
   .grand-row{
     display:flex;
@@ -1011,7 +1012,9 @@
     justify-content:space-between;
     gap:12px;
   }
-  .grand-row .r-value{font-size:17px;font-weight:700;}
+  .grand-row .r-label{font-size:12.5px;}
+  .grand-row .r-value{font-size:14px;font-weight:700;}
+  .grand-total-right .yatirim-dagilim-row{margin-bottom:6px;}
 
   @media (max-width:640px){
     .grand-total-left{border-right:none;border-bottom:1px solid var(--border);padding-right:0;padding-bottom:14px;width:100%;}
@@ -1402,8 +1405,8 @@
 
     <div class="section-panel grand-total-panel">
       <div class="grand-total-left">
-        <div class="summary-label" style="font-size:13.5px;">Toplam Borç</div>
-        <div class="summary-value neg" style="font-size:38px;" id="grandTotal">—</div>
+        <div class="summary-label" style="font-size:12px;">Toplam Borç</div>
+        <div class="summary-value neg" style="font-size:32px;" id="grandTotal">—</div>
       </div>
       <div class="grand-total-right">
         <div class="grand-row">
@@ -1413,12 +1416,20 @@
           </div>
           <div class="r-value" id="loansSummaryToplam">—</div>
         </div>
+        <div class="yatirim-dagilim-row">
+          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKredi" style="width:0%;background:var(--down);"></div></div>
+          <div class="yatirim-dagilim-pct" id="borcPctKredi">%0</div>
+        </div>
         <div class="grand-row">
           <div>
             <div class="r-label" style="font-weight:700;">Kredili Mevduat Hesabı -KMH</div>
             <div class="ai-score-meta" id="kmhSummaryTarih">—</div>
           </div>
           <div class="r-value" id="kmhSummaryToplam">—</div>
+        </div>
+        <div class="yatirim-dagilim-row">
+          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKmh" style="width:0%;background:#6EC3FF;"></div></div>
+          <div class="yatirim-dagilim-pct" id="borcPctKmh">%0</div>
         </div>
         <div class="grand-row">
           <div>
@@ -1427,12 +1438,20 @@
           </div>
           <div class="r-value" id="kkSummaryToplam">—</div>
         </div>
+        <div class="yatirim-dagilim-row">
+          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKk" style="width:0%;background:#C9A6FF;"></div></div>
+          <div class="yatirim-dagilim-pct" id="borcPctKk">%0</div>
+        </div>
         <div class="grand-row">
           <div>
             <div class="r-label" style="font-weight:700;">Elden Nakit Borçlar</div>
             <div class="ai-score-meta" id="nakitSummaryTarih">—</div>
           </div>
           <div class="r-value" id="nakitSummaryToplam">—</div>
+        </div>
+        <div class="yatirim-dagilim-row">
+          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarNakit" style="width:0%;background:#5EEAD4;"></div></div>
+          <div class="yatirim-dagilim-pct" id="borcPctNakit">%0</div>
         </div>
       </div>
     </div>
@@ -1447,28 +1466,29 @@
 
       <div class="section-divider"></div>
 
-      <div class="section-title">Yeni Kredi Ekle</div>
-      <div class="loan-add-row">
-        <label class="loan-file-label" for="loanPdfInput">📄 Ödeme Planı PDF Seç</label>
-        <input type="file" id="loanPdfInput" accept="application/pdf" style="display:none;" onchange="onLoanPdfSelected(event)">
-        <span class="loan-file-name" id="loanFileName">Dosya seçilmedi</span>
-        <span class="loan-inline-note">PDF otomatik okunur — kaydetmeden önce rakamları kontrol et. Sadece bu tarayıcıda saklanır.</span>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;">
+        <div style="flex:1;min-width:260px;">
+          <div class="section-title" style="font-size:13px;">Yeni Kredi Ekle</div>
+          <div class="loan-add-row">
+            <label class="loan-file-label" for="loanPdfInput">📄 Ödeme Planı PDF Seç</label>
+            <input type="file" id="loanPdfInput" accept="application/pdf" style="display:none;" onchange="onLoanPdfSelected(event)">
+            <span class="loan-file-name" id="loanFileName">Dosya seçilmedi</span>
+          </div>
+          <div id="loanExtractStatus"></div>
+          <div id="loanPreviewBox"></div>
+        </div>
+        <div style="flex:1;min-width:260px;border-left:1px solid var(--border);padding-left:24px;">
+          <div class="section-title" style="font-size:13px;">veya Excel Ödeme Planı Yükle</div>
+          <div class="loan-add-row">
+            <input type="text" id="excelBankaAdi" class="ai-input" style="max-width:160px;min-width:130px;" placeholder="Banka adı">
+            <label class="loan-file-label" for="loanExcelInput">📊 Excel Seç</label>
+            <input type="file" id="loanExcelInput" accept=".xlsx,.xls" style="display:none;" onchange="onLoanExcelSelected(event)">
+            <span class="loan-file-name" id="loanExcelFileName">Dosya seçilmedi</span>
+            <a href="kredi-odeme-plani-sablon.xlsx" download class="loan-file-label" style="text-decoration:none;">⬇ Şablon</a>
+          </div>
+          <div id="excelExtractStatus"></div>
+        </div>
       </div>
-      <div id="loanExtractStatus"></div>
-      <div id="loanPreviewBox"></div>
-
-      <div class="section-divider"></div>
-
-      <div class="section-title" style="font-size:13px;">veya Excel Ödeme Planı Yükle</div>
-      <div class="loan-add-row">
-        <input type="text" id="excelBankaAdi" class="ai-input" style="max-width:200px;min-width:160px;" placeholder="Banka adı (ör. Akbank)">
-        <label class="loan-file-label" for="loanExcelInput">📊 Excel Seç (.xlsx)</label>
-        <input type="file" id="loanExcelInput" accept=".xlsx,.xls" style="display:none;" onchange="onLoanExcelSelected(event)">
-        <span class="loan-file-name" id="loanExcelFileName">Dosya seçilmedi</span>
-        <a href="kredi-odeme-plani-sablon.xlsx" download class="loan-file-label" style="text-decoration:none;">⬇ Şablon İndir</a>
-        <span class="loan-inline-note">Şablon sütunlarını kullan, tüm taksitleri (ödenmiş dahil) eksiksiz gir.</span>
-      </div>
-      <div id="excelExtractStatus"></div>
     </div>
 
     <div class="section-panel">
@@ -2766,6 +2786,22 @@ function refreshGrandTotal(){
   const toplam = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
   const el = document.getElementById('grandTotal');
   if(el) el.textContent = '₺' + fmtNumber(toplam, 0);
+
+  // Her kategorinin toplam borca oranını çubuk + yüzde olarak göster
+  const oranlar = [
+    { deger: _bTotals.loans || 0, barId: 'borcBarKredi', pctId: 'borcPctKredi' },
+    { deger: _bTotals.kmh || 0,   barId: 'borcBarKmh',   pctId: 'borcPctKmh' },
+    { deger: _bTotals.kk || 0,    barId: 'borcBarKk',    pctId: 'borcPctKk' },
+    { deger: _bTotals.nakit || 0, barId: 'borcBarNakit', pctId: 'borcPctNakit' },
+  ];
+  oranlar.forEach(({ deger, barId, pctId }) => {
+    const yuzde = toplam > 0 ? (deger / toplam * 100) : 0;
+    const barEl = document.getElementById(barId);
+    const pctEl = document.getElementById(pctId);
+    if(barEl) barEl.style.width = yuzde.toFixed(1) + '%';
+    if(pctEl) pctEl.textContent = '%' + fmtNumber(yuzde, 1);
+  });
+
   // Güncel Finansal Durumum'daki Toplam Borç/Net Değer kutuları da bu toplama bağlı — tazele
   if(typeof renderVarlik === 'function') renderVarlik();
 }
