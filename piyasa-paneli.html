@@ -1622,6 +1622,29 @@ const CARDS = [
 const grid = document.getElementById('grid');
 const state = {};
 let _fxRates = { USD: null, EUR: null }; // Elden Nakit Borçlar döviz çevrimi için son bilinen kurlar
+const FX_KALICI_KEY = 'ft_fx_son_bilinen_v1';
+let _fxRatesKalici = false; // ilk render'da bu kurların "canlı değil, eski" olduğunu işaretlemek için
+
+// Sayfa açılışında, daha önce kaydedilmiş son bilinen kuru yükle — Twelve Data günlük limiti
+// dolsa bile, "kur bekleniyor" yerine en azından biraz eski ama makul bir tahmin gösterelim.
+(function fxKaliciYukle(){
+  try{
+    const kayit = JSON.parse(localStorage.getItem(FX_KALICI_KEY) || 'null');
+    if(kayit){
+      if(kayit.USD) _fxRates.USD = kayit.USD;
+      if(kayit.EUR) _fxRates.EUR = kayit.EUR;
+      _fxRatesKalici = true;
+    }
+  }catch(e){ /* bozuk kayıt varsa yok say */ }
+})();
+
+let _fxRatesLive = { USD: false, EUR: false }; // bu oturumda gerçekten canlı çekildi mi (yoksa sadece kalıcı hafızadan mı geldi)
+
+function fxKaliciKaydet(){
+  try{
+    localStorage.setItem(FX_KALICI_KEY, JSON.stringify({ USD: _fxRates.USD, EUR: _fxRates.EUR, ts: Date.now() }));
+  }catch(e){ /* localStorage dolu/erişilemezse sessizce geç */ }
+}
 
 function buildCards(){
   CARDS.forEach(c=>{
@@ -1692,8 +1715,8 @@ function renderCard(cfg, price, chgPct, stale){
   if(!stale && isFinite(price)) _lastGoodValues[cfg.key] = { price, chgPct };
 
   // Elden Nakit Borçlar'daki döviz çevrimi için güncel kuru sakla (stale/gecikmeli olsa bile son bilinen kur kullanılır)
-  if(cfg.key === 'usdtry' && isFinite(price)) _fxRates.USD = price;
-  if(cfg.key === 'eurtry' && isFinite(price)) _fxRates.EUR = price;
+  if(cfg.key === 'usdtry' && isFinite(price) && !stale){ _fxRates.USD = price; _fxRatesLive.USD = true; fxKaliciKaydet(); }
+  if(cfg.key === 'eurtry' && isFinite(price) && !stale){ _fxRates.EUR = price; _fxRatesLive.EUR = true; fxKaliciKaydet(); }
 
   valEl.classList.remove('skeleton');
 
@@ -3245,9 +3268,9 @@ function nakitTLHesapla(item){
   if(item.paraBirimi === 'TL' || !item.paraBirimi){
     return { tutarTL: girilenTutar, kur: null, canliKur: true, girilenTutar };
   }
-  const canliKur = _fxRates[item.paraBirimi];
-  if(canliKur){
-    return { tutarTL: girilenTutar * canliKur, kur: canliKur, canliKur: true, girilenTutar };
+  const kur = _fxRates[item.paraBirimi];
+  if(kur){
+    return { tutarTL: girilenTutar * kur, kur, canliKur: !!_fxRatesLive[item.paraBirimi], girilenTutar };
   }
   // Güncel kur şu an elde değilse, kaydedilen en son bilinen kuru (ya da eski "kur" alanını) geçici olarak kullan
   const sonKur = item.sonKur || item.kur || null;
