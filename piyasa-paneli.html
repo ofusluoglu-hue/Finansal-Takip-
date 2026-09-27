@@ -3366,7 +3366,7 @@ function renderVarlik(){
   container.innerHTML = list.length
     ? list.map(item => `
         <div class="table-row">
-          <div style="width:220px;flex:0 0 220px;overflow:hidden;text-overflow:ellipsis;">
+          <div style="width:340px;flex:0 0 340px;overflow:hidden;text-overflow:ellipsis;">
             <div class="r-label" style="font-size:18px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(item.ad)}</div>
           </div>
           <div class="r-sub" style="flex:1;">${ledSpan(item.tarih)}${escapeHtml(item.tur)} · ${tarihSaatStr(item.tarih)}</div>
