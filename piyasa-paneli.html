@@ -1097,6 +1097,15 @@
     color:var(--text);
     white-space:nowrap;
   }
+  .yatirim-ad .led-dot{margin-right:4px;}
+  .yatirim-led-time{
+    font-size:10px;
+    font-weight:600;
+    text-transform:none;
+    letter-spacing:0;
+    color:var(--muted-2);
+    vertical-align:middle;
+  }
   .yatirim-tutar{
     font-size:20px;
     font-weight:800;
@@ -3144,15 +3153,15 @@ function yatirimSatirHtml(item, toplamYatirim){
   const canliMi = sonuc.canli === false;
   const tarihStr = sonuc.ts
     ? new Date(sonuc.ts).toLocaleDateString('tr-TR') + ' ' + new Date(sonuc.ts).toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})
-    : (canliMi ? 'eski veri' : 'şimdi');
-  const ledHtml = `<span class="led-dot ${canliMi ? 'red' : 'green'}"></span>${tarihStr}`;
+    : '';
+  const ledHtml = `<span class="led-dot ${canliMi ? 'red' : 'green'}"></span>${tarihStr ? `<span class="yatirim-led-time">${tarihStr}</span>` : ''}`;
   const metaParts = [adetStr, fiyatStr, `Pay %${fmtNumber(pay, 1)}`].filter(Boolean);
 
   return `
     <div class="yatirim-card">
       <div class="yatirim-card-top">
         <div class="yatirim-ad">
-          ${ledHtml}&nbsp;&nbsp;${escapeHtml(yatirimEtiket(item))}
+          ${escapeHtml(yatirimEtiket(item))}&nbsp;&nbsp;${ledHtml}
         </div>
         <div class="yatirim-tutar" style="color:${renk};">₺${fmtNumber(sonuc.tutarTL, 2)}</div>
       </div>
