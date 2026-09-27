@@ -952,37 +952,45 @@
   }
 
   /* ---- Yatırımlarım: dağılım çubuğu ---- */
-  .yatirim-dagilim-wrap{
-    display:flex;
-    align-items:flex-start;
-    gap:18px;
-    flex-wrap:wrap;
-  }
-  .yatirim-dagilim-bar{
+  #yatirimDagilimBar{
     display:flex;
     flex-direction:column;
-    width:180px;
-    max-width:100%;
-    height:14px;
-    border-radius:7px;
-    overflow:hidden;
+    gap:9px;
+    width:100%;
+    justify-content:center;
+    height:100%;
+  }
+  .yatirim-dagilim-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .yatirim-dagilim-track{
+    flex:1 1 auto;
+    height:9px;
+    border-radius:5px;
     background:#1b212a;
-    flex-shrink:0;
+    overflow:hidden;
+    min-width:40px;
   }
-  .yatirim-dagilim-bar{flex-direction:row;}
-  .yatirim-dagilim-bar > div{height:100%;}
-  .yatirim-dagilim-legend{
-    display:flex;
-    flex-direction:column;
-    gap:5px;
+  .yatirim-dagilim-fill{height:100%;border-radius:5px;}
+  .yatirim-dagilim-pct{
+    flex:0 0 44px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--text);
+    text-align:right;
+    font-variant-numeric:tabular-nums;
   }
   .yatirim-legend-item{
-    font-size:12px;
+    flex:0 0 auto;
+    font-size:12.5px;
     font-weight:600;
     color:var(--text);
     display:inline-flex;
     align-items:center;
     gap:6px;
+    white-space:nowrap;
   }
   .yatirim-legend-dot{
     width:9px;height:9px;
@@ -1257,7 +1265,7 @@
       <h1>Yatırımlarım</h1>
     </div>
 
-    <div class="summary-grid" style="grid-template-columns:repeat(2,1fr);">
+    <div class="summary-grid" style="grid-template-columns:1fr 1fr 1.4fr;">
       <div class="summary-card">
         <div class="summary-label">Toplam Yatırım</div>
         <div class="summary-value" style="color:var(--up);font-size:28px;" id="yatirimToplamDeger">—</div>
@@ -1268,12 +1276,8 @@
         <div class="summary-value" style="font-size:28px;" id="yatirimBorcOrani">—</div>
         <div class="summary-sub" id="yatirimBorcOraniAlt">—</div>
       </div>
-    </div>
-
-    <div class="section-panel">
-      <div class="yatirim-dagilim-wrap">
-        <div class="yatirim-dagilim-bar" id="yatirimDagilimBar"></div>
-        <div class="yatirim-dagilim-legend" id="yatirimDagilimLegend"></div>
+      <div class="summary-card">
+        <div id="yatirimDagilimBar"></div>
       </div>
     </div>
 
@@ -1304,7 +1308,7 @@
         <input type="number" step="0.01" id="yatirimBistTutarInput" class="ai-input" style="max-width:140px;min-width:120px;display:none;" placeholder="Güncel değer (TL)">
         <button class="ai-btn" onclick="addYatirim()">+ Yatırım Ekle</button>
       </div>
-      <div class="ai-disclaimer" style="margin-top:10px;">
+      <div class="ai-disclaimer" style="margin-top:10px;font-size:10px;line-height:1.5;">
         ABD ETF/Hisse ve Kripto fiyatları Günlük Makro Özet'te zaten canlı takip ettiğimiz kartlardan (ekstra istek
         yapılmadan) alınır. Emtia (Altın) ons fiyatından gram başına hesaplanır. <b>BİST için ücretsiz canlı veri
         kaynağımız olmadığından</b> hisse adını ve güncel TL değerini elle girip elle güncellersin — tıpkı Kredi
@@ -2967,22 +2971,25 @@ function renderYatirim(){
 
   if(list.length) manuelListeKaydet(YATIRIM_KEY, list); // sonBilinen* alanları güncellenmiş olabilir, kalıcı hale getir
 
-  // Üstte kompakt dağılım çubuğu
+  // Dağılım grafiği — her kategori kendi satırında, çubuk uzunluğu en büyük kategoriye göre orantılı
   const dagilimEl = document.getElementById('yatirimDagilimBar');
-  const legendEl = document.getElementById('yatirimDagilimLegend');
-  if(dagilimEl && legendEl){
-    if(!list.length || toplamYatirim <= 0){
-      dagilimEl.innerHTML = '';
-      legendEl.innerHTML = '';
+  if(dagilimEl){
+    const aktifKategoriler = YATIRIM_KATEGORI_SIRA.filter(kat => kategoriToplam[kat] > 0);
+    if(!list.length || toplamYatirim <= 0 || !aktifKategoriler.length){
+      dagilimEl.innerHTML = '<div class="ai-disclaimer" style="margin:0;">Dağılım için henüz veri yok</div>';
     } else {
-      dagilimEl.innerHTML = YATIRIM_KATEGORI_SIRA
-        .filter(kat => kategoriToplam[kat] > 0)
-        .map(kat => `<div style="width:${(kategoriToplam[kat]/toplamYatirim*100).toFixed(2)}%;background:${YATIRIM_KATEGORI_RENK[kat]};"></div>`)
-        .join('');
-      legendEl.innerHTML = YATIRIM_KATEGORI_SIRA
-        .filter(kat => kategoriToplam[kat] > 0)
-        .map(kat => `<span class="yatirim-legend-item"><span class="yatirim-legend-dot" style="background:${YATIRIM_KATEGORI_RENK[kat]};"></span>${YATIRIM_KATEGORI_BASLIK[kat]} %${fmtNumber(kategoriToplam[kat]/toplamYatirim*100, 1)}</span>`)
-        .join('');
+      const maxYuzde = Math.max(...aktifKategoriler.map(kat => kategoriToplam[kat] / toplamYatirim * 100));
+      dagilimEl.innerHTML = aktifKategoriler.map(kat => {
+        const yuzde = kategoriToplam[kat] / toplamYatirim * 100;
+        const barGenislik = (yuzde / maxYuzde * 100).toFixed(1);
+        return `
+          <div class="yatirim-dagilim-row">
+            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" style="width:${barGenislik}%;background:${YATIRIM_KATEGORI_RENK[kat]};"></div></div>
+            <div class="yatirim-dagilim-pct">%${fmtNumber(yuzde, 1)}</div>
+            <div class="yatirim-legend-item"><span class="yatirim-legend-dot" style="background:${YATIRIM_KATEGORI_RENK[kat]};"></span>${YATIRIM_KATEGORI_BASLIK[kat]}</div>
+          </div>
+        `;
+      }).join('');
     }
   }
 
