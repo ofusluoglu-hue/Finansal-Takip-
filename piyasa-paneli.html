@@ -1274,46 +1274,26 @@
     </div>
 
     <div class="section-panel">
-      <div class="section-title">Aylık Nakit Akışı</div>
-      <div class="table-row">
-        <div><div class="r-label">Aylık Ev Geliri</div><div class="r-sub">Elif Maaş ₺100.000 · Faruk Gelir ₺0</div></div>
-        <div class="r-value pos">₺100.000</div>
+      <div class="section-title">Varlıklarım</div>
+      <div class="loan-add-row">
+        <select id="varlikTurSelect" class="ai-input" style="max-width:150px;min-width:130px;">
+          <option value="Konut">Konut</option>
+          <option value="Otomobil">Otomobil</option>
+          <option value="Arsa">Arsa</option>
+          <option value="Dükkan">Dükkan</option>
+          <option value="Diğer">Diğer</option>
+        </select>
+        <input type="text" id="varlikAdInput" class="ai-input" style="max-width:220px;min-width:160px;" placeholder="Ad (ör. Gaziosmanpaşa Dairesi)">
+        <input type="number" step="0.01" id="varlikDegerInput" class="ai-input" style="max-width:160px;min-width:130px;" placeholder="Değer (TL)">
+        <button class="ai-btn" onclick="addVarlik()">+ Varlık Ekle</button>
       </div>
-      <div class="table-row">
-        <div><div class="r-label">Aylık Kredi Taksit Ödemesi</div><div class="r-sub">6 kredi toplamı</div></div>
-        <div class="r-value neg">₺81.683</div>
+      <div class="ai-disclaimer" style="margin-top:10px;font-size:10px;line-height:1.5;">
+        Konut, otomobil, arsa, dükkan gibi taşınır/taşınmaz varlıklarını buradan ekleyip elle güncel değerini girersin — canlı fiyat çekilmez, tamamen senin girdiğin tutar esas alınır. Tarayıcı hafızasında (localStorage) saklanır.
       </div>
-      <div class="table-row">
-        <div><div class="r-label">Nakit Hesap Bakiyesi</div></div>
-        <div class="r-value neg">-₺9.400</div>
-      </div>
-      <div class="table-row">
-        <div><div class="r-label">Acil Durum Fonu Hedefi</div></div>
-        <div class="r-value muted">₺300.000</div>
-      </div>
-    </div>
-
-    <div class="section-panel">
-      <div class="section-title">Varlık Dağılımı</div>
-      <div class="table-row">
-        <div class="r-label">Daire 2+1 (Gaziosmanpaşa)</div>
-        <div class="r-value">₺7.000.000</div>
-      </div>
-      <div class="table-row">
-        <div class="r-label">Otomobil (Astra-H 2007)</div>
-        <div class="r-value">₺350.000</div>
-      </div>
-      <div class="table-row">
-        <div><div class="r-label">Arsalar</div><div class="r-sub">Ayaş, İç Kale x2, Çankırı Çerkeş</div></div>
-        <div class="r-value">₺2.130.584</div>
-      </div>
-      <div class="table-row">
-        <div class="r-label">Yatırımlar (Kripto + ETF + BIST)</div>
-        <div class="r-value">₺79.895</div>
-      </div>
-      <div class="table-row">
+      <div id="varlikListContainer" style="margin-top:14px;"></div>
+      <div class="table-row" style="margin-top:6px;">
         <div class="r-label" style="font-weight:700;">Toplam Varlık</div>
-        <div class="r-value" style="color:var(--up);">₺9.746.084</div>
+        <div class="r-value" id="varlikToplamDeger" style="color:var(--up);">₺0</div>
       </div>
     </div>
   </div>
@@ -3252,6 +3232,75 @@ function renderYatirim(){
   }
 }
 
+// ---------- Varlıklarım (Konut/Otomobil/Arsa/Dükkan vb.) ----------
+const VARLIK_KEY = 'ft_varliklarim_v1';
+
+function addVarlik(){
+  const tur = document.getElementById('varlikTurSelect').value;
+  const adInput = document.getElementById('varlikAdInput');
+  const degerInput = document.getElementById('varlikDegerInput');
+  const ad = adInput.value.trim();
+  const deger = parseFloat(degerInput.value);
+
+  if(!ad){ showAlertModal('Lütfen varlığın adını yaz.'); return; }
+  if(isNaN(deger) || deger < 0){ showAlertModal('Lütfen geçerli bir değer gir.'); return; }
+
+  const list = manuelListeYukle(VARLIK_KEY);
+  list.push({ id: 'v-' + Date.now(), tur, ad, deger, tarih: new Date().toISOString() });
+  manuelListeKaydet(VARLIK_KEY, list);
+
+  adInput.value = '';
+  degerInput.value = '';
+  renderVarlik();
+}
+
+function deleteVarlik(id){
+  showConfirmModal('Bu varlığı listeden kaldırmak istediğine emin misin?', () => {
+    manuelListeKaydet(VARLIK_KEY, manuelListeYukle(VARLIK_KEY).filter(k => k.id !== id));
+    renderVarlik();
+  });
+}
+
+function guncelleVarlik(id){
+  const list = manuelListeYukle(VARLIK_KEY);
+  const item = list.find(k => k.id === id);
+  if(!item) return;
+
+  const input = document.getElementById('varlik-edit-' + id);
+  const val = parseFloat(input.value);
+  if(isNaN(val) || val < 0){ showAlertModal('Lütfen geçerli bir değer gir.'); return; }
+
+  item.deger = val;
+  item.tarih = new Date().toISOString();
+  manuelListeKaydet(VARLIK_KEY, list);
+  renderVarlik();
+}
+
+function renderVarlik(){
+  const container = document.getElementById('varlikListContainer');
+  const list = manuelListeYukle(VARLIK_KEY);
+  const toplam = list.reduce((s, item) => s + (Number(item.deger) || 0), 0);
+
+  container.innerHTML = list.length
+    ? list.map(item => `
+        <div class="table-row">
+          <div>
+            <div class="r-label">${escapeHtml(item.ad)}</div>
+            <div class="r-sub">${escapeHtml(item.tur)} · ${ledDateHtml(item.tarih)}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <div class="r-value">₺${fmtNumber(item.deger, 0)}</div>
+            <input type="number" step="0.01" id="varlik-edit-${item.id}" class="ai-input" style="width:110px;padding:6px 8px;font-size:12px;" placeholder="yeni değer">
+            <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleVarlik('${item.id}')">Güncelle</button>
+            <button class="loan-delete-btn" onclick="deleteVarlik('${item.id}')">Sil</button>
+          </div>
+        </div>
+      `).join('')
+    : '<div class="ai-disclaimer">Henüz varlık eklenmedi — yukarıdan ekleyebilirsin.</div>';
+
+  document.getElementById('varlikToplamDeger').textContent = '₺' + fmtNumber(toplam, 0);
+}
+
 // ---------- Elden Nakit Borçlar ----------
 const NAKIT_KEY = 'ft_elden_nakit_v1';
 
@@ -3687,6 +3736,7 @@ updateGarantiLive();
 renderKKKartlari();
 renderKMH();
 renderNakit();
+renderVarlik();
 yatirimTurDegisti();
 renderYatirim();
 if(location.protocol === 'file:'){
