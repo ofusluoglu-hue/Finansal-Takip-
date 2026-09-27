@@ -206,6 +206,13 @@
     color:var(--muted-2);
     margin-top:6px;
   }
+  .summary-usd{
+    font-size:11px;
+    font-weight:600;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  .summary-usd:empty{display:none;}
 
   .section-panel{
     background:var(--panel);
@@ -1257,24 +1264,28 @@
 
     <div class="summary-grid finansal-summary-grid">
       <div class="summary-card">
+        <div class="summary-label">Net Varlık Değerim</div>
+        <div class="summary-value pos" id="finansalNetDeger">₺0</div>
+        <div class="summary-usd" id="finansalNetDegerUSD"></div>
+        <div class="summary-sub">Varlıklarım + Yatırımlarım − Toplam Borç</div>
+      </div>
+      <div class="summary-card">
         <div class="summary-label">Toplam Varlık</div>
         <div class="summary-value pos" id="finansalToplamVarlik">₺0</div>
+        <div class="summary-usd" id="finansalToplamVarlikUSD"></div>
         <div class="summary-sub">Varlıklarım toplamı</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Toplam Borç</div>
-        <div class="summary-value neg" id="finansalToplamBorc">₺0</div>
-        <div class="summary-sub">Kredi, kredi kartı, KMH, nakit borç toplamı</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Net Değer</div>
-        <div class="summary-value pos" id="finansalNetDeger">₺0</div>
-        <div class="summary-sub">Varlıklarım + Yatırımlarım − Toplam Borç</div>
       </div>
       <div class="summary-card">
         <div class="summary-label">Yatırımlarım</div>
         <div class="summary-value pos" id="finansalYatirimlarim">₺0</div>
+        <div class="summary-usd" id="finansalYatirimlarimUSD"></div>
         <div class="summary-sub">Portföy toplamı</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Toplam Borcum</div>
+        <div class="summary-value neg" id="finansalToplamBorc">₺0</div>
+        <div class="summary-usd" id="finansalToplamBorcUSD"></div>
+        <div class="summary-sub">Kredi, kredi kartı, KMH, nakit borç toplamı</div>
       </div>
       <div class="summary-card">
         <div class="summary-label">Varlık Dağılımı</div>
@@ -3348,6 +3359,19 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   if(yatirimEl) yatirimEl.textContent = '₺' + fmtNumber(toplamYatirim, 0);
   netEl.textContent = (netDeger < 0 ? '-' : '') + '₺' + fmtNumber(Math.abs(netDeger), 0);
   netEl.className = 'summary-value ' + (netDeger >= 0 ? 'pos' : 'neg');
+
+  // Dolar karşılıkları — USD/TRY kuru henüz gelmediyse (ör. günlük limit dolduysa) boş bırakılır,
+  // kur geldiğinde otomatik görünür.
+  const usdtry = _fxRates.USD;
+  const usdYaz = (elId, tutarTL) => {
+    const el = document.getElementById(elId);
+    if(!el) return;
+    el.textContent = usdtry ? '≈ $' + fmtNumber(tutarTL / usdtry, 0) : '';
+  };
+  usdYaz('finansalNetDegerUSD', netDeger);
+  usdYaz('finansalToplamVarlikUSD', toplamVarlikListesi);
+  usdYaz('finansalYatirimlarimUSD', toplamYatirim);
+  usdYaz('finansalToplamBorcUSD', toplamBorc);
 
   // Pasta grafiği: Varlıklarım'ın türlerine göre + Yatırımlarım (Toplam Varlık rakamına dahil olmasa da grafikte gösterilir)
   const pastaEl = document.getElementById('finansalVarlikPasta');
