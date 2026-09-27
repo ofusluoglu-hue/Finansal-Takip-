@@ -876,6 +876,14 @@
     align-items:center;
     margin-bottom:6px;
   }
+  .loan-inline-note{
+    font-size:10px;
+    color:var(--muted-2);
+    margin-left:auto;
+    text-align:right;
+    max-width:280px;
+    line-height:1.4;
+  }
   .loan-file-label{
     background:var(--panel-2);
     border:1px solid var(--border);
@@ -1430,19 +1438,24 @@
     </div>
 
     <div class="section-panel">
+      <div class="section-title">Kredilerim — Canlı Takip</div>
+      <div id="loans-live-container"></div>
+      <div class="card-note" style="margin-top:6px;">
+        Hesap yöntemi: kalan anapara × (aylık faiz oranı / 30) × geçen gün + %KKDF + %BSMV. Bir krediyi
+        kapattığında "✓ Krediyi Kapattım" ile onaylayarak listeden kaldırabilirsin.
+      </div>
+
+      <div class="section-divider"></div>
+
       <div class="section-title">Yeni Kredi Ekle</div>
       <div class="loan-add-row">
         <label class="loan-file-label" for="loanPdfInput">📄 Ödeme Planı PDF Seç</label>
         <input type="file" id="loanPdfInput" accept="application/pdf" style="display:none;" onchange="onLoanPdfSelected(event)">
         <span class="loan-file-name" id="loanFileName">Dosya seçilmedi</span>
+        <span class="loan-inline-note">PDF otomatik okunur — kaydetmeden önce rakamları kontrol et. Sadece bu tarayıcıda saklanır.</span>
       </div>
       <div id="loanExtractStatus"></div>
       <div id="loanPreviewBox"></div>
-      <div class="ai-disclaimer" style="margin-top:10px;margin-bottom:4px;">
-        PDF, Cloudflare Worker üzerinden Claude'a gönderilip ödeme planı otomatik okunur. Kaydetmeden önce
-        çıkarılan rakamları mutlaka kontrol et — otomatik okuma hata yapabilir. Eklenen krediler yalnızca
-        bu tarayıcıda (localStorage) saklanır, başka cihaza taşınmaz.
-      </div>
 
       <div class="section-divider"></div>
 
@@ -1453,22 +1466,9 @@
         <input type="file" id="loanExcelInput" accept=".xlsx,.xls" style="display:none;" onchange="onLoanExcelSelected(event)">
         <span class="loan-file-name" id="loanExcelFileName">Dosya seçilmedi</span>
         <a href="kredi-odeme-plani-sablon.xlsx" download class="loan-file-label" style="text-decoration:none;">⬇ Şablon İndir</a>
+        <span class="loan-inline-note">Şablon sütunlarını kullan, tüm taksitleri (ödenmiş dahil) eksiksiz gir.</span>
       </div>
       <div id="excelExtractStatus"></div>
-      <div class="ai-disclaimer" style="margin-top:10px;">
-        Kabul edilen sütunlar: DURUM, TAKSİT, ÖDEME TARİHİ, ANA PARA TUTARI, FAİZ, BSMV, KKDF, ÖDEME TUTARI
-        (bu sırada olması şart değil, başlıklar bu isimleri içerdiği sürece tanınır). Tüm taksitleri
-        (ödenmiş dahil) eksiksiz gir — kalan anapara zinciri bunlardan hesaplanır.
-      </div>
-
-      <div class="section-divider"></div>
-
-      <div class="section-title">Kredilerim — Canlı Takip</div>
-      <div id="loans-live-container"></div>
-      <div class="card-note" style="margin-top:6px;">
-        Hesap yöntemi: kalan anapara × (aylık faiz oranı / 30) × geçen gün + %KKDF + %BSMV. Bir krediyi
-        kapattığında "✓ Krediyi Kapattım" ile onaylayarak listeden kaldırabilirsin.
-      </div>
     </div>
 
     <div class="section-panel">
