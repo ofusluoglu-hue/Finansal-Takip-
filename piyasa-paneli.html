@@ -399,16 +399,29 @@
     text-overflow:ellipsis;
     white-space:nowrap;
   }
-  .stale-tag{
-    font-size:9.5px;
-    font-weight:600;
-    letter-spacing:.02em;
-    text-transform:none;
-    color:var(--muted-2);
-    background:#1c222b;
-    border:1px solid var(--border);
-    padding:1px 5px;
-    border-radius:4px;
+  .card-live-led{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--muted-2);
+    z-index:2;
+  }
+  .card-live-led.live{
+    background:var(--up);
+    box-shadow:0 0 5px var(--up);
+    animation:ledBlink 1.6s ease-in-out infinite;
+  }
+  .card-live-led.stale{
+    background:var(--down);
+    box-shadow:0 0 5px var(--down);
+    animation:ledBlink 1.6s ease-in-out infinite;
+  }
+  @keyframes ledBlink{
+    0%, 100%{opacity:1;}
+    50%{opacity:.25;}
   }
 
   .card-value{
@@ -1417,8 +1430,8 @@
           <div class="r-value" id="loansSummaryToplam">—</div>
         </div>
         <div class="yatirim-dagilim-row">
-          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKredi" style="width:0%;background:var(--down);"></div></div>
-          <div class="yatirim-dagilim-pct" id="borcPctKredi">%0</div>
+          <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKredi" style="width:0%;background:var(--amber);"></div></div>
+          <div class="yatirim-dagilim-pct" id="borcPctKredi" style="color:var(--amber);">%0</div>
         </div>
         <div class="grand-row">
           <div>
@@ -1429,7 +1442,7 @@
         </div>
         <div class="yatirim-dagilim-row">
           <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKmh" style="width:0%;background:#6EC3FF;"></div></div>
-          <div class="yatirim-dagilim-pct" id="borcPctKmh">%0</div>
+          <div class="yatirim-dagilim-pct" id="borcPctKmh" style="color:#6EC3FF;">%0</div>
         </div>
         <div class="grand-row">
           <div>
@@ -1440,7 +1453,7 @@
         </div>
         <div class="yatirim-dagilim-row">
           <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKk" style="width:0%;background:#C9A6FF;"></div></div>
-          <div class="yatirim-dagilim-pct" id="borcPctKk">%0</div>
+          <div class="yatirim-dagilim-pct" id="borcPctKk" style="color:#C9A6FF;">%0</div>
         </div>
         <div class="grand-row">
           <div>
@@ -1451,7 +1464,7 @@
         </div>
         <div class="yatirim-dagilim-row">
           <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarNakit" style="width:0%;background:#5EEAD4;"></div></div>
-          <div class="yatirim-dagilim-pct" id="borcPctNakit">%0</div>
+          <div class="yatirim-dagilim-pct" id="borcPctNakit" style="color:#5EEAD4;">%0</div>
         </div>
       </div>
     </div>
@@ -1687,8 +1700,8 @@ function buildCards(){
       <div class="card-label">
         <span>${c.label}</span>
         <span class="regime-badge" id="badge-${c.key}" style="display:none;"></span>
-        <span class="stale-tag" id="stale-${c.key}" style="display:none;">gecikmeli</span>
       </div>
+      <span class="card-live-led" id="stale-${c.key}"></span>
       <div class="card-value skeleton" id="val-${c.key}">0</div>
       <div class="card-change flat" id="chg-${c.key}"><span class="arrow">–</span><span>—</span></div>
       <div class="card-note" id="note-${c.key}" style="display:none;"></div>
@@ -1758,7 +1771,7 @@ function renderCard(cfg, price, chgPct, stale){
     chgEl.classList.remove('up','down');
     chgEl.classList.add('flat');
     chgEl.innerHTML = `<span class="arrow">–</span><span>—</span>`;
-    staleEl.style.display = stale ? 'inline-block' : 'none';
+    staleEl.className = 'card-live-led ' + (stale ? 'stale' : 'live');
     return;
   }
 
@@ -1804,7 +1817,7 @@ function renderCard(cfg, price, chgPct, stale){
     noteEl.style.display = 'block';
   }
 
-  staleEl.style.display = stale ? 'inline-block' : 'none';
+  staleEl.className = 'card-live-led ' + (stale ? 'stale' : 'live');
 }
 
 async function fetchYahoo(symbol){
