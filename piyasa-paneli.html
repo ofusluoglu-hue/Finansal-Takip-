@@ -3142,21 +3142,22 @@ function yatirimSatirHtml(item, toplamYatirim){
     fiyatStr = `$${fmtNumber(sonuc.fiyatBirimUSD, 2)}`;
   }
   const canliMi = sonuc.canli === false;
-  const ledHtml = sonuc.ts
-    ? `<span class="led-dot ${canliMi ? 'red' : 'green'}"></span>${new Date(sonuc.ts).toLocaleDateString('tr-TR')} ${new Date(sonuc.ts).toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})}`
-    : '';
+  const tarihStr = sonuc.ts
+    ? new Date(sonuc.ts).toLocaleDateString('tr-TR') + ' ' + new Date(sonuc.ts).toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})
+    : (canliMi ? 'eski veri' : 'şimdi');
+  const ledHtml = `<span class="led-dot ${canliMi ? 'red' : 'green'}"></span>${tarihStr}`;
   const metaParts = [adetStr, fiyatStr, `Pay %${fmtNumber(pay, 1)}`].filter(Boolean);
 
   return `
     <div class="yatirim-card">
       <div class="yatirim-card-top">
         <div class="yatirim-ad">
-          ${escapeHtml(yatirimEtiket(item))}
+          ${ledHtml}&nbsp;&nbsp;${escapeHtml(yatirimEtiket(item))}
         </div>
         <div class="yatirim-tutar" style="color:${renk};">₺${fmtNumber(sonuc.tutarTL, 2)}</div>
       </div>
       <div class="yatirim-card-bottom">
-        <div class="yatirim-meta">${metaParts.join(' · ')}${ledHtml ? ' · ' + ledHtml : ''}</div>
+        <div class="yatirim-meta">${metaParts.join(' · ')}</div>
         <div class="yatirim-aksiyon">
           <input type="number" step="0.000001" id="yatirim-edit-${item.id}" class="ai-input" style="width:100px;padding:6px 8px;font-size:12px;" placeholder="${editPlaceholder}">
           <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleYatirim('${item.id}')">Güncelle</button>
