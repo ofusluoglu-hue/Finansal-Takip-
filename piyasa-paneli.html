@@ -810,6 +810,52 @@
     padding:8px 0;
   }
 
+  .ai-model-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+  .ai-model-label{
+    display:block;
+    font-size:10.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--muted);
+    margin-bottom:4px;
+  }
+  .ai-model-hint{
+    font-size:11.5px;
+    color:var(--muted-2);
+  }
+  .ai-attach-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:10px;
+    margin-bottom:6px;
+  }
+  #aiFilePreview img{
+    max-width:160px;
+    max-height:160px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    margin-top:8px;
+  }
+  #aiFilePreview .pdf-badge{
+    display:inline-block;
+    margin-top:8px;
+    font-size:11.5px;
+    color:var(--muted);
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    padding:6px 10px;
+    border-radius:7px;
+  }
+
   /* ---- Kredi Ekle ---- */
   .loan-add-row{
     display:flex;
@@ -1504,10 +1550,31 @@
       <b>⚙ Kurulum gerekiyor.</b> AI özelliğinin çalışması için kendi Cloudflare Worker adresini aşağıdaki kod içinde tanımlaman gerekiyor: dosyada <code>AI_ENDPOINT</code> satırını bul ve Worker adresinle değiştir. API anahtarı Worker'ın içinde saklanır, bu sayfada görünmez.
     </div>
 
+    <div class="ai-model-row">
+      <div>
+        <label class="ai-model-label">Model</label>
+        <select id="aiModelSelect" class="ai-input" style="min-width:230px;">
+          <option value="claude-haiku-4-5-20251001">Haiku — Hızlı & Ekonomik ($1/$5)</option>
+          <option value="claude-sonnet-5" selected>Sonnet — Dengeli, varsayılan ($2/$10)</option>
+          <option value="claude-opus-5-5">Opus — Güçlü, derin analiz ($4/$20)</option>
+          <option value="claude-fable-5-1">Fable — En güçlü, en pahalı ($10/$50)</option>
+        </select>
+      </div>
+      <div class="ai-model-hint" id="aiModelHint">Sonnet: çoğu soru için hız/kalite dengesi en iyi seçenek.</div>
+    </div>
+
     <div class="ai-form">
       <textarea class="ai-input" id="aiInput" rows="2" placeholder="Örn: ASELSAN'ı değerlendir — finansalları, sektör görünümü ve haber akışıyla birlikte skorla"></textarea>
       <button class="ai-btn" id="aiBtn" onclick="askAI()">Değerlendir</button>
     </div>
+
+    <div class="ai-attach-row">
+      <label class="loan-file-label" for="aiFileInput">📎 PDF veya Resim Ekle</label>
+      <input type="file" id="aiFileInput" accept="application/pdf,image/png,image/jpeg,image/webp" style="display:none;" onchange="onAiFileSelected(event)">
+      <span class="loan-file-name" id="aiFileName">Dosya eklenmedi</span>
+      <button class="loan-delete-btn" id="aiFileClearBtn" style="display:none;" onclick="clearAiFile()">Kaldır</button>
+    </div>
+    <div id="aiFilePreview"></div>
 
     <div class="ai-chips">
       <button class="ai-chip" onclick="fillAI('THYAO hissesini finansalları, sektör görünümü ve güncel haberleriyle değerlendir ve skorla')">THYAO değerlendir</button>
@@ -2263,11 +2330,65 @@ Kurallar:
   başlıkları indirgeyerek oku. Puan Kartı'ndaki rakamlar senin bağımsız analitik yargın olmalı —
   tek bir haberin veya kaynağın tekrarı değil.`;
 
+// ---------- AI Finans: dosya eki (PDF/Resim) ----------
+let aiAttachedFile = null; // { base64, mediaType, name, kind: 'image'|'pdf' }
+
+async function onAiFileSelected(event){
+  const file = event.target.files[0];
+  const nameEl = document.getElementById('aiFileName');
+  const clearBtn = document.getElementById('aiFileClearBtn');
+  const previewEl = document.getElementById('aiFilePreview');
+
+  if(!file){ return; }
+
+  const isPdf = file.type === 'application/pdf';
+  const isImage = file.type.startsWith('image/');
+  if(!isPdf && !isImage){
+    showAlertModal('Sadece PDF veya resim (PNG/JPEG/WEBP) ekleyebilirsin.');
+    event.target.value = '';
+    return;
+  }
+  if(file.size > 15 * 1024 * 1024){
+    showAlertModal('Dosya çok büyük (15 MB üstü). Daha küçük bir dosya seç.');
+    event.target.value = '';
+    return;
+  }
+
+  const base64 = await fileToBase64(file);
+  aiAttachedFile = { base64, mediaType: file.type, name: file.name, kind: isPdf ? 'pdf' : 'image' };
+
+  nameEl.textContent = file.name;
+  clearBtn.style.display = 'inline-block';
+  previewEl.innerHTML = isImage
+    ? `<img src="data:${file.type};base64,${base64}" alt="${escapeHtml(file.name)}">`
+    : `<div class="pdf-badge">📄 ${escapeHtml(file.name)}</div>`;
+}
+
+function clearAiFile(){
+  aiAttachedFile = null;
+  document.getElementById('aiFileInput').value = '';
+  document.getElementById('aiFileName').textContent = 'Dosya eklenmedi';
+  document.getElementById('aiFileClearBtn').style.display = 'none';
+  document.getElementById('aiFilePreview').innerHTML = '';
+}
+
+const AI_MODEL_HINTS = {
+  'claude-haiku-4-5-20251001': 'Haiku: en hızlı ve en ucuz — basit/kısa sorular için yeterli.',
+  'claude-sonnet-5': 'Sonnet: çoğu soru için hız/kalite dengesi en iyi seçenek.',
+  'claude-opus-5-5': 'Opus: daha derin, çok yönlü analiz gerektiren sorular için.',
+  'claude-fable-5-1': 'Fable: en yüksek kapasiteli model — en karmaşık, en pahalı analizler için.',
+};
+
+document.getElementById('aiModelSelect').addEventListener('change', function(){
+  document.getElementById('aiModelHint').textContent = AI_MODEL_HINTS[this.value] || '';
+});
+
 async function askAI(){
   const input = document.getElementById('aiInput');
   const answerEl = document.getElementById('aiAnswer');
   const btn = document.getElementById('aiBtn');
   const question = input.value.trim();
+  const selectedModel = document.getElementById('aiModelSelect').value;
   if(!question) return;
 
   if(AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
@@ -2277,15 +2398,25 @@ async function askAI(){
 
   btn.disabled = true;
   renderScore(null);
-  answerEl.innerHTML = '<div class="ai-thinking">Analiz ediliyor, haberler taranıyor…</div>';
+  answerEl.innerHTML = '<div class="ai-thinking">' + (aiAttachedFile ? 'Dosya okunuyor, analiz ediliyor…' : 'Analiz ediliyor, haberler taranıyor…') + '</div>';
+
+  // Soruyu düz metin ya da (dosya eklendiyse) çok parçalı içerik olarak kur
+  let userContent = question;
+  if(aiAttachedFile){
+    const blok = aiAttachedFile.kind === 'pdf'
+      ? { type: 'document', source: { type: 'base64', media_type: aiAttachedFile.mediaType, data: aiAttachedFile.base64 } }
+      : { type: 'image', source: { type: 'base64', media_type: aiAttachedFile.mediaType, data: aiAttachedFile.base64 } };
+    userContent = [blok, { type: 'text', text: question }];
+  }
 
   try{
     const res = await fetch(AI_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        model: selectedModel,
         system: AI_SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: question }],
+        messages: [{ role: 'user', content: userContent }],
       }),
     });
 
