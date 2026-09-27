@@ -3090,8 +3090,12 @@ function nakitTLHesapla(item){
   if(sonKur){
     return { tutarTL: girilenTutar * sonKur, kur: sonKur, canliKur: false, girilenTutar };
   }
-  // Hiçbir kur bilgisi yoksa (çok eski kayıt), önceden hesaplanmış TL tutarını olduğu gibi göster
-  return { tutarTL: item.tutar != null ? Number(item.tutar) || 0 : girilenTutar, kur: null, canliKur: false, girilenTutar };
+  // Hiçbir kur bilgisi yoksa (çok eski, gerçekten TL olarak kaydedilmiş bir kayıt hariç) —
+  // döviz tutarını YANLIŞLIKLA TL gibi göstermek yerine "kur bekleniyor" durumu için null dön.
+  if(item.tutar != null && item.paraBirimi == null){
+    return { tutarTL: Number(item.tutar) || 0, kur: null, canliKur: false, girilenTutar };
+  }
+  return null;
 }
 
 function renderNakit(){
@@ -3112,7 +3116,24 @@ function renderNakit(){
 
   container.innerHTML = list.map(item => {
     try{
-      const { tutarTL, kur, canliKur, girilenTutar } = nakitTLHesapla(item);
+      const sonuc = nakitTLHesapla(item);
+
+      if(!sonuc){
+        return `
+          <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
+            <div class="ai-score-num" style="font-size:24px;color:var(--muted-2);">—</div>
+            <div>
+              <div class="ai-score-verdict">${escapeHtml(item.ad || '')} Elden Nakit Borcu</div>
+              <div class="ai-score-meta">${fmtNumber(item.girilenTutar, 2)} ${item.paraBirimi} · kur bekleniyor — birkaç saniye sonra tekrar dene</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
+              <button class="loan-delete-btn" style="margin-left:0;" onclick="manuelListeSil('${NAKIT_KEY}','nakit','${item.id}')">✓ Borcu Kapattım</button>
+            </div>
+          </div>
+        `;
+      }
+
+      const { tutarTL, kur, canliKur, girilenTutar } = sonuc;
       toplam += tutarTL;
       const t = new Date(item.tarih);
       if(!enSonTarih || t > enSonTarih) enSonTarih = t;
