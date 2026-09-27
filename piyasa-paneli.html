@@ -3349,7 +3349,7 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   netEl.textContent = (netDeger < 0 ? '-' : '') + '₺' + fmtNumber(Math.abs(netDeger), 0);
   netEl.className = 'summary-value ' + (netDeger >= 0 ? 'pos' : 'neg');
 
-  // Pasta grafiği: sadece Varlıklarım'ın türlerine göre dağılım (yatırım dahil değil)
+  // Pasta grafiği: Varlıklarım'ın türlerine göre + Yatırımlarım (Toplam Varlık rakamına dahil olmasa da grafikte gösterilir)
   const pastaEl = document.getElementById('finansalVarlikPasta');
   const legendEl = document.getElementById('finansalVarlikPastaLegend');
   if(!pastaEl || !legendEl) return;
@@ -3358,9 +3358,11 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   (varlikListesi || []).forEach(item => {
     kategoriToplam[item.tur] = (kategoriToplam[item.tur] || 0) + (Number(item.deger) || 0);
   });
+  if(toplamYatirim > 0) kategoriToplam['Yatırımlar'] = toplamYatirim;
   const kategoriler = Object.keys(kategoriToplam).filter(k => kategoriToplam[k] > 0);
+  const pastaToplam = toplamVarlikListesi + toplamYatirim;
 
-  if(!kategoriler.length || toplamVarlikListesi <= 0){
+  if(!kategoriler.length || pastaToplam <= 0){
     pastaEl.style.background = '#1b212a';
     legendEl.innerHTML = '<span style="font-size:11px;color:var(--muted-2);">Henüz varlık yok</span>';
     return;
@@ -3368,7 +3370,7 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
 
   let acisum = 0;
   const dilimler = kategoriler.map(kat => {
-    const yuzde = kategoriToplam[kat] / toplamVarlikListesi * 100;
+    const yuzde = kategoriToplam[kat] / pastaToplam * 100;
     const baslangic = acisum;
     acisum += yuzde;
     return `${VARLIK_KATEGORI_RENK[kat] || '#888'} ${baslangic.toFixed(2)}% ${acisum.toFixed(2)}%`;
@@ -3376,7 +3378,7 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   pastaEl.style.background = `conic-gradient(${dilimler.join(', ')})`;
 
   legendEl.innerHTML = kategoriler.map(kat => {
-    const yuzde = kategoriToplam[kat] / toplamVarlikListesi * 100;
+    const yuzde = kategoriToplam[kat] / pastaToplam * 100;
     return `<span style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:${VARLIK_KATEGORI_RENK[kat] || '#888'};display:inline-block;flex-shrink:0;"></span>${escapeHtml(kat)} %${fmtNumber(yuzde,1)}</span>`;
   }).join('');
 }
