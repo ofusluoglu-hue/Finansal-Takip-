@@ -311,11 +311,24 @@
     font-variant-numeric:tabular-nums;
     line-height:1.2;
   }
-  .digital-clock-fixed{
+  .clock-rail{
     position:fixed;
     top:16px;
-    right:22px;
+    left:0;
+    right:0;
     z-index:500;
+    pointer-events:none;
+  }
+  .clock-rail-inner{
+    max-width:1400px;
+    margin:0 auto;
+    padding:0 20px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .digital-clock-fixed{
+    position:relative;
+    pointer-events:auto;
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:10px;
@@ -334,7 +347,7 @@
     animation:ledBlink 1.6s ease-in-out infinite;
   }
   @media (max-width:900px){
-    .digital-clock-fixed{position:relative;top:auto;right:auto;margin:0 0 14px auto;width:fit-content;}
+    .clock-rail{position:static;padding-top:12px;}
   }
   .digital-clock-time{
     font-size:22px;
@@ -1218,10 +1231,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-<div class="digital-clock digital-clock-fixed">
-  <span class="clock-live-led"></span>
-  <div class="digital-clock-time" id="digitalClockTime">--:--:--</div>
-  <div class="digital-clock-date" id="digitalClockDate">—</div>
+<div class="clock-rail">
+  <div class="clock-rail-inner">
+    <div class="digital-clock digital-clock-fixed">
+      <span class="clock-live-led"></span>
+      <div class="digital-clock-time" id="digitalClockTime">--:--:--</div>
+      <div class="digital-clock-date" id="digitalClockDate">—</div>
+    </div>
+  </div>
 </div>
 <div class="wrap">
 <div class="layout">
