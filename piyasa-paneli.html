@@ -306,6 +306,12 @@
     font-size:12.5px;
     color:var(--muted);
   }
+  #statusText{
+    max-width:250px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
   .digital-clock{
     text-align:right;
     font-variant-numeric:tabular-nums;
@@ -313,7 +319,7 @@
   }
   .clock-rail{
     position:fixed;
-    top:16px;
+    top:24px;
     left:0;
     right:0;
     z-index:500;
@@ -322,9 +328,10 @@
   .clock-rail-inner{
     max-width:1400px;
     margin:0 auto;
-    padding:0 20px;
+    /* sol: wrap padding (20) + sidebar (230) + boşluk (20) → saat, içerik alanının tam ortasına gelir */
+    padding:0 20px 0 270px;
     display:flex;
-    justify-content:flex-end;
+    justify-content:center;
   }
   .digital-clock-fixed{
     position:relative;
@@ -348,12 +355,13 @@
   }
   @media (max-width:900px){
     .clock-rail{position:static;padding-top:12px;}
+    .clock-rail-inner{padding:0 20px;}
   }
   .digital-clock-time{
     font-size:22px;
     font-weight:800;
     font-family:'Courier New',ui-monospace,monospace;
-    color:var(--amber);
+    color:#8CFFB5;
     letter-spacing:.03em;
   }
   .digital-clock-date{
@@ -2106,9 +2114,11 @@ async function refreshMarketData(){
   if(anyError){
     dot.className = 'dot err';
     statusText.textContent = `Bazı veriler alınamadı (${lastErrorMsg}) · ` + new Date().toLocaleTimeString('tr-TR');
+    statusText.title = statusText.textContent;
   } else {
     dot.className = 'dot';
     statusText.textContent = 'Canlı · güncellendi ' + new Date().toLocaleTimeString('tr-TR');
+    statusText.title = statusText.textContent;
   }
 }
 
