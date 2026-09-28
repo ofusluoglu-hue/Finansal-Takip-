@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Piyasa Özeti</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
 <style>
   :root{
     --bg:#0A0D12;
@@ -1465,10 +1467,39 @@
   .bp-ek{display:inline-flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:12px;margin-bottom:8px;}
   .bp-ek button{background:none;border:none;color:var(--down);cursor:pointer;font-size:14px;line-height:1;}
 
+
+  /* ===== Giriş ekranı + senkron durumu ===== */
+  .giris-ekrani{position:fixed;inset:0;z-index:100000;background:var(--bg);align-items:center;justify-content:center;padding:20px;}
+  .giris-kutu{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:26px 24px;text-align:center;}
+  .giris-kilit{font-size:30px;margin-bottom:6px;}
+  .giris-kutu h2{margin:0 0 6px;font-size:20px;}
+  .giris-kutu p{margin:0 0 16px;color:var(--muted);font-size:13px;}
+  .giris-kutu input{width:100%;box-sizing:border-box;background:var(--panel-2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:11px 12px;font-size:15px;font-family:inherit;outline:none;margin-bottom:10px;}
+  .giris-kutu input:focus{border-color:var(--amber);}
+  .giris-kutu button{width:100%;background:var(--amber);color:#1a1200;border:none;border-radius:8px;padding:11px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;}
+  .giris-kutu button:disabled{opacity:.6;cursor:default;}
+  .giris-mesaj{margin-top:10px;min-height:16px;font-size:12.5px;color:var(--down);}
+  .nav-alt{margin-top:8px;padding:10px 8px 4px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+  #senkronDurum{font-size:11px;color:var(--muted-2);}
+  #senkronDurum[data-durum="ok"]{color:#82CBA4;}
+  #senkronDurum[data-durum="hata"]{color:var(--amber);}
+  .cikis-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:11.5px;padding:6px 8px;cursor:pointer;font-family:inherit;text-align:left;}
+  .cikis-btn:hover{color:var(--down);border-color:var(--down);}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
+<div id="girisEkrani" class="giris-ekrani" style="display:none;">
+  <div class="giris-kutu">
+    <div class="giris-kilit">🔒</div>
+    <h2>Finansal Takip</h2>
+    <p>Devam etmek için erişim kodunu gir.</p>
+    <input type="password" id="girisKod" autocomplete="current-password" placeholder="Erişim kodu" onkeydown="if(event.key==='Enter')girisYap()">
+    <button id="girisBtn" onclick="girisYap()">Giriş</button>
+    <div class="giris-mesaj" id="girisMesaj"></div>
+  </div>
+</div>
 <div class="wrap">
 <div class="layout">
 
@@ -1493,6 +1524,10 @@
       <div class="nav-item" data-tab="ai" onclick="switchTab('ai')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg>
         <span>Bay Piyasa <small style="font-size:11px;font-weight:500;opacity:.75;">(AI Asistan)</small></span>
+      </div>
+      <div class="nav-alt">
+        <div id="senkronDurum" data-durum="senkron">☁ Senkronize ediliyor…</div>
+        <button class="cikis-btn" onclick="cikisYap()">🔒 Çıkış yap</button>
       </div>
     </div>
   </div>
@@ -1963,6 +1998,254 @@
 </div>
 
 <script>
+// ===== GÜVENLİK & SENKRON BAŞLANGIÇ =====
+// 1) Erişim kodu: kod girilmeden Worker'a hiçbir istek gitmez; giriş ekranı sayfayı kaplar.
+// 2) Senkron: veriler Cloudflare D1'de saklanır. Tarayıcı (localStorage) hızlı önbellektir; her değişiklik D1'e gönderilir,
+//    açılışta ve sekmeye dönüldüğünde diğer cihazlardaki değişiklikler çekilir.
+const MY_WORKER = 'https://weathered-dream-54b3.ofusluoglu.workers.dev';
+const ERISIM_KEY = 'ft_erisim';
+const SENKRON_META_KEY = 'ft_senkron_meta';
+const SENKRON_ANAHTARLARI = new Set([
+  'ft_yatirimlar_v1', 'ft_varliklarim_v1', 'ft_custom_loans_v1', 'ft_closed_loans_v1',
+  'ft_kredi_kartlari_v1', 'ft_kmh_v1', 'ft_elden_nakit_v1', 'ft_sabit_krediler_v1',
+  'ft_bay_piyasa_v1', 'ft_haber_ceviri_v1',
+]);
+
+const _depoSetItem = Storage.prototype.setItem;
+function _snYaz(k, v){ _depoSetItem.call(localStorage, k, v); }   // senkron kuyruğuna girmeyen yazma
+
+// ---- Worker'a giden isteklere erişim kodunu ekle (yalnızca Worker'a; üçüncü taraf proxy'lere ASLA) ----
+const _orijinalFetch = window.fetch.bind(window);
+window.fetch = function(input, init){
+  const url = typeof input === 'string' ? input : ((input && input.url) || '');
+  if(url === MY_WORKER || url.startsWith(MY_WORKER + '/')){
+    const kod = localStorage.getItem(ERISIM_KEY);
+    if(!kod) return Promise.reject(new Error('Giriş gerekli'));
+    init = Object.assign({}, init);
+    const h = new Headers(init.headers || {});
+    h.set('Authorization', 'Bearer ' + kod);
+    init.headers = h;
+    return _orijinalFetch(input, init).then(res => {
+      if(res.status === 401) girisGoster('Erişim kodu geçersiz — tekrar gir.');
+      return res;
+    });
+  }
+  return _orijinalFetch(input, init);
+};
+
+// ---- Giriş ekranı ----
+function girisGoster(mesaj){
+  const el = document.getElementById('girisEkrani');
+  if(!el) return;
+  el.style.display = 'flex';
+  const m = document.getElementById('girisMesaj'); if(m) m.textContent = mesaj || '';
+  const k = document.getElementById('girisKod'); if(k){ k.value = ''; setTimeout(() => k.focus(), 50); }
+}
+async function girisYap(){
+  const kodEl = document.getElementById('girisKod');
+  const btn = document.getElementById('girisBtn');
+  const msj = document.getElementById('girisMesaj');
+  const kod = (kodEl.value || '').trim();
+  if(!kod) return;
+  btn.disabled = true; msj.textContent = 'Kontrol ediliyor…';
+  try{
+    const res = await _orijinalFetch(MY_WORKER + '/auth/check', { headers: { Authorization: 'Bearer ' + kod } });
+    if(res.ok){ _snYaz(ERISIM_KEY, kod); location.reload(); return; }
+    msj.textContent = res.status === 429 ? 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.'
+                    : res.status === 503 ? 'Sunucu kurulumu eksik (Cloudflare\'da ACCESS_TOKEN tanımlı değil).'
+                    : 'Kod yanlış.';
+  }catch(e){ msj.textContent = 'Sunucuya ulaşılamadı. İnternetini kontrol et.'; }
+  btn.disabled = false;
+}
+async function cikisYap(){
+  showConfirmModal('Çıkış yapılırsa bu cihazdaki veriler silinir (veriler sunucuda güvende, tekrar giriş yapınca gelir). Emin misin?', async () => {
+    try{ await senkronGonder(); }catch(e){ /* bağlantı yoksa devam */ }
+    SENKRON_ANAHTARLARI.forEach(k => localStorage.removeItem(k));
+    localStorage.removeItem(ERISIM_KEY);
+    localStorage.removeItem(SENKRON_META_KEY);
+    location.reload();
+  });
+}
+
+// ---- Senkron durumu ----
+function _snMetaYukle(){
+  const bos = { gorulen: {}, bekleyen: {}, since: 0, ilkSenkron: false };
+  try{ const m = JSON.parse(localStorage.getItem(SENKRON_META_KEY) || 'null'); if(m) return Object.assign(bos, m); }catch(e){ /* bozuk kayıt */ }
+  return bos;
+}
+let _snMeta = _snMetaYukle();
+let _senkronHazir = false;      // açılıştaki ilk çekme bitmeden yapılan yazmalar "kullanıcı değişikliği" sayılmaz
+let _snGonderiyor = false;
+let _snZamanlayici = null;
+let _snSonCekme = 0;
+function _snMetaKaydet(){ _snYaz(SENKRON_META_KEY, JSON.stringify(_snMeta)); }
+
+function senkronDurumYaz(tur){
+  const el = document.getElementById('senkronDurum');
+  if(!el) return;
+  const saat = new Date().toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' });
+  el.textContent = tur === 'ok' ? '☁ Senkron tamam · ' + saat
+                 : tur === 'bekliyor' ? '☁ Kaydediliyor…'
+                 : tur === 'hata' ? '☁ Bağlantı yok — değişiklikler kaydedilecek'
+                 : '☁ Senkronize ediliyor…';
+  el.dataset.durum = tur;
+}
+
+// localStorage'a yazılan senkron anahtarlarını kuyruğa al
+Storage.prototype.setItem = function(k, v){
+  _depoSetItem.call(this, k, v);
+  if(this === localStorage && _senkronHazir && SENKRON_ANAHTARLARI.has(k)){
+    _snMeta.bekleyen[k] = true;
+    _snMetaKaydet();
+    senkronDurumYaz('bekliyor');
+    clearTimeout(_snZamanlayici);
+    _snZamanlayici = setTimeout(senkronGonder, 1200);
+  }
+};
+
+// İki cihazda aynı anda değişiklik olursa: liste verilerini (id'ye göre) birleştir; sunucudakiler + yerelde olup sunucuda olmayanlar
+function snDizileriBirlestir(yerelStr, sunucuStr){
+  try{
+    const y = JSON.parse(yerelStr), s = JSON.parse(sunucuStr);
+    if(!Array.isArray(y) || !Array.isArray(s)) return null;
+    const kimlik = o => (o && typeof o === 'object' && o.id != null) ? 'id:' + o.id : 'js:' + JSON.stringify(o);
+    const goruldu = new Set(s.map(kimlik));
+    return JSON.stringify(s.concat(y.filter(o => !goruldu.has(kimlik(o)))));
+  }catch(e){ return null; }
+}
+
+// Sunucudaki değişiklikleri çeker; yerel veri değiştiyse true döner
+async function senkronCek(){
+  const res = await fetch(MY_WORKER + '/data?since=' + (_snMeta.since || 0), { cache: 'no-store' });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  const items = (await res.json()).items || [];
+  const ilk = !_snMeta.ilkSenkron;
+  let degisti = false;
+
+  for(const it of items){
+    if(!SENKRON_ANAHTARLARI.has(it.key)) continue;
+    const yerel = localStorage.getItem(it.key);
+    if(_snMeta.bekleyen[it.key] && yerel !== null && yerel !== it.value){
+      // Gönderilmemiş yerel değişiklik var, sunucuda da farklı bir sürüm var → birleştir (liste ise), değilse yerel kalsın
+      const birlesik = snDizileriBirlestir(yerel, it.value);
+      if(birlesik !== null && birlesik !== yerel){ _snYaz(it.key, birlesik); degisti = true; }
+    } else if(yerel === null){
+      _snYaz(it.key, it.value); degisti = true;
+    } else if(yerel !== it.value){
+      if(ilk){
+        // Bu cihaz ilk kez senkronlanıyor ve iki tarafta da veri var → kaybetmemek için birleştir, gönder
+        const birlesik = snDizileriBirlestir(yerel, it.value);
+        if(birlesik !== null){ _snYaz(it.key, birlesik); if(birlesik !== it.value) _snMeta.bekleyen[it.key] = true; }
+        else { _snYaz('ft_yedek_' + it.key, yerel); _snYaz(it.key, it.value); }   // liste değilse sunucu kazanır, yerel yedeklenir
+        degisti = true;
+      } else {
+        _snYaz(it.key, it.value); degisti = true;
+      }
+    }
+    _snMeta.gorulen[it.key] = it.updated_at;
+    _snMeta.since = Math.max(_snMeta.since || 0, it.updated_at);   // yalnızca çekilenlere göre ilerler (kendi gönderdiklerimize göre değil)
+  }
+
+  if(ilk){
+    // İlk senkron: sunucuda hiç olmayan yerel anahtarlar (mevcut verini taşıma) sunucuya gönderilecek
+    const sunucuda = new Set(items.map(i => i.key));
+    SENKRON_ANAHTARLARI.forEach(k => { if(!sunucuda.has(k) && localStorage.getItem(k) !== null) _snMeta.bekleyen[k] = true; });
+    _snMeta.ilkSenkron = true;
+  }
+  _snMetaKaydet();
+  _snSonCekme = Date.now();
+  return degisti;
+}
+
+// Bekleyen yerel değişiklikleri sunucuya gönderir
+async function senkronGonder(){
+  if(_snGonderiyor) return;
+  _snGonderiyor = true;
+  let cakisma = false;
+  try{
+    for(const k of Object.keys(_snMeta.bekleyen)){
+      const deger = localStorage.getItem(k);
+      if(deger === null){ delete _snMeta.bekleyen[k]; continue; }
+      const res = await fetch(MY_WORKER + '/data/' + encodeURIComponent(k), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value: deger, expected: _snMeta.gorulen[k] || 0 }),
+      });
+      if(res.status === 409){
+        // Başka cihaz araya girdi: liste ise birleştirip bir daha dene, değilse sunucudaki kalsın
+        const cur = (await res.json()).current;
+        const birlesik = snDizileriBirlestir(deger, cur.value);
+        _snMeta.gorulen[k] = cur.updated_at;
+        _snMeta.since = Math.min(_snMeta.since || 0, cur.updated_at - 1);   // bir sonraki çekme bunu da görsün
+        if(birlesik !== null){ _snYaz(k, birlesik); }   // bekleyen kalır → döngü sonunda tekrar denenir
+        else { _snYaz(k, cur.value); delete _snMeta.bekleyen[k]; }
+        cakisma = true;
+        continue;
+      }
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const d = await res.json();
+      _snMeta.gorulen[k] = d.updated_at;
+      if(localStorage.getItem(k) === deger) delete _snMeta.bekleyen[k];   // gönderirken tekrar değiştiyse bekleyen kalır
+    }
+    _snMetaKaydet();
+    senkronDurumYaz('ok');
+  }catch(e){
+    _snMetaKaydet();
+    senkronDurumYaz('hata');
+    clearTimeout(_snZamanlayici);
+    _snZamanlayici = setTimeout(senkronGonder, 30000);   // bağlantı gelince tekrar dene
+  }finally{
+    _snGonderiyor = false;
+  }
+  if(cakisma && Object.keys(_snMeta.bekleyen).length){ clearTimeout(_snZamanlayici); _snZamanlayici = setTimeout(senkronGonder, 300); }
+}
+
+function _snReloadIzinli(){
+  try{
+    const son = parseInt(sessionStorage.getItem('ft_senkron_reload') || '0', 10);
+    if(Date.now() - son < 20000) return false;      // döngüye girmesin
+    sessionStorage.setItem('ft_senkron_reload', String(Date.now()));
+  }catch(e){ /* sessionStorage yok */ }
+  return true;
+}
+
+// Sayfa açılışında: sunucudan çek, gerekirse sayfayı yenile, bekleyenleri gönder
+async function senkronBaslat(){
+  if(!localStorage.getItem(ERISIM_KEY)) return;
+  senkronDurumYaz('senkron');
+  try{
+    const degisti = await senkronCek();
+    if(degisti && _snReloadIzinli()){ location.reload(); return; }
+  }catch(e){
+    senkronDurumYaz('hata');
+  }
+  _senkronHazir = true;
+  if(typeof krediTohumla === 'function') krediTohumla();     // sabit kredileri ilk kez D1'e yaz
+  if(Object.keys(_snMeta.bekleyen).length) senkronGonder(); else if(_snSonCekme) senkronDurumYaz('ok');
+}
+
+// Sekmeye dönünce / belirli aralıklarla diğer cihazlardaki değişiklikleri al
+async function senkronArkaplan(){
+  if(!_senkronHazir || _snGonderiyor || Object.keys(_snMeta.bekleyen).length) return;
+  try{
+    const degisti = await senkronCek();
+    senkronDurumYaz('ok');
+    if(degisti){
+      const a = document.activeElement;
+      if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) senkronDurumYaz('bekliyor');   // yazarken sayfayı yenileme
+      else location.reload();
+    }
+  }catch(e){ senkronDurumYaz('hata'); }
+}
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible' && Date.now() - _snSonCekme > 60000) senkronArkaplan();
+});
+setInterval(() => { if(document.visibilityState === 'visible') senkronArkaplan(); }, 300000);
+
+// Kod girilmemişse giriş ekranını hemen göster
+if(!localStorage.getItem(ERISIM_KEY)) girisGoster('');
+// ===== GÜVENLİK & SENKRON BİTİŞ =====
+
 const CARDS = [
   { key:'ndx',    label:'QQM ETF (NASDAQ100)', source:'finnhub', symbol:'QQQM', fmt:'usd2',   fallback:{price:210.00, chg:-0.62} },
   { key:'sp500',  label:'VOO ETF (S&P500)',  source:'finnhub', symbol:'VOO',     fmt:'usd2',   fallback:{price:590.00, chg:-0.47} },
@@ -2698,9 +2981,6 @@ const TRUSTED_SITES = ['reuters.com','bloomberg.com','bloomberght.com','investin
 const TRUSTED_SOURCE_RE = /reuters|bloomberg|investing\.com|cnbc|financial times|(^|\W)ft\.com|wall street journal|wsj|marketwatch/i;
 const NEWS_SITE_FILTER = '(' + TRUSTED_SITES.map(s => 'site:' + s).join(' OR ') + ') when:3d';
 
-// Kendi Cloudflare Worker adresin (en güvenilir kaynak — ilk sırada denenir).
-// Worker'ı kurduktan sonra aşağıdaki adresi kendi adresinle değiştir.
-const MY_WORKER = 'https://weathered-dream-54b3.ofusluoglu.workers.dev';
 
 const NEWS_PROXIES = [
   MY_WORKER + '/proxy?url=',
@@ -2995,7 +3275,9 @@ function bpKaydet(){
     bp.chats = bp.chats.slice(0, 40);
     const gunler = Object.keys(bp.harcama).sort();
     while(gunler.length > 62) delete bp.harcama[gunler.shift()];
-    localStorage.setItem(BP_KEY, JSON.stringify(bp));
+    let json = JSON.stringify(bp);
+    while(json.length > 1400000 && bp.chats.length > 1){ bp.chats.pop(); json = JSON.stringify(bp); }   // D1 satır sınırı: en eski sohbeti at
+    localStorage.setItem(BP_KEY, json);
   }catch(e){ /* localStorage dolu/erişilemez */ }
 }
 
@@ -3515,7 +3797,7 @@ if(!AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
 //  - 'schedule': tüm ödeme planı bilinen krediler (ör. Garanti, On Bank) — taban tarih/anapara otomatik ilerler.
 //  - 'anchor'  : tek bir referans nokta bilinen krediler — taban tarih/anapara sabittir,
 //                bir sonraki ödemeden sonra kullanıcı tarafından elle güncellenmesi gerekir.
-const LOANS = [
+const LOANS_TOHUM = [
   {
     id: 'garanti',
     ad: 'Garanti BBVA',
@@ -3648,9 +3930,25 @@ function saveClosedLoanIds(list){
   try{ localStorage.setItem(CLOSED_LOANS_KEY, JSON.stringify(list)); }catch(e){ /* yok say */ }
 }
 
+// Sabit krediler artık D1'de saklanır (ft_sabit_krediler_v1). LOANS_TOHUM yalnızca ilk taşıma içindir:
+// anahtar hiç yoksa (ilk kurulum) buradan yazılır, sonra sunucudaki kopya kullanılır.
+const FIXED_LOANS_KEY = 'ft_sabit_krediler_v1';
+function loadFixedLoans(){
+  try{
+    const raw = localStorage.getItem(FIXED_LOANS_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){ /* bozuk kayıt: tohuma düş */ }
+  return (typeof LOANS_TOHUM !== 'undefined') ? LOANS_TOHUM : [];
+}
+function krediTohumla(){
+  if(localStorage.getItem(FIXED_LOANS_KEY) === null && typeof LOANS_TOHUM !== 'undefined' && LOANS_TOHUM.length){
+    localStorage.setItem(FIXED_LOANS_KEY, JSON.stringify(LOANS_TOHUM));
+  }
+}
+
 function getAllLoans(){
   const closed = loadClosedLoanIds();
-  const builtIn = LOANS.filter(l => !closed.includes(l.id));
+  const builtIn = loadFixedLoans().filter(l => !closed.includes(l.id));
   return builtIn.concat(loadCustomLoans());
 }
 
@@ -4872,6 +5170,7 @@ tickDigitalClock();
 setInterval(tickDigitalClock, 1000);
 
 bpBaslat();   // Bay Piyasa: kayıtlı sohbetleri/ayarları yükle
+senkronBaslat();   // D1 ile senkron: sunucudaki değişiklikleri çek, bekleyenleri gönder
 </script>
 </body>
 </html>
