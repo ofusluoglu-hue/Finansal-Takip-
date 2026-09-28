@@ -38,6 +38,7 @@
   .sidebar{
     width:230px;
     flex:0 0 230px;
+    align-self:stretch;   /* sticky menünün kaydırma alanı olsun */
   }
   .main{
     flex:1;
@@ -54,7 +55,7 @@
     border-radius:12px;
     padding:8px;
     position:sticky;
-    top:20px;
+    top:12px;
   }
   .nav-item{
     display:flex;
@@ -153,7 +154,7 @@
     margin-top:12px;
   }
 
-  .page-head{margin-bottom:20px;}
+  .page-head{display:none;}  /* başlık artık sabit üst çubukta */
   .page-head h1{
     font-size:20px;
     font-weight:700;
@@ -317,25 +318,36 @@
     font-variant-numeric:tabular-nums;
     line-height:1.2;
   }
-  .clock-rail{
-    position:fixed;
-    top:24px;
-    left:0;
-    right:0;
-    z-index:500;
-    pointer-events:none;
+  /* Üst çubuk: başlık | saat | durum + Yenile — kaydırırken hep üstte sabit kalır */
+  .app-bar{
+    position:sticky;
+    top:0;
+    z-index:100;
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:16px;
+    background:var(--bg);
+    padding:12px 0 14px;
+    margin-top:-12px;   /* sayfa başında içerik sol menüyle aynı hizadan başlasın */
+    margin-bottom:14px;
+    border-bottom:1px solid var(--border);
   }
-  .clock-rail-inner{
-    max-width:1400px;
-    margin:0 auto;
-    /* sol: wrap padding (20) + sidebar (230) + boşluk (20) → saat, içerik alanının tam ortasına gelir */
-    padding:0 20px 0 270px;
-    display:flex;
-    justify-content:center;
+  .app-bar .status{justify-self:end;}
+  .app-bar-title h1{
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 4px;
+    letter-spacing:-0.01em;
   }
+  .app-bar-title p{
+    margin:0;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .app-bar-title p:empty{display:none;}
   .digital-clock-fixed{
     position:relative;
-    pointer-events:auto;
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:10px;
@@ -354,8 +366,8 @@
     animation:ledBlink 1.6s ease-in-out infinite;
   }
   @media (max-width:900px){
-    .clock-rail{position:static;padding-top:12px;}
-    .clock-rail-inner{padding:0 20px;}
+    .app-bar{grid-template-columns:1fr;justify-items:start;gap:8px;}
+    .app-bar .status{justify-self:start;}
   }
   .digital-clock-time{
     font-size:22px;
@@ -1239,15 +1251,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-<div class="clock-rail">
-  <div class="clock-rail-inner">
-    <div class="digital-clock digital-clock-fixed">
-      <span class="clock-live-led"></span>
-      <div class="digital-clock-time" id="digitalClockTime">--:--:--</div>
-      <div class="digital-clock-date" id="digitalClockDate">—</div>
-    </div>
-  </div>
-</div>
 <div class="wrap">
 <div class="layout">
 
@@ -1278,17 +1281,16 @@
 
   <div class="main">
 
-  <!-- ================= TAB: GÜNLÜK MAKRO ÖZET ================= -->
-  <div class="tab-panel active" id="tab-gunluk">
-
-  <div class="file-warning" id="fileWarning">
-    <b>⚠ Bu dosyayı doğrudan bilgisayarından açtın (file://).</b> Tarayıcılar bu şekilde açılan sayfalarda internetten veri çekmeyi güvenlik gereği engeller, bu yüzden hiçbir kart/grafik/haber gelmez. Çözüm: dosyayı basit bir yerel sunucu üzerinden aç — örneğin klasörde terminalde <code>python3 -m http.server 8000</code> yazıp tarayıcıda <code>http://localhost:8000/piyasa-paneli.html</code> adresini aç, ya da dosyayı bir hosting'e (GitHub Pages, Netlify Drop vb.) yükle.
-  </div>
-
-  <div class="topbar">
-    <div class="title-block">
-      <h1>Günlük Özet</h1>
-      <p>Endeksler, faiz, döviz, emtia, kripto ve güncel haberler</p>
+  <!-- ===== SABİT ÜST ÇUBUK: başlık | saat | durum + Yenile (tüm sekmelerde) ===== -->
+  <div class="app-bar" id="appBar">
+    <div class="app-bar-title">
+      <h1 id="appBarTitle">Günlük Özet</h1>
+      <p id="appBarSub">Endeksler, faiz, döviz, emtia, kripto ve güncel haberler</p>
+    </div>
+    <div class="digital-clock digital-clock-fixed">
+      <span class="clock-live-led"></span>
+      <div class="digital-clock-time" id="digitalClockTime">--:--:--</div>
+      <div class="digital-clock-date" id="digitalClockDate">—</div>
     </div>
     <div class="status">
       <span id="statusDot" class="dot loading"></span>
@@ -1300,6 +1302,13 @@
         Yenile
       </button>
     </div>
+  </div>
+
+  <!-- ================= TAB: GÜNLÜK MAKRO ÖZET ================= -->
+  <div class="tab-panel active" id="tab-gunluk">
+
+  <div class="file-warning" id="fileWarning">
+    <b>⚠ Bu dosyayı doğrudan bilgisayarından açtın (file://).</b> Tarayıcılar bu şekilde açılan sayfalarda internetten veri çekmeyi güvenlik gereği engeller, bu yüzden hiçbir kart/grafik/haber gelmez. Çözüm: dosyayı basit bir yerel sunucu üzerinden aç — örneğin klasörde terminalde <code>python3 -m http.server 8000</code> yazıp tarayıcıda <code>http://localhost:8000/piyasa-paneli.html</code> adresini aç, ya da dosyayı bir hosting'e (GitHub Pages, Netlify Drop vb.) yükle.
   </div>
 
   <div class="grid" id="grid"></div>
@@ -4036,10 +4045,22 @@ async function onLoanExcelSelected(event){
 }
 
 // ---------- Sekme geçişi ----------
+const TAB_BASLIKLARI = {
+  gunluk:   ['Günlük Özet', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
+  finansal: ['Güncel Finansal Durumum', ''],
+  yatirim:  ['Yatırımlarım', ''],
+  borclar:  ['Borçlarım', ''],
+  ai:       ['AI Finans', 'Şirket, sektör ve piyasa sorularını güncel haber taramasıyla birlikte değerlendirir'],
+};
 function switchTab(tabId){
   document.querySelectorAll('.tab-panel').forEach(el=> el.classList.remove('active'));
   document.getElementById('tab-'+tabId).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(el=> el.classList.toggle('active', el.dataset.tab === tabId));
+  const b = TAB_BASLIKLARI[tabId];
+  if(b){
+    document.getElementById('appBarTitle').textContent = b[0];
+    document.getElementById('appBarSub').textContent = b[1];
+  }
 }
 
 buildCards();
