@@ -217,6 +217,13 @@
   #finansalToplamBorcUSD, #grandTotalUSD{color:#E59A9A;}
   #yatirimToplamDegerUSD{color:#82CBA4;}
 
+  /* Yatırım / Borç Oranı: rengi orana göre değişiyor (yeşil/sarı/kırmızı) — ışıma da o rengi takip eder */
+  #yatirimBorcOrani{animation:oranNabiz 2.2s ease-in-out infinite;}
+  @keyframes oranNabiz{
+    0%, 100%{opacity:1;  text-shadow:0 0 16px color-mix(in srgb, currentColor 55%, transparent);}
+    50%     {opacity:.5; text-shadow:0 0 3px  color-mix(in srgb, currentColor 15%, transparent);}
+  }
+
   /* Yatırımlarım'daki Toplam Yatırım ve Borçlarım'daki Toplam Borç da aynı nabız gibi yanıp sönsün */
   #yatirimToplamDeger, #grandTotal{
     --glow-a:rgba(51,192,124,.55);
