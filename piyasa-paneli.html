@@ -2303,10 +2303,23 @@ window.addEventListener('resize', ()=>{
 
 // ---------- Güncel Haberler ----------
 const NEWS_FEEDS = [
-  { key:'btc',  query:'Bitcoin' },
-  { key:'gold', query:'Altın ons Fed' },
-  { key:'us',   query:'ABD borsa Wall Street S&P 500' },
+  { key:'btc',  q_tr:'Bitcoin',                       q_en:'Bitcoin',
+    rel:/bitcoin|btc|crypto|kripto|ethereum|stablecoin|coinbase|digital asset|dijital varl/i },
+  { key:'gold', q_tr:'Altın ons Fed',                 q_en:'gold price Fed',
+    rel:/gold|altın|altin|bullion|precious|silver|gümüş|\bfed\b|treasury|yield|tahvil|faiz|dollar|dolar/i },
+  { key:'us',   q_tr:'ABD borsa Wall Street S&P 500', q_en:'Wall Street stocks S&P 500',
+    rel:/stock|wall street|s&p|nasdaq|\bdow\b|futures|equit|shares|borsa|hisse|market|\bfed\b|earnings|treasury|yield/i },
 ];
+
+// Haber olmayan sayfaları (kur çevirici, canlı fiyat, grafik sayfası vb.) ve 3 günden eski kayıtları ele
+const NEWS_JUNK_RE = /\||^convert\b|exchange rate|advanced chart|user rankings|real[- ]time|price live|live index|news today|historical data|stock price/i;
+const NEWS_MAX_AGE_MS = 72 * 3600 * 1000;
+
+// Sadece bu güvenilir kaynaklardan haber alınır (Google News aramasına site: filtresiyle eklenir,
+// ayrıca gelen sonuçlar kaynak adına göre bir kez daha süzülür). Son 2 gün ile sınırlı.
+const TRUSTED_SITES = ['reuters.com','bloomberg.com','bloomberght.com','investing.com','cnbc.com','ft.com','wsj.com','marketwatch.com'];
+const TRUSTED_SOURCE_RE = /reuters|bloomberg|investing\.com|cnbc|financial times|(^|\W)ft\.com|wall street journal|wsj|marketwatch/i;
+const NEWS_SITE_FILTER = '(' + TRUSTED_SITES.map(s => 'site:' + s).join(' OR ') + ') when:2d';
 
 // Kendi Cloudflare Worker adresin (en güvenilir kaynak — ilk sırada denenir).
 // Worker'ı kurduktan sonra aşağıdaki adresi kendi adresinle değiştir.
@@ -2342,46 +2355,93 @@ async function fetchWithFallback(url){
   throw lastErr || new Error('all proxies failed');
 }
 
-async function fetchNews(query){
-  const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=tr&gl=TR&ceid=TR:tr`;
+function haberGoreliZaman(ts){
+  if(!ts) return '';
+  const dk = Math.max(0, Math.round((Date.now() - ts) / 60000));
+  if(dk < 60) return dk + ' dk önce';
+  const sa = Math.round(dk / 60);
+  if(sa < 24) return sa + ' sa önce';
+  return Math.round(sa / 24) + ' gün önce';
+}
 
-  // 1) rss2json: RSS'i doğrudan JSON'a çevirir, CORS sorunu yaşamaz.
-  try{
-    const r2jUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
-    const res = await fetchWithTimeout(r2jUrl);
-    const data = await res.json();
-    if(data && data.status === 'ok' && Array.isArray(data.items) && data.items.length){
-      return data.items.slice(0, 4).map(it => ({
-        title: (it.title || '').split(' - ').slice(0, -1).join(' - ') || it.title || '',
-        link: it.link || '#',
-        source: it.author || (it.title || '').split(' - ').pop() || '',
-      }));
-    }
-  }catch(e){ /* alttaki yönteme düş */ }
+// Google News RSS'ini (tek bir dil sürümü için) çekip [{title, link, source, ts}] döndürür.
+async function fetchNewsEdition(query, edition){
+  const ed = edition === 'tr' ? 'hl=tr&gl=TR&ceid=TR:tr' : 'hl=en-US&gl=US&ceid=US:en';
+  const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query + ' ' + NEWS_SITE_FILTER)}&${ed}`;
 
-  // 2) Yedek: ham RSS XML, proxy zinciri üzerinden
+  // 1) Ham RSS, önce kendi Worker'ın üzerinden (önbelleksiz, en taze)
   try{
     const res = await fetchWithFallback(feedUrl);
     const text = await res.text();
     const xml = new DOMParser().parseFromString(text, 'text/xml');
-    const items = Array.from(xml.querySelectorAll('item')).slice(0, 4);
-    if(items.length){
-      return items.map(it => ({
-        title: it.querySelector('title')?.textContent || '',
+    const items = Array.from(xml.querySelectorAll('item')).map(it => {
+      const rawTitle = it.querySelector('title')?.textContent || '';
+      const idx = rawTitle.lastIndexOf(' - ');
+      return {
+        title: idx > 0 ? rawTitle.slice(0, idx) : rawTitle,
         link: it.querySelector('link')?.textContent || '#',
-        source: it.querySelector('source')?.textContent || '',
-      }));
+        source: it.querySelector('source')?.textContent || (idx > 0 ? rawTitle.slice(idx + 3) : ''),
+        ts: Date.parse(it.querySelector('pubDate')?.textContent || '') || 0,
+      };
+    });
+    if(items.length) return items;
+  }catch(e){ /* alttaki yönteme düş */ }
+
+  // 2) Yedek: rss2json (5 dakikalık dilimle önbelleği atlatıyoruz)
+  try{
+    const r2jUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl + '&_=' + Math.floor(Date.now() / 300000))}`;
+    const res = await fetchWithTimeout(r2jUrl);
+    const data = await res.json();
+    if(data && data.status === 'ok' && Array.isArray(data.items)){
+      return data.items.map(it => {
+        const rawTitle = it.title || '';
+        const idx = rawTitle.lastIndexOf(' - ');
+        return {
+          title: idx > 0 ? rawTitle.slice(0, idx) : rawTitle,
+          link: it.link || '#',
+          source: it.author || (idx > 0 ? rawTitle.slice(idx + 3) : ''),
+          ts: Date.parse((it.pubDate || '').replace(' ', 'T') + 'Z') || 0, // rss2json UTC verir
+        };
+      });
     }
-  }catch(e){ /* aşağıda boş döner */ }
+  }catch(e){ /* boş döner */ }
 
   return [];
 }
 
-function fallbackNewsLink(query){
-  const searchUrl = `https://news.google.com/search?q=${encodeURIComponent(query)}&hl=tr&gl=TR&ceid=TR:tr`;
+// Türkçe ve İngilizce sürümlerden gelen haberleri birleştirir, sadece güvenilir kaynakları alır,
+// tekrarları eler ve en yeniden eskiye sıralayıp ilk 4'ü döndürür.
+async function fetchNews(feed){
+  const [tr, en] = await Promise.all([
+    fetchNewsEdition(feed.q_tr, 'tr'),
+    fetchNewsEdition(feed.q_en, 'en'),
+  ]);
+  const simdi = Date.now();
+  const guvenilir = [...tr, ...en]
+    .filter(it => it.title
+      && TRUSTED_SOURCE_RE.test(it.source)      // sadece güvenilir kaynaklar
+      && !NEWS_JUNK_RE.test(it.title)           // fiyat/grafik/çevirici sayfaları haber değildir
+      && feed.rel.test(it.title)                // sütunun konusuyla alakalı olsun
+      && it.ts && (simdi - it.ts) <= NEWS_MAX_AGE_MS)  // son 3 gün
+    .sort((a, b) => b.ts - a.ts);
+
+  const goruldu = new Set();
+  const sonuc = [];
+  for(const it of guvenilir){
+    const anahtar = it.title.toLowerCase().slice(0, 60);
+    if(goruldu.has(anahtar)) continue;
+    goruldu.add(anahtar);
+    sonuc.push(it);
+    if(sonuc.length >= 4) break;
+  }
+  return sonuc;
+}
+
+function fallbackNewsLink(feed){
+  const searchUrl = `https://news.google.com/search?q=${encodeURIComponent(feed.q_tr + ' ' + NEWS_SITE_FILTER)}&hl=tr&gl=TR&ceid=TR:tr`;
   return `
     <a class="news-item" href="${searchUrl}" target="_blank" rel="noopener">
-      Güncel haberleri görüntülemek için tıklayın
+      Güvenilir kaynaklardan güncel haber bulunamadı — Google News'te aramak için tıkla
       <span class="news-source">Google News</span>
     </a>
   `;
@@ -2391,19 +2451,19 @@ async function loadNews(){
   await Promise.all(NEWS_FEEDS.map(async feed=>{
     const container = document.getElementById('news-'+feed.key);
     try{
-      const items = await fetchNews(feed.query);
+      const items = await fetchNews(feed);
       if(!items.length){
-        container.innerHTML = fallbackNewsLink(feed.query);
+        container.innerHTML = fallbackNewsLink(feed);
         return;
       }
       container.innerHTML = items.map(it => `
         <a class="news-item" href="${it.link}" target="_blank" rel="noopener">
           ${escapeHtml(it.title)}
-          <span class="news-source">${escapeHtml(it.source)}</span>
+          <span class="news-source">${escapeHtml(it.source)}${it.ts ? ' · ' + haberGoreliZaman(it.ts) : ''}</span>
         </a>
       `).join('');
     }catch(e){
-      container.innerHTML = fallbackNewsLink(feed.query);
+      container.innerHTML = fallbackNewsLink(feed);
     }
   }));
   document.getElementById('newsUpdated').textContent = 'güncellendi ' + new Date().toLocaleTimeString('tr-TR');
