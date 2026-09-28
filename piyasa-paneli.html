@@ -214,7 +214,19 @@
     margin-top:3px;
   }
   .summary-usd:empty{display:none;}
-  #finansalToplamBorcUSD{color:#E59A9A;}   /* borcun dolar karşılığı: ana kırmızıdan (#FF5C5C) daha soluk */
+  #finansalToplamBorcUSD, #grandTotalUSD{color:#E59A9A;}
+  #yatirimToplamDegerUSD{color:#82CBA4;}
+
+  /* Yatırımlarım'daki Toplam Yatırım ve Borçlarım'daki Toplam Borç da aynı nabız gibi yanıp sönsün */
+  #yatirimToplamDeger, #grandTotal{
+    --glow-a:rgba(51,192,124,.55);
+    --glow-b:rgba(51,192,124,.15);
+    animation:finansalNabiz 2.2s ease-in-out infinite;
+  }
+  #grandTotal{
+    --glow-a:rgba(255,92,92,.55);
+    --glow-b:rgba(255,92,92,.15);
+  }   /* borcun dolar karşılığı: ana kırmızıdan (#FF5C5C) daha soluk */
 
   /* Varlıklarım altındaki toplam: ortada, büyük ve nabız gibi yanıp sönen rakam */
   .varlik-toplam-row{
@@ -1485,6 +1497,7 @@
       <div class="summary-card">
         <div class="summary-label">Toplam Yatırım</div>
         <div class="summary-value" style="color:var(--up);font-size:28px;" id="yatirimToplamDeger">—</div>
+        <div class="summary-usd" id="yatirimToplamDegerUSD"></div>
         <div class="summary-sub" id="yatirimSummaryTarih">—</div>
       </div>
       <div class="summary-card">
@@ -1549,6 +1562,7 @@
       <div class="grand-total-left">
         <div class="summary-label" style="font-size:12px;">Toplam Borç</div>
         <div class="summary-value neg" style="font-size:32px;" id="grandTotal">—</div>
+        <div class="summary-usd" id="grandTotalUSD"></div>
       </div>
       <div class="grand-total-right" id="borcKategoriListesi">
         <div id="borcGrup-loans">
@@ -1786,9 +1800,11 @@ const CARDS = [
   { key:'ura',    label:'URA ETF (Global X Uranium)', source:'finnhub', symbol:'URA', fmt:'usd2', fallback:{price:38.00, chg:0.30} },
   { key:'nlr',    label:'NLR ETF (VanEck Uranium+Nuclear)', source:'finnhub', symbol:'NLR', fmt:'usd2', fallback:{price:110.00, chg:0.25} },
   { key:'xle',    label:'XLE ETF (Energy Select SPDR)', source:'finnhub', symbol:'XLE', fmt:'usd2', fallback:{price:95.00, chg:0.10} },
-  { key:'usdtry', label:'DOLAR/TL',     source:'twelvedata', symbol:'USD/TRY', fmt:'usd2',    fallback:{price:34.50, chg:0.05} },
-  { key:'eurtry', label:'EURO/TL',      source:'twelvedata', symbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
-  { key:'gold',   label:'ALTIN (ONS)',  source:'yahoo',    symbol:'GC=F',     fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
+  // Dolar/Euro: Yahoo (saniyelik güncel); Yahoo cevap vermezse tdSymbol ile Twelve Data'ya düşülür
+  { key:'usdtry', label:'DOLAR/TL',     source:'yahoo', symbol:'USDTRY=X', tdSymbol:'USD/TRY', fmt:'usd2',    fallback:{price:34.50, chg:0.05} },
+  { key:'eurtry', label:'EURO/TL',      source:'yahoo', symbol:'EURTRY=X', tdSymbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
+  // Altın: gerçek SPOT ons fiyatı (Twelve Data XAU/USD). Eski GC=F, gecikmeli ve primli bir vadeli kontrattı.
+  { key:'gold',   label:'ALTIN (ONS)',  source:'twelvedata', symbol:'XAU/USD', fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
   { key:'brent',  label:'BRENT PETROL', source:'yahoo',    symbol:'BZ=F',     fmt:'usd2',    fallback:{price:101.60, chg:0.39} },
   { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
   { key:'rexc',   label:'REXC ETF (Sprott Rare Earths Ex-China)', source:'finnhub', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
@@ -1956,16 +1972,49 @@ function renderCard(cfg, price, chgPct, stale, meta){
 
   // ABD hisse/ETF kartları: hangi seansın fiyatı gösteriliyor? (normal seansta not gizli)
   const seansNotEl = document.getElementById('note-' + cfg.key);
-  if(seansNotEl && cfg.source === 'finnhub'){
-    const etiket = (!stale && meta) ? (SEANS_ETIKET[meta.seans] || '') : '';
+  if(seansNotEl && (cfg.source === 'finnhub' || cfg.source === 'yahoo')){
+    let etiket = '';
+    if(!stale && meta) etiket = (meta.not !== undefined) ? meta.not : (SEANS_ETIKET[meta.seans] || '');
     seansNotEl.textContent = etiket;
     seansNotEl.style.display = etiket ? 'block' : 'none';
     seansNotEl.title = (etiket && meta && meta.kapanis) ? 'Son resmi kapanış: ' + fmtNumber(meta.kapanis, 2) : '';
   }
 
   let ledSinif = stale ? 'stale' : 'live';
-  if(!stale && meta && (meta.seans === 'closed' || /_yok$/.test(meta.seans))) ledSinif = 'closed'; // veri çekildi ama piyasa kapalı/yeni fiyat yok
+  if(!stale && meta && (meta.led === 'closed' || meta.seans === 'closed' || /_yok$/.test(meta.seans || ''))) ledSinif = 'closed'; // veri çekildi ama piyasa kapalı/yeni fiyat yok
   staleEl.className = 'card-live-led ' + ledSinif;
+}
+
+const _fxTabanOnbellek = {}; // döviz günlük taban fiyatı (günde bir kez hesaplanır)
+async function fxGunlukTaban(symbol){
+  const now = new Date();
+  const kesim = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 21, 0, 0)); // NY kapanışı ≈ 21:00 UTC
+  if(now < kesim) kesim.setUTCDate(kesim.getUTCDate() - 1);
+  const anahtar = symbol + '|' + kesim.toISOString();
+  if(_fxTabanOnbellek[anahtar] != null) return _fxTabanOnbellek[anahtar];
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=15m&range=5d`;
+  const res = await fetchWithFallback(url);
+  const r = (await res.json()).chart.result[0];
+  const ts = r.timestamp || [];
+  const cl = (r.indicators.quote[0] || {}).close || [];
+  let val = null;
+  for(let i = 0; i < ts.length; i++){ if(ts[i] * 1000 <= kesim.getTime() && cl[i] != null) val = cl[i]; }
+  if(val == null) throw new Error('fx taban yok');
+  _fxTabanOnbellek[anahtar] = val;
+  return val;
+}
+
+const _tdYedekZaman = {}; // Yahoo başarısız olunca Twelve Data'ya düşüşün son zamanı (kart bazında)
+
+// Yahoo kartlarının altına küçük not: veri eskiyse "Son işlem …", vadeli kontratlarda gecikme uyarısı
+function yahooNotMeta(cfg, ts){
+  if(!ts) return undefined;
+  if(Date.now() - ts > 3 * 3600 * 1000){
+    const d = new Date(ts);
+    return { not: 'Son işlem ' + d.toLocaleDateString('tr-TR', {day:'2-digit', month:'short'}) + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}), led: 'closed' };
+  }
+  if(cfg.symbol.endsWith('=F')) return { not: '~10 dk gecikmeli', led: 'live' }; // Yahoo, CME vadelilerini 10 dk gecikmeyle verir
+  return undefined;
 }
 
 async function fetchYahoo(symbol){
@@ -1978,9 +2027,16 @@ async function fetchYahoo(symbol){
       const result = data.chart.result[0];
       const meta = result.meta;
       const price = meta.regularMarketPrice;
-      const prevClose = meta.chartPreviousClose ?? meta.previousClose;
-      const chgPct = ((price - prevClose) / prevClose) * 100;
-      return { price, chgPct };
+      // Günlük değişim tabanı: bir önceki günlük çubuğun kapanışı. (meta.chartPreviousClose güvenilmez:
+      // 5 günlük aralığın BAŞINDAKİ fiyatı verir, yani günlük değil 5 günlük değişim çıkar.)
+      const kapanislar = ((result.indicators.quote[0] || {}).close || []).filter(v => v != null);
+      let onceki = kapanislar.length >= 2 ? kapanislar[kapanislar.length - 2] : null;
+      if(symbol.endsWith('=X')){
+        // Döviz: Yahoo'nun günlük çubuklarında hafta sonu/Cuma çubuğu eksik kalabiliyor → önceki günün 21:00 UTC kapanışı
+        try{ onceki = await fxGunlukTaban(symbol); }catch(e){ /* günlük çubuk tabanı kalır */ }
+      }
+      const chgPct = onceki ? ((price - onceki) / onceki) * 100 : 0; // taban yoksa (işlem görmeyen kontrat) değişim bilinmiyor → 0
+      return { price, chgPct, ts: meta.regularMarketTime ? meta.regularMarketTime * 1000 : null };
     }catch(e){
       lastErr = e;
       if(attempt === 1) await sleep(1200); // Yahoo'nun bot koruması kararsız — kısa bekleyip bir kez daha dene
@@ -2220,16 +2276,31 @@ async function refreshMarketData(){
   for(const cfg of otherCards){
     try{
       if(cfg.source === 'yahoo'){
-        const { price, chgPct } = await fetchYahoo(cfg.symbol);
-        renderCard(cfg, price, chgPct, false);
+        const { price, chgPct, ts } = await fetchYahoo(cfg.symbol);
+        renderCard(cfg, price, chgPct, false, yahooNotMeta(cfg, ts));
       } else if(cfg.source === 'fred'){
         const { price, chgPct } = await fetchFred(cfg.symbol);
         renderCard(cfg, price, chgPct, false);
       }
     }catch(e){
-      anyError = true;
-      lastErrorMsg = e.message || String(e);
-      renderStale(cfg);
+      // Dolar/Euro: Yahoo olmazsa Twelve Data'dan dene (günlük kota için en fazla 5 dakikada bir)
+      let kurtarildi = false;
+      if(cfg.tdSymbol && (Date.now() - (_tdYedekZaman[cfg.key] || 0)) > 5 * 60 * 1000){
+        _tdYedekZaman[cfg.key] = Date.now();
+        try{
+          const d = (await fetchTwelveDataBatch([cfg.tdSymbol]))[cfg.tdSymbol];
+          const fiyat = d ? parseFloat(d.close) : NaN;
+          if(d && !d.code && isFinite(fiyat)){
+            renderCard(cfg, fiyat, parseFloat(d.percent_change) || 0, false);
+            kurtarildi = true;
+          }
+        }catch(e2){ /* aşağıda eski değere dönülür */ }
+      }
+      if(!kurtarildi){
+        anyError = true;
+        lastErrorMsg = e.message || String(e);
+        renderStale(cfg);
+      }
     }
     await sleep(350);
   }
@@ -2237,6 +2308,9 @@ async function refreshMarketData(){
   if(location.protocol === 'file:'){
     document.getElementById('fileWarning').style.display = 'block';
   }
+
+  // Dolar/Euro artık Yahoo döngüsünde güncelleniyor — Elden Nakit Borçlar'ın TL karşılığını tazele
+  if(typeof renderNakit === 'function') renderNakit();
 
   // Tüm fiyatlar (Altın dahil) tazelendi — Yatırımlarım'daki canlı değerleri güncelle
   if(typeof renderYatirim === 'function') renderYatirim();
@@ -3071,6 +3145,8 @@ function refreshGrandTotal(){
   const toplam = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
   const el = document.getElementById('grandTotal');
   if(el) el.textContent = '₺' + fmtNumber(toplam, 0);
+  const borcUsdEl = document.getElementById('grandTotalUSD');
+  if(borcUsdEl) borcUsdEl.textContent = (toplam > 0 && _fxRates.USD) ? '≈ $' + fmtNumber(toplam / _fxRates.USD, 0) : '';
 
   // Her kategorinin toplam borca oranını çubuk + yüzde olarak göster
   const oranlar = [
@@ -3573,6 +3649,8 @@ function renderYatirim(){
   }
 
   document.getElementById('yatirimToplamDeger').textContent = list.length ? '₺' + fmtNumber(toplamYatirim, 0) : '—';
+  const yatirimUsdEl = document.getElementById('yatirimToplamDegerUSD');
+  if(yatirimUsdEl) yatirimUsdEl.textContent = (list.length && _fxRates.USD) ? '≈ $' + fmtNumber(toplamYatirim / _fxRates.USD, 0) : '';
   const now = new Date();
   document.getElementById('yatirimSummaryTarih').textContent = list.length
     ? now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}) + ' itibarıyla'
