@@ -2369,7 +2369,7 @@ function drawChart(svgEl, points){
 
   const gridLines = [0.25, 0.5, 0.75].map(frac=>{
     const yy = PAD_T + frac*(H-PAD_T-PAD_B);
-    return `<line x1="${PAD_L}" y1="${yy}" x2="${W-PAD_R}" y2="${yy}" stroke="#1b212a" stroke-width="1"/>`;
+    return `<line x1="${PAD_L}" y1="${yy}" x2="${W-PAD_R}" y2="${yy}" stroke="#252d39" stroke-width="2.4"/>`;
   }).join('');
 
   svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
