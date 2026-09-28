@@ -237,6 +237,21 @@
     50%     {opacity:.5;  text-shadow:0 0 3px rgba(51,192,124,.15);}
   }
 
+  /* Güncel Finansal Durumum'un 4 büyük rakamı da aynı nabız gibi yanıp sönsün (yeşil/kırmızıya göre ışıma rengi değişir) */
+  .finansal-summary-grid .summary-value{
+    --glow-a:rgba(51,192,124,.55);
+    --glow-b:rgba(51,192,124,.15);
+    animation:finansalNabiz 2.2s ease-in-out infinite;
+  }
+  .finansal-summary-grid .summary-value.neg{
+    --glow-a:rgba(255,92,92,.55);
+    --glow-b:rgba(255,92,92,.15);
+  }
+  @keyframes finansalNabiz{
+    0%, 100%{opacity:1;  text-shadow:0 0 16px var(--glow-a);}
+    50%     {opacity:.5; text-shadow:0 0 3px var(--glow-b);}
+  }
+
   .section-panel{
     background:var(--panel);
     border:1px solid var(--border);
