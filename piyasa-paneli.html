@@ -1881,7 +1881,7 @@ function renderCard(cfg, price, chgPct, stale, meta){
   valEl.textContent = valueStr;
 
   const isBp = cfg.fallback.bp;
-  const dir = chgPct > 0.005 ? 'up' : (chgPct < -0.005 ? 'down' : 'flat');
+  const dir = chgPct > 0 ? 'up' : (chgPct < 0 ? 'down' : 'flat'); // çok küçük değişimde bile çizgi yeşil/kırmızı yansın
   cardEl.classList.remove('up','down');
   if(dir!=='flat') cardEl.classList.add(dir);
 
@@ -1891,7 +1891,7 @@ function renderCard(cfg, price, chgPct, stale, meta){
   const sign = chgPct > 0 ? '+' : '';
   const chgLabel = isBp
     ? `${sign}${Math.round(chgPct*100)} bp`
-    : `${sign}%${fmtNumber(Math.abs(chgPct)===chgPct?chgPct:chgPct,2)}`;
+    : `${sign}%${fmtNumber(chgPct, (chgPct !== 0 && Math.abs(chgPct) < 0.01) ? 3 : 2)}`; // çok küçük değişimde 3 ondalık (ör. TL kurları)
   chgEl.innerHTML = `<span class="arrow">${arrow}</span><span>${chgLabel}</span>`;
 
   // VIX: rejim rozeti, renk ve açıklama notu
