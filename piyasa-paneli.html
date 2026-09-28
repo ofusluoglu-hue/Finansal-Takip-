@@ -613,11 +613,18 @@
   }
 
   .card{cursor:pointer;}
+  /* Seçili/üzerine gelinen kartta sol renkli çizgi (yeşil/kırmızı) korunsun: sadece diğer 3 kenar boyanır */
   .card.selected{
-    border-color:#3a4453;
+    border-top-color:#3a4453;
+    border-right-color:#3a4453;
+    border-bottom-color:#3a4453;
     box-shadow:0 0 0 1px #3a4453 inset;
   }
-  .card:hover{border-color:#2b3340;}
+  .card:hover{
+    border-top-color:#2b3340;
+    border-right-color:#2b3340;
+    border-bottom-color:#2b3340;
+  }
 
   .chart-panel{
     margin-top:20px;
