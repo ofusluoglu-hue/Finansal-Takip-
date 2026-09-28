@@ -208,12 +208,33 @@
     margin-top:6px;
   }
   .summary-usd{
-    font-size:11px;
+    font-size:13.5px;
     font-weight:600;
-    color:var(--muted);
-    margin-top:2px;
+    color:#82CBA4;   /* ana TL yeşilinden (#33C07C) daha soluk bir ton */
+    margin-top:3px;
   }
   .summary-usd:empty{display:none;}
+
+  /* Varlıklarım altındaki toplam: ortada, büyük ve nabız gibi yanıp sönen rakam */
+  .varlik-toplam-row{
+    display:flex;
+    justify-content:center;
+    padding:20px 0 8px;
+    margin-top:10px;
+    border-top:1px solid var(--border);
+  }
+  .varlik-toplam-deger{
+    font-size:25px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+    color:var(--up);
+    letter-spacing:.01em;
+    animation:toplamNabiz 2.2s ease-in-out infinite;
+  }
+  @keyframes toplamNabiz{
+    0%, 100%{opacity:1;   text-shadow:0 0 16px rgba(51,192,124,.55);}
+    50%     {opacity:.5;  text-shadow:0 0 3px rgba(51,192,124,.15);}
+  }
 
   .section-panel{
     background:var(--panel);
@@ -1431,9 +1452,8 @@
         Konut, otomobil, arsa, dükkan gibi taşınır/taşınmaz varlıklarını buradan ekleyip elle güncel değerini girersin — canlı fiyat çekilmez, tamamen senin girdiğin tutar esas alınır. Tarayıcı hafızasında (localStorage) saklanır.
       </div>
       <div id="varlikListContainer" style="margin-top:14px;"></div>
-      <div class="table-row" style="margin-top:6px;">
-        <div class="r-label" style="font-weight:700;">Toplam Varlık</div>
-        <div class="r-value" id="varlikToplamDeger" style="color:var(--up);">₺0</div>
+      <div class="varlik-toplam-row">
+        <div class="varlik-toplam-deger" id="varlikToplamDeger">₺0</div>
       </div>
     </div>
   </div>
