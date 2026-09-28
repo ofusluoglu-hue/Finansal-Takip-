@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Günlük Özet</title>
+<title>Piyasa Özeti</title>
 <style>
   :root{
     --bg:#0A0D12;
@@ -256,7 +256,7 @@
     50%     {opacity:.5;  text-shadow:0 0 3px rgba(51,192,124,.15);}
   }
 
-  /* Güncel Finansal Durumum'un 4 büyük rakamı da aynı nabız gibi yanıp sönsün (yeşil/kırmızıya göre ışıma rengi değişir) */
+  /* Finansal Durumum'un 4 büyük rakamı da aynı nabız gibi yanıp sönsün (yeşil/kırmızıya göre ışıma rengi değişir) */
   .finansal-summary-grid .summary-value{
     --glow-a:rgba(51,192,124,.55);
     --glow-b:rgba(51,192,124,.15);
@@ -1476,11 +1476,11 @@
     <div class="nav-panel" id="navPanel">
       <div class="nav-item active" data-tab="gunluk" onclick="switchTab('gunluk')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg>
-        <span>Günlük Makro Özet</span>
+        <span>Piyasa Özeti</span>
       </div>
       <div class="nav-item" data-tab="finansal" onclick="switchTab('finansal')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
-        <span>Güncel Finansal Durumum</span>
+        <span>Finansal Durumum</span>
       </div>
       <div class="nav-item" data-tab="yatirim" onclick="switchTab('yatirim')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 7l-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
@@ -1502,7 +1502,7 @@
   <!-- ===== SABİT ÜST ÇUBUK: başlık | saat | durum + Yenile (tüm sekmelerde) ===== -->
   <div class="app-bar" id="appBar">
     <div class="app-bar-title">
-      <h1 id="appBarTitle">Günlük Özet</h1>
+      <h1 id="appBarTitle">Piyasa Özeti</h1>
       <p id="appBarSub">Endeksler, faiz, döviz, emtia, kripto ve güncel haberler</p>
     </div>
     <div class="digital-clock digital-clock-fixed">
@@ -1573,7 +1573,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto CoinGecko'dan gelir. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 5 dakikada bir yenilenir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto CoinGecko'dan gelir. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 10 dakikada bir yenilenir; İngilizce başlıklar Türkçeye çevrilir.
   </div>
 
   </div>
@@ -1582,7 +1582,7 @@
   <!-- ================= TAB: GÜNCEL FİNANSAL DURUMUM ================= -->
   <div class="tab-panel" id="tab-finansal">
     <div class="page-head">
-      <h1>Güncel Finansal Durumum</h1>
+      <h1>Finansal Durumum</h1>
     </div>
 
     <div class="summary-grid finansal-summary-grid">
@@ -1695,7 +1695,7 @@
         <button class="ai-btn" onclick="addYatirim()">+ Yatırım Ekle</button>
       </div>
       <div class="ai-disclaimer" style="margin-top:10px;font-size:10px;line-height:1.5;">
-        ABD ETF/Hisse ve Kripto fiyatları Günlük Makro Özet'te zaten canlı takip ettiğimiz kartlardan (ekstra istek
+        ABD ETF/Hisse ve Kripto fiyatları Piyasa Özeti'nde zaten canlı takip ettiğimiz kartlardan (ekstra istek
         yapılmadan) alınır. Emtia (Altın) ons fiyatından gram başına hesaplanır. <b>BİST için ücretsiz canlı veri
         kaynağımız olmadığından</b> hisse adını ve güncel TL değerini elle girip elle güncellersin — tıpkı Kredi
         Kartlarım gibi. Tarayıcı hafızasında (localStorage) saklanır.
@@ -2675,24 +2675,28 @@ window.addEventListener('resize', ()=>{
 });
 
 // ---------- Güncel Haberler ----------
+// Haber kaynakları: yalnızca güvenilir yayıncılar (Reuters, Bloomberg, Bloomberg HT, Investing.com, CNBC, FT, WSJ, MarketWatch).
+// Türkçe ve İngilizce sürümler birlikte çekilir; İngilizce başlıklar Claude Haiku ile Türkçeye çevrilip tarayıcıda saklanır.
 const NEWS_FEEDS = [
   { key:'btc',  q_tr:'Bitcoin',                       q_en:'Bitcoin',
     rel:/bitcoin|btc|crypto|kripto|ethereum|stablecoin|coinbase|digital asset|dijital varl/i },
   { key:'gold', q_tr:'Altın ons Fed',                 q_en:'gold price Fed',
-    rel:/gold|altın|altin|bullion|precious|silver|gümüş|\bfed\b|treasury|yield|tahvil|faiz|dollar|dolar/i },
+    rel:/^(?=.*(altın|altin|\bons\b|gümüş|değerli metal|gold|bullion|silver|precious))(?=.*(fiyat|gram|fed|dolar|tahvil|faiz|piyasa|düş|yüksel|rekor|ralli|satış|borsa|talep|merkez banka|enflasyon|price|yield|rate|dollar|treasur|inflation|central bank|demand|record|ounce|futures|safe.haven|slid|fall|drop|rise|rall|surge|slump|climb))/i },
   { key:'us',   q_tr:'ABD borsa Wall Street S&P 500', q_en:'Wall Street stocks S&P 500',
-    rel:/stock|wall street|s&p|nasdaq|\bdow\b|futures|equit|shares|borsa|hisse|market|\bfed\b|earnings|treasury|yield/i },
+    rel:/stock|wall street|s&p|nasdaq|\bdow\b|futures|equit|shares|borsa|hisse|market|\bfed\b|earnings|treasury|yield|vadeli/i },
 ];
 
-// Haber olmayan sayfaları (kur çevirici, canlı fiyat, grafik sayfası vb.) ve 3 günden eski kayıtları ele
-const NEWS_JUNK_RE = /\||^convert\b|exchange rate|advanced chart|user rankings|real[- ]time|price live|live index|news today|historical data|stock price/i;
+// Haber olmayan sayfaları (kur çevirici, canlı fiyat, grafik sayfası, borsa uyarı bildirimleri vb.) ve 3 günden eski kayıtları ele
+const NEWS_JUNK_RE = /\||^convert\b|exchange rate|advanced chart|user rankings|real[- ]time|price live|live index|news today|historical data|stock price|\bcanlı\b|ihtar|uyumsuzluk|listeden çıkar|delisting|deficiency/i;
 const NEWS_MAX_AGE_MS = 72 * 3600 * 1000;
+// Başlık zaten Türkçe mi? (Türkçe harf ya da sık geçen Türkçe kelimeler) — Türkçe olanlar çevrilmez
+const NEWS_TR_RE = /[çğıöşüÇĞİÖŞÜ]|\b(ve|ile|için|bu|gibi|kadar|sonra|göre)\b/i;
 
 // Sadece bu güvenilir kaynaklardan haber alınır (Google News aramasına site: filtresiyle eklenir,
-// ayrıca gelen sonuçlar kaynak adına göre bir kez daha süzülür). Son 2 gün ile sınırlı.
+// ayrıca gelen sonuçlar kaynak adına göre bir kez daha süzülür). Son 3 gün ile sınırlı.
 const TRUSTED_SITES = ['reuters.com','bloomberg.com','bloomberght.com','investing.com','cnbc.com','ft.com','wsj.com','marketwatch.com'];
 const TRUSTED_SOURCE_RE = /reuters|bloomberg|investing\.com|cnbc|financial times|(^|\W)ft\.com|wall street journal|wsj|marketwatch/i;
-const NEWS_SITE_FILTER = '(' + TRUSTED_SITES.map(s => 'site:' + s).join(' OR ') + ') when:2d';
+const NEWS_SITE_FILTER = '(' + TRUSTED_SITES.map(s => 'site:' + s).join(' OR ') + ') when:3d';
 
 // Kendi Cloudflare Worker adresin (en güvenilir kaynak — ilk sırada denenir).
 // Worker'ı kurduktan sonra aşağıdaki adresi kendi adresinle değiştir.
@@ -2793,7 +2797,7 @@ async function fetchNews(feed){
   const guvenilir = [...tr, ...en]
     .filter(it => it.title
       && TRUSTED_SOURCE_RE.test(it.source)      // sadece güvenilir kaynaklar
-      && !NEWS_JUNK_RE.test(it.title)           // fiyat/grafik/çevirici sayfaları haber değildir
+      && !NEWS_JUNK_RE.test(it.title)           // fiyat/grafik/çevirici sayfaları ve borsa uyarıları haber değildir
       && feed.rel.test(it.title)                // sütunun konusuyla alakalı olsun
       && it.ts && (simdi - it.ts) <= NEWS_MAX_AGE_MS)  // son 3 gün
     .sort((a, b) => b.ts - a.ts);
@@ -2801,7 +2805,7 @@ async function fetchNews(feed){
   const goruldu = new Set();
   const sonuc = [];
   for(const it of guvenilir){
-    const anahtar = it.title.toLowerCase().slice(0, 60);
+    const anahtar = it.title.toLowerCase().slice(0, 50);
     if(goruldu.has(anahtar)) continue;
     goruldu.add(anahtar);
     sonuc.push(it);
@@ -2820,27 +2824,101 @@ function fallbackNewsLink(feed){
   `;
 }
 
+// ---------- Haber başlıklarını Türkçeye çevirme (Claude Haiku, sonuçlar tarayıcıda saklanır) ----------
+// Her başlık yalnızca BİR kez çevrilir; sonraki yenilemelerde kayıttan gelir. Maliyet ~ $0,002 / 10 başlık
+// ve Bay Piyasa'nın günlük harcamasına eklenir. Limit dolmuşsa ya da çeviri başarısızsa başlık aslıyla kalır.
+const HABER_CEVIRI_KEY = 'ft_haber_ceviri_v1';
+let _haberCeviri = {};
+try{ _haberCeviri = JSON.parse(localStorage.getItem(HABER_CEVIRI_KEY) || '{}') || {}; }catch(e){ _haberCeviri = {}; }
+let _ceviriBekle = 0;       // hata sonrası bekleme (zaman damgası)
+let _ceviriDevam = false;
+
+function haberCeviriAnahtar(t){ return String(t).toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 160); }
+function haberBaslikTR(it){ const c = _haberCeviri[haberCeviriAnahtar(it.title)]; return c ? c.tr : it.title; }
+function haberCeviriKaydet(){
+  try{
+    const k = Object.keys(_haberCeviri);
+    if(k.length > 300) k.sort((a, b) => _haberCeviri[a].ts - _haberCeviri[b].ts).slice(0, k.length - 300).forEach(x => delete _haberCeviri[x]);
+    localStorage.setItem(HABER_CEVIRI_KEY, JSON.stringify(_haberCeviri));
+  }catch(e){ /* localStorage dolu/erişilemez */ }
+}
+
+function renderHaberler(){
+  NEWS_FEEDS.forEach(feed => {
+    const container = document.getElementById('news-' + feed.key);
+    const items = _sonHaberler[feed.key];
+    if(!container || !items) return;
+    if(!items.length){ container.innerHTML = fallbackNewsLink(feed); return; }
+    container.innerHTML = items.map(it => {
+      const c = _haberCeviri[haberCeviriAnahtar(it.title)];
+      return `
+        <a class="news-item" href="${escapeHtml(it.link)}" target="_blank" rel="noopener"${c ? ' title="Orijinal: ' + escapeHtml(it.title).replace(/"/g, '&quot;') + '"' : ''}>
+          ${escapeHtml(c ? c.tr : it.title)}
+          <span class="news-source">${escapeHtml(it.source)}${it.ts ? ' · ' + haberGoreliZaman(it.ts) : ''}${c ? ' · çeviri' : ''}</span>
+        </a>`;
+    }).join('');
+  });
+}
+
+async function haberleriCevir(){
+  if(_ceviriDevam || Date.now() < _ceviriBekle) return;
+  const gorulen = new Set();
+  const bekleyen = [];
+  Object.values(_sonHaberler).flat().forEach(it => {
+    const k = haberCeviriAnahtar(it.title);
+    if(NEWS_TR_RE.test(it.title) || _haberCeviri[k] || gorulen.has(k)) return;   // zaten Türkçe ya da çevrilmiş
+    gorulen.add(k);
+    bekleyen.push(it.title);
+  });
+  if(!bekleyen.length) return;
+  if(typeof bpBugunHarcama === 'function' && bpBugunHarcama() >= bp.ayar.limit) return;   // günlük limit doluysa çevirme
+
+  _ceviriDevam = true;
+  try{
+    for(let i = 0; i < bekleyen.length; i += 16){
+      const paket = bekleyen.slice(i, i + 16);
+      const res = await fetch(AI_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1500,
+          webSearch: false,
+          system: 'Finans haber başlıklarını, Türkiye\'deki bir ekonomi sitesinin editörü gibi doğal, akıcı ve kısa haber diliyle Türkçeye çevirirsin. Kelimesi kelimesine değil, anlamı koruyarak çevir; devrik ya da kasıntı cümle kurma. Cümle düzeninde yaz: yalnızca ilk harf ve özel isimler büyük olsun, İngilizce başlıklardaki gibi her kelimeyi büyük harfle başlatma. "Futures" için "vadeli", "stocks" için "hisseler/borsa" gibi yaygın Türkçe karşılıkları kullan. Sayıları, yüzdeleri, şirket/kişi/kurum adlarını ve Fed, S&P 500, WSJ, ETF gibi kısaltmaları olduğu gibi koru. Yorum ekleme. YALNIZCA verilen sırayla ve aynı sayıda öğeyle bir JSON dizisi (string dizisi) döndür.',
+          messages: [{ role: 'user', content: JSON.stringify(paket) }],
+        }),
+      });
+      const data = await res.json();
+      if(!res.ok) throw new Error((data && data.error && (data.error.message || data.error)) || ('HTTP ' + res.status));
+      const metin = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+      const m = metin.match(/\[[\s\S]*\]/);
+      const dizi = m ? JSON.parse(m[0]) : null;
+      if(!Array.isArray(dizi) || dizi.length !== paket.length) throw new Error('çeviri sayısı uyuşmadı');
+      dizi.forEach((tr, j) => { if(typeof tr === 'string' && tr.trim()) _haberCeviri[haberCeviriAnahtar(paket[j])] = { tr: tr.trim(), ts: Date.now() }; });
+      haberCeviriKaydet();
+      if(typeof bpMaliyet === 'function'){ bpHarcamaEkle(bpMaliyet('claude-haiku-4-5-20251001', data.usage)); bpKaydet(); bpRenderMeter(); }
+      renderHaberler();
+    }
+  }catch(e){
+    _ceviriBekle = Date.now() + 15 * 60 * 1000;   // hata: 15 dakika sonra tekrar dene, o zamana kadar başlık aslıyla kalır
+  }finally{
+    _ceviriDevam = false;
+  }
+}
+
 async function loadNews(){
-  await Promise.all(NEWS_FEEDS.map(async feed=>{
-    const container = document.getElementById('news-'+feed.key);
+  await Promise.all(NEWS_FEEDS.map(async feed => {
     try{
       const items = await fetchNews(feed);
-      _sonHaberler[feed.key] = items;   // Bay Piyasa bu başlıkları bağlam olarak kullanabilir
-      if(!items.length){
-        container.innerHTML = fallbackNewsLink(feed);
-        return;
-      }
-      container.innerHTML = items.map(it => `
-        <a class="news-item" href="${it.link}" target="_blank" rel="noopener">
-          ${escapeHtml(it.title)}
-          <span class="news-source">${escapeHtml(it.source)}${it.ts ? ' · ' + haberGoreliZaman(it.ts) : ''}</span>
-        </a>
-      `).join('');
+      // Çekme tamamen başarısız olduysa (boş dönerse) elimizdeki son haberleri koru
+      if(items.length || !(_sonHaberler[feed.key] || []).length) _sonHaberler[feed.key] = items;
     }catch(e){
-      container.innerHTML = fallbackNewsLink(feed);
+      if(!_sonHaberler[feed.key]) _sonHaberler[feed.key] = [];
     }
   }));
+  renderHaberler();   // önce mevcut (çevrilmiş ya da orijinal) başlıklarla hemen çiz
   document.getElementById('newsUpdated').textContent = 'güncellendi ' + new Date().toLocaleTimeString('tr-TR');
+  haberleriCevir();   // yeni İngilizce başlıklar varsa arka planda çevir, bitince yeniden çiz
 }
 
 // ---------- Bay Piyasa (sohbet asistanı) ----------
@@ -2972,7 +3050,7 @@ function bpSnapshotOlustur(paylas, haber){
     const adlar = { btc:'Bitcoin', gold:'Altın', us:'ABD borsaları' };
     let varMi = false;
     Object.keys(adlar).forEach(k => (_sonHaberler[k] || []).slice(0, 4).forEach(h => {
-      s.push('- [' + adlar[k] + '] ' + h.title + ' (' + h.source + (h.ts ? ', ' + haberGoreliZaman(h.ts) : '') + ')');
+      s.push('- [' + adlar[k] + '] ' + haberBaslikTR(h) + ' (' + h.source + (h.ts ? ', ' + haberGoreliZaman(h.ts) : '') + ')');
       varMi = true;
     }));
     if(!varMi) s.push('- (haberler yüklenemedi)');
@@ -3640,7 +3718,7 @@ function updateGarantiLive(){
 }
 
 let _bTotals = { loans: 0, kk: 0, kmh: 0, nakit: 0 };
-let _toplamYatirimTL = 0; // Yatırımlarım toplamı — Güncel Finansal Durumum'daki Toplam Varlık'a dahil edilir
+let _toplamYatirimTL = 0; // Yatırımlarım toplamı — Finansal Durumum'daki Toplam Varlık'a dahil edilir
 
 function refreshGrandTotal(){
   const toplam = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
@@ -3673,7 +3751,7 @@ function refreshGrandTotal(){
     });
   }
 
-  // Güncel Finansal Durumum'daki Toplam Borç/Net Değer kutuları da bu toplama bağlı — tazele
+  // Finansal Durumum'daki Toplam Borç/Net Değer kutuları da bu toplama bağlı — tazele
   if(typeof renderVarlik === 'function') renderVarlik();
 }
 
@@ -3988,7 +4066,7 @@ function guncelleYatirim(id){
   renderYatirim();
 }
 
-// Bir yatırım kaydının güncel TL değerini hesaplar — fiyatlar Günlük Özet kartlarının
+// Bir yatırım kaydının güncel TL değerini hesaplar — fiyatlar Piyasa Özeti kartlarının
 // zaten çektiği canlı verilerden (ekstra istek yapılmadan) alınır. BİST elle girilen değeri döner.
 function yatirimDegerHesapla(item){
   if(item.tur === 'bist'){
@@ -4110,7 +4188,7 @@ function renderYatirim(){
   if(list.length) manuelListeKaydet(YATIRIM_KEY, list); // sonBilinen* alanları güncellenmiş olabilir, kalıcı hale getir
 
   _toplamYatirimTL = toplamYatirim;
-  if(typeof renderVarlik === 'function') renderVarlik(); // Güncel Finansal Durumum'daki Toplam Varlık/pasta grafiği bu toplama bağlı
+  if(typeof renderVarlik === 'function') renderVarlik(); // Finansal Durumum'daki Toplam Varlık/pasta grafiği bu toplama bağlı
 
   // Dağılım grafiği — her kategori kendi satırında, çubuk uzunluğu en büyük kategoriye göre orantılı
   const dagilimEl = document.getElementById('yatirimDagilimBar');
@@ -4255,7 +4333,7 @@ const VARLIK_KATEGORI_RENK = {
   'Yatırımlar': '#FF8A65',
 };
 
-// Güncel Finansal Durumum'un üst 4 kutusu: canlı Toplam Varlık / Toplam Borç / Net Değer ve
+// Finansal Durumum'un üst 4 kutusu: canlı Toplam Varlık / Toplam Borç / Net Değer ve
 // Varlıklarım'ın türe göre dairesel (pasta) dağılım grafiği.
 function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   const varlikEl = document.getElementById('finansalToplamVarlik');
@@ -4746,8 +4824,8 @@ async function onLoanExcelSelected(event){
 
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
-  gunluk:   ['Günlük Özet', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
-  finansal: ['Güncel Finansal Durumum', ''],
+  gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
+  finansal: ['Finansal Durumum', ''],
   yatirim:  ['Yatırımlarım', ''],
   borclar:  ['Borçlarım', ''],
   ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir'],
@@ -4778,10 +4856,10 @@ if(location.protocol === 'file:'){
 refreshAll();
 setInterval(refreshAll, 60000);
 loadNews();
-setInterval(loadNews, 300000);
+setInterval(loadNews, 600000);
 openChart('btc');
 
-// ---------- Dijital saat/tarih (Günlük Özet, sağ üst) ----------
+// ---------- Dijital saat/tarih (Piyasa Özeti, sağ üst) ----------
 function tickDigitalClock(){
   const timeEl = document.getElementById('digitalClockTime');
   const dateEl = document.getElementById('digitalClockDate');
