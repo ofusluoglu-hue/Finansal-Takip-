@@ -2253,8 +2253,8 @@ const CARDS = [
   { key:'nlr',    label:'NLR ETF (VanEck Uranium+Nuclear)', source:'finnhub', symbol:'NLR', fmt:'usd2', fallback:{price:110.00, chg:0.25} },
   { key:'xle',    label:'XLE ETF (Energy Select SPDR)', source:'finnhub', symbol:'XLE', fmt:'usd2', fallback:{price:95.00, chg:0.10} },
   // Dolar/Euro: Yahoo (saniyelik güncel); Yahoo cevap vermezse tdSymbol ile Twelve Data'ya düşülür
-  { key:'usdtry', label:'DOLAR/TL',     source:'yahoo', symbol:'USDTRY=X', tdSymbol:'USD/TRY', fmt:'usd2',    fallback:{price:34.50, chg:0.05} },
-  { key:'eurtry', label:'EURO/TL',      source:'yahoo', symbol:'EURTRY=X', tdSymbol:'EUR/TRY', fmt:'usd2',    fallback:{price:37.80, chg:0.05} },
+  { key:'usdtry', label:'DOLAR/TL',     source:'yahoo', symbol:'USDTRY=X', tdSymbol:'USD/TRY', fmt:'try4',    fallback:{price:34.50, chg:0.05} },
+  { key:'eurtry', label:'EURO/TL',      source:'yahoo', symbol:'EURTRY=X', tdSymbol:'EUR/TRY', fmt:'try4',    fallback:{price:37.80, chg:0.05} },
   // Altın: gerçek SPOT ons fiyatı (Twelve Data XAU/USD). Eski GC=F, gecikmeli ve primli bir vadeli kontrattı.
   { key:'gold',   label:'ALTIN (ONS)',  source:'twelvedata', symbol:'XAU/USD', fmt:'usd2',    fallback:{price:4455.20, chg:-0.12} },
   { key:'brent',  label:'BRENT PETROL', source:'yahoo',    symbol:'BZ=F',     fmt:'usd2',    fallback:{price:101.60, chg:0.39} },
@@ -2387,6 +2387,7 @@ function renderCard(cfg, price, chgPct, stale, meta){
     case 'yield': valueStr = '%' + fmtNumber(price, 2); break;
     case 'usd0': valueStr = fmtNumber(price, 2); break;
     case 'usd2': valueStr = fmtNumber(price, 2); break;
+    case 'try4': valueStr = fmtNumber(price, 4); break;   // TL kurları saatte birkaç binde oynar: 2 ondalıkta "donmuş" görünür
     default: valueStr = fmtNumber(price, 2);
   }
   valEl.textContent = valueStr;
@@ -2435,6 +2436,22 @@ function renderCard(cfg, price, chgPct, stale, meta){
   let ledSinif = stale ? 'stale' : 'live';
   if(!stale && meta && (meta.led === 'closed' || meta.seans === 'closed' || /_yok$/.test(meta.seans || ''))) ledSinif = 'closed'; // veri çekildi ama piyasa kapalı/yeni fiyat yok
   staleEl.className = 'card-live-led ' + ledSinif;
+}
+
+// Uranyum (U3O8): Yahoo'daki UX=F kontratı neredeyse hiç işlem görmediği için (son işlem haftalar önce) güncel fiyat
+// Worker'ın /uranyum ucundan gelir (NYMEX UxC vadeli, lb başına USD). Uç nokta yoksa/başarısızsa Yahoo'ya düşülür.
+async function fetchUranyum(){
+  const res = await fetchWithTimeout(MY_WORKER + '/uranyum', 12000);
+  const d = await res.json();
+  if(!res.ok || !isFinite(d.price)) throw new Error((d && d.error) || 'uranyum fiyatı yok');
+  const gun = new Date(d.asOf + 'T12:00:00');
+  const yasGun = (Date.now() - gun.getTime()) / 86400000;
+  return {
+    price: d.price,
+    chgPct: d.chgPct || 0,
+    not: 'NYMEX vadeli · ' + gun.toLocaleDateString('tr-TR', { day:'2-digit', month:'short' }),
+    led: yasGun > 4 ? 'closed' : 'live',      // 4 günden eskiyse turuncu LED
+  };
 }
 
 const _fxTabanOnbellek = {}; // döviz günlük taban fiyatı (günde bir kez hesaplanır)
@@ -2726,6 +2743,14 @@ async function refreshMarketData(){
   // ---- Yahoo/FRED kaynaklı kartlar: az sayıda, art arda (aralıklı) ----
   const otherCards = CARDS.filter(c => c.source === 'yahoo' || c.source === 'fred');
   for(const cfg of otherCards){
+    if(cfg.key === 'uranium'){
+      try{
+        const u = await fetchUranyum();
+        renderCard(cfg, u.price, u.chgPct, false, { not: u.not, led: u.led });
+        await sleep(350);
+        continue;
+      }catch(e){ /* Yahoo'ya düş */ }
+    }
     try{
       if(cfg.source === 'yahoo'){
         const { price, chgPct, ts } = await fetchYahoo(cfg.symbol);
@@ -3323,7 +3348,7 @@ function bpSnapshotOlustur(paylas, haber){
     if(!v || !isFinite(v.price)) return;
     const ch = (v.chgPct >= 0 ? '+' : '') + fmtNumber(v.chgPct, 2) + '%';
     const seans = (v.seans && SEANS_ETIKET[v.seans]) ? ' [' + SEANS_ETIKET[v.seans].toLowerCase() + ']' : '';
-    s.push('- ' + c.label + ': ' + fmtNumber(v.price, c.fmt === 'usd0' ? 0 : 2) + ' (' + ch + ')' + seans);
+    s.push('- ' + c.label + ': ' + fmtNumber(v.price, c.fmt === 'usd0' ? 0 : (c.fmt === 'try4' ? 4 : 2)) + ' (' + ch + ')' + seans);
   });
 
   if(haber){
