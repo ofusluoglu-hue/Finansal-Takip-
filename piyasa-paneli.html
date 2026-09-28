@@ -490,6 +490,11 @@
     box-shadow:0 0 5px var(--up);
     animation:ledBlink 1.6s ease-in-out infinite;
   }
+  .card-live-led.closed{
+    background:var(--amber);
+    box-shadow:0 0 5px var(--amber);
+    animation:ledBlink 2.6s ease-in-out infinite;
+  }
   .card-live-led.stale{
     background:var(--down);
     box-shadow:0 0 5px var(--down);
@@ -1839,14 +1844,14 @@ function renderStale(cfg){
   }
 }
 
-function renderCard(cfg, price, chgPct, stale){
+function renderCard(cfg, price, chgPct, stale, meta){
   const cardEl = document.getElementById('card-'+cfg.key);
   const valEl = document.getElementById('val-'+cfg.key);
   const chgEl = document.getElementById('chg-'+cfg.key);
   const staleEl = document.getElementById('stale-'+cfg.key);
 
   // Gerçekten çekilmiş (sahte olmayan) bir değerse hafızaya al — bir sonraki başarısızlıkta buna döneriz
-  if(!stale && isFinite(price)) _lastGoodValues[cfg.key] = { price, chgPct, ts: Date.now() };
+  if(!stale && isFinite(price)) _lastGoodValues[cfg.key] = { price, chgPct, ts: Date.now(), seans: meta && meta.seans };
 
   // Elden Nakit Borçlar'daki döviz çevrimi için güncel kuru sakla (stale/gecikmeli olsa bile son bilinen kur kullanılır)
   if(cfg.key === 'usdtry' && isFinite(price) && !stale){ _fxRates.USD = price; _fxRatesLive.USD = true; fxKaliciKaydet(); }
@@ -1906,7 +1911,18 @@ function renderCard(cfg, price, chgPct, stale){
     noteEl.style.display = 'block';
   }
 
-  staleEl.className = 'card-live-led ' + (stale ? 'stale' : 'live');
+  // ABD hisse/ETF kartları: hangi seansın fiyatı gösteriliyor? (normal seansta not gizli)
+  const seansNotEl = document.getElementById('note-' + cfg.key);
+  if(seansNotEl && cfg.source === 'finnhub'){
+    const etiket = (!stale && meta) ? (SEANS_ETIKET[meta.seans] || '') : '';
+    seansNotEl.textContent = etiket;
+    seansNotEl.style.display = etiket ? 'block' : 'none';
+    seansNotEl.title = (etiket && meta && meta.kapanis) ? 'Son resmi kapanış: ' + fmtNumber(meta.kapanis, 2) : '';
+  }
+
+  let ledSinif = stale ? 'stale' : 'live';
+  if(!stale && meta && (meta.seans === 'closed' || /_yok$/.test(meta.seans))) ledSinif = 'closed'; // veri çekildi ama piyasa kapalı/yeni fiyat yok
+  staleEl.className = 'card-live-led ' + ledSinif;
 }
 
 async function fetchYahoo(symbol){
@@ -1979,8 +1995,70 @@ async function fetchFinnhub(symbol){
   const prevClose = data.pc; // previous close
   if(!price || !prevClose) throw new Error('finnhub veri yok');
   const chgPct = ((price - prevClose) / prevClose) * 100;
-  return { price, chgPct };
+  return { price, chgPct, pc: prevClose, t: data.t };
 }
+
+// ---------- ABD borsası: normal seans + işlem öncesi/sonrası (hibrit) ----------
+// Finnhub ücretsiz planı sadece NORMAL seansı verir (16:30–23:00 TSİ). İşlem öncesi (11:00–16:30 TSİ) ve
+// işlem sonrası (23:00–03:00 TSİ) fiyatları için Yahoo'nun 5 dakikalık grafik verisi kullanılır; Yahoo
+// bot korumasına takılırsa Finnhub'daki resmi kapanış fiyatına düşülür.
+function abdSeansi(now){
+  const p = new Intl.DateTimeFormat('en-US', { timeZone:'America/New_York', weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false }).formatToParts(now || new Date());
+  const g = t => p.find(x => x.type === t).value;
+  const gun = g('weekday');
+  const dk = (parseInt(g('hour'), 10) % 24) * 60 + parseInt(g('minute'), 10);
+  if(gun === 'Sat' || gun === 'Sun') return 'closed';
+  if(dk >= 4 * 60 && dk < 9 * 60 + 30) return 'pre';
+  if(dk >= 9 * 60 + 30 && dk < 16 * 60) return 'regular';
+  if(dk >= 16 * 60 && dk < 20 * 60) return 'post';
+  return 'closed';
+}
+function abdTarihi(ms){
+  return new Intl.DateTimeFormat('en-CA', { timeZone:'America/New_York' }).format(new Date(ms)); // YYYY-MM-DD
+}
+
+async function fetchYahooExtended(symbol){
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=5m&range=1d&includePrePost=true`;
+  const res = await fetchWithFallback(url);
+  const data = await res.json();
+  const r = data.chart.result[0];
+  const ts = r.timestamp || [];
+  const cl = (r.indicators.quote[0] || {}).close || [];
+  let i = cl.length - 1;
+  while(i >= 0 && cl[i] == null) i--;
+  if(i < 0) throw new Error('yahoo bar yok');
+  return { price: cl[i], ts: ts[i] * 1000 };
+}
+
+// Resmi seans fiyatını Finnhub'dan alır; işlem öncesi/sonrası penceresindeysek Yahoo'dan güncel fiyatı bulup
+// önceki günün kapanışına göre değişimi hesaplar. seans: regular | pre | post | closed | pre_yok | post_yok
+async function fetchEtfHibrit(symbol){
+  const fh = await fetchFinnhub(symbol);
+  let seans = abdSeansi();
+  if(seans === 'regular' && fh.t && (Date.now() - fh.t * 1000) > 30 * 60 * 1000) seans = 'closed'; // tatil vb.
+
+  if(seans === 'pre' || seans === 'post'){
+    try{
+      const ext = await fetchYahooExtended(symbol);
+      if(isFinite(ext.price) && abdTarihi(ext.ts) === abdTarihi(Date.now())){
+        // pre: Finnhub'daki fiyat = dünkü kapanış. post: Finnhub'daki fiyat = bugünkü kapanış, dünkü kapanış = pc.
+        const taban = seans === 'pre' ? fh.price : fh.pc;
+        return { price: ext.price, chgPct: ((ext.price - taban) / taban) * 100, seans, kapanis: fh.price };
+      }
+    }catch(e){ /* aşağıda _yok olarak işaretlenir */ }
+    seans = seans + '_yok'; // bugün bu seansta henüz işlem/veri yok ya da Yahoo cevap vermedi
+  }
+  return { price: fh.price, chgPct: fh.chgPct, seans, kapanis: fh.price };
+}
+
+const SEANS_ETIKET = {
+  regular:  '',
+  pre:      'Piyasa öncesi',
+  post:     'Piyasa sonrası',
+  closed:   'Piyasa kapalı',
+  pre_yok:  'Öncesi · işlem yok',
+  post_yok: 'Sonrası · işlem yok',
+};
 
 // Frankfurter (ECB resmi kurları) — anahtar gerekmez, belgelenmiş bir istek sınırı yok.
 // Günde bir kez (öğleden sonra, CET) güncellenir; değişim yüzdesi bu oturumda daha önce
@@ -2084,8 +2162,8 @@ async function refreshMarketData(){
   const finnhubCards = CARDS.filter(c => c.source === 'finnhub');
   for(const cfg of finnhubCards){
     try{
-      const { price, chgPct } = await fetchFinnhub(cfg.symbol);
-      renderCard(cfg, price, chgPct, false);
+      const { price, chgPct, seans, kapanis } = await fetchEtfHibrit(cfg.symbol);
+      renderCard(cfg, price, chgPct, false, { seans, kapanis });
     }catch(e){
       anyError = true;
       lastErrorMsg = e.message || String(e);
