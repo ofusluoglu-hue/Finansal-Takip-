@@ -1315,6 +1315,156 @@
     background:var(--border);
     margin:20px 0 18px;
   }
+
+  /* ================= Bay Piyasa ================= */
+  .bp-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:14px;align-items:start;}
+  @media (max-width:900px){ .bp-layout{grid-template-columns:1fr;} }
+
+  /* Sol: geçmiş */
+  .bp-side{
+    background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:12px;display:flex;flex-direction:column;gap:8px;
+    position:sticky;top:96px;max-height:calc(100vh - 120px);
+  }
+  @media (max-width:900px){ .bp-side{position:static;max-height:none;} }
+  .bp-new{
+    background:var(--amber);color:#1a1200;border:none;border-radius:8px;
+    padding:9px 10px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;
+  }
+  .bp-new:hover{filter:brightness(1.08);}
+  .bp-side-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);font-weight:700;margin-top:4px;}
+  .bp-gecmis{display:flex;flex-direction:column;gap:3px;overflow-y:auto;min-height:40px;}
+  .bp-gitem{display:flex;align-items:center;gap:6px;padding:8px 9px;border-radius:8px;cursor:pointer;border:1px solid transparent;}
+  .bp-gitem:hover{background:var(--panel-2);}
+  .bp-gitem.aktif{background:var(--panel-2);border-color:var(--border);}
+  .bp-gbaslik{font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bp-gtarih{font-size:10px;color:var(--muted-2);margin-top:1px;}
+  .bp-gsil{background:none;border:none;color:var(--muted-2);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;font-family:inherit;}
+  .bp-gsil:hover{color:var(--down);}
+  .bp-bos{font-size:11.5px;color:var(--muted-2);padding:6px 4px;}
+  .bp-temizle{background:none;border:none;color:var(--muted-2);font-size:11px;cursor:pointer;text-align:left;padding:2px 4px;font-family:inherit;}
+  .bp-temizle:hover{color:var(--down);}
+
+  /* Sağ: ana alan */
+  .bp-main{display:flex;flex-direction:column;gap:10px;min-width:0;}
+
+  .bp-toolbar{
+    display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;
+    background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 14px;
+  }
+  .bp-lbl{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);margin-bottom:3px;}
+  .bp-toolbar select{min-width:200px;padding:7px 10px;font-size:12.5px;}
+  .bp-toggle{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text);cursor:pointer;user-select:none;}
+  .bp-toggle input{display:none;}
+  .bp-toggle small{color:var(--muted-2);font-size:10.5px;}
+  .bp-switch{width:34px;height:19px;border-radius:10px;background:#2a3140;position:relative;transition:background .2s;flex-shrink:0;}
+  .bp-switch::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#9aa4b2;transition:transform .2s,background .2s;}
+  .bp-toggle input:checked + .bp-switch{background:rgba(51,192,124,.35);}
+  .bp-toggle input:checked + .bp-switch::after{transform:translateX(15px);background:var(--up);}
+  .bp-ipucu{flex:1 1 100%;font-size:11px;color:var(--muted-2);}
+  .bp-paylas-not{flex:1 1 100%;display:none;font-size:11px;color:var(--amber);}
+
+  .bp-meter{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;font-size:12px;color:var(--muted);padding:0 4px;}
+  .bp-meter b{color:var(--text);}
+  .bp-bar{flex:0 1 150px;height:6px;border-radius:3px;background:#1b212a;overflow:hidden;min-width:70px;}
+  .bp-bar > div{height:100%;width:0;background:var(--up);border-radius:3px;transition:width .3s,background .3s;}
+  .bp-bar.uyari > div{background:var(--amber);}
+  .bp-bar.limit > div{background:var(--down);}
+  .bp-limit-input{
+    width:58px;background:var(--panel);border:1px solid var(--border);border-radius:6px;
+    color:var(--text);padding:3px 6px;font-size:12px;font-family:inherit;margin:0 3px;
+  }
+
+  /* Sohbet akışı */
+  .bp-thread{
+    background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;
+    min-height:340px;max-height:max(340px, calc(100vh - 430px));overflow-y:auto;
+    display:flex;flex-direction:column;gap:16px;
+  }
+  /* Koyu temaya uygun ince kaydırma çubukları */
+  .bp-thread,.bp-gecmis,.bp-md pre,.bp-tablo-wrap{color-scheme:dark;scrollbar-width:thin;scrollbar-color:#2f3947 transparent;}
+  .bp-msg{display:flex;gap:10px;min-width:0;}
+  .bp-msg.user{justify-content:flex-end;}
+  .bp-avatar{
+    width:30px;height:30px;border-radius:50%;flex-shrink:0;margin-top:2px;
+    background:linear-gradient(135deg,var(--amber),#e0871f);color:#1a1200;
+    font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;
+  }
+  .bp-bubble{border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.65;min-width:0;}
+  .bp-msg.user .bp-bubble{background:#1c2733;border:1px solid #2b3a4b;white-space:pre-wrap;max-width:min(82%,640px);}
+  .bp-msg.bot .bp-bubble{background:var(--panel-2);border:1px solid var(--border);flex:1;max-width:860px;}
+  .bp-msg.bot.hata .bp-bubble{border-color:rgba(255,92,92,.5);color:#ffb3b3;}
+  .bp-ekgoster{margin-top:6px;font-size:11.5px;color:var(--muted);}
+  .bp-meta{
+    margin-top:10px;padding-top:8px;border-top:1px solid var(--border);
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:11px;color:var(--muted-2);
+  }
+  .bp-src{color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:10px;padding:1px 8px;}
+  .bp-src:hover{color:var(--text);border-color:#3a4453;}
+  .bp-copy{background:none;border:none;color:var(--muted-2);cursor:pointer;font-size:11px;font-family:inherit;padding:0;margin-left:auto;}
+  .bp-copy:hover{color:var(--text);}
+
+  /* Cevap metni (markdown) */
+  .bp-md > *:first-child{margin-top:0;}
+  .bp-md > *:last-child{margin-bottom:0;}
+  .bp-md p{margin:0 0 10px;}
+  .bp-md h3,.bp-md h4{margin:16px 0 8px;color:var(--amber);font-weight:800;line-height:1.3;}
+  .bp-md h3{font-size:15.5px;}
+  .bp-md h4{font-size:14px;}
+  .bp-md ul,.bp-md ol{margin:0 0 10px;padding-left:22px;}
+  .bp-md li{margin:3px 0;}
+  .bp-md li > ul,.bp-md li > ol{margin:4px 0;}
+  .bp-md strong{color:#fff;}
+  .bp-md hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+  .bp-md code{background:#0d1117;border:1px solid var(--border);border-radius:5px;padding:1px 5px;font-size:12.5px;font-family:ui-monospace,Consolas,monospace;}
+  .bp-md pre{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:0 0 10px;}
+  .bp-md pre code{background:none;border:none;padding:0;}
+  .bp-md blockquote{margin:0 0 10px;padding:6px 12px;border-left:3px solid var(--amber);color:var(--muted);background:rgba(255,255,255,.02);border-radius:0 6px 6px 0;}
+  .bp-md a{color:#6EC3FF;}
+  .bp-tablo-wrap{overflow-x:auto;margin:0 0 12px;border:1px solid var(--border);border-radius:8px;}
+  .bp-md table{border-collapse:collapse;width:100%;font-size:13px;}
+  .bp-md th{
+    background:#1b222c;color:var(--muted);text-align:left;font-weight:700;padding:8px 10px;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);
+  }
+  .bp-md td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .bp-md tr:last-child td{border-bottom:none;}
+  .bp-md tbody tr:nth-child(even) td{background:rgba(255,255,255,.015);}
+
+  /* "Yazıyor…" */
+  .bp-typing{display:inline-flex;gap:4px;align-items:center;height:20px;}
+  .bp-typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:bpNokta 1.2s infinite ease-in-out;}
+  .bp-typing i:nth-child(2){animation-delay:.15s;}
+  .bp-typing i:nth-child(3){animation-delay:.3s;}
+  @keyframes bpNokta{0%,80%,100%{opacity:.25;transform:translateY(0);}40%{opacity:1;transform:translateY(-3px);}}
+
+  /* Boş durum */
+  .bp-empty{margin:auto;text-align:center;max-width:540px;padding:20px 10px;}
+  .bp-empty .bp-avatar{width:48px;height:48px;font-size:16px;margin:0 auto;}
+  .bp-empty h2{font-size:20px;margin:12px 0 6px;}
+  .bp-empty p{color:var(--muted);font-size:13.5px;line-height:1.6;margin:0 0 14px;}
+  .bp-orneks{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+
+  /* Hazır raporlar + yazı alanı */
+  .bp-raporlar{display:flex;flex-wrap:wrap;gap:8px;}
+  .bp-chip{
+    background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:18px;
+    padding:7px 13px;font-size:12.5px;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s;
+  }
+  .bp-chip:hover{border-color:var(--amber);background:var(--panel-2);}
+  .bp-composer{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 12px;}
+  .bp-composer:focus-within{border-color:#3a4453;}
+  .bp-composer-row{display:flex;align-items:flex-end;gap:10px;}
+  .bp-composer textarea{
+    flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14px;
+    font-family:inherit;line-height:1.5;resize:none;max-height:150px;padding:6px 2px;
+  }
+  .bp-attach{cursor:pointer;font-size:18px;padding:6px;border-radius:8px;color:var(--muted);line-height:1;}
+  .bp-attach:hover{background:var(--panel-2);}
+  .bp-hint{margin-top:6px;font-size:10.5px;color:var(--muted-2);}
+  .bp-ek{display:inline-flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:12px;margin-bottom:8px;}
+  .bp-ek button{background:none;border:none;color:var(--down);cursor:pointer;font-size:14px;line-height:1;}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -1342,7 +1492,7 @@
       </div>
       <div class="nav-item" data-tab="ai" onclick="switchTab('ai')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg>
-        <span>AI Finans</span>
+        <span>Bay Piyasa <small style="font-size:11px;font-weight:500;opacity:.75;">(AI Asistan)</small></span>
       </div>
     </div>
   </div>
@@ -1423,7 +1573,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> Endeks, tahvil, döviz ve emtia verileri halka açık piyasa kaynaklarından; BTC/ETH verileri CoinGecko'dan canlı çekilir. Kaynağa anlık ulaşılamazsa kart üzerinde "gecikmeli" etiketiyle en son bilinen değer gösterilir. Haberler Google News'ten çekilir ve 5 dakikada bir yenilenir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto CoinGecko'dan gelir. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 5 dakikada bir yenilenir.
   </div>
 
   </div>
@@ -1742,59 +1892,71 @@
   </div>
   <!-- ================= /TAB: BORÇLARIM ================= -->
 
-  <!-- ================= TAB: AI FİNANS ================= -->
+  <!-- ================= TAB: BAY PİYASA ================= -->
   <div class="tab-panel" id="tab-ai">
-    <div class="page-head">
-      <h1>AI Finans</h1>
-      <p>Şirket, sektör ve piyasa sorularını güncel haber taramasıyla birlikte değerlendirir</p>
-    </div>
+    <div class="page-head"><h1>Bay Piyasa</h1></div>
 
     <div class="ai-setup" id="aiSetup">
-      <b>⚙ Kurulum gerekiyor.</b> AI özelliğinin çalışması için kendi Cloudflare Worker adresini aşağıdaki kod içinde tanımlaman gerekiyor: dosyada <code>AI_ENDPOINT</code> satırını bul ve Worker adresinle değiştir. API anahtarı Worker'ın içinde saklanır, bu sayfada görünmez.
+      <b>⚙ Kurulum gerekiyor.</b> Bay Piyasa'nın çalışması için dosyada <code>MY_WORKER</code> adresini kendi Cloudflare Worker adresinle tanımlaman gerekiyor. API anahtarı Worker'ın içinde saklanır, bu sayfada görünmez.
     </div>
 
-    <div class="ai-model-row">
-      <div>
-        <label class="ai-model-label">Model</label>
-        <select id="aiModelSelect" class="ai-input" style="min-width:230px;">
-          <option value="claude-haiku-4-5-20251001">Haiku — Hızlı & Ekonomik ($1/$5)</option>
-          <option value="claude-sonnet-5" selected>Sonnet — Dengeli, varsayılan ($2/$10)</option>
-          <option value="claude-opus-5-5">Opus — Güçlü, derin analiz ($4/$20)</option>
-          <option value="claude-fable-5-1">Fable — En güçlü, en pahalı ($10/$50)</option>
-        </select>
-      </div>
-      <div class="ai-model-hint" id="aiModelHint">Sonnet: çoğu soru için hız/kalite dengesi en iyi seçenek.</div>
-    </div>
+    <div class="bp-layout">
+      <aside class="bp-side">
+        <button class="bp-new" onclick="bpYeniSohbet()">＋ Yeni sohbet</button>
+        <div class="bp-side-title">Geçmiş</div>
+        <div class="bp-gecmis" id="bpGecmis"></div>
+        <button class="bp-temizle" onclick="bpGecmisiTemizle()">Geçmişi temizle</button>
+      </aside>
 
-    <div class="ai-form">
-      <textarea class="ai-input" id="aiInput" rows="2" placeholder="Örn: ASELSAN'ı değerlendir — finansalları, sektör görünümü ve haber akışıyla birlikte skorla"></textarea>
-      <button class="ai-btn" id="aiBtn" onclick="askAI()">Değerlendir</button>
-    </div>
+      <section class="bp-main">
+        <div class="bp-toolbar">
+          <div class="bp-tool">
+            <label class="bp-lbl" for="bpModel">Model</label>
+            <select id="bpModel" class="ai-input" onchange="bpAyarDegisti()">
+              <option value="claude-haiku-4-5-20251001">Haiku — hızlı, ucuz ($1/$5)</option>
+              <option value="claude-sonnet-5">Sonnet — dengeli ($2/$10)</option>
+              <option value="claude-opus-5-5">Opus — derin analiz ($4/$20)</option>
+              <option value="claude-fable-5-1">Fable — en güçlü ($10/$50)</option>
+            </select>
+          </div>
+          <label class="bp-toggle" title="Açıkken yatırım, varlık ve borç rakamların bu sohbetin bağlamına eklenir ve Anthropic API'sine gönderilir.">
+            <input type="checkbox" id="bpPaylas" onchange="bpAyarDegisti()"><span class="bp-switch"></span>Portföyümü paylaş
+          </label>
+          <label class="bp-toggle" title="Haber sütunlarındaki güncel başlıkları bağlama ekler (yaklaşık 450 token).">
+            <input type="checkbox" id="bpHaber" onchange="bpAyarDegisti()"><span class="bp-switch"></span>Haberleri ekle
+          </label>
+          <label class="bp-toggle" title="Modelin internette arama yapmasına izin verir. Her arama $0,01 + gelen sayfaların token maliyetidir.">
+            <input type="checkbox" id="bpAra" onchange="bpAyarDegisti()"><span class="bp-switch"></span>Web araması <small>(+$0,01/arama)</small>
+          </label>
+          <div class="bp-ipucu" id="bpModelIpucu"></div>
+          <div class="bp-paylas-not" id="bpPaylasNot">🔓 Portföy paylaşımı açık: yatırım, varlık ve borç rakamların Anthropic API'sine gönderiliyor.</div>
+        </div>
 
-    <div class="ai-attach-row">
-      <label class="loan-file-label" for="aiFileInput">📎 PDF veya Resim Ekle</label>
-      <input type="file" id="aiFileInput" accept="application/pdf,image/png,image/jpeg,image/webp" style="display:none;" onchange="onAiFileSelected(event)">
-      <span class="loan-file-name" id="aiFileName">Dosya eklenmedi</span>
-      <button class="loan-delete-btn" id="aiFileClearBtn" style="display:none;" onclick="clearAiFile()">Kaldır</button>
-    </div>
-    <div id="aiFilePreview"></div>
+        <div class="bp-meter">
+          <span>Bugün <span id="bpMBugun"></span></span>
+          <div class="bp-bar" id="bpMBar"><div></div></div>
+          <span>günlük limit <input type="number" id="bpLimit" class="bp-limit-input" min="0" step="0.1" onchange="bpAyarDegisti()">$</span>
+          <span>Bu ay <span id="bpMAy"></span></span>
+        </div>
 
-    <div class="ai-chips">
-      <button class="ai-chip" onclick="fillAI('THYAO hissesini finansalları, sektör görünümü ve güncel haberleriyle değerlendir ve skorla')">THYAO değerlendir</button>
-      <button class="ai-chip" onclick="fillAI('NVIDIA (NVDA) için değerleme, büyüme ve risk analizi yap, skorla')">NVDA analizi</button>
-      <button class="ai-chip" onclick="fillAI('Fed faiz kararı öncesi altın ve tahvil piyasası için senaryo analizi yap')">Altın senaryoları</button>
-      <button class="ai-chip" onclick="fillAI('Bitcoin için mevcut makro koşullarda risk/getiri değerlendirmesi yap')">BTC makro görünüm</button>
-      <button class="ai-chip" onclick="fillAI('Savunma sanayi sektörünün 2026 görünümünü ve öne çıkan şirketleri analiz et')">Savunma sanayi</button>
-    </div>
+        <div class="bp-thread" id="bpThread"></div>
 
-    <div id="aiScoreBox"></div>
-    <div class="ai-answer" id="aiAnswer"></div>
+        <div class="bp-raporlar" id="bpRaporlar"></div>
 
-    <div class="ai-disclaimer">
-      Bu bölüm bir analiz aracıdır, yatırım tavsiyesi değildir. Üretilen skorlar ve değerlendirmeler, modelin kamuya açık bilgi ve haber taramasına dayalı yorumudur; hata veya eksik içerebilir, kesin bir al/sat talimatı olarak okunmamalıdır. Yatırım kararlarını kendi araştırman ve gerekiyorsa lisanslı bir danışmanla birlikte vermelisin.
+        <div class="bp-composer">
+          <div id="bpEk"></div>
+          <div class="bp-composer-row">
+            <label class="bp-attach" for="bpFile" title="PDF veya resim ekle">📎</label>
+            <input type="file" id="bpFile" accept="application/pdf,image/png,image/jpeg,image/webp" style="display:none;" onchange="bpEkSecildi(event)">
+            <textarea id="bpInput" rows="1" placeholder="Bay Piyasa'ya sor…"></textarea>
+            <button class="ai-btn" id="bpGonder" onclick="bpGonder()">Gönder</button>
+          </div>
+          <div class="bp-hint">Enter gönderir · Shift+Enter yeni satır · Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
+        </div>
+      </section>
     </div>
   </div>
-  <!-- ================= /TAB: AI FİNANS ================= -->
+  <!-- ================= /TAB: BAY PİYASA ================= -->
 
   </div>
 </div>
@@ -2663,6 +2825,7 @@ async function loadNews(){
     const container = document.getElementById('news-'+feed.key);
     try{
       const items = await fetchNews(feed);
+      _sonHaberler[feed.key] = items;   // Bay Piyasa bu başlıkları bağlam olarak kullanabilir
       if(!items.length){
         container.innerHTML = fallbackNewsLink(feed);
         return;
@@ -2680,259 +2843,590 @@ async function loadNews(){
   document.getElementById('newsUpdated').textContent = 'güncellendi ' + new Date().toLocaleTimeString('tr-TR');
 }
 
-// ---------- AI Finans ----------
+// ---------- Bay Piyasa (sohbet asistanı) ----------
 // AI uç noktası — yukarıdaki MY_WORKER adresini tanımladığında otomatik çalışır.
 const AI_ENDPOINT = MY_WORKER + '/ai';
 
-function fillAI(text){
-  document.getElementById('aiInput').value = text;
-  document.getElementById('aiInput').focus();
-}
+const BP_KEY = 'ft_bay_piyasa_v1';
 
-function renderScore(score, verdict){
-  const box = document.getElementById('aiScoreBox');
-  if(score == null){ box.innerHTML = ''; return; }
-  const cls = score >= 70 ? 'good' : (score >= 45 ? 'mid' : 'bad');
-  box.innerHTML = `
-    <div class="ai-score-row">
-      <div class="ai-score-num ${cls}">${score}<span style="font-size:14px;color:var(--muted-2);">/100</span></div>
-      <div>
-        <div class="ai-score-verdict">${escapeHtml(verdict || '')}</div>
-        <div class="ai-score-meta">Modelin kamuya açık bilgi ve haber taramasına dayalı değerlendirmesi · yatırım tavsiyesi değildir</div>
-      </div>
-    </div>
-  `;
-}
-
-function formatAIText(text){
-  const rawLines = text.replace(/\r/g, '').split('\n');
-  const blocks = [];
-  let para = [];
-  let list = [];
-
-  function flushPara(){
-    if(para.length){
-      blocks.push('<p>' + para.join(' ') + '</p>');
-      para = [];
-    }
-  }
-  function flushList(){
-    if(list.length){
-      blocks.push('<ul>' + list.map(li => '<li>' + li + '</li>').join('') + '</ul>');
-      list = [];
-    }
-  }
-
-  rawLines.forEach(rawLine => {
-    const line = rawLine.trim();
-
-    if(line === ''){
-      flushPara();
-      flushList();
-      return;
-    }
-
-    const headerMatch = line.match(/^#{2,3}\s*(.+)$/);
-    if(headerMatch){
-      flushPara(); flushList();
-      blocks.push('<h3>' + inlineFormat(headerMatch[1]) + '</h3>');
-      return;
-    }
-
-    const listMatch = line.match(/^[-*•]\s+(.+)$/) || line.match(/^\d+\.\s+(.+)$/);
-    if(listMatch){
-      flushPara();
-      list.push(inlineFormat(listMatch[1]));
-      return;
-    }
-
-    // Düz metin satırı: liste modundaysak listeyi kapat, paragrafa ekle
-    flushList();
-    para.push(inlineFormat(line));
-  });
-  flushPara();
-  flushList();
-
-  return blocks.join('');
-}
-
-function inlineFormat(line){
-  return escapeHtml(line).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-}
-
-const AI_SYSTEM_PROMPT = `Sen 20+ yıllık deneyimli, kıdemli bir kurumsal portföy yöneticisi/hisse-makro analistisin (eski bir yatırım bankası araştırma direktörü gibi düşün). Türkçe yanıt ver.
-
-Üslup: Kısa, net, jargon kullanmaktan çekinmeyen ama gösterişten kaçınan bir profesyonel gibi yaz. Uzun paragraflar YOK — madde işaretleri kullan. Her madde tek, çarpıcı bir bilgi/rakam içersin, 1-2 cümleyi geçmesin. Toplam yanıt kısa ve taranabilir olsun — gevezelik etme, doğrudan söyle.
-
-Bir şirket, varlık veya sektör sorulduğunda şu yapıda yanıt ver:
-
-## Özet
-Tek cümlelik "elevator pitch" — durumu bir cümlede özetle.
-
-## Puan Kartı (0-10 üzerinden)
-- Momentum: [0-10] — kısa gerekçe (max 8 kelime)
-- Değerleme: [0-10] — kısa gerekçe (max 8 kelime)
-- Likidite/Akış: [0-10] — kısa gerekçe (max 8 kelime)
-- Makro Rüzgar: [0-10] — kısa gerekçe (max 8 kelime, faiz/enflasyon/jeopolitik yönü)
-- Risk (düşükse yüksek puan): [0-10] — kısa gerekçe (max 8 kelime)
-
-## Kilit Veriler
-3-5 madde, sadece somut rakamlar (fiyat, % değişim, çarpan, akış verisi vb.). Rakam yoksa o maddeyi atla, uydurma.
-
-## Yükseliş Senaryosu
-2 madde, en fazla.
-
-## Düşüş Senaryosu
-2 madde, en fazla.
-
-## Sonuç
-SKOR: [0-100, yukarıdaki 5 alt puanın ortalaması × 2]
-KARAR: [Cazip / Makul / Temkinli / Riskli]
-Tek cümlelik gerekçe + "yatırım tavsiyesi değildir" notu aynı cümlede.
-
-Kurallar:
-- Emin olmadığın rakamı uydurma; bilmiyorsan maddeyi atla.
-- Kesin al/sat emri verme.
-- Toplam yanıt ekranda kaydırmadan (kısa) okunabilecek uzunlukta olsun — mümkün olduğunca özet.
-- Bulduğun haberleri/verileri olduğu gibi sıralama — bir insan analist gibi ELEKTEN GEÇİR: kaynaklar
-  çelişiyorsa hangisine neden güvendiğini kısaca belirt, eski/güncel olmayan veriyi ayıkla, abartılı
-  başlıkları indirgeyerek oku. Puan Kartı'ndaki rakamlar senin bağımsız analitik yargın olmalı —
-  tek bir haberin veya kaynağın tekrarı değil.`;
-
-// ---------- AI Finans: dosya eki (PDF/Resim) ----------
-let aiAttachedFile = null; // { base64, mediaType, name, kind: 'image'|'pdf' }
-
-async function onAiFileSelected(event){
-  const file = event.target.files[0];
-  const nameEl = document.getElementById('aiFileName');
-  const clearBtn = document.getElementById('aiFileClearBtn');
-  const previewEl = document.getElementById('aiFilePreview');
-
-  if(!file){ return; }
-
-  const isPdf = file.type === 'application/pdf';
-  const isImage = file.type.startsWith('image/');
-  if(!isPdf && !isImage){
-    showAlertModal('Sadece PDF veya resim (PNG/JPEG/WEBP) ekleyebilirsin.');
-    event.target.value = '';
-    return;
-  }
-  if(file.size > 15 * 1024 * 1024){
-    showAlertModal('Dosya çok büyük (15 MB üstü). Daha küçük bir dosya seç.');
-    event.target.value = '';
-    return;
-  }
-
-  const base64 = await fileToBase64(file);
-  aiAttachedFile = { base64, mediaType: file.type, name: file.name, kind: isPdf ? 'pdf' : 'image' };
-
-  nameEl.textContent = file.name;
-  clearBtn.style.display = 'inline-block';
-  previewEl.innerHTML = isImage
-    ? `<img src="data:${file.type};base64,${base64}" alt="${escapeHtml(file.name)}">`
-    : `<div class="pdf-badge">📄 ${escapeHtml(file.name)}</div>`;
-}
-
-function clearAiFile(){
-  aiAttachedFile = null;
-  document.getElementById('aiFileInput').value = '';
-  document.getElementById('aiFileName').textContent = 'Dosya eklenmedi';
-  document.getElementById('aiFileClearBtn').style.display = 'none';
-  document.getElementById('aiFilePreview').innerHTML = '';
-}
-
-const AI_MODEL_HINTS = {
-  'claude-haiku-4-5-20251001': 'Haiku: en hızlı ve en ucuz — basit/kısa sorular için yeterli.',
-  'claude-sonnet-5': 'Sonnet: çoğu soru için hız/kalite dengesi en iyi seçenek.',
-  'claude-opus-5-5': 'Opus: daha derin, çok yönlü analiz gerektiren sorular için.',
-  'claude-fable-5-1': 'Fable: en yüksek kapasiteli model — en karmaşık, en pahalı analizler için.',
+// Resmi fiyatlar (USD / milyon token). cw: 5 dk önbellek yazma, cr: önbellek okuma
+const BP_FIYAT = {
+  'claude-haiku-4-5-20251001': { ad:'Haiku 4.5',  in:1,  out:5,  cw:1.25, cr:0.10 },
+  'claude-sonnet-5':           { ad:'Sonnet 5',   in:2,  out:10, cw:2.5,  cr:0.20 },
+  'claude-opus-5-5':           { ad:'Opus 5.5',   in:4,  out:20, cw:5,    cr:0.20 },
+  'claude-fable-5-1':          { ad:'Fable 5.1',  in:10, out:50, cw:12.5, cr:0.25 },
+};
+const BP_MODEL_IPUCU = {
+  'claude-haiku-4-5-20251001': 'Hızlı ve ucuz — kısa sorular ve günlük özet için yeterli.',
+  'claude-sonnet-5':           'Dengeli — çoğu sohbet için en iyi hız/kalite/fiyat.',
+  'claude-opus-5-5':           'Daha derin analiz — Sonnet\'in yaklaşık 2 katı maliyet.',
+  'claude-fable-5-1':          'En güçlü — Sonnet\'in yaklaşık 5 katı maliyet, önemli kararlar için.',
 };
 
-document.getElementById('aiModelSelect').addEventListener('change', function(){
-  document.getElementById('aiModelHint').textContent = AI_MODEL_HINTS[this.value] || '';
-});
+const BP_SISTEM = `Sen "Bay Piyasa"sın: kullanıcının kişisel finans ve piyasa sohbet asistanı. Kıdemli bir portföy yöneticisi ve makro analist gibi düşünür, samimi bir arkadaş gibi konuşursun.
 
-async function askAI(){
-  const input = document.getElementById('aiInput');
-  const answerEl = document.getElementById('aiAnswer');
-  const btn = document.getElementById('aiBtn');
-  const question = input.value.trim();
-  const selectedModel = document.getElementById('aiModelSelect').value;
-  if(!question) return;
+ÜSLUP
+- Türkçe yaz, "sen" diye hitap et. Sohbet et: doğal, kısa, net.
+- "Elbette", "Harika soru" gibi girişler ve süreç anlatımı ("şimdi arayayım", "verileri getirelim") YAZMA; doğrudan cevaba gir.
+- Basit sorulara 2-4 cümleyle cevap ver. Analiz istenirse yapılandır ama kısa tut.
 
-  if(AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
-    answerEl.innerHTML = '<span style="color:var(--amber);">AI uç noktası henüz tanımlanmamış. Dosyadaki AI_ENDPOINT satırını kendi Cloudflare Worker adresinle değiştirmen gerekiyor.</span>';
+BİÇİM (markdown)
+- Başlık gerekirse yalnızca "## " ile ve en fazla 3-4 tane. Yatay çizgi (---) KULLANMA.
+- Maddeler kısa olsun. Tabloyu yalnızca gerçek bir karşılaştırma için (en fazla 6 satır) kullan.
+- Önemli rakamları **kalın** yaz. Para biçimi: ₺1.234.567 veya $84.400.
+
+İÇERİK KURALLARI
+- <panel_verisi> içinde kullanıcının panelindeki güncel fiyatlar, haber başlıkları ve (paylaşıldıysa) portföy/borç bilgisi verilir. Bunları birincil kaynak say. Kullanıcıya ait rakamları ASLA uydurma; verilmemişse "bunu paylaşmamışsın" de.
+- Web araması yoksa güncel olmayabilecek bilgiyi belirt. Emin olmadığın rakamı uydurma.
+- Kesin al/sat emri verme; senaryo, olasılık ve risk diliyle konuş. Öneri içeren cevapların sonuna tek satırlık kısa bir "yatırım tavsiyesi değildir" notu ekle; her mesajda tekrarlama.
+- Bir varlığı değerlendirirken portföydeki payını ve borç dengesini biliyorsan mutlaka bağla.
+- Belirsizse tek bir netleştirici soru sor.`;
+
+const BP_RAPORLAR = [
+  { id:'ozet',    ad:'☀ Günlük özet',      portfoy:true,  haber:true,
+    prompt:'Bugün benim için önemli olanı özetle. Yapı: (1) "Bugün öne çıkan": panelde belirgin hareket eden varlıklar ve portföyüme etkisi, 3-5 madde; (2) "Haberler": portföyümü veya piyasayı ilgilendiren başlıkların ne anlama geldiği, 2-3 madde; (3) "Dikkat": bugün izlenecek en önemli risk ya da fırsat, tek cümle. Kısa tut.' },
+  { id:'portfoy', ad:'📊 Portföy analizi', portfoy:true,
+    prompt:'Portföyümü analiz et: dağılım ve yoğunlaşma, yatırım-borç dengesi, en büyük riskler, iyi/orta/kötü olmak üzere 3 senaryo ve rakamlarla 3 somut öneri.' },
+  { id:'borc',    ad:'🧾 Borç planı',      portfoy:true,
+    prompt:'Borçlarımı incele: hangi kalem bana en pahalıya geliyor (faiz), hangisini önce kapatmak mantıklı, elimdeki yatırımlar ve varlıklarla nasıl bir kapatma sırası önerirsin? Rakamlarla kısa bir plan çıkar.' },
+  { id:'piyasa',  ad:'🌍 Piyasa özeti',    haber:true,
+    prompt:'Panelde görünen piyasa verilerine ve haberlere göre şu anki piyasayı özetle: risk iştahı, dolar/altın/kripto/ABD hisse yönü ve dikkat edilecekler. Kısa ve net.' },
+  { id:'risk',    ad:'⚠ Risk kontrolü',    portfoy:true,
+    prompt:'Portföyüm ve borçlarım açısından şu an beni en çok zorlayabilecek 3 riski (kur, faiz, düşüş, yoğunlaşma vb.) rakamlı örneklerle anlat; her biri için neyi izlemem gerektiğini söyle.' },
+];
+
+let bp = { chats: [], aktif: null, ayar: { model:'claude-sonnet-5', paylas:false, haber:true, ara:false, limit:0.5 }, harcama: {} };
+let bpEk = null;        // eklenen dosya { base64, mediaType, name, kind }
+let bpMesgul = false;
+let _sonHaberler = {};  // haber sütunlarındaki son başlıklar (loadNews doldurur)
+
+function bpYukle(){
+  try{
+    const j = JSON.parse(localStorage.getItem(BP_KEY) || 'null');
+    if(j){
+      bp.chats = Array.isArray(j.chats) ? j.chats : [];
+      bp.aktif = j.aktif || null;
+      bp.harcama = j.harcama || {};
+      bp.ayar = Object.assign(bp.ayar, j.ayar || {});
+    }
+  }catch(e){ /* bozuk kayıt: sıfırdan başla */ }
+}
+function bpKaydet(){
+  try{
+    bp.chats.sort((a, b) => (b.guncelleme || 0) - (a.guncelleme || 0));
+    bp.chats = bp.chats.slice(0, 40);
+    const gunler = Object.keys(bp.harcama).sort();
+    while(gunler.length > 62) delete bp.harcama[gunler.shift()];
+    localStorage.setItem(BP_KEY, JSON.stringify(bp));
+  }catch(e){ /* localStorage dolu/erişilemez */ }
+}
+
+function bpBugunAnahtar(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function bpBugunHarcama(){ return bp.harcama[bpBugunAnahtar()] || 0; }
+function bpAyHarcama(){
+  const onek = bpBugunAnahtar().slice(0, 7);
+  return Object.keys(bp.harcama).filter(k => k.startsWith(onek)).reduce((t, k) => t + bp.harcama[k], 0);
+}
+function bpHarcamaEkle(x){ const k = bpBugunAnahtar(); bp.harcama[k] = (bp.harcama[k] || 0) + x; }
+function bpPara(x){ return '$' + fmtNumber(x, x < 0.1 ? 3 : 2); }
+
+function bpMaliyet(model, u){
+  const f = BP_FIYAT[model];
+  if(!f || !u) return 0;
+  const arama = (u.server_tool_use && u.server_tool_use.web_search_requests) || 0;
+  return ((u.input_tokens || 0) * f.in + (u.cache_creation_input_tokens || 0) * f.cw
+        + (u.cache_read_input_tokens || 0) * f.cr + (u.output_tokens || 0) * f.out) / 1e6 + arama * 0.01;
+}
+
+function bpAktifChat(){ return bp.chats.find(c => c.id === bp.aktif) || null; }
+function bpYeniChat(){
+  const c = { id: 'c-' + Date.now(), baslik: '', olusturma: Date.now(), guncelleme: Date.now(), model: bp.ayar.model, mesajlar: [], snapshot: null, pencere: 0 };
+  bp.chats.unshift(c);
+  bp.aktif = c.id;
+  return c;
+}
+
+// Sohbetin başında/yenilenirken kullanılan "panel fotoğrafı": fiyatlar, haberler ve (paylaşıldıysa) portföy
+function bpSnapshotOlustur(paylas, haber){
+  const simdi = new Date();
+  const usdtry = _fxRates.USD;
+  const s = [];
+  s.push('<panel_verisi>');
+  s.push('Zaman: ' + simdi.toLocaleString('tr-TR') + ' (Türkiye saati). USD/TRY: ' + (usdtry ? fmtNumber(usdtry, 2) : 'bilinmiyor'));
+  s.push('');
+  s.push('Piyasa (bir önceki kapanışa göre değişim):');
+  CARDS.forEach(c => {
+    const v = _lastGoodValues[c.key];
+    if(!v || !isFinite(v.price)) return;
+    const ch = (v.chgPct >= 0 ? '+' : '') + fmtNumber(v.chgPct, 2) + '%';
+    const seans = (v.seans && SEANS_ETIKET[v.seans]) ? ' [' + SEANS_ETIKET[v.seans].toLowerCase() + ']' : '';
+    s.push('- ' + c.label + ': ' + fmtNumber(v.price, c.fmt === 'usd0' ? 0 : 2) + ' (' + ch + ')' + seans);
+  });
+
+  if(haber){
+    s.push('');
+    s.push('Güncel haber başlıkları (Reuters, Bloomberg, Investing vb.):');
+    const adlar = { btc:'Bitcoin', gold:'Altın', us:'ABD borsaları' };
+    let varMi = false;
+    Object.keys(adlar).forEach(k => (_sonHaberler[k] || []).slice(0, 4).forEach(h => {
+      s.push('- [' + adlar[k] + '] ' + h.title + ' (' + h.source + (h.ts ? ', ' + haberGoreliZaman(h.ts) : '') + ')');
+      varMi = true;
+    }));
+    if(!varMi) s.push('- (haberler yüklenemedi)');
+  }
+
+  if(paylas){
+    s.push('');
+    s.push('KULLANICININ PORTFÖYÜ (kullanıcı paylaşmayı seçti):');
+
+    // Yatırımlar
+    const yList = manuelListeYukle(YATIRIM_KEY).map(item => {
+      const r = yatirimDegerHesapla(item);
+      return { item, tl: r ? r.tutarTL : 0, kat: YATIRIM_KATEGORI_BASLIK[item.tur] || item.tur };
+    });
+    const yToplam = yList.reduce((t, x) => t + x.tl, 0);
+    s.push('Yatırımlar (toplam ₺' + fmtNumber(yToplam, 0) + '):');
+    if(!yList.length) s.push('- (yatırım girilmemiş)');
+    yList.forEach(({ item, tl, kat }) => {
+      let miktar;
+      if(item.tur === 'emtia') miktar = fmtNumber(item.miktar, 2) + ' gr';
+      else if(item.tur === 'bist') miktar = 'elle girilen değer';
+      else miktar = fmtNumber(item.miktar, 6).replace(/,?0+$/, '') + ' adet';
+      const pay = yToplam > 0 ? ' (%' + fmtNumber(tl / yToplam * 100, 1) + ')' : '';
+      s.push('- ' + kat + ' | ' + yatirimEtiket(item) + ' | ' + miktar + ' | ₺' + fmtNumber(tl, 0) + pay);
+    });
+
+    // Varlıklar
+    const vList = manuelListeYukle(VARLIK_KEY);
+    const vToplam = vList.reduce((t, x) => t + (Number(x.deger) || 0), 0);
+    s.push('Varlıklar (toplam ₺' + fmtNumber(vToplam, 0) + '):');
+    if(!vList.length) s.push('- (varlık girilmemiş)');
+    vList.forEach(v => s.push('- ' + v.tur + ' | ' + v.ad + ' | ₺' + fmtNumber(v.deger, 0)));
+
+    // Borçlar
+    s.push('Borçlar:');
+    getAllLoans().forEach(l => {
+      const r = loanGuncelBorc(l);
+      if(!r) return;
+      s.push('- Kredi | ' + l.ad + ' | güncel borç ₺' + fmtNumber(r.toplam, 0) + ' | aylık faiz %' + String(l.faizOraniAylik).replace('.', ',') + ' | kalan taksit ' + r.kalanTaksit);
+    });
+    manuelListeYukle(KK_KARTLARI_KEY).forEach(k => s.push('- Kredi kartı | ' + k.ad + ' | ₺' + fmtNumber(k.tutar, 0)));
+    manuelListeYukle(KMH_KEY).forEach(k => s.push('- KMH | ' + k.ad + ' | ₺' + fmtNumber(k.tutar, 0)));
+    s.push('- Elden nakit borçlar (toplam) | ₺' + fmtNumber(_bTotals.nakit || 0, 0));
+    const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
+    s.push('Toplam borç: ₺' + fmtNumber(borc, 0));
+    s.push('Net değer (Varlıklar + Yatırımlar − Borç): ₺' + fmtNumber(vToplam + yToplam - borc, 0)
+      + (usdtry ? ' (≈ $' + fmtNumber((vToplam + yToplam - borc) / usdtry, 0) + ')' : ''));
+    if(borc > 0) s.push('Yatırım / Borç oranı: %' + fmtNumber(yToplam / borc * 100, 1));
+  } else {
+    s.push('');
+    s.push('(Kullanıcı portföyünü paylaşmadı — kişisel rakamlar bilinmiyor.)');
+  }
+  s.push('</panel_verisi>');
+  return s.join('\n');
+}
+
+// Sohbet geçmişini API biçimine çevirir: eski mesajları kırpar, ardışık aynı rolleri birleştirir,
+// eki sadece son mesaja koyar ve önbellek işaretini son bloğa ekler.
+function bpApiMesajlari(chat, ek){
+  const hepsi = chat.mesajlar;
+  if(hepsi.length - (chat.pencere || 0) > 24){          // pencere 4 turda bir kayar → önbellek sık bozulmaz
+    let bas = hepsi.length - 16;
+    while(bas < hepsi.length && hepsi[bas].r !== 'user') bas++;
+    chat.pencere = bas;
+  }
+  const dilim = hepsi.slice(chat.pencere || 0).filter(m => !m.hata);
+  const birlesik = [];
+  dilim.forEach(m => {
+    const rol = m.r === 'user' ? 'user' : 'assistant';
+    let metin = m.t;
+    if(m.ek && !(m === hepsi[hepsi.length - 1] && ek)) metin += '\n\n[Bu mesajla "' + m.ek + '" dosyası eklenmişti]';
+    const onceki = birlesik[birlesik.length - 1];
+    if(onceki && onceki.role === rol) onceki.text += '\n\n' + metin;
+    else birlesik.push({ role: rol, text: metin, ek: null });
+  });
+  if(ek && birlesik.length && birlesik[birlesik.length - 1].role === 'user') birlesik[birlesik.length - 1].ek = ek;
+
+  const mesajlar = birlesik.map(b => {
+    const bloklar = [];
+    if(b.ek){
+      bloklar.push(b.ek.kind === 'pdf'
+        ? { type:'document', source:{ type:'base64', media_type:b.ek.mediaType, data:b.ek.base64 } }
+        : { type:'image',    source:{ type:'base64', media_type:b.ek.mediaType, data:b.ek.base64 } });
+    }
+    bloklar.push({ type:'text', text:b.text });
+    return { role:b.role, content:bloklar };
+  });
+  const son = mesajlar[mesajlar.length - 1];
+  son.content[son.content.length - 1].cache_control = { type:'ephemeral' };
+  return mesajlar;
+}
+
+// ---------- Markdown → HTML ----------
+function bpInline(s){
+  s = escapeHtml(s);
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  s = s.replace(/\*\*([^*]+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/__([^_]+?)__/g, '<strong>$1</strong>');
+  s = s.replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\*)/g, '$1<em>$2</em>');
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)"'<>]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return s;
+}
+
+function bpMd(kaynak){
+  let text = String(kaynak || '').replace(/\r/g, '');
+  // Model bazen başlığı önceki cümleye yapıştırıyor ("...getirelim.## Başlık") → ayır
+  text = text.replace(/([.!?:;])(#{2,4}\s)/g, '$1\n\n$2');
+  const kodlar = [];
+  text = text.replace(/```[a-zA-Z0-9]*\n?([\s\S]*?)```/g, (m, kod) => { kodlar.push(kod.replace(/\n$/, '')); return '\n\u0000K' + (kodlar.length - 1) + '\u0000\n'; });
+
+  const L = text.split('\n');
+  const html = [];
+  const TABLO_AYRAC = /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/;
+  const LISTE = /^(\s*)([-*+•]|\d+[.)])\s+(.*)$/;
+  const HR = /^([-*_])(\s*\1){2,}$/;
+  const BASLIK = /^(#{1,6})\s+(.*?)\s*#*\s*$/;
+  const hucreler = satir => satir.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(h => h.trim());
+
+  const ozelMi = k => {
+    const t = (L[k] || '').trim();
+    if(t === '') return true;
+    if(/^\u0000K\d+\u0000$/.test(t) || HR.test(t) || BASLIK.test(t) || t.startsWith('>')) return true;
+    if(LISTE.test(L[k])) return true;
+    if(t.includes('|') && k + 1 < L.length && TABLO_AYRAC.test(L[k + 1]) && L[k + 1].includes('-')) return true;
+    return false;
+  };
+
+  let i = 0;
+  while(i < L.length){
+    const satir = L[i];
+    const t = satir.trim();
+    if(t === ''){ i++; continue; }
+    let m;
+
+    if((m = t.match(/^\u0000K(\d+)\u0000$/))){ html.push('<pre><code>' + escapeHtml(kodlar[+m[1]]) + '</code></pre>'); i++; continue; }
+    if(HR.test(t)){ html.push('<hr>'); i++; continue; }
+    if((m = t.match(BASLIK))){ html.push('<h' + (m[1].length <= 2 ? 3 : 4) + '>' + bpInline(m[2]) + '</h' + (m[1].length <= 2 ? 3 : 4) + '>'); i++; continue; }
+
+    // Tablo
+    if(t.includes('|') && i + 1 < L.length && TABLO_AYRAC.test(L[i + 1]) && L[i + 1].includes('-')){
+      const bas = hucreler(t);
+      i += 2;
+      const govde = [];
+      while(i < L.length && L[i].trim().includes('|') && L[i].trim() !== ''){ govde.push(hucreler(L[i])); i++; }
+      html.push('<div class="bp-tablo-wrap"><table><thead><tr>' + bas.map(h => '<th>' + bpInline(h) + '</th>').join('') + '</tr></thead><tbody>'
+        + govde.map(r => '<tr>' + bas.map((_, j) => '<td>' + bpInline(r[j] || '') + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>');
+      continue;
+    }
+
+    // Alıntı
+    if(t.startsWith('>')){
+      const q = [];
+      while(i < L.length && L[i].trim().startsWith('>')){ q.push(L[i].trim().replace(/^>\s?/, '')); i++; }
+      html.push('<blockquote>' + q.map(bpInline).join('<br>') + '</blockquote>');
+      continue;
+    }
+
+    // Liste (iç içe)
+    if(LISTE.test(satir)){
+      const ogeler = [];
+      while(i < L.length){
+        const lm = L[i].match(LISTE);
+        if(lm){ ogeler.push({ indent: lm[1].replace(/\t/g, '  ').length, ordered: /\d/.test(lm[2]), text: lm[3] }); i++; }
+        else if(L[i].trim() !== '' && /^\s+/.test(L[i]) && !ozelMi(i) && ogeler.length){ ogeler[ogeler.length - 1].text += ' ' + L[i].trim(); i++; }
+        else break;
+      }
+      let out = '';
+      const yigin = [];
+      ogeler.forEach(o => {
+        const tag = o.ordered ? 'ol' : 'ul';
+        while(yigin.length && o.indent < yigin[yigin.length - 1].indent) out += '</li></' + yigin.pop().tag + '>';
+        if(!yigin.length || o.indent > yigin[yigin.length - 1].indent){ out += '<' + tag + '><li>' + bpInline(o.text); yigin.push({ indent:o.indent, tag }); }
+        else out += '</li><li>' + bpInline(o.text);
+      });
+      while(yigin.length) out += '</li></' + yigin.pop().tag + '>';
+      html.push(out);
+      continue;
+    }
+
+    // Paragraf: satır sonları korunur
+    const p = [];
+    while(i < L.length && !(p.length && ozelMi(i))){ p.push(L[i].trim()); i++; if(i < L.length && L[i].trim() === '') break; }
+    html.push('<p>' + p.map(bpInline).join('<br>') + '</p>');
+  }
+  return html.join('');
+}
+
+// ---------- Ekranı çizen fonksiyonlar ----------
+function bpTarihKisa(ts){
+  const d = new Date(ts);
+  return isBugun(d) ? d.toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }) : d.toLocaleDateString('tr-TR', { day:'2-digit', month:'short' });
+}
+
+function bpRenderAyar(){
+  const set = (id, fn) => { const el = document.getElementById(id); if(el) fn(el); };
+  set('bpModel', el => el.value = bp.ayar.model);
+  set('bpPaylas', el => el.checked = !!bp.ayar.paylas);
+  set('bpHaber', el => el.checked = !!bp.ayar.haber);
+  set('bpAra', el => el.checked = !!bp.ayar.ara);
+  set('bpLimit', el => el.value = bp.ayar.limit);
+  set('bpModelIpucu', el => el.textContent = BP_MODEL_IPUCU[bp.ayar.model] || '');
+  set('bpPaylasNot', el => el.style.display = bp.ayar.paylas ? 'block' : 'none');
+}
+
+function bpAyarDegisti(){
+  bp.ayar.model = document.getElementById('bpModel').value;
+  bp.ayar.paylas = document.getElementById('bpPaylas').checked;
+  bp.ayar.haber = document.getElementById('bpHaber').checked;
+  bp.ayar.ara = document.getElementById('bpAra').checked;
+  const l = parseFloat(document.getElementById('bpLimit').value);
+  if(isFinite(l) && l >= 0) bp.ayar.limit = l;
+  bpKaydet();
+  bpRenderAyar();
+  bpRenderMeter();
+  bpRenderThread();
+}
+
+function bpRenderMeter(){
+  const bugun = bpBugunHarcama(), ay = bpAyHarcama(), lim = bp.ayar.limit;
+  const oran = lim > 0 ? Math.min(100, bugun / lim * 100) : 100;
+  const usd = _fxRates.USD;
+  const tl = x => usd ? ' (≈ ₺' + fmtNumber(x * usd, x * usd < 10 ? 1 : 0) + ')' : '';
+  const set = (id, fn) => { const el = document.getElementById(id); if(el) fn(el); };
+  set('bpMBugun', el => el.innerHTML = '<b>' + bpPara(bugun) + '</b>' + tl(bugun));
+  set('bpMAy', el => el.innerHTML = '<b>' + bpPara(ay) + '</b>' + tl(ay));
+  set('bpMBar', el => { el.className = 'bp-bar' + (oran >= 100 ? ' limit' : (oran >= 75 ? ' uyari' : '')); el.firstElementChild.style.width = oran + '%'; });
+}
+
+function bpRenderRaporlar(){
+  const el = document.getElementById('bpRaporlar');
+  if(el) el.innerHTML = BP_RAPORLAR.map(r => `<button class="bp-chip" onclick="bpRaporCalistir('${r.id}')" title="${r.portfoy ? 'Portföy verini kullanır' : 'Panel ve haber verisini kullanır'}">${r.ad}</button>`).join('');
+}
+
+function bpRenderGecmis(){
+  const el = document.getElementById('bpGecmis');
+  if(!el) return;
+  const liste = bp.chats.filter(c => c.mesajlar.length);
+  el.innerHTML = liste.length
+    ? liste.map(c => `
+        <div class="bp-gitem ${c.id === bp.aktif ? 'aktif' : ''}" onclick="bpSohbetAc('${c.id}')">
+          <div style="flex:1;min-width:0;"><div class="bp-gbaslik">${escapeHtml(c.baslik || 'Yeni sohbet')}</div><div class="bp-gtarih">${bpTarihKisa(c.guncelleme)} · ${Math.ceil(c.mesajlar.length / 2)} mesaj</div></div>
+          <button class="bp-gsil" title="Sohbeti sil" onclick="event.stopPropagation();bpSohbetSil('${c.id}')">×</button>
+        </div>`).join('')
+    : '<div class="bp-bos">Henüz sohbet yok</div>';
+}
+
+function bpMesajHtml(m, i){
+  if(m.r === 'user'){
+    return `<div class="bp-msg user"><div class="bp-bubble">${escapeHtml(m.t)}${m.ek ? '<div class="bp-ekgoster">📎 ' + escapeHtml(m.ek) + '</div>' : ''}</div></div>`;
+  }
+  if(m.hata){
+    return `<div class="bp-msg bot hata"><div class="bp-avatar">BP</div><div class="bp-bubble">${escapeHtml(m.t)}</div></div>`;
+  }
+  const k = m.kullanim || {};
+  const girdi = (k.input_tokens || 0) + (k.cache_creation_input_tokens || 0) + (k.cache_read_input_tokens || 0);
+  const arama = (k.server_tool_use && k.server_tool_use.web_search_requests) || 0;
+  const kaynak = (m.kaynaklar || []).slice(0, 6).map(s => {
+    let host = s.u; try{ host = new URL(s.u).hostname.replace(/^www\./, ''); }catch(e){}
+    return `<a class="bp-src" href="${escapeHtml(s.u)}" target="_blank" rel="noopener" title="${escapeHtml(s.b)}">${escapeHtml(host)}</a>`;
+  }).join('');
+  const meta = [
+    (BP_FIYAT[m.model] || {}).ad || '',
+    girdi ? fmtNumber(girdi, 0) + ' giriş' + (k.cache_read_input_tokens ? ' (' + fmtNumber(k.cache_read_input_tokens, 0) + ' önbellek)' : '') : '',
+    k.output_tokens ? fmtNumber(k.output_tokens, 0) + ' çıkış' : '',
+    arama ? arama + ' arama' : '',
+    '≈ ' + bpPara(m.maliyet || 0),
+  ].filter(Boolean).join(' · ');
+  return `<div class="bp-msg bot"><div class="bp-avatar">BP</div><div class="bp-bubble">
+    <div class="bp-md">${bpMd(m.t)}</div>
+    <div class="bp-meta"><span>${meta}</span>${kaynak}<button class="bp-copy" onclick="bpKopyala(${i}, this)">Kopyala</button></div>
+  </div></div>`;
+}
+
+function bpRenderThread(yaziyor){
+  const el = document.getElementById('bpThread');
+  if(!el) return;
+  const chat = bpAktifChat();
+  if(!chat || !chat.mesajlar.length){
+    const paylas = bp.ayar.paylas;
+    el.innerHTML = `<div class="bp-empty">
+      <div class="bp-avatar">BP</div>
+      <h2>Merhaba, ben Bay Piyasa</h2>
+      <p>Piyasayı, haberleri ${paylas ? 've senin portföyünü ' : ''}bilen sohbet asistanınım. ${paylas ? '' : 'Portföyünü görmemi istersen üstteki <b>Portföyümü paylaş</b> anahtarını aç. '}Bir şey sor ya da aşağıdan hazır bir rapor seç.</p>
+      <div class="bp-orneks">
+        <button class="bp-chip" onclick="bpGonder('Bitcoin bugün neden düşüyor, ne bekliyorsun?')">Bitcoin bugün neden düşüyor?</button>
+        <button class="bp-chip" onclick="bpGonder('Altın ve dolar şu an ne söylüyor, nelere dikkat etmeliyim?')">Altın ve dolar ne söylüyor?</button>
+        <button class="bp-chip" onclick="bpGonder('ABD borsası açılmadan önce bugün neler önemli?')">Bugün ABD borsasında ne önemli?</button>
+      </div></div>`;
+    return;
+  }
+  el.innerHTML = chat.mesajlar.map(bpMesajHtml).join('')
+    + (yaziyor ? '<div class="bp-msg bot"><div class="bp-avatar">BP</div><div class="bp-bubble"><span class="bp-typing"><i></i><i></i><i></i></span></div></div>' : '');
+  el.scrollTop = el.scrollHeight;
+}
+
+function bpRenderGonder(){
+  const b = document.getElementById('bpGonder');
+  if(b){ b.disabled = bpMesgul; b.textContent = bpMesgul ? '…' : 'Gönder'; }
+}
+
+function bpEkSecildi(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const pdf = file.type === 'application/pdf';
+  if(!pdf && !file.type.startsWith('image/')){ showAlertModal('Sadece PDF veya resim (PNG/JPEG/WEBP) ekleyebilirsin.'); event.target.value = ''; return; }
+  if(file.size > 15 * 1024 * 1024){ showAlertModal('Dosya çok büyük (15 MB üstü).'); event.target.value = ''; return; }
+  fileToBase64(file).then(base64 => {
+    bpEk = { base64, mediaType: file.type, name: file.name, kind: pdf ? 'pdf' : 'image' };
+    document.getElementById('bpEk').innerHTML = `<span class="bp-ek">📎 ${escapeHtml(file.name)} <button onclick="bpEkKaldir()" title="Kaldır">×</button></span>`;
+  });
+}
+function bpEkKaldir(){
+  bpEk = null;
+  const f = document.getElementById('bpFile'); if(f) f.value = '';
+  const e = document.getElementById('bpEk'); if(e) e.innerHTML = '';
+}
+
+function bpYeniSohbet(){
+  bp.aktif = null;
+  bpKaydet(); bpRenderGecmis(); bpRenderThread();
+  const i = document.getElementById('bpInput'); if(i) i.focus();
+}
+function bpSohbetAc(id){ bp.aktif = id; bpKaydet(); bpRenderGecmis(); bpRenderThread(); }
+function bpSohbetSil(id){
+  showConfirmModal('Bu sohbeti silmek istediğine emin misin?', () => {
+    bp.chats = bp.chats.filter(c => c.id !== id);
+    if(bp.aktif === id) bp.aktif = null;
+    bpKaydet(); bpRenderGecmis(); bpRenderThread();
+  });
+}
+function bpGecmisiTemizle(){
+  showConfirmModal('Tüm sohbet geçmişi silinecek (harcama kaydı kalır). Emin misin?', () => {
+    bp.chats = []; bp.aktif = null;
+    bpKaydet(); bpRenderGecmis(); bpRenderThread();
+  });
+}
+
+function bpKopyala(i, btn){
+  const chat = bpAktifChat();
+  if(!chat || !chat.mesajlar[i]) return;
+  try{
+    navigator.clipboard.writeText(chat.mesajlar[i].t).then(() => { btn.textContent = 'Kopyalandı'; setTimeout(() => btn.textContent = 'Kopyala', 1500); });
+  }catch(e){ /* pano erişimi yok */ }
+}
+
+function bpRaporCalistir(id){
+  const r = BP_RAPORLAR.find(x => x.id === id);
+  if(!r || bpMesgul) return;
+  const calistir = () => bpGonder(r.prompt, { haber: !!r.haber });
+  if(r.portfoy && !bp.ayar.paylas){
+    showConfirmModal('Bu rapor portföy ve borç verilerini kullanır. Bu rakamlar Anthropic API\'sine gönderilir. Paylaşıp devam edelim mi?', () => {
+      bp.ayar.paylas = true; bpKaydet(); bpRenderAyar(); calistir();
+    });
+    return;
+  }
+  calistir();
+}
+
+async function bpGonder(metinParam, opsiyon){
+  opsiyon = opsiyon || {};
+  if(bpMesgul) return;
+  const girdi = document.getElementById('bpInput');
+  const metin = (metinParam != null ? metinParam : girdi.value).trim();
+  if(!metin && !bpEk) return;
+  if(AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){ showAlertModal('AI uç noktası tanımlı değil.'); return; }
+  if(bpBugunHarcama() >= bp.ayar.limit){
+    showAlertModal('Bugünkü limit (' + bpPara(bp.ayar.limit) + ') doldu. Devam etmek için üstteki limiti artırabilirsin.');
     return;
   }
 
-  btn.disabled = true;
-  renderScore(null);
-  answerEl.innerHTML = '<div class="ai-thinking">' + (aiAttachedFile ? 'Dosya okunuyor, analiz ediliyor…' : 'Analiz ediliyor, haberler taranıyor…') + '</div>';
-
-  // Soruyu düz metin ya da (dosya eklendiyse) çok parçalı içerik olarak kur
-  let userContent = question;
-  if(aiAttachedFile){
-    const blok = aiAttachedFile.kind === 'pdf'
-      ? { type: 'document', source: { type: 'base64', media_type: aiAttachedFile.mediaType, data: aiAttachedFile.base64 } }
-      : { type: 'image', source: { type: 'base64', media_type: aiAttachedFile.mediaType, data: aiAttachedFile.base64 } };
-    userContent = [blok, { type: 'text', text: question }];
+  const chat = bpAktifChat() || bpYeniChat();
+  const paylas = bp.ayar.paylas;
+  const haber = bp.ayar.haber || !!opsiyon.haber;
+  const s = chat.snapshot;
+  if(!s || (Date.now() - s.t) > 30 * 60 * 1000 || s.paylas !== paylas || s.haber !== haber){
+    chat.snapshot = { t: Date.now(), paylas, haber, text: bpSnapshotOlustur(paylas, haber) };
   }
+  const ek = bpEk;
+  chat.mesajlar.push({ r:'user', t: metin || '(ekli dosyayı incele)', ts: Date.now(), ek: ek ? ek.name : null });
+  if(!chat.baslik) chat.baslik = (metin || (ek && ek.name) || 'Yeni sohbet').slice(0, 48);
+  chat.guncelleme = Date.now();
+  girdi.value = ''; girdi.style.height = 'auto';
+  bpEkKaldir();
+  bpMesgul = true;
+  bpKaydet(); bpRenderGecmis(); bpRenderThread(true); bpRenderGonder();
 
   try{
+    const model = bp.ayar.model;
     const res = await fetch(AI_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: selectedModel,
-        system: AI_SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: userContent }],
+        model,
+        max_tokens: 2500,
+        webSearch: !!bp.ayar.ara,
+        system: [
+          { type:'text', text: BP_SISTEM, cache_control: { type:'ephemeral' } },
+          { type:'text', text: chat.snapshot.text },
+        ],
+        messages: bpApiMesajlari(chat, ek),
       }),
     });
-
-    if(!res.ok){
-      let detail = '';
-      try{
-        const errData = await res.json();
-        detail = errData?.error?.message || errData?.error || errData?.message || JSON.stringify(errData);
-      }catch(e){ /* yanıt JSON değilse boş kalır */ }
-      throw new Error('AI isteği başarısız (' + res.status + ')' + (detail ? ': ' + detail : ''));
+    let data = null;
+    try{ data = await res.json(); }catch(e){ /* JSON değil */ }
+    if(!res.ok || !data){
+      const d = data && ((data.error && (data.error.message || data.error)) || data.message) || '';
+      throw new Error('İstek başarısız (' + res.status + ')' + (d ? ': ' + d : ''));
     }
-    const data = await res.json();
 
-    const text = (data.content || [])
-      .map(b => b.type === 'text' ? b.text : '')
-      .filter(Boolean)
-      .join('');
+    // Web araması yapıldıysa modelin araç öncesi/arası anlatımını atla: sadece son araç sonucundan sonraki metin
+    const bloklar = data.content || [];
+    let sonArac = -1;
+    bloklar.forEach((b, i) => { if(b.type !== 'text') sonArac = i; });
+    const metinBloklari = bloklar.filter((b, i) => b.type === 'text' && i > sonArac);
+    // Alıntı yüzünden bölünmüş bitişik metin parçaları kesintisiz birleşir
+    let cevap = metinBloklari.map(b => b.text).join('').trim();
+    if(!cevap) cevap = bloklar.filter(b => b.type === 'text').map(b => b.text).join('\n\n').trim();
+    if(!cevap) throw new Error('Boş yanıt döndü');
+    if(data.stop_reason === 'max_tokens') cevap += '\n\n*(Cevap uzunluk sınırında kesildi — "devam et" yazabilirsin.)*';
 
-    if(!text) throw new Error('Boş yanıt döndü');
+    const kaynaklar = [];
+    const goruldu = new Set();
+    metinBloklari.forEach(b => (b.citations || []).forEach(c => {
+      if(c.url && !goruldu.has(c.url)){ goruldu.add(c.url); kaynaklar.push({ u:c.url, b:c.title || '' }); }
+    }));
 
-    // Skor ve kararı ayıkla
-    const scoreMatch = text.match(/SKOR:\s*\**\s*(\d{1,3})/i);
-    const verdictMatch = text.match(/KARAR:\s*\**\s*([^\n*]+)/i);
-    const score = scoreMatch ? Math.min(100, parseInt(scoreMatch[1], 10)) : null;
-    const verdict = verdictMatch ? verdictMatch[1].trim().replace(/^[—–-]\s*/, '') : '';
-
-    renderScore(score, verdict);
-    answerEl.innerHTML = formatAIText(text);
+    const maliyet = bpMaliyet(model, data.usage);
+    chat.mesajlar.push({ r:'bot', t: cevap, ts: Date.now(), model, kullanim: data.usage || {}, maliyet, kaynaklar });
+    bpHarcamaEkle(maliyet);
   }catch(e){
-    renderScore(null);
-    answerEl.innerHTML = '<span style="color:var(--down);">Analiz alınamadı: ' + escapeHtml(e.message || String(e)) + '</span>';
+    chat.mesajlar.push({ r:'bot', hata:true, t: 'Cevap alınamadı: ' + (e.message || e), ts: Date.now() });
   }finally{
-    btn.disabled = false;
+    bpMesgul = false;
+    chat.guncelleme = Date.now();
+    bpKaydet(); bpRenderGecmis(); bpRenderThread(); bpRenderMeter(); bpRenderGonder();
   }
 }
 
-// Enter ile gönder (Shift+Enter yeni satır)
-document.getElementById('aiInput').addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter' && !e.shiftKey){
-    e.preventDefault();
-    askAI();
+function bpBaslat(){
+  bpYukle();
+  bpRenderAyar(); bpRenderRaporlar(); bpRenderGecmis(); bpRenderThread(); bpRenderMeter(); bpRenderGonder();
+  const girdi = document.getElementById('bpInput');
+  if(girdi){
+    girdi.addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); bpGonder(); } });
+    girdi.addEventListener('input', () => { girdi.style.height = 'auto'; girdi.style.height = Math.min(girdi.scrollHeight, 150) + 'px'; });
   }
-});
+}
+function bpTabAcildi(){ bpRenderMeter(); const el = document.getElementById('bpThread'); if(el) el.scrollTop = el.scrollHeight; }
 
 if(!AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
-  document.getElementById('aiSetup').style.display = 'none';
+  const kurulum = document.getElementById('aiSetup');
+  if(kurulum) kurulum.style.display = 'none';
 }
+
 
 // ---------- Kredilerim — canlı erken kapama hesaplayıcı ----------
 // Ortak formül: kalan anapara × (aylık faiz oranı / 30) × geçen gün + %15 KKDF + %15 BSMV.
@@ -4256,7 +4750,7 @@ const TAB_BASLIKLARI = {
   finansal: ['Güncel Finansal Durumum', ''],
   yatirim:  ['Yatırımlarım', ''],
   borclar:  ['Borçlarım', ''],
-  ai:       ['AI Finans', 'Şirket, sektör ve piyasa sorularını güncel haber taramasıyla birlikte değerlendirir'],
+  ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir'],
 };
 function switchTab(tabId){
   document.querySelectorAll('.tab-panel').forEach(el=> el.classList.remove('active'));
@@ -4267,6 +4761,7 @@ function switchTab(tabId){
     document.getElementById('appBarTitle').textContent = b[0];
     document.getElementById('appBarSub').textContent = b[1];
   }
+  if(tabId === 'ai' && typeof bpTabAcildi === 'function') bpTabAcildi();
 }
 
 buildCards();
@@ -4297,6 +4792,8 @@ function tickDigitalClock(){
 }
 tickDigitalClock();
 setInterval(tickDigitalClock, 1000);
+
+bpBaslat();   // Bay Piyasa: kayıtlı sohbetleri/ayarları yükle
 </script>
 </body>
 </html>
