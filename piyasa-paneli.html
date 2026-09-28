@@ -319,10 +319,22 @@
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:10px;
-    padding:8px 14px;
+    padding:8px 14px 8px 26px;
+  }
+  .clock-live-led{
+    position:absolute;
+    top:50%;
+    left:10px;
+    width:8px;
+    height:8px;
+    margin-top:-4px;
+    border-radius:50%;
+    background:#8CFFB5;
+    box-shadow:0 0 7px #8CFFB5, 0 0 12px rgba(140,255,181,.5);
+    animation:ledBlink 1.6s ease-in-out infinite;
   }
   @media (max-width:900px){
-    .digital-clock-fixed{position:static;margin:0 0 14px auto;width:fit-content;}
+    .digital-clock-fixed{position:relative;top:auto;right:auto;margin:0 0 14px auto;width:fit-content;}
   }
   .digital-clock-time{
     font-size:22px;
@@ -1207,6 +1219,7 @@
 </head>
 <body>
 <div class="digital-clock digital-clock-fixed">
+  <span class="clock-live-led"></span>
   <div class="digital-clock-time" id="digitalClockTime">--:--:--</div>
   <div class="digital-clock-date" id="digitalClockDate">—</div>
 </div>
