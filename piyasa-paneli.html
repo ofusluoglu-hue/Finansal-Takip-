@@ -1202,6 +1202,14 @@
     min-width:40px;
   }
   .yatirim-dagilim-fill{height:100%;border-radius:5px;}
+  .yatirim-dagilim-tutar{
+    flex:0 0 auto;
+    min-width:96px;
+    font-size:13px;
+    font-weight:700;
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
   .yatirim-dagilim-pct{
     flex:0 0 44px;
     font-size:13px;
@@ -4528,6 +4536,7 @@ function renderYatirim(){
           <div class="yatirim-dagilim-row">
             <div class="yatirim-legend-item"><span class="yatirim-legend-dot" style="background:${YATIRIM_KATEGORI_RENK[kat]};"></span>${YATIRIM_KATEGORI_BASLIK[kat]}</div>
             <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" style="width:${barGenislik}%;background:${YATIRIM_KATEGORI_RENK[kat]};"></div></div>
+            <div class="yatirim-dagilim-tutar" style="color:${YATIRIM_KATEGORI_RENK[kat]};">₺${fmtNumber(kategoriToplam[kat], 0)}</div>
             <div class="yatirim-dagilim-pct">%${fmtNumber(yuzde, 1)}</div>
           </div>
         `;
