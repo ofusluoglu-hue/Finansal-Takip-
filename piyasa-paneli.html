@@ -1684,7 +1684,9 @@
   /* Portföy İstatistikleri: genel puan öne çıkan kart (2 sütun, büyük puan, derece rozeti, puan renginde hafif zemin) */
   .ozet-grid.ist-grid{grid-template-columns:repeat(6, minmax(0,1fr));}
   .ozet-kart.vurgu{grid-column:span 2;padding:12px 16px 11px;gap:6px;justify-content:center;background:linear-gradient(135deg, color-mix(in srgb, var(--vurgu-renk, var(--amber)) 10%, var(--panel)) 0%, var(--panel) 70%);border-color:color-mix(in srgb, var(--vurgu-renk, var(--amber)) 35%, var(--border));border-left-width:4px;}
-  .ozet-kart.vurgu.yesil{--vurgu-renk:var(--up);}
+  .ozet-kart.vurgu.yesil, .ozet-kart.ton.yesil{--vurgu-renk:var(--up);}
+  /* Ton: öne çıkan kartın renkli çerçevesi ve zemin yansıması, ama genişlik/boyut değişmeden */
+  .ozet-kart.ton{background:linear-gradient(135deg, color-mix(in srgb, var(--vurgu-renk, var(--amber)) 10%, var(--panel)) 0%, var(--panel) 70%);border-color:color-mix(in srgb, var(--vurgu-renk, var(--amber)) 35%, var(--border));border-left-width:4px;}
   .ozet-kart.vurgu.sari{--vurgu-renk:var(--amber);}
   .ozet-kart.vurgu.kirmizi{--vurgu-renk:var(--down);}
   .ozet-kart.vurgu .ozet-etiket{font-size:11px;color:var(--text);letter-spacing:.06em;}
@@ -1997,7 +1999,7 @@
     <div class="page-head"><h1>Yatırımlarım</h1></div>
 
     <div class="ozet-grid k4">
-      <div class="ozet-kart yesil">
+      <div class="ozet-kart yesil ton">
         <div class="ozet-etiket">Toplam Yatırım</div>
         <div class="ozet-deger" id="yatirimToplamDeger">—</div>
         <div class="ozet-alt" id="yatirimToplamDegerUSD"></div>
