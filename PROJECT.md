@@ -36,6 +36,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_elden_nakit_v1` | Elden nakit borçlar |
 | `ft_bay_piyasa_v1` | Bay Piyasa sohbetleri, ayarları, harcama |
 | `ft_haber_ceviri_v1` | Haber başlığı çeviri önbelleği |
+| `ft_harcamalar_v1` | Harcamalar: tek harcama kayıtları ve elle yazılan aylık kategori toplamları |
 
 Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
@@ -109,7 +110,17 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - **İlk taksit henüz gelmediyse** borç, kullandırılan anaparadır (`orijinalAnapara`; yoksa ilk iki satırın farkından tahmin edilir). Faiz `kullandirimTarihi` biliniyorsa oradan işler. Kartta "İlk taksit GG.AA.YYYY" yazar.
 - İçe aktarma: PDF (Claude, `/extract-loan`) veya Excel ([kredi-odeme-plani-sablon.xlsx](kredi-odeme-plani-sablon.xlsx) şablonu). Excel tarihleri saat dilimi kaymasını önlemek için ham gün numarasından okunur; "Kalan Ana Para" sütunu ödenen anapara sanılmaz.
 
-## 8. Arayüz
+## 8. Harcama İstatistikleri
+
+- Veri `ft_harcamalar_v1` dizisinde (senkronda id'ye göre birleşir):
+  - `{ id:'h-…', tur:'kayit', tarih:'YYYY-MM-DD', kat, tutar, not }` — tek harcama
+  - `{ id:'ay-YYYY-MM-kat', tur:'aylik', ay:'YYYY-MM', kat, tutar }` — o ayın kategori toplamı; varsa o ay ve kategori için **kayıtların toplamı yerine** geçer (tabloda ✎ ile işaretli)
+- Kategoriler (`HARCAMA_KATEGORILER`): market, akaryakıt, kişisel, fatura ve aidat, ev giderleri, yeme-içme ve eğlence, sağlık, eğitim, diğer.
+- Aylık ortalama = seçili yılda harcama girilmiş ayların ortalaması; yıl sonu tahmini = ortalama × 12.
+- Grafik (`harcamaGrafikCiz`): tek renk sütunlar (≤24 px, 4 px yuvarlak üst), ortalama çizgisi, bant genişliğinde isabet alanıyla fare/klavye ipucu; aylık tablo grafiğin tablo karşılığıdır. Kategori dağılımı tek renk yatay çubuk (kimliği etiket taşır; 9 kategori renkle ayırt edilmez).
+- Bay Piyasa: portföy paylaşımı açıkken harcama özeti bağlama eklenir; "💸 Harcama analizi" hazır raporu vardır.
+
+## 9. Arayüz
 
 - Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur, senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
@@ -121,16 +132,17 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
   - Açıklamalar her sayfanın altında tek bir **Not** satırındadır.
 - Piyasa Özeti kartları kompakttır: yüzde değişim ve seans notu aynı satırda, ETF seans satırları ince bir çizgiyle ayrılır. Hedef: 1440×900 ekranda kartlar ve grafik kaydırmadan görünsün.
 
-## 9. Deploy
+## 10. Deploy
 
 - **Ön yüz:** `main` dalına push → GitHub Pages.
 - **Worker:** `npx.cmd wrangler deploy` ([wrangler.toml](wrangler.toml)). `keep_vars = true` panelden eklenen değişkenleri korur, `preview_urls = false` sürüme özel önizleme adreslerini kapatır; secret'lar deploy'dan etkilenmez.
 
-## 10. Sürüm geçmişi
+## 11. Sürüm geçmişi
 
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Harcama İstatistikleri sekmesi: tek tek harcama ve aylık toplam girişi, 9 kategori, aylık grafik, kategori dağılımı, aylık tablo, ortalamalar; Bay Piyasa harcama analizi; `ft_harcamalar_v1` senkron anahtarı (Worker'a eklendi) |
 | 2026-09-29 | Finansal Durumum, Yatırımlarım, Borçlarım ve Portföy İstatistikleri Piyasa Özeti'nin tasarım diline geçti: ortak özet kartları, bölüm başlığında toplam ve + Ekle, satır içi ✎ düzenleme, sayfa sonunda tek Not; üst çubuk alt başlıkları eklendi |
 | 2026-09-29 | Haberler kurumların kendi RSS yayınlarından: Türkçe kaynaklar (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı) öncelikli, BBC/CNBC Google Çeviri ile Türkçe açılır; basın bültenleri ve fon sayfaları elenir; Worker proxy izin listesine haber alan adları eklendi |
 | 2026-09-29 | Tüm kartların altında bilgi satırları: Dün/Aralık (döviz, altın, Brent), 24s önce/24s aralık (kripto), Önceki (uranyum, işlem görmeyen ETF) |

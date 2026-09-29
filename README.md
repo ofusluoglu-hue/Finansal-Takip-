@@ -13,6 +13,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 | **Finansal Durumum** | Varlıklar (konut, otomobil, arsa vb.) ve net finansal durum |
 | **Yatırımlarım** | Portföy takibi, kâr/zarar |
 | **Borçlarım** | Krediler (canlı erken kapama hesaplayıcı), kredi kartları, KMH, elden nakit borçlar; kredi planını **PDF'ten** (yapay zekâ) veya **Excel'den** içe aktarma |
+| **Harcama İstatistikleri** | Tek tek harcama kaydı ya da aylık kategori toplamı; 9 kategori (market, akaryakıt, kişisel, fatura ve aidat, ev giderleri, yeme-içme ve eğlence, sağlık, eğitim, diğer); aylık grafik, kategori dağılımı, aylık tablo, yıllık ve aylık ortalamalar |
 | **Portföy İstatistikleri** | Genel puan: portföy yaşı, çeşitlendirme, borç karşılama, döviz koruması |
 | **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması) |
 

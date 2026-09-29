@@ -1678,6 +1678,51 @@
   .ist-etiket{font-size:10.5px;font-weight:600;letter-spacing:.03em;color:var(--muted);}
   .ist-deger{font-size:20px;font-weight:700;margin-top:4px;}
   .section-title{font-size:15px;}
+  /* ---- Harcama İstatistikleri ---- */
+  .harcama-filtre{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--muted);}
+  .harcama-filtre .ai-input{flex:0 0 auto;min-width:0;width:auto;min-height:0;padding:6px 10px;font-size:13px;}
+  .harcama-ikili{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;}
+  .harcama-ikili > .bolum{margin-bottom:14px;}
+  .harcama-grafik{position:relative;min-height:230px;}
+  .harcama-grafik svg{display:block;width:100%;height:230px;overflow:visible;}
+  .harcama-grafik .hc-cubuk{fill:var(--amber);transition:opacity .15s;}
+  .harcama-grafik .hc-cubuk.gecmis{opacity:.72;}
+  .harcama-grafik .hc-hedef{fill:transparent;cursor:pointer;outline:none;}
+  .harcama-grafik .hc-hedef:hover + .hc-cubuk, .harcama-grafik .hc-hedef:focus + .hc-cubuk{opacity:1;filter:brightness(1.15);}
+  .harcama-grafik .hc-eksen{fill:var(--muted-2);font-size:10.5px;font-family:inherit;}
+  .harcama-grafik .hc-eksen.bu-ay{fill:var(--text);font-weight:700;}
+  .harcama-grafik .hc-ort{stroke:var(--muted);stroke-width:1;}
+  .harcama-grafik .hc-ort-yazi{fill:var(--muted);font-size:10.5px;font-weight:600;font-family:inherit;}
+  .harcama-ipucu{position:absolute;pointer-events:none;background:#0f141b;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--muted);box-shadow:0 6px 18px rgba(0,0,0,.45);min-width:150px;z-index:5;display:none;}
+  .harcama-ipucu b{display:block;font-size:14px;color:var(--text);margin-bottom:2px;font-variant-numeric:tabular-nums;}
+  .harcama-ipucu div{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums;}
+  .harcama-bos{display:flex;align-items:center;justify-content:center;min-height:200px;font-size:12px;color:var(--muted-2);text-align:center;}
+  .harcama-kat-liste{display:flex;flex-direction:column;gap:9px;padding:4px 0 8px;}
+  .hk-satir{display:grid;grid-template-columns:minmax(0,120px) minmax(40px,1fr) auto;align-items:center;gap:10px;font-size:12.5px;}
+  .hk-ad{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .hk-iz{height:9px;border-radius:5px;background:#1b212a;overflow:hidden;}
+  .hk-iz > div{height:100%;border-radius:0 4px 4px 0;background:var(--amber);}
+  .hk-deger{text-align:right;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .hk-deger small{font-weight:500;color:var(--muted-2);margin-left:6px;}
+  .harcama-tablo-kap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;margin-top:4px;}
+  .harcama-tablo{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums;}
+  .harcama-tablo th, .harcama-tablo td{padding:7px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--border);}
+  .harcama-tablo th{font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);background:var(--panel-2);}
+  .harcama-tablo th:first-child, .harcama-tablo td:first-child{text-align:left;position:sticky;left:0;background:var(--panel);z-index:1;}
+  .harcama-tablo th:first-child{background:var(--panel-2);}
+  .harcama-tablo td.hucre{cursor:pointer;color:var(--text);}
+  .harcama-tablo td.hucre:hover{background:#1a212b;}
+  .harcama-tablo td.hucre.bos{color:var(--muted-2);}
+  .harcama-tablo td.hucre.gelecek{color:#3a4453;}
+  .harcama-tablo td.hucre.elle::after{content:' ✎';font-size:9px;color:var(--amber);}
+  .harcama-tablo td.hucre input{width:84px;background:var(--panel-2);border:1px solid var(--amber);border-radius:5px;color:var(--text);font-family:inherit;font-size:12px;padding:3px 5px;text-align:right;}
+  .harcama-tablo th.bu-ay{color:var(--amber);}
+  .harcama-tablo .ozet-kolon{color:var(--muted);font-weight:600;}
+  .harcama-tablo tfoot td{font-weight:700;color:var(--text);background:var(--panel-2);border-bottom:none;}
+  .harcama-tablo tfoot td:first-child{background:var(--panel-2);}
+  .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
+  .harcama-ay-sec{flex:0 0 auto !important;min-width:0 !important;width:auto;min-height:0 !important;padding:5px 8px !important;font-size:12px !important;}
+  @media (max-width:900px){ .harcama-ikili{grid-template-columns:1fr;gap:0;} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -1713,6 +1758,10 @@
       <div class="nav-item" data-tab="borclar" onclick="switchTab('borclar')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
         <span>Borçlarım</span>
+      </div>
+      <div class="nav-item" data-tab="harcama" onclick="switchTab('harcama')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>
+        <span>Harcama İstatistikleri</span>
       </div>
       <div class="nav-item" data-tab="ai" onclick="switchTab('ai')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg>
@@ -2181,6 +2230,91 @@
   </div>
   <!-- ================= /TAB: BORÇLARIM ================= -->
 
+  <!-- ================= TAB: HARCAMA İSTATİSTİKLERİ ================= -->
+  <div class="tab-panel" id="tab-harcama">
+    <div class="page-head"><h1>Harcama İstatistikleri</h1></div>
+
+    <div class="harcama-filtre">
+      <label for="harcamaYil">Yıl</label>
+      <select id="harcamaYil" class="ai-input" onchange="_harcamaYil = +this.value; renderHarcama();"></select>
+    </div>
+
+    <div class="ozet-grid k4">
+      <div class="ozet-kart sari">
+        <div class="ozet-etiket" id="harcamaBuAyEtiket">Bu ay</div>
+        <div class="ozet-deger" id="harcamaBuAy">—</div>
+        <div class="ozet-alt" id="harcamaBuAyDegisim"></div>
+        <div class="card-seanslar" id="harcamaBuAyDetay"></div>
+      </div>
+      <div class="ozet-kart sari">
+        <div class="ozet-etiket" id="harcamaOrtEtiket">Aylık ortalama</div>
+        <div class="ozet-deger" id="harcamaOrtalama">—</div>
+        <div class="ozet-alt" id="harcamaOrtAlt"></div>
+        <div class="card-seanslar" id="harcamaOrtDetay"></div>
+      </div>
+      <div class="ozet-kart sari">
+        <div class="ozet-etiket" id="harcamaYilEtiket">Yıl toplamı</div>
+        <div class="ozet-deger" id="harcamaYilToplam">—</div>
+        <div class="ozet-alt" id="harcamaYilUSD"></div>
+        <div class="card-seanslar" id="harcamaYilDetay"></div>
+      </div>
+      <div class="ozet-kart sari">
+        <div class="ozet-etiket">En büyük kategori</div>
+        <div class="ozet-deger" id="harcamaEnBuyuk">—</div>
+        <div class="ozet-alt" id="harcamaEnBuyukAlt"></div>
+        <div class="card-seanslar" id="harcamaEnBuyukDetay"></div>
+      </div>
+    </div>
+
+    <div class="harcama-ikili">
+      <div class="bolum">
+        <div class="bolum-bas">
+          <span class="bolum-baslik">Aylık harcamalar</span>
+          <span class="bolum-toplam ozet-soluk" id="harcamaGrafikAlt" style="font-size:12px;font-weight:600;"></span>
+        </div>
+        <div class="harcama-grafik" id="harcamaGrafik"></div>
+      </div>
+      <div class="bolum">
+        <div class="bolum-bas">
+          <span class="bolum-baslik">Kategoriler</span>
+          <span class="bolum-toplam ozet-soluk" style="font-size:12px;font-weight:600;">toplam · aylık ort.</span>
+        </div>
+        <div id="harcamaKategoriler" class="harcama-kat-liste"></div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Aylık tablo</span>
+        <span class="bolum-toplam" id="harcamaTabloToplam"></span>
+      </div>
+      <div class="harcama-tablo-kap"><table class="harcama-tablo" id="harcamaTablo"></table></div>
+      <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Bir hücreye tıklayıp o ayın kategori toplamını doğrudan yazabilirsin (Enter kaydeder, boş bırakıp Enter tek tek kayıtların toplamına döner). Elle yazılan toplamlar <b>✎</b> ile işaretlidir.</div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Harcama kayıtları</span>
+        <select id="harcamaAy" class="ai-input harcama-ay-sec" onchange="_harcamaAy = +this.value; _harcamaHepsi = false; renderHarcama();"></select>
+        <span class="bolum-toplam" id="harcamaKayitToplam"></span>
+        <button class="bolum-ekle" onclick="bolumFormAc('harcamaForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="harcamaForm">
+        <div class="loan-add-row">
+          <input type="date" id="harcamaTarihInput" class="ai-input" style="max-width:160px;min-width:140px;">
+          <select id="harcamaKatInput" class="ai-input" style="max-width:210px;min-width:170px;"></select>
+          <input type="number" step="0.01" id="harcamaTutarInput" class="ai-input" style="max-width:150px;min-width:120px;" placeholder="Tutar (TL)" onkeydown="if(event.key==='Enter')addHarcama()">
+          <input type="text" id="harcamaNotInput" class="ai-input" style="max-width:240px;min-width:150px;" placeholder="Not (ör. Migros)" onkeydown="if(event.key==='Enter')addHarcama()">
+          <button class="ai-btn" onclick="addHarcama()">Harcama Ekle</button>
+        </div>
+      </div>
+      <div id="harcamaKayitlar"></div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Harcamaları tek tek girersin (tarih, kategori, tutar, not); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. İstersen bir ayın kategori toplamını tablodan doğrudan da yazabilirsin — o ay ve kategori için elle yazılan toplam esas alınır. Aylık ortalama, seçili yılda harcama girilmiş aylar üzerinden hesaplanır; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+  </div>
+  <!-- ================= /TAB: HARCAMA İSTATİSTİKLERİ ================= -->
+
   <!-- ================= TAB: BAY PİYASA ================= -->
   <div class="tab-panel" id="tab-ai">
     <div class="page-head"><h1>Bay Piyasa</h1></div>
@@ -2262,7 +2396,7 @@ const SENKRON_META_KEY = 'ft_senkron_meta';
 const SENKRON_ANAHTARLARI = new Set([
   'ft_yatirimlar_v1', 'ft_varliklarim_v1', 'ft_custom_loans_v1', 'ft_closed_loans_v1',
   'ft_kredi_kartlari_v1', 'ft_kmh_v1', 'ft_elden_nakit_v1', 'ft_sabit_krediler_v1',
-  'ft_bay_piyasa_v1', 'ft_haber_ceviri_v1',
+  'ft_bay_piyasa_v1', 'ft_haber_ceviri_v1', 'ft_harcamalar_v1',
 ]);
 
 const _depoSetItem = Storage.prototype.setItem;
@@ -3928,6 +4062,8 @@ const BP_RAPORLAR = [
     prompt:'Borçlarımı incele: hangi kalem bana en pahalıya geliyor (faiz), hangisini önce kapatmak mantıklı, elimdeki yatırımlar ve varlıklarla nasıl bir kapatma sırası önerirsin? Rakamlarla kısa bir plan çıkar.' },
   { id:'piyasa',  ad:'🌍 Piyasa özeti',    haber:true,
     prompt:'Panelde görünen piyasa verilerine ve haberlere göre şu anki piyasayı özetle: risk iştahı, dolar/altın/kripto/ABD hisse yönü ve dikkat edilecekler. Kısa ve net.' },
+  { id:'harcama', ad:'💸 Harcama analizi', portfoy:true,
+    prompt:'Harcamalarımı analiz et: aylık ortalamam ve bu ayın ortalamaya göre durumu, en çok harcadığım kategoriler, dikkat çeken artışlar ve borç/yatırım durumumla birlikte düşününce aylık harcamamı nerede ve ne kadar azaltabileceğime dair rakamlı 3 somut öneri.' },
   { id:'risk',    ad:'⚠ Risk kontrolü',    portfoy:true,
     prompt:'Portföyüm ve borçlarım açısından şu an beni en çok zorlayabilecek 3 riski (kur, faiz, düşüş, yoğunlaşma vb.) rakamlı örneklerle anlat; her biri için neyi izlemem gerektiğini söyle.' },
 ];
@@ -4058,6 +4194,7 @@ function bpSnapshotOlustur(paylas, haber){
     s.push('- Elden nakit borçlar (toplam) | ₺' + fmtNumber(_bTotals.nakit || 0, 0));
     const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
     s.push('Toplam borç: ₺' + fmtNumber(borc, 0));
+    try{ const h = harcamaOzetMetni(); if(h) s.push(h); }catch(e){ /* harcama özeti eklenemezse bağlam yine gider */ }
     s.push('Net değer (Varlıklar + Yatırımlar − Borç): ₺' + fmtNumber(vToplam + yToplam - borc, 0)
       + (usdtry ? ' (≈ $' + fmtNumber((vToplam + yToplam - borc) / usdtry, 0) + ')' : ''));
     if(borc > 0) s.push('Yatırım / Borç oranı: %' + fmtNumber(yToplam / borc * 100, 1));
@@ -5854,6 +5991,323 @@ async function onLoanExcelSelected(event){
   }
 }
 
+// ---------- Harcama İstatistikleri ----------
+// Kayıtlar tek bir dizide tutulur (cihazlar arası senkronda id'ye göre birleşebilsin):
+//   { id:'h-…', tur:'kayit', tarih:'YYYY-MM-DD', kat, tutar, not }  — tek harcama
+//   { id:'ay-YYYY-MM-kat', tur:'aylik', ay:'YYYY-MM', kat, tutar }  — o ayın kategori toplamı (elle; kayıtların yerine geçer)
+const HARCAMA_KEY = 'ft_harcamalar_v1';
+const HARCAMA_KATEGORILER = [
+  { k:'market',    ad:'Market' },
+  { k:'akaryakit', ad:'Akaryakıt' },
+  { k:'kisisel',   ad:'Kişisel' },
+  { k:'fatura',    ad:'Fatura ve aidat' },
+  { k:'ev',        ad:'Ev giderleri' },
+  { k:'yemeicme',  ad:'Yeme-içme ve eğlence' },
+  { k:'saglik',    ad:'Sağlık' },
+  { k:'egitim',    ad:'Eğitim' },
+  { k:'diger',     ad:'Diğer' },
+];
+const HARCAMA_KAT_AD = Object.fromEntries(HARCAMA_KATEGORILER.map(x => [x.k, x.ad]));
+const AY_KISA = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+const AY_UZUN = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+let _harcamaYil = new Date().getFullYear();
+let _harcamaAy = new Date().getMonth();   // kayıt listesinin gösterdiği ay (-1: tüm yıl)
+let _harcamaHepsi = false;                // kayıt listesinde ilk 10 yerine tümü gösterilsin mi
+const HARCAMA_LISTE_ILK = 10;
+
+function harcamaYukle(){ return manuelListeYukle(HARCAMA_KEY); }
+function harcamaKaydet(list){ manuelListeKaydet(HARCAMA_KEY, list); }
+function ayAnahtar(yil, ay){ return yil + '-' + String(ay + 1).padStart(2, '0'); }
+function bugunISO(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+
+// Seçili yılın özet tablosu: hucre[kat][ay] = { tutar, elle, kayitToplam, kayitSayisi }
+function harcamaTablosu(yil){
+  const list = harcamaYukle();
+  const hucre = {};
+  HARCAMA_KATEGORILER.forEach(({ k }) => { hucre[k] = Array.from({ length: 12 }, () => ({ tutar: 0, elle: false, kayitToplam: 0, kayitSayisi: 0 })); });
+  list.forEach(x => {
+    if(!hucre[x.kat]) return;
+    if(x.tur === 'kayit' && String(x.tarih).startsWith(yil + '-')){
+      const h = hucre[x.kat][+x.tarih.slice(5, 7) - 1];
+      h.kayitToplam += Number(x.tutar) || 0; h.kayitSayisi++;
+    }
+  });
+  HARCAMA_KATEGORILER.forEach(({ k }) => hucre[k].forEach(h => { h.tutar = h.kayitToplam; }));
+  list.forEach(x => {
+    if(x.tur === 'aylik' && hucre[x.kat] && String(x.ay).startsWith(yil + '-')){
+      const h = hucre[x.kat][+x.ay.slice(5, 7) - 1];
+      h.tutar = Number(x.tutar) || 0; h.elle = true;
+    }
+  });
+  const ayToplam = Array.from({ length: 12 }, (_, a) => HARCAMA_KATEGORILER.reduce((t, { k }) => t + hucre[k][a].tutar, 0));
+  const katToplam = Object.fromEntries(HARCAMA_KATEGORILER.map(({ k }) => [k, hucre[k].reduce((t, h) => t + h.tutar, 0)]));
+  const yilToplam = ayToplam.reduce((t, x) => t + x, 0);
+  const veriliAylar = ayToplam.map((x, i) => x > 0 ? i : -1).filter(i => i >= 0);
+  const ortalama = veriliAylar.length ? yilToplam / veriliAylar.length : 0;
+  return { hucre, ayToplam, katToplam, yilToplam, veriliAylar, ortalama };
+}
+
+// Eksen için "güzel" adım: 1, 2, 2,5, 5 × 10^n
+function guzelAdim(x){
+  if(!(x > 0)) return 1;
+  const us = Math.pow(10, Math.floor(Math.log10(x)));
+  const n = x / us;
+  return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * us;
+}
+function kisaTL(v){ return v >= 1e6 ? '₺' + fmtNumber(v / 1e6, 1) + ' mn' : v >= 1e3 ? '₺' + fmtNumber(v / 1e3, v >= 1e4 ? 0 : 1) + ' bin' : '₺' + fmtNumber(v, 0); }
+
+function harcamaGrafikCiz(T){
+  const kap = document.getElementById('harcamaGrafik');
+  if(!kap) return;
+  if(!T.yilToplam){ kap.innerHTML = '<div class="harcama-bos">Bu yıl için henüz harcama yok — aşağıdan kayıt ekleyebilir ya da tablodan aylık toplam yazabilirsin.</div>'; return; }
+  const W = Math.max(kap.clientWidth || 0, 300), H = 230, PL = 52, PR = 10, PT = 12, PB = 24;
+  const tepeHam = Math.max(...T.ayToplam, T.ortalama);
+  const adim = guzelAdim(tepeHam / 4);
+  const tepe = Math.ceil(tepeHam / adim) * adim || adim;
+  const y = v => PT + (1 - v / tepe) * (H - PT - PB);
+  const bant = (W - PL - PR) / 12, bw = Math.min(24, bant * 0.62);
+  const simdi = new Date(), buAy = _harcamaYil === simdi.getFullYear() ? simdi.getMonth() : -1;
+  let svg = '';
+  for(let v = 0; v <= tepe + 1e-9; v += adim){
+    svg += `<line x1="${PL}" x2="${W - PR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="#222a35" stroke-width="1"/>`;
+    svg += `<text class="hc-eksen" x="${PL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end">${kisaTL(v)}</text>`;
+  }
+  T.ayToplam.forEach((v, i) => {
+    const x0 = PL + i * bant + (bant - bw) / 2;
+    svg += `<text class="hc-eksen${i === buAy ? ' bu-ay' : ''}" x="${(x0 + bw / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle">${AY_KISA[i]}</text>`;
+    // Görünmez, bandın tamamını kaplayan isabet alanı (işaretten büyük) — klavyeyle de odaklanır
+    svg += `<rect class="hc-hedef" data-ay="${i}" tabindex="0" x="${(PL + i * bant).toFixed(1)}" y="${PT}" width="${bant.toFixed(1)}" height="${H - PT - PB}" aria-label="${AY_UZUN[i]} ${fmtNumber(v, 0)} TL"></rect>`;
+    if(v > 0){
+      const y0 = y(v), taban = H - PB, r = Math.min(4, taban - y0);
+      svg += `<path class="hc-cubuk${i === buAy ? '' : ' gecmis'}" d="M${x0.toFixed(1)},${taban} V${(y0 + r).toFixed(1)} Q${x0.toFixed(1)},${y0.toFixed(1)} ${(x0 + r).toFixed(1)},${y0.toFixed(1)} H${(x0 + bw - r).toFixed(1)} Q${(x0 + bw).toFixed(1)},${y0.toFixed(1)} ${(x0 + bw).toFixed(1)},${(y0 + r).toFixed(1)} V${taban} Z"/>`;
+    } else {
+      svg += `<path class="hc-cubuk" d="" />`;
+    }
+  });
+  if(T.ortalama > 0){
+    const yo = y(T.ortalama).toFixed(1);
+    svg += `<line class="hc-ort" x1="${PL}" x2="${W - PR}" y1="${yo}" y2="${yo}"/>`;
+    svg += `<text class="hc-ort-yazi" x="${W - PR}" y="${(+yo - 5).toFixed(1)}" text-anchor="end">ort. ${kisaTL(T.ortalama)}</text>`;
+  }
+  kap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${_harcamaYil} aylık harcama toplamları">${svg}</svg><div class="harcama-ipucu" id="harcamaIpucu"></div>`;
+
+  // İpucu: değer önde (güçlü), ay adı ve en büyük 3 kategori ardından. Metinler textContent ile eklenir.
+  const ipucu = document.getElementById('harcamaIpucu');
+  const goster = (hedef) => {
+    const ay = +hedef.dataset.ay, v = T.ayToplam[ay];
+    ipucu.textContent = '';
+    const b = document.createElement('b'); b.textContent = '₺' + fmtNumber(v, 0); ipucu.appendChild(b);
+    const baslik = document.createElement('div'); baslik.textContent = AY_UZUN[ay] + ' ' + _harcamaYil + (T.ortalama && v ? ' · ort. ' + (v >= T.ortalama ? '+' : '−') + '%' + fmtNumber(Math.abs(v / T.ortalama - 1) * 100, 0) : ''); ipucu.appendChild(baslik);
+    HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][ay].tutar]).filter(x => x[1] > 0).sort((a, b2) => b2[1] - a[1]).slice(0, 3).forEach(([ad, t]) => {
+      const sat = document.createElement('div');
+      const s1 = document.createElement('span'); s1.textContent = ad;
+      const s2 = document.createElement('span'); s2.textContent = '₺' + fmtNumber(t, 0); s2.style.color = 'var(--text)';
+      sat.append(s1, s2); ipucu.appendChild(sat);
+    });
+    ipucu.style.display = 'block';
+    const kr = kap.getBoundingClientRect(), hr = hedef.getBoundingClientRect();
+    let sol = hr.left - kr.left + hr.width / 2 - ipucu.offsetWidth / 2;
+    sol = Math.max(0, Math.min(sol, kr.width - ipucu.offsetWidth));
+    ipucu.style.left = sol + 'px'; ipucu.style.top = '0px';
+  };
+  kap.querySelectorAll('.hc-hedef').forEach(h => {
+    h.addEventListener('pointerenter', () => goster(h));
+    h.addEventListener('focus', () => goster(h));
+    h.addEventListener('pointerleave', () => { ipucu.style.display = 'none'; });
+    h.addEventListener('blur', () => { ipucu.style.display = 'none'; });
+  });
+}
+
+function renderHarcama(){
+  const T = harcamaTablosu(_harcamaYil);
+  const list = harcamaYukle();
+  const simdi = new Date();
+  const buYil = _harcamaYil === simdi.getFullYear();
+  const refAy = buYil ? simdi.getMonth() : (T.veriliAylar.length ? T.veriliAylar[T.veriliAylar.length - 1] : 11);
+
+  // Yıl seçimi: kayıtlardaki yıllar + bu yıl
+  const yillar = new Set([simdi.getFullYear(), _harcamaYil]);
+  list.forEach(x => { const t = x.tur === 'aylik' ? x.ay : x.tarih; if(t) yillar.add(+String(t).slice(0, 4)); });
+  const yilSec = document.getElementById('harcamaYil');
+  if(yilSec) yilSec.innerHTML = [...yillar].filter(Boolean).sort((a, b) => b - a).map(yl => `<option value="${yl}"${yl === _harcamaYil ? ' selected' : ''}>${yl}</option>`).join('');
+
+  // ---- Özet kartları
+  const v = T.ayToplam[refAy], onceki = refAy > 0 ? T.ayToplam[refAy - 1] : null;
+  istYaz('harcamaBuAyEtiket', (buYil ? 'Bu ay · ' : '') + AY_UZUN[refAy]);
+  istYaz('harcamaBuAy', '₺' + fmtNumber(v, 0));
+  const degEl = document.getElementById('harcamaBuAyDegisim');
+  if(degEl){
+    if(onceki > 0 && v > 0){
+      const d = (v / onceki - 1) * 100;
+      degEl.innerHTML = `<span style="color:${d > 0 ? 'var(--down)' : 'var(--up)'};">${d > 0 ? '▲' : '▼'} %${fmtNumber(Math.abs(d), 1)}</span> <span class="ozet-soluk">${AY_UZUN[refAy - 1]} ayına göre</span>`;
+    } else degEl.textContent = v > 0 ? '' : 'henüz harcama yok';
+  }
+  const ayKat = HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][refAy].tutar]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+  ozetDetayYaz('harcamaBuAyDetay', [ayKat[0] ? ['En büyük', ayKat[0][0] + ' ₺' + fmtNumber(ayKat[0][1], 0)] : null, T.ortalama && v ? ['Ortalamaya', (v >= T.ortalama ? '+' : '−') + '%' + fmtNumber(Math.abs(v / T.ortalama - 1) * 100, 0)] : null]);
+
+  istYaz('harcamaOrtEtiket', _harcamaYil + ' aylık ortalama');
+  istYaz('harcamaOrtalama', T.ortalama ? '₺' + fmtNumber(T.ortalama, 0) : '—');
+  istYaz('harcamaOrtAlt', T.veriliAylar.length ? T.veriliAylar.length + ' ay üzerinden' : '');
+  const siraliAy = T.veriliAylar.map(i => [i, T.ayToplam[i]]).sort((a, b) => b[1] - a[1]);
+  ozetDetayYaz('harcamaOrtDetay', siraliAy.length > 1 ? [['En yüksek', AY_UZUN[siraliAy[0][0]] + ' ₺' + fmtNumber(siraliAy[0][1], 0)], ['En düşük', AY_UZUN[siraliAy[siraliAy.length - 1][0]] + ' ₺' + fmtNumber(siraliAy[siraliAy.length - 1][1], 0)]] : []);
+
+  istYaz('harcamaYilEtiket', _harcamaYil + ' toplamı');
+  istYaz('harcamaYilToplam', '₺' + fmtNumber(T.yilToplam, 0));
+  istYaz('harcamaYilUSD', T.yilToplam && _fxRates.USD ? '≈ $' + fmtNumber(T.yilToplam / _fxRates.USD, 0) : '');
+  ozetDetayYaz('harcamaYilDetay', T.ortalama ? [['Yıl sonu tah.', '₺' + fmtNumber(T.ortalama * 12, 0)]] : []);
+
+  const katSira = HARCAMA_KATEGORILER.map(({ k, ad }) => ({ k, ad, t: T.katToplam[k] })).filter(x => x.t > 0).sort((a, b) => b.t - a.t);
+  istYaz('harcamaEnBuyuk', katSira[0] ? '₺' + fmtNumber(katSira[0].t, 0) : '—');
+  istYaz('harcamaEnBuyukAlt', katSira[0] ? katSira[0].ad + ' · %' + fmtNumber(katSira[0].t / T.yilToplam * 100, 1) : '');
+  ozetDetayYaz('harcamaEnBuyukDetay', katSira[1] ? [['2.', katSira[1].ad + ' %' + fmtNumber(katSira[1].t / T.yilToplam * 100, 0)], katSira[2] ? ['3.', katSira[2].ad + ' %' + fmtNumber(katSira[2].t / T.yilToplam * 100, 0)] : null] : []);
+
+  // ---- Grafik (yalnızca sekme görünürken çizilir; gizli sekmede genişlik 0'dır)
+  istYaz('harcamaGrafikAlt', T.yilToplam ? _harcamaYil + ' · aylık toplam' : '');
+  const sekme = document.getElementById('tab-harcama');
+  if(sekme && sekme.classList.contains('active')) harcamaGrafikCiz(T);
+
+  // ---- Kategoriler (tek renk yatay çubuk; kategori adı etiketle, renk kimlik taşımaz)
+  const katEl = document.getElementById('harcamaKategoriler');
+  if(katEl){
+    const enBuyuk = katSira.length ? katSira[0].t : 1;
+    const aySay = T.veriliAylar.length || 1;
+    katEl.innerHTML = katSira.length ? katSira.map(x => `
+      <div class="hk-satir" title="${escapeHtml(x.ad)}: yıl toplamı ₺${fmtNumber(x.t, 0)}, aylık ortalama ₺${fmtNumber(x.t / aySay, 0)}">
+        <div class="hk-ad">${escapeHtml(x.ad)}</div>
+        <div class="hk-iz"><div style="width:${(x.t / enBuyuk * 100).toFixed(1)}%;"></div></div>
+        <div class="hk-deger">₺${fmtNumber(x.t, 0)}<small>₺${fmtNumber(x.t / aySay, 0)}/ay</small></div>
+      </div>`).join('') : '<div class="bos-not">Henüz harcama yok.</div>';
+  }
+
+  // ---- Aylık tablo (grafiğin tablo karşılığı; hücreye tıklayınca o ayın toplamı yazılabilir)
+  const tablo = document.getElementById('harcamaTablo');
+  if(tablo){
+    const gelecekMi = a => buYil && a > simdi.getMonth();
+    const aySay = T.veriliAylar.length || 1;
+    tablo.innerHTML = `<thead><tr><th>Kategori</th>${AY_KISA.map((a, i) => `<th class="${buYil && i === simdi.getMonth() ? 'bu-ay' : ''}">${a}</th>`).join('')}<th>Ort.</th><th>Toplam</th></tr></thead>
+      <tbody>${HARCAMA_KATEGORILER.map(({ k, ad }) => `<tr><td>${escapeHtml(ad)}</td>${T.hucre[k].map((h, a) => {
+        const sinif = ['hucre', h.tutar ? '' : 'bos', gelecekMi(a) ? 'gelecek' : '', h.elle ? 'elle' : ''].filter(Boolean).join(' ');
+        const ipucu = h.elle ? `Elle yazılan toplam${h.kayitSayisi ? ' (kayıtların toplamı ₺' + fmtNumber(h.kayitToplam, 0) + ')' : ''}` : (h.kayitSayisi ? h.kayitSayisi + ' kayıt' : 'Toplam yazmak için tıkla');
+        return `<td class="${sinif}" title="${ipucu}" onclick="harcamaHucreDuzenle(this, '${k}', ${a})">${h.tutar ? fmtNumber(h.tutar, 0) : '—'}</td>`;
+      }).join('')}<td class="ozet-kolon">${T.katToplam[k] ? fmtNumber(T.katToplam[k] / aySay, 0) : '—'}</td><td class="ozet-kolon">${T.katToplam[k] ? fmtNumber(T.katToplam[k], 0) : '—'}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td>Toplam</td>${T.ayToplam.map(v2 => `<td>${v2 ? fmtNumber(v2, 0) : '—'}</td>`).join('')}<td>${T.ortalama ? fmtNumber(T.ortalama, 0) : '—'}</td><td>${T.yilToplam ? fmtNumber(T.yilToplam, 0) : '—'}</td></tr></tfoot>`;
+  }
+  istYaz('harcamaTabloToplam', T.yilToplam ? '₺' + fmtNumber(T.yilToplam, 0) : '');
+
+  // ---- Kayıt listesi (seçili ay)
+  const aySec = document.getElementById('harcamaAy');
+  if(aySec) aySec.innerHTML = `<option value="-1"${_harcamaAy === -1 ? ' selected' : ''}>Tüm yıl</option>` + AY_UZUN.map((a, i) => `<option value="${i}"${i === _harcamaAy ? ' selected' : ''}>${a}</option>`).join('');
+  const kayitlar = list.filter(x => x.tur === 'kayit' && String(x.tarih).startsWith(_harcamaAy === -1 ? _harcamaYil + '-' : ayAnahtar(_harcamaYil, _harcamaAy)))
+    .sort((a, b) => (b.tarih || '').localeCompare(a.tarih || '') || (b.id > a.id ? 1 : -1));
+  const kayitEl = document.getElementById('harcamaKayitlar');
+  if(kayitEl){
+    const elleNot = _harcamaAy >= 0 ? HARCAMA_KATEGORILER.filter(({ k }) => T.hucre[k][_harcamaAy].elle && T.hucre[k][_harcamaAy].kayitSayisi).map(({ ad }) => ad) : [];
+    kayitEl.innerHTML = (elleNot.length ? `<div class="ozet-not" style="padding:4px 2px;white-space:normal;">✎ ${elleNot.map(escapeHtml).join(', ')} için bu ayın toplamı tablodan elle yazıldı; aşağıdaki kayıtlar o toplama eklenmez.</div>` : '')
+      + (kayitlar.length ? kayitlar.slice(0, _harcamaHepsi ? kayitlar.length : HARCAMA_LISTE_ILK).map(x => satirHtml({
+          ad: (HARCAMA_KAT_AD[x.kat] || x.kat) + (x.not ? ' · ' + x.not : ''),
+          alt: new Date(x.tarih + 'T12:00:00').toLocaleDateString('tr-TR', { day:'2-digit', month:'long', year:'numeric', weekday:'short' }),
+          tutar: '₺' + fmtNumber(x.tutar, 2),
+          duzen: { id: 'harcama-edit-' + x.id, ph: 'yeni tutar (₺)', kaydet: `harcamaGuncelle('${x.id}')` },
+          sil: { onclick: `harcamaSil('${x.id}')`, baslik: 'Sil', ikon: '✕' },
+        })).join('') + (kayitlar.length > HARCAMA_LISTE_ILK
+          ? `<button class="bolum-ekle liste-daha" onclick="_harcamaHepsi = !_harcamaHepsi; renderHarcama();">${_harcamaHepsi ? 'Daha az göster' : 'Tümünü göster (' + kayitlar.length + ' kayıt)'}</button>` : '')
+        : `<div class="bos-not">${_harcamaAy === -1 ? _harcamaYil : AY_UZUN[_harcamaAy] + ' ' + _harcamaYil} için kayıt yok — sağ üstteki + Ekle ile ekleyebilirsin.</div>`);
+  }
+  istYaz('harcamaKayitToplam', kayitlar.length ? '₺' + fmtNumber(kayitlar.reduce((t, x) => t + (Number(x.tutar) || 0), 0), 0) : '');
+
+  // Form varsayılanları
+  const katInput = document.getElementById('harcamaKatInput');
+  if(katInput && !katInput.options.length) katInput.innerHTML = HARCAMA_KATEGORILER.map(({ k, ad }) => `<option value="${k}">${escapeHtml(ad)}</option>`).join('');
+  const tarihInput = document.getElementById('harcamaTarihInput');
+  if(tarihInput && !tarihInput.value) tarihInput.value = bugunISO();
+}
+
+function addHarcama(){
+  const tarih = document.getElementById('harcamaTarihInput').value;
+  const kat = document.getElementById('harcamaKatInput').value;
+  const tutar = parseFloat(document.getElementById('harcamaTutarInput').value);
+  const not = document.getElementById('harcamaNotInput').value.trim();
+  if(!/^\d{4}-\d\d-\d\d$/.test(tarih)){ showAlertModal('Lütfen geçerli bir tarih seç.'); return; }
+  if(!(tutar > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  const list = harcamaYukle();
+  list.push({ id: 'h-' + Date.now(), tur: 'kayit', tarih, kat, tutar, not });
+  harcamaKaydet(list);
+  document.getElementById('harcamaTutarInput').value = '';
+  document.getElementById('harcamaNotInput').value = '';
+  // Eklenen harcamanın ayı görünsün; form açık kalır (art arda giriş için), tutar kutusuna odaklanır
+  _harcamaYil = +tarih.slice(0, 4); _harcamaAy = +tarih.slice(5, 7) - 1;
+  renderHarcama();
+  document.getElementById('harcamaTutarInput').focus();
+}
+
+function harcamaGuncelle(id){
+  const input = document.getElementById('harcama-edit-' + id);
+  const val = parseFloat(input && input.value);
+  if(!(val > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  const list = harcamaYukle();
+  const x = list.find(k => k.id === id);
+  if(!x) return;
+  x.tutar = val;
+  harcamaKaydet(list);
+  renderHarcama();
+}
+
+function harcamaSil(id){
+  showConfirmModal('Bu harcama kaydını silmek istediğine emin misin?', () => {
+    harcamaKaydet(harcamaYukle().filter(k => k.id !== id));
+    renderHarcama();
+  });
+}
+
+// Tablodaki hücreye tıklayınca: o ayın kategori toplamını yaz (Enter kaydeder, boş Enter elle toplamı kaldırır, Esc vazgeçer)
+function harcamaHucreDuzenle(td, kat, ay){
+  if(td.querySelector('input')) return;
+  const ayK = ayAnahtar(_harcamaYil, ay);
+  const mevcut = harcamaYukle().find(x => x.tur === 'aylik' && x.ay === ayK && x.kat === kat);
+  td.classList.remove('elle');
+  td.innerHTML = `<input type="number" step="0.01" min="0" value="${mevcut ? mevcut.tutar : ''}" placeholder="toplam">`;
+  const inp = td.querySelector('input');
+  inp.focus(); inp.select();
+  let bitti = false;
+  const kaydet = () => {
+    if(bitti) return; bitti = true;
+    const ham = inp.value.trim();
+    const list = harcamaYukle().filter(x => !(x.tur === 'aylik' && x.ay === ayK && x.kat === kat));
+    if(ham !== ''){
+      const t = parseFloat(ham.replace(',', '.'));
+      if(!(t >= 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); renderHarcama(); return; }
+      list.push({ id: 'ay-' + ayK + '-' + kat, tur: 'aylik', ay: ayK, kat, tutar: t });
+    }
+    harcamaKaydet(list);
+    renderHarcama();
+  };
+  inp.addEventListener('keydown', e => {
+    if(e.key === 'Enter'){ e.preventDefault(); kaydet(); }
+    if(e.key === 'Escape'){ bitti = true; renderHarcama(); }
+  });
+  inp.addEventListener('blur', () => { if(!bitti){ bitti = true; renderHarcama(); } });   // odaktan çıkınca vazgeç
+}
+
+// Bay Piyasa bağlamı için kısa özet
+function harcamaOzetMetni(){
+  const yil = new Date().getFullYear(), ay = new Date().getMonth();
+  const T = harcamaTablosu(yil);
+  if(!T.yilToplam) return null;
+  const katlar = HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.katToplam[k]]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1])
+    .map(([ad, t]) => ad + ' ₺' + fmtNumber(t, 0) + ' (ort. ₺' + fmtNumber(t / (T.veriliAylar.length || 1), 0) + '/ay)').join(', ');
+  const buAyKat = HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][ay].tutar]).filter(x => x[1] > 0).map(([ad, t]) => ad + ' ₺' + fmtNumber(t, 0)).join(', ');
+  return 'Harcamalar ' + yil + ': yıl toplamı ₺' + fmtNumber(T.yilToplam, 0) + ', aylık ortalama ₺' + fmtNumber(T.ortalama, 0) + ' (' + T.veriliAylar.length + ' ay)'
+    + ' | Bu ay (' + AY_UZUN[ay] + ') ₺' + fmtNumber(T.ayToplam[ay], 0) + (buAyKat ? ': ' + buAyKat : '')
+    + ' | Kategoriler: ' + katlar
+    + ' | Aylık toplamlar: ' + T.ayToplam.map((v, i) => v ? AY_KISA[i] + ' ₺' + fmtNumber(v, 0) : null).filter(Boolean).join(', ');
+}
+
+let _harcamaBoyutZamanlayici = null;
+window.addEventListener('resize', () => {
+  clearTimeout(_harcamaBoyutZamanlayici);
+  _harcamaBoyutZamanlayici = setTimeout(() => { const s = document.getElementById('tab-harcama'); if(s && s.classList.contains('active')) harcamaGrafikCiz(harcamaTablosu(_harcamaYil)); }, 200);
+});
+
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
   gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
@@ -5861,6 +6315,7 @@ const TAB_BASLIKLARI = {
   yatirim:  ['Yatırımlarım', 'Canlı fiyatlarla portföy değeri ve dağılımı'],
   istatistik: ['Portföy İstatistikleri', 'Portföyünü 100 üzerinden puanlayan göstergeler'],
   borclar:  ['Borçlarım', 'Krediler, kartlar, KMH ve elden borçlar — canlı toplam'],
+  harcama:  ['Harcama İstatistikleri', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir'],
 };
 function switchTab(tabId){
@@ -5873,6 +6328,7 @@ function switchTab(tabId){
     document.getElementById('appBarSub').textContent = b[1];
   }
   if(tabId === 'ai' && typeof bpTabAcildi === 'function') bpTabAcildi();
+  if(tabId === 'harcama') renderHarcama();   // grafik görünür genişlikle çizilsin
   window.scrollTo(0, 0);
 }
 
@@ -5884,6 +6340,7 @@ renderNakit();
 renderVarlik();
 yatirimTurDegisti();
 renderYatirim();
+renderHarcama();
 if(location.protocol === 'file:'){
   document.getElementById('fileWarning').style.display = 'block';
 }

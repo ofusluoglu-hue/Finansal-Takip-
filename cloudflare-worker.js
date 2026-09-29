@@ -32,7 +32,7 @@ const VARSAYILAN_ORIGIN = 'https://ofusluoglu-hue.github.io';
 const IZINLI_ANAHTARLAR = new Set([
   'ft_yatirimlar_v1', 'ft_varliklarim_v1', 'ft_custom_loans_v1', 'ft_closed_loans_v1',
   'ft_kredi_kartlari_v1', 'ft_kmh_v1', 'ft_elden_nakit_v1', 'ft_sabit_krediler_v1',
-  'ft_bay_piyasa_v1', 'ft_haber_ceviri_v1',
+  'ft_bay_piyasa_v1', 'ft_haber_ceviri_v1', 'ft_harcamalar_v1',
 ]);
 const MAX_DEGER_BAYT = 1500000;      // D1 satır sınırı 2 MB
 const KILIT_ESIK = 8;                // 15 dk içinde bu kadar yanlış deneme → kilit
