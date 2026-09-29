@@ -1698,7 +1698,9 @@
   .ozet-kart.vurgu .ozet-deger .ist-puan-ust{font-size:14px;}
   .ozet-kart.vurgu .ozet-cubuk{height:6px;border-radius:3px;}
   .ozet-kart.vurgu.orta .ozet-deger{font-size:26px;}   /* öne çıkan ama "bir tık" büyük (ör. Borçlarım › Toplam Borç) */
-  #yatirimToplamDeger{color:var(--up);font-size:23px;}   /* Yatırımlarım › Toplam Yatırım: yeşil, biraz büyük (nabız efekti yukarıda) */
+  #yatirimToplamDeger{color:var(--up);font-size:23px;}
+  #finansalNetDeger{color:var(--up);}          /* Finansal Durumum › Net Varlık: yeşil (eksi ise .neg → kırmızı) */
+  #finansalNetDeger.neg{color:var(--down);}   /* Yatırımlarım › Toplam Yatırım: yeşil, biraz büyük (nabız efekti yukarıda) */
   .puan-rozet{display:inline-block;padding:1px 9px;border-radius:10px;font-size:11.5px;font-weight:700;background:color-mix(in srgb, currentColor 16%, transparent);border:1px solid color-mix(in srgb, currentColor 45%, transparent);margin-right:4px;}
   .puan-rozet:empty{display:none;}
   @media (max-width:980px){
