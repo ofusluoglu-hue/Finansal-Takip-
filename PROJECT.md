@@ -67,7 +67,7 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (sen
 
 | Veri | Kaynak |
 |---|---|
-| ABD hisse ve ETF'leri (QQQM, VOO, URA, XLE, REMX, NVDA…) | Finnhub (`/fh`) |
+| ABD hisse ve ETF'leri (QQQM, VOO, URA, XLE, REMX, NVDA…) | Resmi kapanış ve normal seans: Finnhub (`/fh`). Seans öncesi / sonrası: Yahoo 5 dk'lık grafik (`includePrePost`, son 5 gün) |
 | Dolar/TL, Euro/TL | Yahoo Finance (`/proxy`); yedek Twelve Data |
 | Kripto (BTC, ETH, SOL, AAVE, HYPE) | Binance 24 saatlik ticker (doğrudan, anahtarsız); yedek CoinGecko. Grafikler Binance |
 | Altın (spot ons) | Twelve Data (`/td`) |
@@ -76,6 +76,19 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (sen
 | Haberler | Google News RSS (`/proxy`) |
 
 Yenileme: fiyatlar 60 sn, haberler 10 dk, senkron 5 dk.
+
+**Yenileme sırası:** Her turda önce Dolar/TL ve Euro/TL paralel çekilir, ardından kripto; hemen sonra `tlKarsiliklariniYenile()` tüm TL karşılıklarını (elden nakit USD/EUR borçlar, yatırımlar, altın, net değer, borç toplamı, portföy puanları) yeniden hesaplar. Tur sonunda (altın ve ETF'ler geldikten sonra) bir kez daha çalışır.
+
+**ABD seansları (ETF/hisse kartları):** Kartın ana değeri o an açık seansın fiyatıdır (değişim bir önceki resmi kapanışa göre). Altındaki satırlar diğer seansları gösterir:
+
+| An (ABD saati) | Ana değer | Alt satırlar |
+|---|---|---|
+| Seans öncesi 04:00–09:30 | Öncesi | Kapanış (önceki gün), Sonrası (önceki gün) |
+| Normal seans 09:30–16:00 | Canlı fiyat | Öncesi |
+| Seans sonrası 16:00–20:00 | Sonrası | Öncesi, Kapanış, Sonrası |
+| Gece / hafta sonu | Kapanış | Öncesi, Sonrası |
+
+Öncesi yüzdesi önceki kapanışa, Sonrası yüzdesi o günün kapanışına göredir. Sonrası dilimi 16:05'ten başlar (16:00 çubuğu kapanış müzayedesini içerir). **Gece seansı (20:00–04:00 ET) verisi ücretsiz kaynaklarda (Yahoo, Nasdaq, Finnhub) bulunmadığı için gösterilmez.** Seans verisi seans öncesi/sonrası penceresinde her turda, diğer zamanlarda 5 dakikada bir tazelenir.
 Proxy yedekleri (`NEWS_PROXIES` / `fetchWithFallback`): Worker proxy'si başarısız olursa Yahoo, FRED ve haber istekleri sırayla `allorigins.win`, `corsproxy.io` ve `codetabs.com` üzerinden denenir (bu isteklere erişim kodu gönderilmez).
 
 ## 6. Yapay zekâ kullanımı
@@ -109,4 +122,5 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Döviz kurları her turun başında çekiliyor, tüm TL karşılıkları hemen güncelleniyor (nakit borçta kurun saati görünür); ETF kartlarında seans öncesi / kapanış / sonrası satırları |
 | 2026-09-29 | Test sonrası düzeltmeler: ilk taksidi gelmemiş krediler görünür; kripto fiyatları Binance'e taşındı (CoinGecko 429); yatırım listesi artık dakikada bir sunucuya yazılmıyor; Excel tarih kayması ve "Kalan Ana Para" sütunu düzeltildi; Excel şablonu eklendi; telefon görünümü (alt sekme çubuğu, taşmalar) düzeltildi; sekme simgesi eklendi |

@@ -655,6 +655,11 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
+  .card-seanslar{margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .card-seanslar:empty{display:none;}
+  .card-seanslar div{display:flex;align-items:baseline;gap:6px;white-space:nowrap;overflow:hidden;}
+  .card-seanslar .s-ad{min-width:50px;color:var(--muted-2);}
+  .card-seanslar b{font-weight:600;color:var(--text);}
   .card-value.calm{color:#8FE3BC;}
   .card-value.normal{color:#8FB4FF;}
   .card-value.fear{color:#F4C871;}
@@ -1709,7 +1714,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 10 dakikada bir yenilenir; İngilizce başlıklar Türkçeye çevrilir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 10 dakikada bir yenilenir; İngilizce başlıklar Türkçeye çevrilir.
   </div>
 
   </div>
@@ -2481,7 +2486,8 @@ let _fxRatesKalici = false; // ilk render'da bu kurların "canlı değil, eski" 
   }catch(e){ /* bozuk kayıt varsa yok say */ }
 })();
 
-let _fxRatesLive = { USD: false, EUR: false }; // bu oturumda gerçekten canlı çekildi mi (yoksa sadece kalıcı hafızadan mı geldi)
+let _fxRatesLive = { USD: false, EUR: false };
+const _fxZaman = { USD: null, EUR: null };   // kurun bu oturumda en son canlı güncellendiği an // bu oturumda gerçekten canlı çekildi mi (yoksa sadece kalıcı hafızadan mı geldi)
 
 function fxKaliciKaydet(){
   try{
@@ -2503,6 +2509,7 @@ function buildCards(){
       <div class="card-value skeleton" id="val-${c.key}">0</div>
       <div class="card-change flat" id="chg-${c.key}"><span class="arrow">–</span><span>—</span></div>
       <div class="card-note" id="note-${c.key}" style="display:none;"></div>
+      ${c.source === 'finnhub' ? `<div class="card-seanslar" id="seanslar-${c.key}"></div>` : ''}
     `;
     el.addEventListener('click', ()=> openChart(c.key));
     grid.appendChild(el);
@@ -2555,11 +2562,11 @@ function renderCard(cfg, price, chgPct, stale, meta){
   const staleEl = document.getElementById('stale-'+cfg.key);
 
   // Gerçekten çekilmiş (sahte olmayan) bir değerse hafızaya al — bir sonraki başarısızlıkta buna döneriz
-  if(!stale && isFinite(price)) _lastGoodValues[cfg.key] = { price, chgPct, ts: Date.now(), seans: meta && meta.seans };
+  if(!stale && isFinite(price)) _lastGoodValues[cfg.key] = { price, chgPct, ts: Date.now(), seans: meta && meta.seans, seanslar: meta && meta.seanslar };
 
   // Elden Nakit Borçlar'daki döviz çevrimi için güncel kuru sakla (stale/gecikmeli olsa bile son bilinen kur kullanılır)
-  if(cfg.key === 'usdtry' && isFinite(price) && !stale){ _fxRates.USD = price; _fxRatesLive.USD = true; fxKaliciKaydet(); }
-  if(cfg.key === 'eurtry' && isFinite(price) && !stale){ _fxRates.EUR = price; _fxRatesLive.EUR = true; fxKaliciKaydet(); }
+  if(cfg.key === 'usdtry' && isFinite(price) && !stale){ _fxRates.USD = price; _fxRatesLive.USD = true; _fxZaman.USD = Date.now(); fxKaliciKaydet(); }
+  if(cfg.key === 'eurtry' && isFinite(price) && !stale){ _fxRates.EUR = price; _fxRatesLive.EUR = true; _fxZaman.EUR = Date.now(); fxKaliciKaydet(); }
 
   valEl.classList.remove('skeleton');
 
@@ -2626,6 +2633,16 @@ function renderCard(cfg, price, chgPct, stale, meta){
     seansNotEl.title = (etiket && meta && meta.kapanis) ? 'Son resmi kapanış: ' + fmtNumber(meta.kapanis, 2) : '';
   }
 
+  // ABD ETF/hisse: diğer seansların fiyatları (öncesi / kapanış / sonrası). Veri gelmezse son gösterilen kalır.
+  const seanslarEl = document.getElementById('seanslar-' + cfg.key);
+  if(seanslarEl && !stale && meta && meta.seanslar){
+    seanslarEl.innerHTML = meta.seanslar.map(x => {
+      const renk = x.chg == null ? '' : (x.chg > 0 ? 'var(--up)' : (x.chg < 0 ? 'var(--down)' : ''));
+      const yuzde = x.chg == null ? '' : (x.chg > 0 ? '+' : '') + '%' + fmtNumber(x.chg, 2);
+      return `<div><span class="s-ad">${x.ad}</span><b>${fmtNumber(x.fiyat, 2)}</b><span style="color:${renk}">${yuzde}</span></div>`;
+    }).join('');
+  }
+
   let ledSinif = stale ? 'stale' : 'live';
   if(!stale && meta && (meta.led === 'closed' || meta.seans === 'closed' || /_yok$/.test(meta.seans || ''))) ledSinif = 'closed'; // veri çekildi ama piyasa kapalı/yeni fiyat yok
   staleEl.className = 'card-live-led ' + ledSinif;
@@ -2666,6 +2683,7 @@ async function fxGunlukTaban(symbol){
   return val;
 }
 
+const KUR_KARTLARI = ['usdtry', 'eurtry'];   // her turun başında, diğer kartlardan önce çekilir
 const _tdYedekZaman = {}; // Yahoo başarısız olunca Twelve Data'ya düşüşün son zamanı (kart bazında)
 
 // Yahoo kartlarının altına küçük not: veri eskiyse "Son işlem …", vadeli kontratlarda gecikme uyarısı
@@ -2778,38 +2796,92 @@ function abdTarihi(ms){
   return new Intl.DateTimeFormat('en-CA', { timeZone:'America/New_York' }).format(new Date(ms)); // YYYY-MM-DD
 }
 
-async function fetchYahooExtended(symbol){
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=5m&range=1d&includePrePost=true`;
-  const res = await fetchWithFallback(url);
-  const data = await res.json();
-  const r = data.chart.result[0];
-  const ts = r.timestamp || [];
-  const cl = (r.indicators.quote[0] || {}).close || [];
-  let i = cl.length - 1;
-  while(i >= 0 && cl[i] == null) i--;
-  if(i < 0) throw new Error('yahoo bar yok');
-  return { price: cl[i], ts: ts[i] * 1000 };
+// ABD saatiyle (ET) günün dakikası: 0–1439
+const _etSaatBicim = new Intl.DateTimeFormat('en-US', { timeZone:'America/New_York', hour:'2-digit', minute:'2-digit', hour12:false });
+function abdDakika(ms){
+  const p = _etSaatBicim.formatToParts(new Date(ms));
+  const g = t => parseInt(p.find(x => x.type === t).value, 10);
+  return (g('hour') % 24) * 60 + g('minute');
 }
 
-// Resmi seans fiyatını Finnhub'dan alır; işlem öncesi/sonrası penceresindeysek Yahoo'dan güncel fiyatı bulup
-// önceki günün kapanışına göre değişimi hesaplar. seans: regular | pre | post | closed | pre_yok | post_yok
+// Yahoo'nun 5 dakikalık grafiğinden (uzatılmış seans dahil, son 5 gün) her ABD işlem gününün seans sonlarını çıkarır:
+// [{ gun:'YYYY-MM-DD', pre:{fiyat,ts}, reg:{fiyat,ts}, post:{fiyat,ts} }, …] (eskiden yeniye).
+// Gece seansı (20:00–04:00 ET) ücretsiz kaynaklarda bulunmadığı için yoktur.
+const _seansOnbellek = {};   // sembol → { t, gunler }
+async function fetchYahooSeanslar(symbol, tazeMs){
+  const o = _seansOnbellek[symbol];
+  if(o && Date.now() - o.t < tazeMs) return o.gunler;
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=5m&range=5d&includePrePost=true`;
+  const res = await fetchWithFallback(url);
+  const r = (await res.json()).chart.result[0];
+  const ts = r.timestamp || [];
+  const cl = (r.indicators.quote[0] || {}).close || [];
+  const harita = new Map();
+  for(let i = 0; i < ts.length; i++){
+    if(cl[i] == null) continue;
+    const ms = ts[i] * 1000, dk = abdDakika(ms);
+    // Sonrası 16:05'ten başlar: 16:00 çubuğu kapanış müzayedesini içerir, işlem olmasa da "sonrası = kapanış" gösterirdi
+    const seans = dk >= 240 && dk < 570 ? 'pre' : (dk >= 570 && dk < 960 ? 'reg' : (dk >= 965 && dk < 1200 ? 'post' : null));
+    if(!seans) continue;
+    const gun = abdTarihi(ms);
+    if(!harita.has(gun)) harita.set(gun, { gun });
+    harita.get(gun)[seans] = { fiyat: cl[i], ts: ms };   // zaman sıralı → her seansın son fiyatı kalır
+  }
+  const gunler = [...harita.values()].sort((a, b) => a.gun < b.gun ? -1 : 1);
+  _seansOnbellek[symbol] = { t: Date.now(), gunler };
+  return gunler;
+}
+
+const yuzdeDegisim = (fiyat, taban) => (isFinite(fiyat) && taban) ? (fiyat - taban) / taban * 100 : null;
+
+// Kartın ana fiyatı: o an hangi seans açıksa onun son fiyatı (değişim bir önceki resmi kapanışa göre).
+// Kartın altındaki satırlar: diğer seansların fiyatları — Öncesi (önceki kapanışa göre), Kapanış (resmi, Finnhub),
+// Sonrası (o günün kapanışına göre). seans: regular | pre | post | closed | pre_yok | post_yok
 async function fetchEtfHibrit(symbol){
-  const fh = await fetchFinnhub(symbol);
+  const fh = await fetchFinnhub(symbol);   // fh.price = son resmi kapanış (seans içindeyse canlı), fh.pc = ondan önceki kapanış
   let seans = abdSeansi();
   if(seans === 'regular' && fh.t && (Date.now() - fh.t * 1000) > 30 * 60 * 1000) seans = 'closed'; // tatil vb.
+  const uzatilmis = seans === 'pre' || seans === 'post';
 
-  if(seans === 'pre' || seans === 'post'){
-    try{
-      const ext = await fetchYahooExtended(symbol);
-      if(isFinite(ext.price) && abdTarihi(ext.ts) === abdTarihi(Date.now())){
-        // pre: Finnhub'daki fiyat = dünkü kapanış. post: Finnhub'daki fiyat = bugünkü kapanış, dünkü kapanış = pc.
-        const taban = seans === 'pre' ? fh.price : fh.pc;
-        return { price: ext.price, chgPct: ((ext.price - taban) / taban) * 100, seans, kapanis: fh.price };
-      }
-    }catch(e){ /* aşağıda _yok olarak işaretlenir */ }
-    seans = seans + '_yok'; // bugün bu seansta henüz işlem/veri yok ya da Yahoo cevap vermedi
+  let gunler = [];
+  try{ gunler = await fetchYahooSeanslar(symbol, uzatilmis ? 0 : 5 * 60 * 1000); }catch(e){ /* yalnızca Finnhub */ }
+  const bugun = gunler.find(g => g.gun === abdTarihi(Date.now()));
+  const kapanisGunu = fh.t ? gunler.find(g => g.gun === abdTarihi(fh.t * 1000)) : null;   // fh.price'ın ait olduğu gün
+
+  const satir = (ad, fiyat, taban) => (fiyat != null && isFinite(fiyat)) ? { ad, fiyat, chg: yuzdeDegisim(fiyat, taban) } : null;
+  const kapanisSatiri = satir('Kapanış', fh.price, fh.pc);
+
+  let sonuc;
+  if(seans === 'pre' && bugun && bugun.pre){
+    // Bugünün öncesi; alttaki satırlar bir önceki işlem gününün kapanışı ve sonrası
+    sonuc = { price: bugun.pre.fiyat, chgPct: yuzdeDegisim(bugun.pre.fiyat, fh.price), seanslar: [
+      kapanisSatiri,
+      kapanisGunu && kapanisGunu.post ? satir('Sonrası', kapanisGunu.post.fiyat, fh.price) : null,
+    ] };
+  } else if(seans === 'post' && bugun && bugun.post){
+    sonuc = { price: bugun.post.fiyat, chgPct: yuzdeDegisim(bugun.post.fiyat, fh.pc), seanslar: [
+      bugun.pre ? satir('Öncesi', bugun.pre.fiyat, fh.pc) : null,
+      kapanisSatiri,
+      satir('Sonrası', bugun.post.fiyat, fh.price),
+    ] };
+  } else if(seans === 'regular'){
+    sonuc = { price: fh.price, chgPct: fh.chgPct, seanslar: [
+      bugun && bugun.pre ? satir('Öncesi', bugun.pre.fiyat, fh.pc) : null,
+    ] };
+  } else {
+    // Kapalı (gece, hafta sonu, tatil) ya da açık seansta henüz işlem yok: ana değer resmi kapanış.
+    // Bugünün öncesinde işlem yoksa dünkü "Öncesi" gösterilmez (bugününkü sanılmasın).
+    const oncesiGoster = seans !== 'pre';
+    if(uzatilmis) seans = seans + '_yok';
+    const g = kapanisGunu;
+    sonuc = { price: fh.price, chgPct: fh.chgPct, seanslar: [
+      oncesiGoster && g && g.pre ? satir('Öncesi', g.pre.fiyat, fh.pc) : null,
+      g && g.post ? satir('Sonrası', g.post.fiyat, fh.price) : null,
+    ] };
   }
-  return { price: fh.price, chgPct: fh.chgPct, seans, kapanis: fh.price };
+  if(!isFinite(sonuc.chgPct)) sonuc.chgPct = fh.chgPct;
+  sonuc.seanslar = sonuc.seanslar.filter(Boolean);
+  return Object.assign(sonuc, { seans, kapanis: fh.price });
 }
 
 const SEANS_ETIKET = {
@@ -2894,10 +2966,14 @@ async function refreshMarketData(){
   let anyError = false;
   let lastErrorMsg = '';
 
+  // ---- Dolar/Euro EN ÖNCE ve paralel: tüm TL karşılıkları bu kurlara bağlı, turun geri kalanını beklemesinler ----
+  const kurHatalari = await Promise.all(CARDS.filter(c => KUR_KARTLARI.includes(c.key)).map(kartYahooYenile));
+  kurHatalari.filter(Boolean).forEach(h => { anyError = true; lastErrorMsg = h; });
+
   try{
     await refreshCrypto();
   }catch(e){ anyError = true; lastErrorMsg = e.message || String(e); }
-  if(typeof renderYatirim === 'function') renderYatirim();   // kripto fiyatları geldi — portföyü hemen güncelle
+  tlKarsiliklariniYenile();   // yeni kur + kripto fiyatları → nakit borçlar, portföy ve net değer hemen güncellenir
 
   // ---- Twelve Data: yalnızca altın (XAU/USD) — ETF/hisseler Finnhub'da, Dolar/Euro Yahoo'da (Twelve Data yedek).
   // Günlük 800 kredi sınırını korumak için temkinli bir aralık konur.
@@ -2932,15 +3008,12 @@ async function refreshMarketData(){
     }
   }
 
-  // Dolar/Euro kuru güncellenmiş olabilir — Elden Nakit Borçlar'ın TL karşılığını tazele
-  if(typeof renderNakit === 'function') renderNakit();
-
   // ---- Finnhub kaynaklı ETF/hisse kartları: günlük tavan yok, her turda tazelenir ----
   const finnhubCards = CARDS.filter(c => c.source === 'finnhub');
   for(const cfg of finnhubCards){
     try{
-      const { price, chgPct, seans, kapanis } = await fetchEtfHibrit(cfg.symbol);
-      renderCard(cfg, price, chgPct, false, { seans, kapanis });
+      const { price, chgPct, seans, kapanis, seanslar } = await fetchEtfHibrit(cfg.symbol);
+      renderCard(cfg, price, chgPct, false, { seans, kapanis, seanslar });
     }catch(e){
       anyError = true;
       lastErrorMsg = e.message || String(e);
@@ -2950,45 +3023,11 @@ async function refreshMarketData(){
   }
   if(typeof renderYatirim === 'function') renderYatirim();   // ETF/hisse fiyatları geldi — portföyü hemen güncelle
 
-  // ---- Yahoo/FRED kaynaklı kartlar: az sayıda, art arda (aralıklı) ----
-  const otherCards = CARDS.filter(c => c.source === 'yahoo' || c.source === 'fred');
+  // ---- Yahoo/FRED kaynaklı diğer kartlar (Brent, uranyum…): az sayıda, art arda (aralıklı) ----
+  const otherCards = CARDS.filter(c => (c.source === 'yahoo' || c.source === 'fred') && !KUR_KARTLARI.includes(c.key));
   for(const cfg of otherCards){
-    if(cfg.key === 'uranium'){
-      try{
-        const u = await fetchUranyum();
-        renderCard(cfg, u.price, u.chgPct, false, { not: u.not, led: u.led });
-        await sleep(350);
-        continue;
-      }catch(e){ /* Yahoo'ya düş */ }
-    }
-    try{
-      if(cfg.source === 'yahoo'){
-        const { price, chgPct, ts } = await fetchYahoo(cfg.symbol);
-        renderCard(cfg, price, chgPct, false, yahooNotMeta(cfg, ts));
-      } else if(cfg.source === 'fred'){
-        const { price, chgPct } = await fetchFred(cfg.symbol);
-        renderCard(cfg, price, chgPct, false);
-      }
-    }catch(e){
-      // Dolar/Euro: Yahoo olmazsa Twelve Data'dan dene (günlük kota için en fazla 5 dakikada bir)
-      let kurtarildi = false;
-      if(cfg.tdSymbol && (Date.now() - (_tdYedekZaman[cfg.key] || 0)) > 5 * 60 * 1000){
-        _tdYedekZaman[cfg.key] = Date.now();
-        try{
-          const d = (await fetchTwelveDataBatch([cfg.tdSymbol]))[cfg.tdSymbol];
-          const fiyat = d ? parseFloat(d.close) : NaN;
-          if(d && !d.code && isFinite(fiyat)){
-            renderCard(cfg, fiyat, parseFloat(d.percent_change) || 0, false);
-            kurtarildi = true;
-          }
-        }catch(e2){ /* aşağıda eski değere dönülür */ }
-      }
-      if(!kurtarildi){
-        anyError = true;
-        lastErrorMsg = e.message || String(e);
-        renderStale(cfg);
-      }
-    }
+    const hata = await kartYahooYenile(cfg);
+    if(hata){ anyError = true; lastErrorMsg = hata; }
     await sleep(350);
   }
 
@@ -2996,11 +3035,8 @@ async function refreshMarketData(){
     document.getElementById('fileWarning').style.display = 'block';
   }
 
-  // Dolar/Euro artık Yahoo döngüsünde güncelleniyor — Elden Nakit Borçlar'ın TL karşılığını tazele
-  if(typeof renderNakit === 'function') renderNakit();
-
-  // Tüm fiyatlar (Altın dahil) tazelendi — Yatırımlarım'daki canlı değerleri güncelle
-  if(typeof renderYatirim === 'function') renderYatirim();
+  // Tüm fiyatlar (altın dahil) tazelendi — TL karşılıklarını son kez güncelle
+  tlKarsiliklariniYenile();
 
   if(anyError){
     dot.className = 'dot err';
@@ -3011,6 +3047,50 @@ async function refreshMarketData(){
     statusText.textContent = 'Canlı · güncellendi ' + new Date().toLocaleTimeString('tr-TR');
     statusText.title = statusText.textContent;
   }
+}
+
+// Yahoo/FRED kaynaklı tek bir kartı yeniler; hata olursa mesajını, yoksa null döndürür
+async function kartYahooYenile(cfg){
+  if(cfg.key === 'uranium'){
+    try{
+      const u = await fetchUranyum();
+      renderCard(cfg, u.price, u.chgPct, false, { not: u.not, led: u.led });
+      return null;
+    }catch(e){ /* Yahoo'ya düş */ }
+  }
+  try{
+    if(cfg.source === 'yahoo'){
+      const { price, chgPct, ts } = await fetchYahoo(cfg.symbol);
+      renderCard(cfg, price, chgPct, false, yahooNotMeta(cfg, ts));
+    } else if(cfg.source === 'fred'){
+      const { price, chgPct } = await fetchFred(cfg.symbol);
+      renderCard(cfg, price, chgPct, false);
+    }
+    return null;
+  }catch(e){
+    // Dolar/Euro: Yahoo olmazsa Twelve Data'dan dene (günlük kota için en fazla 5 dakikada bir)
+    if(cfg.tdSymbol && (Date.now() - (_tdYedekZaman[cfg.key] || 0)) > 5 * 60 * 1000){
+      _tdYedekZaman[cfg.key] = Date.now();
+      try{
+        const d = (await fetchTwelveDataBatch([cfg.tdSymbol]))[cfg.tdSymbol];
+        const fiyat = d ? parseFloat(d.close) : NaN;
+        if(d && !d.code && isFinite(fiyat)){
+          renderCard(cfg, fiyat, parseFloat(d.percent_change) || 0, false);
+          return null;
+        }
+      }catch(e2){ /* aşağıda eski değere dönülür */ }
+    }
+    renderStale(cfg);
+    return e.message || String(e);
+  }
+}
+
+// Döviz kuruna bağlı tüm TL karşılıklarını yeniden hesaplar: elden nakit borçlar (USD/EUR), yatırımlar
+// (ABD ETF, kripto, altın), net değer, borç toplamı, portföy puanları ve Bay Piyasa harcama göstergesi.
+function tlKarsiliklariniYenile(){
+  if(typeof renderNakit === 'function') renderNakit();       // → refreshGrandTotal → renderVarlik
+  if(typeof renderYatirim === 'function') renderYatirim();   // → renderVarlik, renderIstatistik
+  if(typeof bpRenderMeter === 'function') bpRenderMeter();
 }
 
 let _refreshInProgress = false;
@@ -3809,7 +3889,8 @@ function bpSnapshotOlustur(paylas, haber){
     if(!v || !isFinite(v.price)) return;
     const ch = (v.chgPct >= 0 ? '+' : '') + fmtNumber(v.chgPct, 2) + '%';
     const seans = (v.seans && SEANS_ETIKET[v.seans]) ? ' [' + SEANS_ETIKET[v.seans].toLowerCase() + ']' : '';
-    s.push('- ' + c.label + ': ' + fmtNumber(v.price, c.fmt === 'usd0' ? 0 : (c.fmt === 'try4' ? 4 : 2)) + ' (' + ch + ')' + seans);
+    const digerSeanslar = (v.seanslar || []).map(x => x.ad.toLowerCase() + ' ' + fmtNumber(x.fiyat, 2) + (x.chg != null ? ' (' + (x.chg >= 0 ? '+' : '') + fmtNumber(x.chg, 2) + '%)' : '')).join(', ');
+    s.push('- ' + c.label + ': ' + fmtNumber(v.price, c.fmt === 'usd0' ? 0 : (c.fmt === 'try4' ? 4 : 2)) + ' (' + ch + ')' + seans + (digerSeanslar ? ' — ' + digerSeanslar : ''));
   });
 
   if(haber){
@@ -5331,7 +5412,7 @@ function renderNakit(){
       if(!enSonTarih || t > enSonTarih) enSonTarih = t;
 
       const dovizNotu = item.paraBirimi !== 'TL'
-        ? `${fmtNumber(girilenTutar, 2)} ${item.paraBirimi} · kur ${kur ? fmtNumber(kur, 4) : '—'}${canliKur ? ' (güncel)' : ' (son bilinen)'}`
+        ? `${fmtNumber(girilenTutar, 2)} ${item.paraBirimi} · kur ${kur ? fmtNumber(kur, 4) : '—'}${canliKur ? ' (güncel' + (_fxZaman[item.paraBirimi] ? ' · ' + new Date(_fxZaman[item.paraBirimi]).toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }) : '') + ')' : ' (son bilinen)'}`
         : '';
 
       return `
