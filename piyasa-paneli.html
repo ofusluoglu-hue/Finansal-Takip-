@@ -1678,6 +1678,23 @@
   .ist-hval{flex:0 0 auto;min-width:92px;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;}
   .ist-detay{display:flex;flex-direction:column;gap:9px;margin-top:2px;}
 
+  /* Portföy İstatistikleri: genel puan öne çıkan kart (2 sütun, büyük puan, derece rozeti, puan renginde hafif zemin) */
+  .ozet-grid.ist-grid{grid-template-columns:repeat(6, minmax(0,1fr));}
+  .ozet-kart.vurgu{grid-column:span 2;padding:12px 16px 11px;gap:6px;justify-content:center;background:linear-gradient(135deg, color-mix(in srgb, var(--vurgu-renk, var(--amber)) 10%, var(--panel)) 0%, var(--panel) 70%);border-color:color-mix(in srgb, var(--vurgu-renk, var(--amber)) 35%, var(--border));border-left-width:4px;}
+  .ozet-kart.vurgu.yesil{--vurgu-renk:var(--up);}
+  .ozet-kart.vurgu.sari{--vurgu-renk:var(--amber);}
+  .ozet-kart.vurgu.kirmizi{--vurgu-renk:var(--down);}
+  .ozet-kart.vurgu .ozet-etiket{font-size:11px;color:var(--text);letter-spacing:.06em;}
+  .ozet-kart.vurgu .ozet-deger{font-size:34px;letter-spacing:-0.02em;}
+  .ozet-kart.vurgu .ozet-deger .ist-puan-ust{font-size:14px;}
+  .ozet-kart.vurgu .ozet-cubuk{height:6px;border-radius:3px;}
+  .puan-rozet{display:inline-block;padding:1px 9px;border-radius:10px;font-size:11.5px;font-weight:700;background:color-mix(in srgb, currentColor 16%, transparent);border:1px solid color-mix(in srgb, currentColor 45%, transparent);margin-right:4px;}
+  .puan-rozet:empty{display:none;}
+  @media (max-width:980px){
+    .ozet-grid.ist-grid{grid-template-columns:repeat(2, minmax(0,1fr));}
+    .ozet-kart.vurgu{grid-column:1 / -1;}
+  }
+
   /* Portföy İstatistikleri kutuları da ortak kart dilinde */
   .ist-kutu{background:var(--panel-2);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:10px;padding:10px 13px 9px;}
   .ist-etiket{font-size:10.5px;font-weight:600;letter-spacing:.03em;color:var(--muted);}
@@ -1984,11 +2001,11 @@
   <div class="tab-panel" id="tab-istatistik">
     <div class="page-head"><h1>Portföy İstatistikleri</h1></div>
 
-    <div class="ozet-grid">
-      <div class="ozet-kart" id="istGenelKart">
+    <div class="ozet-grid ist-grid">
+      <div class="ozet-kart vurgu" id="istGenelKart">
         <div class="ozet-etiket">Genel portföy puanı</div>
         <div class="ozet-deger"><span id="istGenelPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
-        <div class="ozet-alt"><span id="istGenelDerece"></span> <span class="ozet-soluk">· 4 kriterin ortalaması</span></div>
+        <div class="ozet-alt"><span class="puan-rozet" id="istGenelDerece"></span> <span class="ozet-soluk">4 kriterin ortalaması</span></div>
         <div class="ozet-cubuk"><div id="istGenelBar"></div></div>
         <div class="card-seanslar"><div><span class="s-ad">En güçlü</span><b><span id="istGenelEnIyi">—</span></b></div><div><span class="s-ad">En zayıf</span><b><span id="istGenelEnKotu">—</span></b></div></div>
       </div>
@@ -3881,7 +3898,7 @@ function istPuanlariHesapla(){
 function istPuanRenkSinif(p){ return p >= 70 ? 'yesil' : (p >= 40 ? 'sari' : 'kirmizi'); }
 function istPuanYaz(onek, puan){
   const kart = document.getElementById(onek + 'Kart');
-  if(kart) kart.className = 'ozet-kart' + (puan != null ? ' ' + istPuanRenkSinif(puan) : '');
+  if(kart) kart.className = 'ozet-kart' + (kart.classList.contains('vurgu') ? ' vurgu' : '') + (puan != null ? ' ' + istPuanRenkSinif(puan) : '');
   const bas = document.getElementById(onek + 'Baslik');
   if(bas){ bas.textContent = puan != null ? fmtNumber(puan, 1) + ' · ' + istDerece(puan) : ''; bas.style.color = puan != null ? istPuanRenk(puan) : ''; }
   const t = document.getElementById(onek + 'Puan'), b = document.getElementById(onek + 'Bar');
