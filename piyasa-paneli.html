@@ -5060,7 +5060,8 @@ function satirDuzenle(btn, id){
 }
 function satirDuzenIptal(el){ _duzen = { id: null, deger: '' }; const s = el.closest('.satir'); if(s) s.classList.remove('duzenleniyor'); }
 
-// o: { led, ad, alt, tutar, renk, duzen:{ id, ph, kaydet }, sil:{ onclick, baslik, ikon } }
+// o: { led, ad, alt, tutar, renk, dil, duzen:{ id, ph, kaydet }, sil:{ onclick, baslik, ikon } }
+// dil: adın dili (büyük harfe çevirmede i/İ doğru olsun; ör. 'en' → BITCOIN, varsayılan sayfa dili tr → ALTIN, GÜMÜŞ)
 function satirHtml(o){
   const duzenAcik = o.duzen && _duzen.id === o.duzen.id;
   const deger = duzenAcik ? escapeHtml(_duzen.deger) : '';
@@ -5068,7 +5069,7 @@ function satirHtml(o){
     <div class="satir${duzenAcik ? ' duzenleniyor' : ''}">
       ${o.led ? `<span class="led-dot ${o.led}"></span>` : ''}
       <div class="satir-ana">
-        <div class="satir-ad" title="${escapeHtml(o.ad).replace(/"/g, '&quot;')}">${escapeHtml(o.ad)}</div>
+        <div class="satir-ad"${o.dil ? ` lang="${o.dil}"` : ''} title="${escapeHtml(o.ad).replace(/"/g, '&quot;')}">${escapeHtml(o.ad)}</div>
         ${o.alt ? `<div class="satir-alt">${o.alt}</div>` : ''}
       </div>
       <div class="satir-tutar" style="color:${o.renk || 'var(--text)'};">${o.tutar}</div>
@@ -5496,7 +5497,7 @@ function yatirimSatirHtml(item, toplamYatirim){
   const sil = { onclick: `deleteYatirim('${item.id}')`, baslik: 'Sil', ikon: '✕' };
 
   if(!sonuc){
-    return satirHtml({ led: 'red', ad: yatirimEtiket(item), alt: 'Fiyat/kur henüz yüklenmedi — birkaç saniye sonra güncellenir', tutar: '—', renk: 'var(--muted-2)', sil });
+    return satirHtml({ led: 'red', ad: yatirimEtiket(item), dil: (item.tur === 'etf' || item.tur === 'kripto') ? 'en' : null, alt: 'Fiyat/kur henüz yüklenmedi — birkaç saniye sonra güncellenir', tutar: '—', renk: 'var(--muted-2)', sil });
   }
 
   const pay = toplamYatirim > 0 ? (sonuc.tutarTL / toplamYatirim * 100) : 0;
@@ -5517,6 +5518,7 @@ function yatirimSatirHtml(item, toplamYatirim){
   return satirHtml({
     led: sonuc.canli === false ? 'red' : 'green',
     ad: yatirimEtiket(item),
+    dil: (item.tur === 'etf' || item.tur === 'kripto') ? 'en' : null,   // İngilizce adlar: BITCOIN (BİTCOİN değil)
     alt: parcalar.join(' · '),
     tutar: '₺' + fmtNumber(sonuc.tutarTL, 2),
     renk,
