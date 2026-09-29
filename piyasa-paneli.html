@@ -234,7 +234,7 @@
   }
   .summary-usd:empty{display:none;}
   #finansalToplamBorcUSD, #grandTotalUSD{color:#E59A9A;}
-  #yatirimToplamDegerUSD{color:#82CBA4;}
+  #yatirimToplamDegerUSD, #finansalNetDegerUSD, #finansalToplamVarlikUSD, #finansalYatirimlarimUSD{color:#82CBA4;}
 
   /* Yatırım / Borç Oranı: rengi orana göre değişiyor (yeşil/sarı/kırmızı) — ışıma da o rengi takip eder */
   #yatirimBorcOrani{animation:oranNabiz 2.2s ease-in-out infinite;}
@@ -1353,6 +1353,88 @@
   }
   .yatirim-aksiyon input{width:78px !important;}
 
+  /* ===== Ortak tasarım dili — Piyasa Özeti kartlarıyla aynı: özet kartı, bölüm, açılır form, liste satırı ===== */
+  .ozet-grid{display:grid;grid-template-columns:repeat(5, minmax(0,1fr));gap:10px;margin-bottom:16px;}
+  .ozet-grid.k4{grid-template-columns:repeat(4, minmax(0,1fr));}
+  .ozet-kart{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:10px;padding:10px 13px 9px;display:flex;flex-direction:column;gap:5px;min-width:0;}
+  .ozet-kart.yesil{border-left-color:var(--up);}
+  .ozet-kart.kirmizi{border-left-color:var(--down);}
+  .ozet-kart.sari{border-left-color:var(--amber);}
+  .ozet-kart.mavi{border-left-color:#6EC3FF;}
+  .ozet-kart.mor{border-left-color:#C9A6FF;}
+  .ozet-kart.turkuaz{border-left-color:#5EEAD4;}
+  .ozet-kart.genis{grid-column:span 2;}
+  .ozet-etiket{font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ozet-deger{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;line-height:1.1;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ozet-deger.neg{color:var(--down);}
+  .ozet-alt{font-size:12.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ozet-alt:empty{display:none;}
+  .ozet-soluk{font-weight:500;color:var(--muted-2);}
+  .ozet-cubuk{height:4px;border-radius:2px;background:#1b212a;overflow:hidden;}
+  .ozet-cubuk > div{height:100%;border-radius:2px;transition:width .3s ease;}
+  .ozet-not{font-size:10.5px;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pasta-satir{display:flex;align-items:center;gap:12px;margin-top:2px;}
+  .pasta{width:62px;height:62px;border-radius:50%;flex-shrink:0;background:#1b212a;}
+  .pasta-legend{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  @media (max-width:980px){
+    .ozet-grid, .ozet-grid.k4{grid-template-columns:repeat(3, minmax(0,1fr));}
+  }
+  @media (max-width:640px){
+    .ozet-grid, .ozet-grid.k4{grid-template-columns:repeat(2, minmax(0,1fr));}
+    .ozet-kart.genis{grid-column:1 / -1;}
+  }
+
+  .bolum{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 18px 8px;margin-bottom:14px;}
+  .bolum-bas{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap;}
+  .bolum-baslik{font-size:15px;font-weight:700;}
+  .bolum-toplam{margin-left:auto;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .bolum-ekle{background:transparent;border:1px solid var(--border);color:var(--amber);font-family:inherit;font-size:12px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;}
+  .bolum-ekle:hover{border-color:var(--amber);}
+  .bolum-toplam:empty + .bolum-ekle{margin-left:auto;}
+  .bolum-form{display:none;background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:12px 12px 6px;margin:6px 0 8px;}
+  .bolum-form.acik{display:block;}
+  .bolum-form .ai-input{min-height:40px;padding:9px 12px;font-size:13px;}
+  .bolum-form .ai-btn{padding:10px 16px;}
+  .bolum-form-baslik{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .kredi-form-ic{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;}
+  .kredi-form-ayrac{width:1px;align-self:stretch;background:var(--border);}
+  .bolum-alt-baslik{display:flex;justify-content:space-between;gap:10px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin:12px 0 0;padding-bottom:4px;border-bottom:1px solid var(--border);}
+  .bolum-alt-baslik span:last-child{font-variant-numeric:tabular-nums;}
+
+  .satir{display:flex;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--border);min-width:0;}
+  .satir:last-child{border-bottom:none;}
+  .satir > .led-dot{flex-shrink:0;margin-right:0;}
+  .satir-ana{flex:1 1 auto;min-width:0;}
+  .satir-ad{font-size:13.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .satir-alt{font-size:11px;color:var(--muted-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
+  .satir-tutar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
+  .satir-aksiyon{display:flex;gap:2px;flex-shrink:0;}
+  .ikon-btn{background:transparent;border:1px solid transparent;color:var(--muted-2);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:13px;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;padding:0;}
+  .ikon-btn:hover{border-color:var(--border);color:var(--text);}
+  .ikon-btn.sil:hover{color:var(--down);border-color:var(--down);}
+  .ikon-btn.onay:hover{color:var(--up);border-color:var(--up);}
+  .satir-duzen{display:none;align-items:center;gap:6px;flex-shrink:0;}
+  .satir.duzenleniyor .satir-duzen{display:flex;}
+  .satir.duzenleniyor .satir-aksiyon{display:none;}
+  .satir-duzen input{width:130px;background:var(--panel-2);border:1px solid var(--amber);border-radius:7px;color:var(--text);font-family:inherit;font-size:12.5px;padding:6px 8px;}
+  .satir-duzen .loan-btn-save{padding:6px 10px;font-size:11.5px;}
+  .bos-not{font-size:12px;color:var(--muted-2);padding:10px 2px;}
+  @media (max-width:640px){
+    /* Telefonda satır tek sırada kalır (ad kısalır); yalnızca düzenleme açılınca kutu alt satıra iner */
+    .satir{gap:8px;}
+    .satir.duzenleniyor{flex-wrap:wrap;row-gap:6px;}
+    .satir-tutar{font-size:14px;}
+    .ikon-btn{width:26px;height:26px;}
+    .satir.duzenleniyor .satir-duzen{flex:1 1 100%;}
+    .satir-duzen input{flex:1;width:auto;min-width:0;}
+    .kredi-form-ayrac{display:none;}
+    .bolum{padding:12px 14px 6px;}
+    .bolum-bas{flex-wrap:nowrap;gap:8px;}
+    .bolum-baslik{font-size:14px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .bolum-toplam{font-size:14px;white-space:nowrap;}
+    .bolum-ekle{white-space:nowrap;flex-shrink:0;}
+  }
+
   /* ---- Telefon düzeni: Yatırımlarım ve Varlıklarım ---- */
   .summary-grid.yatirim-summary-grid{grid-template-columns:0.8fr 0.8fr 1.8fr;}
   .varlik-ad-kol{width:340px;flex:0 0 340px;min-width:0;overflow:hidden;text-overflow:ellipsis;}
@@ -1591,6 +1673,11 @@
   .ist-hval{flex:0 0 auto;min-width:92px;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;}
   .ist-detay{display:flex;flex-direction:column;gap:9px;margin-top:2px;}
 
+  /* Portföy İstatistikleri kutuları da ortak kart dilinde */
+  .ist-kutu{background:var(--panel-2);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:10px;padding:10px 13px 9px;}
+  .ist-etiket{font-size:10.5px;font-weight:600;letter-spacing:.03em;color:var(--muted);}
+  .ist-deger{font-size:20px;font-weight:700;margin-top:4px;}
+  .section-title{font-size:15px;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -1727,131 +1814,118 @@
 
   <!-- ================= TAB: GÜNCEL FİNANSAL DURUMUM ================= -->
   <div class="tab-panel" id="tab-finansal">
-    <div class="page-head">
-      <h1>Finansal Durumum</h1>
-    </div>
+    <div class="page-head"><h1>Finansal Durumum</h1></div>
 
-    <div class="summary-grid finansal-summary-grid">
-      <div class="summary-card">
-        <div class="summary-label">Net Varlık Değerim</div>
-        <div class="summary-value pos" id="finansalNetDeger">₺0</div>
-        <div class="summary-usd" id="finansalNetDegerUSD"></div>
-        <div class="summary-sub">Varlıklarım + Yatırımlarım − Toplam Borç</div>
+    <div class="ozet-grid">
+      <div class="ozet-kart yesil" id="finansalNetKart">
+        <div class="ozet-etiket">Net Varlık Değerim</div>
+        <div class="ozet-deger" id="finansalNetDeger">₺0</div>
+        <div class="ozet-alt" id="finansalNetDegerUSD"></div>
+        <div class="card-seanslar" id="finansalNetDetay"></div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">Toplam Varlık</div>
-        <div class="summary-value pos" id="finansalToplamVarlik">₺0</div>
-        <div class="summary-usd" id="finansalToplamVarlikUSD"></div>
-        <div class="summary-sub">Varlıklarım toplamı</div>
+      <div class="ozet-kart yesil">
+        <div class="ozet-etiket">Toplam Varlık</div>
+        <div class="ozet-deger" id="finansalToplamVarlik">₺0</div>
+        <div class="ozet-alt" id="finansalToplamVarlikUSD"></div>
+        <div class="card-seanslar" id="finansalVarlikDetay"></div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">Yatırımlarım</div>
-        <div class="summary-value pos" id="finansalYatirimlarim">₺0</div>
-        <div class="summary-usd" id="finansalYatirimlarimUSD"></div>
-        <div class="summary-sub">Portföy toplamı</div>
+      <div class="ozet-kart yesil">
+        <div class="ozet-etiket">Yatırımlarım</div>
+        <div class="ozet-deger" id="finansalYatirimlarim">₺0</div>
+        <div class="ozet-alt" id="finansalYatirimlarimUSD"></div>
+        <div class="card-seanslar" id="finansalYatirimDetay"></div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">Toplam Borcum</div>
-        <div class="summary-value neg" id="finansalToplamBorc">₺0</div>
-        <div class="summary-usd" id="finansalToplamBorcUSD"></div>
-        <div class="summary-sub">Kredi, kredi kartı, KMH, nakit borç toplamı</div>
+      <div class="ozet-kart kirmizi">
+        <div class="ozet-etiket">Toplam Borcum</div>
+        <div class="ozet-deger" id="finansalToplamBorc">₺0</div>
+        <div class="ozet-alt" id="finansalToplamBorcUSD"></div>
+        <div class="card-seanslar" id="finansalBorcDetay"></div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">Varlık Dağılımı</div>
-        <div style="display:flex;align-items:center;gap:14px;margin-top:6px;">
-          <div id="finansalVarlikPasta" style="width:76px;height:76px;border-radius:50%;flex-shrink:0;background:#1b212a;"></div>
-          <div id="finansalVarlikPastaLegend" style="display:flex;flex-direction:column;gap:4px;"></div>
+      <div class="ozet-kart">
+        <div class="ozet-etiket">Varlık Dağılımı</div>
+        <div class="pasta-satir">
+          <div id="finansalVarlikPasta" class="pasta"></div>
+          <div id="finansalVarlikPastaLegend" class="pasta-legend"></div>
         </div>
       </div>
     </div>
 
-    <div class="section-panel">
-      <div class="section-title">Varlıklarım</div>
-      <div class="loan-add-row">
-        <select id="varlikTurSelect" class="ai-input" style="max-width:150px;min-width:130px;">
-          <option value="Konut">Konut</option>
-          <option value="Otomobil">Otomobil</option>
-          <option value="Arsa">Arsa</option>
-          <option value="Dükkan">Dükkan</option>
-          <option value="Diğer">Diğer</option>
-        </select>
-        <input type="text" id="varlikAdInput" class="ai-input" style="max-width:220px;min-width:160px;" placeholder="Ad (ör. Gaziosmanpaşa Dairesi)">
-        <input type="number" step="0.01" id="varlikDegerInput" class="ai-input" style="max-width:160px;min-width:130px;" placeholder="Değer (TL)">
-        <button class="ai-btn" onclick="addVarlik()">+ Varlık Ekle</button>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Varlıklarım</span>
+        <span class="bolum-toplam" id="varlikToplamDeger" style="color:var(--up);">₺0</span>
+        <button class="bolum-ekle" onclick="bolumFormAc('varlikForm')">+ Ekle</button>
       </div>
-      <div class="ai-disclaimer" style="margin-top:10px;font-size:10px;line-height:1.5;">
-        Konut, otomobil, arsa, dükkan gibi taşınır/taşınmaz varlıklarını buradan ekleyip elle güncel değerini girersin — canlı fiyat çekilmez, tamamen senin girdiğin tutar esas alınır. Hesabında saklanır ve tüm cihazlarında senkronlanır.
+      <div class="bolum-form" id="varlikForm">
+        <div class="loan-add-row">
+          <select id="varlikTurSelect" class="ai-input" style="max-width:150px;min-width:130px;">
+            <option value="Konut">Konut</option>
+            <option value="Otomobil">Otomobil</option>
+            <option value="Arsa">Arsa</option>
+            <option value="Dükkan">Dükkan</option>
+            <option value="Diğer">Diğer</option>
+          </select>
+          <input type="text" id="varlikAdInput" class="ai-input" style="max-width:240px;min-width:160px;" placeholder="Ad (ör. Gaziosmanpaşa Dairesi)">
+          <input type="number" step="0.01" id="varlikDegerInput" class="ai-input" style="max-width:170px;min-width:130px;" placeholder="Değer (TL)" onkeydown="if(event.key==='Enter')addVarlik()">
+          <button class="ai-btn" onclick="addVarlik()">Varlık Ekle</button>
+        </div>
       </div>
-      <div id="varlikListContainer" style="margin-top:14px;"></div>
-      <div class="varlik-toplam-row">
-        <div class="varlik-toplam-deger" id="varlikToplamDeger">₺0</div>
-      </div>
+      <div id="varlikListContainer"></div>
     </div>
+
+    <div class="footnote"><b>Not:</b> Konut, otomobil, arsa, dükkan gibi varlıklar için canlı fiyat çekilmez; girdiğin güncel değer esas alınır, ✎ ile güncellersin. Net varlık = varlıklar + yatırımlar − toplam borç. Satırdaki LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: GÜNCEL FİNANSAL DURUMUM ================= -->
 
   <!-- ================= TAB: YATIRIMLARIM ================= -->
   <div class="tab-panel" id="tab-yatirim">
-    <div class="page-head">
-      <h1>Yatırımlarım</h1>
-    </div>
+    <div class="page-head"><h1>Yatırımlarım</h1></div>
 
-    <div class="summary-grid yatirim-summary-grid">
-      <div class="summary-card">
-        <div class="summary-label">Toplam Yatırım</div>
-        <div class="summary-value" style="color:var(--up);font-size:28px;" id="yatirimToplamDeger">—</div>
-        <div class="summary-usd" id="yatirimToplamDegerUSD"></div>
-        <div class="summary-sub" id="yatirimSummaryTarih">—</div>
+    <div class="ozet-grid k4">
+      <div class="ozet-kart yesil">
+        <div class="ozet-etiket">Toplam Yatırım</div>
+        <div class="ozet-deger" id="yatirimToplamDeger">—</div>
+        <div class="ozet-alt" id="yatirimToplamDegerUSD"></div>
+        <div class="card-seanslar" id="yatirimOzetDetay"></div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">Yatırım / Borç Oranı</div>
-        <div class="summary-value" style="font-size:28px;" id="yatirimBorcOrani">—</div>
-        <div class="summary-sub" id="yatirimBorcOraniAlt">—</div>
+      <div class="ozet-kart sari" id="yatirimOranKart">
+        <div class="ozet-etiket">Yatırım / Borç Oranı</div>
+        <div class="ozet-deger" id="yatirimBorcOrani">—</div>
+        <div class="ozet-alt" id="yatirimBorcOraniAlt"></div>
+        <div class="card-seanslar" id="yatirimOranDetay"></div>
       </div>
-      <div class="summary-card">
-        <div id="yatirimDagilimBar"></div>
-      </div>
-    </div>
-
-    <div class="section-panel">
-      <div class="section-title">Yeni Yatırım Ekle</div>
-      <div class="loan-add-row">
-        <select id="yatirimTurSelect" class="ai-input" style="max-width:150px;min-width:130px;" onchange="yatirimTurDegisti()">
-          <option value="etf">ABD ETF & Hisse</option>
-          <option value="kripto">Kripto</option>
-          <option value="bist">BİST</option>
-          <option value="emtia">Emtia</option>
-        </select>
-
-        <select id="yatirimSembolSelect" class="ai-input" style="max-width:260px;min-width:220px;">
-          <option value="ndx">QQQM ETF (NASDAQ100)</option>
-          <option value="sp500">VOO ETF (S&P500)</option>
-          <option value="ura">URA ETF (Uranyum)</option>
-          <option value="nlr">NLR ETF (Uranyum+Nükleer)</option>
-          <option value="xle">XLE ETF (Enerji)</option>
-          <option value="rexc">REXC ETF (Nadir Toprak)</option>
-          <option value="remx">REMX ETF (Nadir Toprak)</option>
-          <option value="nvda">NVDA (Nvidia)</option>
-        </select>
-
-        <input type="text" id="yatirimBistAdInput" class="ai-input" style="max-width:160px;min-width:130px;display:none;" placeholder="Hisse adı (ör. THYAO)">
-        <input type="number" step="0.000001" id="yatirimAdetInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Adet">
-        <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram (Altın)">
-        <input type="number" step="0.01" id="yatirimBistTutarInput" class="ai-input" style="max-width:140px;min-width:120px;display:none;" placeholder="Güncel değer (TL)">
-        <button class="ai-btn" onclick="addYatirim()">+ Yatırım Ekle</button>
-      </div>
-      <div class="ai-disclaimer" style="margin-top:10px;font-size:10px;line-height:1.5;">
-        ABD ETF/Hisse ve Kripto fiyatları Piyasa Özeti'nde zaten canlı takip ettiğimiz kartlardan (ekstra istek
-        yapılmadan) alınır. Emtia (Altın) ons fiyatından gram başına hesaplanır. <b>BİST için ücretsiz canlı veri
-        kaynağımız olmadığından</b> hisse adını ve güncel TL değerini elle girip elle güncellersin — tıpkı Kredi
-        Kartlarım gibi. Hesabında saklanır ve tüm cihazlarında senkronlanır.
+      <div class="ozet-kart genis">
+        <div class="ozet-etiket">Kategori Dağılımı</div>
+        <div id="yatirimDagilimBar" class="ist-detay"></div>
       </div>
     </div>
 
-    <div class="section-panel">
-      <div class="section-title" style="font-size:20px;">Portföyüm</div>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Portföyüm</span>
+        <span class="bolum-toplam" id="yatirimBolumToplam" style="color:var(--up);"></span>
+        <button class="bolum-ekle" onclick="bolumFormAc('yatirimForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="yatirimForm">
+        <div class="loan-add-row">
+          <select id="yatirimTurSelect" class="ai-input" style="max-width:150px;min-width:130px;" onchange="yatirimTurDegisti()">
+            <option value="etf">ABD ETF &amp; Hisse</option>
+            <option value="kripto">Kripto</option>
+            <option value="bist">BİST</option>
+            <option value="emtia">Emtia</option>
+          </select>
+          <select id="yatirimSembolSelect" class="ai-input" style="max-width:260px;min-width:200px;"></select>
+          <input type="text" id="yatirimBistAdInput" class="ai-input" style="max-width:160px;min-width:130px;display:none;" placeholder="Hisse adı (ör. THYAO)">
+          <input type="number" step="0.000001" id="yatirimAdetInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Adet" onkeydown="if(event.key==='Enter')addYatirim()">
+          <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram (Altın)" onkeydown="if(event.key==='Enter')addYatirim()">
+          <input type="number" step="0.01" id="yatirimBistTutarInput" class="ai-input" style="max-width:150px;min-width:120px;display:none;" placeholder="Güncel değer (TL)" onkeydown="if(event.key==='Enter')addYatirim()">
+          <button class="ai-btn" onclick="addYatirim()">Yatırım Ekle</button>
+        </div>
+      </div>
       <div id="yatirimListContainer"></div>
     </div>
+
+    <div class="footnote"><b>Not:</b> ABD ETF/hisse ve kripto fiyatları Piyasa Özeti'ndeki canlı kartlardan (ek istek yapılmadan), altın ons fiyatından gram başına hesaplanır ve güncel dolar kuruyla TL'ye çevrilir. BİST için ücretsiz canlı veri kaynağı olmadığından hisse adını ve güncel TL değerini elle girip ✎ ile güncellersin. LED: yeşil canlı fiyat, kırmızı son bilinen fiyat. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: YATIRIMLARIM ================= -->
 
@@ -1946,112 +2020,120 @@
 
   <!-- ================= TAB: BORÇLARIM ================= -->
   <div class="tab-panel" id="tab-borclar">
-    <div class="page-head">
-      <h1>Borçlarım</h1>
-    </div>
+    <div class="page-head"><h1>Borçlarım</h1></div>
 
-    <div class="section-panel grand-total-panel">
-      <div class="grand-total-left">
-        <div class="summary-label" style="font-size:12px;">Toplam Borç</div>
-        <div class="summary-value neg" style="font-size:32px;" id="grandTotal">—</div>
-        <div class="summary-usd" id="grandTotalUSD"></div>
+    <div class="ozet-grid" id="borcKategoriListesi">
+      <div class="ozet-kart kirmizi">
+        <div class="ozet-etiket">Toplam Borç</div>
+        <div class="ozet-deger neg" id="grandTotal">—</div>
+        <div class="ozet-alt" id="grandTotalUSD"></div>
+        <div class="card-seanslar" id="borcToplamDetay"></div>
       </div>
-      <div class="grand-total-right" id="borcKategoriListesi">
-        <div id="borcGrup-loans">
-          <div class="grand-row">
-            <div>
-              <div class="r-label" style="font-weight:700;">Kredi Borcu</div>
-              <div class="ai-score-meta" id="loansSummaryTarih">—</div>
-            </div>
-            <div class="r-value" id="loansSummaryToplam">—</div>
-          </div>
-          <div class="yatirim-dagilim-row">
-            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKredi" style="width:0%;background:var(--amber);"></div></div>
-            <div class="yatirim-dagilim-pct" id="borcPctKredi" style="color:var(--amber);">%0</div>
-          </div>
-        </div>
-        <div id="borcGrup-kmh">
-          <div class="grand-row">
-            <div>
-              <div class="r-label" style="font-weight:700;">Kredili Mevduat Hesabı -KMH</div>
-              <div class="ai-score-meta" id="kmhSummaryTarih">—</div>
-            </div>
-            <div class="r-value" id="kmhSummaryToplam">—</div>
-          </div>
-          <div class="yatirim-dagilim-row">
-            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKmh" style="width:0%;background:#6EC3FF;"></div></div>
-            <div class="yatirim-dagilim-pct" id="borcPctKmh" style="color:#6EC3FF;">%0</div>
-          </div>
-        </div>
-        <div id="borcGrup-kk">
-          <div class="grand-row">
-            <div>
-              <div class="r-label" style="font-weight:700;">Kredi Kartı Borcu</div>
-              <div class="ai-score-meta" id="kkSummaryTarih">—</div>
-            </div>
-            <div class="r-value" id="kkSummaryToplam">—</div>
-          </div>
-          <div class="yatirim-dagilim-row">
-            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarKk" style="width:0%;background:#C9A6FF;"></div></div>
-            <div class="yatirim-dagilim-pct" id="borcPctKk" style="color:#C9A6FF;">%0</div>
-          </div>
-        </div>
-        <div id="borcGrup-nakit">
-          <div class="grand-row">
-            <div>
-              <div class="r-label" style="font-weight:700;">Elden Nakit Borçlar</div>
-              <div class="ai-score-meta" id="nakitSummaryTarih">—</div>
-            </div>
-            <div class="r-value" id="nakitSummaryToplam">—</div>
-          </div>
-          <div class="yatirim-dagilim-row">
-            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" id="borcBarNakit" style="width:0%;background:#5EEAD4;"></div></div>
-            <div class="yatirim-dagilim-pct" id="borcPctNakit" style="color:#5EEAD4;">%0</div>
-          </div>
-        </div>
+      <div class="ozet-kart sari" id="borcGrup-loans">
+        <div class="ozet-etiket">Kredi Borcu</div>
+        <div class="ozet-deger" id="loansSummaryToplam">—</div>
+        <div class="ozet-alt"><span id="borcPctKredi">%0</span> <span class="ozet-soluk">toplam borcun</span></div>
+        <div class="ozet-cubuk"><div id="borcBarKredi" style="width:0%;background:var(--amber);"></div></div>
+        <div class="ozet-not" id="loansSummaryTarih">—</div>
+      </div>
+      <div class="ozet-kart mavi" id="borcGrup-kmh">
+        <div class="ozet-etiket">KMH</div>
+        <div class="ozet-deger" id="kmhSummaryToplam">—</div>
+        <div class="ozet-alt"><span id="borcPctKmh">%0</span> <span class="ozet-soluk">toplam borcun</span></div>
+        <div class="ozet-cubuk"><div id="borcBarKmh" style="width:0%;background:#6EC3FF;"></div></div>
+        <div class="ozet-not" id="kmhSummaryTarih">—</div>
+      </div>
+      <div class="ozet-kart mor" id="borcGrup-kk">
+        <div class="ozet-etiket">Kredi Kartı Borcu</div>
+        <div class="ozet-deger" id="kkSummaryToplam">—</div>
+        <div class="ozet-alt"><span id="borcPctKk">%0</span> <span class="ozet-soluk">toplam borcun</span></div>
+        <div class="ozet-cubuk"><div id="borcBarKk" style="width:0%;background:#C9A6FF;"></div></div>
+        <div class="ozet-not" id="kkSummaryTarih">—</div>
+      </div>
+      <div class="ozet-kart turkuaz" id="borcGrup-nakit">
+        <div class="ozet-etiket">Elden Nakit Borçlar</div>
+        <div class="ozet-deger" id="nakitSummaryToplam">—</div>
+        <div class="ozet-alt"><span id="borcPctNakit">%0</span> <span class="ozet-soluk">toplam borcun</span></div>
+        <div class="ozet-cubuk"><div id="borcBarNakit" style="width:0%;background:#5EEAD4;"></div></div>
+        <div class="ozet-not" id="nakitSummaryTarih">—</div>
       </div>
     </div>
 
-    <div class="section-panel">
-      <div class="section-title">Kredilerim — Canlı Takip</div>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Kredilerim</span>
+        <span class="bolum-toplam" id="loansBolumToplam" style="color:var(--amber);"></span>
+        <button class="bolum-ekle" onclick="bolumFormAc('krediForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="krediForm">
+        <div class="kredi-form-ic">
+          <div style="flex:1;min-width:260px;">
+            <div class="bolum-form-baslik">Ödeme planı PDF'inden</div>
+            <div class="loan-add-row">
+              <label class="loan-file-label" for="loanPdfInput">📄 PDF Seç</label>
+              <input type="file" id="loanPdfInput" accept="application/pdf" style="display:none;" onchange="onLoanPdfSelected(event)">
+              <span class="loan-file-name" id="loanFileName">Dosya seçilmedi</span>
+            </div>
+            <div id="loanExtractStatus"></div>
+          </div>
+          <div class="kredi-form-ayrac"></div>
+          <div style="flex:1;min-width:260px;">
+            <div class="bolum-form-baslik">veya Excel ödeme planından</div>
+            <div class="loan-add-row">
+              <input type="text" id="excelBankaAdi" class="ai-input" style="max-width:160px;min-width:130px;" placeholder="Banka adı">
+              <label class="loan-file-label" for="loanExcelInput">📊 Excel Seç</label>
+              <input type="file" id="loanExcelInput" accept=".xlsx,.xls" style="display:none;" onchange="onLoanExcelSelected(event)">
+              <span class="loan-file-name" id="loanExcelFileName">Dosya seçilmedi</span>
+              <a href="kredi-odeme-plani-sablon.xlsx" download class="loan-file-label" style="text-decoration:none;">⬇ Şablon</a>
+            </div>
+            <div id="excelExtractStatus"></div>
+          </div>
+        </div>
+        <div id="loanPreviewBox"></div>
+      </div>
       <div id="loans-live-container"></div>
-      <div class="card-note" style="margin-top:6px;">
-        Hesap yöntemi: kalan anapara × (aylık faiz oranı / 30) × geçen gün + %KKDF + %BSMV. Bir krediyi
-        kapattığında "✓ Krediyi Kapattım" ile onaylayarak listeden kaldırabilirsin.
-      </div>
-
-      <div class="section-divider"></div>
-
-      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;">
-        <div style="flex:1;min-width:260px;">
-          <div class="section-title" style="font-size:13px;">Yeni Kredi Ekle</div>
-          <div class="loan-add-row">
-            <label class="loan-file-label" for="loanPdfInput">📄 Ödeme Planı PDF Seç</label>
-            <input type="file" id="loanPdfInput" accept="application/pdf" style="display:none;" onchange="onLoanPdfSelected(event)">
-            <span class="loan-file-name" id="loanFileName">Dosya seçilmedi</span>
-          </div>
-          <div id="loanExtractStatus"></div>
-          <div id="loanPreviewBox"></div>
-        </div>
-        <div style="flex:1;min-width:260px;border-left:1px solid var(--border);padding-left:24px;">
-          <div class="section-title" style="font-size:13px;">veya Excel Ödeme Planı Yükle</div>
-          <div class="loan-add-row">
-            <input type="text" id="excelBankaAdi" class="ai-input" style="max-width:160px;min-width:130px;" placeholder="Banka adı">
-            <label class="loan-file-label" for="loanExcelInput">📊 Excel Seç</label>
-            <input type="file" id="loanExcelInput" accept=".xlsx,.xls" style="display:none;" onchange="onLoanExcelSelected(event)">
-            <span class="loan-file-name" id="loanExcelFileName">Dosya seçilmedi</span>
-            <a href="kredi-odeme-plani-sablon.xlsx" download class="loan-file-label" style="text-decoration:none;">⬇ Şablon</a>
-          </div>
-          <div id="excelExtractStatus"></div>
-        </div>
-      </div>
     </div>
 
-    <div class="section-panel">
-      <div class="section-title">Kredi Kartlarım</div>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Kredi Kartlarım</span>
+        <span class="bolum-toplam" id="kkBolumToplam" style="color:#C9A6FF;"></span>
+        <button class="bolum-ekle" onclick="bolumFormAc('kkForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="kkForm">
+        <div class="loan-add-row">
+          <select id="kkAdInput" class="ai-input" style="max-width:200px;min-width:160px;">
+          <option value="" disabled selected>Banka seç…</option>
+          <option>Akbank</option>
+          <option>Denizbank</option>
+          <option>Enpara</option>
+          <option>Garanti BBVA</option>
+          <option>Halkbank</option>
+          <option>Hayat Finans</option>
+          <option>İş Bankası</option>
+          <option>ON Bank</option>
+          <option>QNB</option>
+          <option>Tombank</option>
+          <option>Vakıfbank</option>
+          <option>Yapı Kredi</option>
+          <option>Ziraat Bankası</option>
+          </select>
+          <input type="number" step="0.01" id="kkTutarInput" class="ai-input" style="max-width:180px;min-width:140px;" placeholder="Borç tutarı" onkeydown="if(event.key==='Enter')addKKKart()">
+          <button class="ai-btn" onclick="addKKKart()">Kart Ekle</button>
+        </div>
+      </div>
       <div id="kkKartlarContainer"></div>
-      <div class="loan-add-row" style="margin-top:14px;">
-        <select id="kkAdInput" class="ai-input" style="max-width:200px;min-width:160px;">
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Kredili Mevduat Hesabı (KMH)</span>
+        <span class="bolum-toplam" id="kmhBolumToplam" style="color:#6EC3FF;"></span>
+        <button class="bolum-ekle" onclick="bolumFormAc('kmhForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="kmhForm">
+        <div class="loan-add-row">
+          <select id="kmhAdInput" class="ai-input" style="max-width:200px;min-width:160px;">
           <option value="" disabled selected>Banka seç…</option>
           <option>Akbank</option>
           <option>Denizbank</option>
@@ -2066,64 +2148,36 @@
           <option>Vakıfbank</option>
           <option>Yapı Kredi</option>
           <option>Ziraat Bankası</option>
-        </select>
-        <input type="number" step="0.01" id="kkTutarInput" class="ai-input" style="max-width:180px;min-width:140px;" placeholder="Borç tutarı">
-        <button class="ai-btn" onclick="addKKKart()">+ Kart Ekle</button>
+          </select>
+          <input type="number" step="0.01" id="kmhTutarInput" class="ai-input" style="max-width:180px;min-width:140px;" placeholder="Borç tutarı" onkeydown="if(event.key==='Enter')addKMH()">
+          <button class="ai-btn" onclick="addKMH()">KMH Ekle</button>
+        </div>
       </div>
-      <div class="ai-disclaimer" style="margin-top:10px;">
-        Rakamlar otomatik hesaplanmaz — her kartın ekstresinden gördüğün güncel borcu elle girip
-        güncellersin. Hesabında saklanır ve tüm cihazlarında senkronlanır.
-      </div>
-    </div>
-
-    <div class="section-panel">
-      <div class="section-title">Kredili Mevduat Hesabı -KMH</div>
       <div id="kmhKartlarContainer"></div>
-      <div class="loan-add-row" style="margin-top:14px;">
-        <select id="kmhAdInput" class="ai-input" style="max-width:200px;min-width:160px;">
-          <option value="" disabled selected>Banka seç…</option>
-          <option>Akbank</option>
-          <option>Denizbank</option>
-          <option>Enpara</option>
-          <option>Garanti BBVA</option>
-          <option>Halkbank</option>
-          <option>Hayat Finans</option>
-          <option>İş Bankası</option>
-          <option>ON Bank</option>
-          <option>QNB</option>
-          <option>Tombank</option>
-          <option>Vakıfbank</option>
-          <option>Yapı Kredi</option>
-          <option>Ziraat Bankası</option>
-        </select>
-        <input type="number" step="0.01" id="kmhTutarInput" class="ai-input" style="max-width:180px;min-width:140px;" placeholder="Borç tutarı">
-        <button class="ai-btn" onclick="addKMH()">+ KMH Ekle</button>
-      </div>
-      <div class="ai-disclaimer" style="margin-top:10px;">
-        Kredili mevduat hesabı (KMH) borcu — rakamlar otomatik hesaplanmaz, hesap özetinden gördüğün
-        güncel bakiyeyi elle girip güncellersin. Hesabında saklanır ve tüm cihazlarında senkronlanır.
-      </div>
     </div>
 
-    <div class="section-panel">
-      <div class="section-title">Elden Nakit Borçlar</div>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Elden Nakit Borçlar</span>
+        <span class="bolum-toplam" id="nakitBolumToplam" style="color:#5EEAD4;"></span>
+        <button class="bolum-ekle" onclick="bolumFormAc('nakitForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="nakitForm">
+        <div class="loan-add-row">
+          <input type="text" id="nakitAdInput" class="ai-input" style="max-width:200px;min-width:160px;" placeholder="Kimden (ör. Abim)">
+          <input type="number" step="0.01" id="nakitTutarInput" class="ai-input" style="max-width:160px;min-width:120px;" placeholder="Borç tutarı" onkeydown="if(event.key==='Enter')addNakit()">
+          <select id="nakitParaBirimi" class="ai-input" style="max-width:100px;min-width:90px;">
+            <option value="TL">TL</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+          <button class="ai-btn" onclick="addNakit()">Nakit Borç Ekle</button>
+        </div>
+      </div>
       <div id="nakitKartlarContainer"></div>
-      <div class="loan-add-row" style="margin-top:14px;">
-        <input type="text" id="nakitAdInput" class="ai-input" style="max-width:200px;min-width:160px;" placeholder="Kimden (ör. Abim)">
-        <input type="number" step="0.01" id="nakitTutarInput" class="ai-input" style="max-width:160px;min-width:120px;" placeholder="Borç tutarı">
-        <select id="nakitParaBirimi" class="ai-input" style="max-width:100px;min-width:90px;">
-          <option value="TL">TL</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
-        <button class="ai-btn" onclick="addNakit()">+ Nakit Borç Ekle</button>
-      </div>
-      <div class="ai-disclaimer" style="margin-top:10px;">
-        Elden (banka dışı) nakit borçlar — kimden aldığını yazıp tutarı ve para birimini girersin.
-        USD/EUR seçersen güncel kurdan TL karşılığı hesaplanıp kaydedilir. Rakamlar otomatik
-        hesaplanmaz, elle güncellersin. Hesabında saklanır ve tüm cihazlarında senkronlanır.
-      </div>
     </div>
+
+    <div class="footnote"><b>Not:</b> Kredi borcu canlı hesaplanır: kalan anapara × (aylık faiz ÷ 30) × geçen gün + KKDF + BSMV; ilk taksidi gelmemiş kredilerde kullandırılan anapara esas alınır. Kredi kartı ve KMH tutarları otomatik hesaplanmaz, ekstre/hesap özetindeki güncel borcu ✎ ile güncellersin. USD/EUR elden borçların TL karşılığı güncel kurdan hesaplanır. Bir borcu kapattığında ✓ ile listeden kaldırırsın. LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: BORÇLARIM ================= -->
 
@@ -3701,7 +3755,7 @@ function istPuanlariHesapla(){
 
 function istPuanYaz(onek, puan){
   const t = document.getElementById(onek + 'Puan'), b = document.getElementById(onek + 'Bar');
-  if(t){ t.textContent = puan != null ? fmtNumber(puan, 1) : '—'; t.style.color = puan != null ? istPuanRenk(puan) : ''; }
+  if(t){ t.textContent = puan != null ? fmtNumber(puan, 1) : '—'; t.style.color = puan != null ? istPuanRenk(puan) : ''; const k = t.closest('.ist-kutu'); if(k) k.style.borderLeftColor = puan != null ? istPuanRenk(puan) : ''; }
   if(b){ b.style.width = (puan != null ? puan : 0).toFixed(1) + '%'; b.style.background = puan != null ? istPuanRenk(puan) : ''; }
 }
 function istYaz(id, metin){ const el = document.getElementById(id); if(el) el.textContent = metin; }
@@ -4617,49 +4671,42 @@ function closeLoan(id, isCustom){
 
 function updateGarantiLive(){
   const container = document.getElementById('loans-live-container');
-  container.innerHTML = '';
   let liveToplam = 0;
-  let anyLoan = false;
+  let adet = 0;
+  const simdiStr = kisaTarihSaat(new Date());
 
-  getAllLoans().forEach(loan => {
+  const satirlar = getAllLoans().map(loan => {
     const r = loanGuncelBorc(loan);
-    if(!r) return;
-
-    anyLoan = true;
+    if(!r) return '';
+    adet++;
     liveToplam += r.toplam;
-
-    const simdi = new Date();
-    const simdiStr = simdi.toLocaleDateString('tr-TR') + ' ' + simdi.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
     const aySayisi = loan.mode === 'schedule' ? loan.schedule.length : (loan.toplamTaksitSayisi || r.kalanTaksit);
-    const oranStr = String(loan.faizOraniAylik).replace('.', ',');
+    const alt = [
+      '%' + String(loan.faizOraniAylik).replace('.', ',') + ' aylık',
+      aySayisi + ' ay',
+      'kalan taksit ' + r.kalanTaksit,
+      r.ilkTaksitOncesi ? 'ilk taksit ' + r.ilkTaksitTarihi.split('-').reverse().join('.') : 'faiz ' + r.gun + ' gündür işliyor',
+    ].join(' · ');
+    return satirHtml({
+      led: 'green',
+      ad: loan.ad + ' Kredisi',
+      alt,
+      tutar: '₺' + fmtNumber(r.toplam, 2),
+      renk: 'var(--amber)',
+      sil: { onclick: `closeLoan('${loan.id}', ${!!loan.custom})`, baslik: 'Krediyi kapattım', ikon: '✓' },
+    });
+  }).join('');
 
-    const block = document.createElement('div');
-    block.style.marginBottom = '10px';
-    block.innerHTML = `
-      <div class="ai-score-row loan-card-head">
-        <div class="ai-score-num mid" style="font-size:24px;">₺${fmtNumber(r.toplam, 2)}</div>
-        <div>
-          <div class="ai-score-verdict">${escapeHtml(loan.ad)} Kredi Borcu (%${oranStr} ${aySayisi} Ay)</div>
-          <div class="ai-score-meta"><span class="led-dot green"></span>${simdiStr} · Kalan Taksit: ${r.kalanTaksit}${r.ilkTaksitOncesi ? ' · İlk taksit ' + r.ilkTaksitTarihi.split('-').reverse().join('.') : ''}</div>
-        </div>
-        <button class="loan-delete-btn" onclick="closeLoan('${loan.id}', ${!!loan.custom})">✓ Krediyi Kapattım</button>
-      </div>
-    `;
-    container.appendChild(block);
-  });
+  container.innerHTML = adet ? satirlar : '<div class="bos-not">Aktif kredi yok — sağ üstteki + Ekle ile ödeme planı PDF\'i ya da Excel\'i yükleyebilirsin.</div>';
 
-  if(!anyLoan){
-    container.innerHTML = '<div class="ai-disclaimer">Aktif kredi yok — yukarıdan yeni bir ödeme planı ekleyebilirsin.</div>';
-  }
-
-  const now = new Date();
-  const nowStr = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
-  document.getElementById('loansSummaryToplam').textContent = anyLoan ? '₺' + fmtNumber(liveToplam, 0) : '—';
-  document.getElementById('loansSummaryTarih').innerHTML = anyLoan
-    ? `<span class="led-dot green"></span>${nowStr}`
+  document.getElementById('loansSummaryToplam').textContent = adet ? '₺' + fmtNumber(liveToplam, 0) : '—';
+  document.getElementById('loansSummaryTarih').innerHTML = adet
+    ? `<span class="led-dot green"></span>${adet} kredi · canlı ${simdiStr}`
     : 'aktif kredi yok';
+  const bolumToplamEl = document.getElementById('loansBolumToplam');
+  if(bolumToplamEl) bolumToplamEl.textContent = adet ? '₺' + fmtNumber(liveToplam, 0) : '';
 
-  _bTotals.loans = anyLoan ? liveToplam : 0;
+  _bTotals.loans = adet ? liveToplam : 0;
   refreshGrandTotal();
 }
 
@@ -4674,6 +4721,8 @@ function refreshGrandTotal(){
   if(borcUsdEl) borcUsdEl.textContent = (toplam > 0 && _fxRates.USD) ? '≈ $' + fmtNumber(toplam / _fxRates.USD, 0) : '';
 
   if(typeof renderIstatistik === 'function') renderIstatistik();   // Portföy İstatistikleri'ndeki "Borç karşılama" puanı bu toplama bağlı
+  const kalemSayisi = [_bTotals.loans, _bTotals.kmh, _bTotals.kk, _bTotals.nakit].filter(x => x > 0).length;
+  ozetDetayYaz('borcToplamDetay', toplam > 0 ? [['Kategori', kalemSayisi + ' borç türü'], _toplamYatirimTL > 0 ? ['Yatırımla', '%' + fmtNumber(Math.min(999, _toplamYatirimTL / toplam * 100), 0) + ' karşılanıyor'] : null] : []);
 
   // Her kategorinin toplam borca oranını çubuk + yüzde olarak göster
   const oranlar = [
@@ -4753,6 +4802,56 @@ function ledDateHtml(dateIso){
   return ledSpan(dateIso) + tarihSaatStr(dateIso);
 }
 
+// ---------- Ortak arayüz: açılır ekleme formu ve liste satırı ----------
+function bolumFormAc(id){
+  const f = document.getElementById(id);
+  if(!f) return;
+  f.classList.toggle('acik');
+  if(f.classList.contains('acik')){ const i = f.querySelector('input:not([type=file]):not([style*="display:none"]), select'); if(i) i.focus(); }
+}
+
+// Satır içi düzenleme: fiyatlar her dakika yenilenip satırlar yeniden çizilse de açık kutu ve yazılan değer korunur
+let _duzen = { id: null, deger: '' };
+function satirDuzenle(btn, id){
+  _duzen = { id, deger: '' };
+  const satir = btn.closest('.satir');
+  satir.classList.add('duzenleniyor');
+  const i = satir.querySelector('.satir-duzen input'); if(i) i.focus();
+}
+function satirDuzenIptal(el){ _duzen = { id: null, deger: '' }; const s = el.closest('.satir'); if(s) s.classList.remove('duzenleniyor'); }
+
+// o: { led, ad, alt, tutar, renk, duzen:{ id, ph, kaydet }, sil:{ onclick, baslik, ikon } }
+function satirHtml(o){
+  const duzenAcik = o.duzen && _duzen.id === o.duzen.id;
+  const deger = duzenAcik ? escapeHtml(_duzen.deger) : '';
+  return `
+    <div class="satir${duzenAcik ? ' duzenleniyor' : ''}">
+      ${o.led ? `<span class="led-dot ${o.led}"></span>` : ''}
+      <div class="satir-ana">
+        <div class="satir-ad" title="${escapeHtml(o.ad).replace(/"/g, '&quot;')}">${escapeHtml(o.ad)}</div>
+        ${o.alt ? `<div class="satir-alt">${o.alt}</div>` : ''}
+      </div>
+      <div class="satir-tutar" style="color:${o.renk || 'var(--text)'};">${o.tutar}</div>
+      ${o.duzen ? `<div class="satir-duzen">
+        <input type="number" step="any" id="${o.duzen.id}" placeholder="${escapeHtml(o.duzen.ph)}" value="${deger.replace(/"/g, '&quot;')}"
+          oninput="_duzen.deger = this.value"
+          onkeydown="if(event.key==='Enter') this.nextElementSibling.click(); if(event.key==='Escape') satirDuzenIptal(this);">
+        <button class="loan-btn-save" onclick="_duzen.id = null; ${o.duzen.kaydet}">Kaydet</button>
+        <button class="ikon-btn" title="Vazgeç" onclick="satirDuzenIptal(this)">✕</button>
+      </div>` : ''}
+      <div class="satir-aksiyon">
+        ${o.duzen ? `<button class="ikon-btn" title="Güncelle" onclick="satirDuzenle(this, '${o.duzen.id}')">✎</button>` : ''}
+        ${o.sil ? `<button class="ikon-btn ${o.sil.ikon === '✓' ? 'onay' : 'sil'}" title="${escapeHtml(o.sil.baslik)}" onclick="${o.sil.onclick}">${o.sil.ikon || '✕'}</button>` : ''}
+      </div>
+    </div>`;
+}
+function ledRengi(dateIso){ return isBugun(new Date(dateIso)) ? 'green' : 'red'; }
+function kisaTarihSaat(d){ return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }); }
+function ozetDetayYaz(id, satirlar){
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = satirlar.filter(Boolean).map(([ad, deger]) => `<div><span class="s-ad">${ad}</span><b>${deger}</b></div>`).join('');
+}
+
 // ---------- Ortak: manuel borç listesi (kredi kartı / KMH aynı mantığı paylaşır) ----------
 function manuelListeYukle(key){
   try{
@@ -4766,34 +4865,30 @@ function manuelListeKaydet(key, list){
 }
 
 function manuelListeRender(opts){
-  const { key, containerId, summaryToplamId, summaryTarihId, prefix, renkClass, etiketSonek, bTotalKey } = opts;
+  const { key, containerId, summaryToplamId, summaryTarihId, prefix, renk, bTotalKey } = opts;
   const container = document.getElementById(containerId);
   const list = manuelListeYukle(key);
+  const bolumToplamEl = document.getElementById(prefix + 'BolumToplam');
 
   if(!list.length){
-    container.innerHTML = '<div class="ai-disclaimer">Henüz eklenmedi — aşağıdan ekleyebilirsin.</div>';
+    container.innerHTML = '<div class="bos-not">Henüz eklenmedi — sağ üstteki + Ekle ile ekleyebilirsin.</div>';
     document.getElementById(summaryToplamId).textContent = '—';
     document.getElementById(summaryTarihId).textContent = 'henüz girilmedi';
+    if(bolumToplamEl) bolumToplamEl.textContent = '';
     _bTotals[bTotalKey] = 0;
     refreshGrandTotal();
     return;
   }
 
-  container.innerHTML = list.map(item => `
-    <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
-      <div class="ai-score-num ${renkClass}" style="font-size:24px;">₺${fmtNumber(item.tutar, 2)}</div>
-      <div>
-        <div class="ai-score-verdict">${escapeHtml(item.ad)} ${etiketSonek}</div>
-        ${item.paraBirimi && item.paraBirimi !== 'TL' ? `<div class="ai-score-meta">${fmtNumber(item.orijinalTutar,2)} ${item.paraBirimi} · kur ${fmtNumber(item.kur,4)}</div>` : ''}
-        <div class="ai-score-meta">${ledDateHtml(item.tarih)}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
-        <input type="number" step="0.01" id="${prefix}-edit-${item.id}" class="ai-input" style="width:120px;padding:6px 8px;font-size:12px;" placeholder="yeni tutar">
-        <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="manuelListeGuncelle('${key}','${prefix}','${item.id}')">Güncelle</button>
-        <button class="loan-delete-btn" style="margin-left:0;" onclick="manuelListeSil('${key}','${prefix}','${item.id}')">✓ Borcu Kapattım</button>
-      </div>
-    </div>
-  `).join('');
+  container.innerHTML = list.map(item => satirHtml({
+    led: ledRengi(item.tarih),
+    ad: item.ad,
+    alt: 'Güncelleme ' + tarihSaatStr(item.tarih),
+    tutar: '₺' + fmtNumber(item.tutar, 2),
+    renk,
+    duzen: { id: `${prefix}-edit-${item.id}`, ph: 'yeni tutar (₺)', kaydet: `manuelListeGuncelle('${key}','${prefix}','${item.id}')` },
+    sil: { onclick: `manuelListeSil('${key}','${prefix}','${item.id}')`, baslik: 'Borcu kapattım', ikon: '✓' },
+  })).join('');
 
   const toplam = list.reduce((sum, k) => sum + k.tutar, 0);
   const enSonTarih = list.reduce((latest, k) => {
@@ -4802,8 +4897,9 @@ function manuelListeRender(opts){
   }, null);
   document.getElementById(summaryToplamId).textContent = '₺' + fmtNumber(toplam, 0);
   document.getElementById(summaryTarihId).innerHTML = enSonTarih
-    ? `<span class="led-dot ${isBugun(enSonTarih) ? 'green' : 'red'}"></span>${enSonTarih.toLocaleDateString('tr-TR')} ${enSonTarih.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})}`
+    ? `<span class="led-dot ${isBugun(enSonTarih) ? 'green' : 'red'}"></span>${list.length} kalem · ${kisaTarihSaat(enSonTarih)}`
     : '—';
+  if(bolumToplamEl) bolumToplamEl.textContent = '₺' + fmtNumber(toplam, 0);
 
   _bTotals[bTotalKey] = toplam;
   refreshGrandTotal();
@@ -4825,6 +4921,7 @@ function manuelListeEkle(opts){
 
   if(adInput.tagName === 'SELECT'){ adInput.selectedIndex = 0; } else { adInput.value = ''; }
   tutarInput.value = '';
+  const form = adInput.closest('.bolum-form'); if(form) form.classList.remove('acik');
   renderFn();
 }
 
@@ -4871,8 +4968,7 @@ function renderKKKartlari(){
     summaryToplamId: 'kkSummaryToplam',
     summaryTarihId: 'kkSummaryTarih',
     prefix: 'kk',
-    renkClass: 'purple',
-    etiketSonek: 'Kredi Kartı Borcu',
+    renk: '#C9A6FF',
     bTotalKey: 'kk',
   });
 }
@@ -4891,8 +4987,7 @@ function renderKMH(){
     summaryToplamId: 'kmhSummaryToplam',
     summaryTarihId: 'kmhSummaryTarih',
     prefix: 'kmh',
-    renkClass: 'blue',
-    etiketSonek: 'KMH Borcu',
+    renk: '#6EC3FF',
     bTotalKey: 'kmh',
   });
 }
@@ -4984,6 +5079,7 @@ function addYatirim(){
   document.getElementById('yatirimGramInput').value = '';
   document.getElementById('yatirimBistAdInput').value = '';
   document.getElementById('yatirimBistTutarInput').value = '';
+  document.getElementById('yatirimForm').classList.remove('acik');
   renderYatirim();
 }
 
@@ -5076,59 +5172,36 @@ const YATIRIM_KATEGORI_RENK = {
 function yatirimSatirHtml(item, toplamYatirim){
   const sonuc = yatirimDegerHesapla(item);
   const renk = YATIRIM_KATEGORI_RENK[item.tur] || 'var(--text)';
+  const sil = { onclick: `deleteYatirim('${item.id}')`, baslik: 'Sil', ikon: '✕' };
 
   if(!sonuc){
-    return `
-      <div class="yatirim-card">
-        <div class="yatirim-card-top">
-          <div class="yatirim-ad">${escapeHtml(yatirimEtiket(item))}</div>
-          <button class="loan-delete-btn" onclick="deleteYatirim('${item.id}')">Sil</button>
-        </div>
-        <div class="yatirim-meta" style="color:var(--muted-2);">Fiyat/kur henüz yüklenmedi — birkaç saniye sonra tekrar dene</div>
-      </div>
-    `;
+    return satirHtml({ led: 'red', ad: yatirimEtiket(item), alt: 'Fiyat/kur henüz yüklenmedi — birkaç saniye sonra güncellenir', tutar: '—', renk: 'var(--muted-2)', sil });
   }
 
   const pay = toplamYatirim > 0 ? (sonuc.tutarTL / toplamYatirim * 100) : 0;
-  let adetStr, editPlaceholder, fiyatStr;
+  let parcalar, ph;
   if(item.tur === 'emtia'){
-    adetStr = `${fmtNumber(item.miktar, 2)} gr`;
-    editPlaceholder = 'yeni gram';
-    fiyatStr = `$${fmtNumber(sonuc.fiyatBirimUSD, 2)}/gr`;
+    parcalar = [fmtNumber(item.miktar, 2) + ' gr', '$' + fmtNumber(sonuc.fiyatBirimUSD, 2) + '/gr'];
+    ph = 'yeni gram';
   } else if(item.tur === 'bist'){
-    adetStr = '';
-    editPlaceholder = 'yeni TL değeri';
-    fiyatStr = '';
+    parcalar = ['elle girilen değer'];
+    ph = 'yeni TL değeri';
   } else {
-    adetStr = `${fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/,'$1').replace(/,$/,'')} adet`;
-    editPlaceholder = 'yeni adet';
-    fiyatStr = `$${fmtNumber(sonuc.fiyatBirimUSD, 2)}`;
+    parcalar = [fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '') + ' adet', '$' + fmtNumber(sonuc.fiyatBirimUSD, 2)];
+    ph = 'yeni adet';
   }
-  const canliMi = sonuc.canli === false;
-  const tarihStr = sonuc.ts
-    ? new Date(sonuc.ts).toLocaleDateString('tr-TR') + ' ' + new Date(sonuc.ts).toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})
-    : '';
-  const ledHtml = `<span class="led-dot ${canliMi ? 'red' : 'green'}"></span>${tarihStr ? `<span class="yatirim-led-time">${tarihStr}</span>` : ''}`;
-  const metaParts = [adetStr, fiyatStr, `Pay %${fmtNumber(pay, 1)}`].filter(Boolean);
+  parcalar.push('Pay %' + fmtNumber(pay, 1));
+  if(sonuc.ts) parcalar.push(kisaTarihSaat(new Date(sonuc.ts)));
 
-  return `
-    <div class="yatirim-card">
-      <div class="yatirim-card-top">
-        <div class="yatirim-ad">
-          ${escapeHtml(yatirimEtiket(item))}&nbsp;&nbsp;${ledHtml}
-        </div>
-        <div class="yatirim-tutar" style="color:${renk};">₺${fmtNumber(sonuc.tutarTL, 2)}</div>
-      </div>
-      <div class="yatirim-card-bottom">
-        <div class="yatirim-meta">${metaParts.join(' · ')}</div>
-        <div class="yatirim-aksiyon">
-          <input type="number" step="0.000001" id="yatirim-edit-${item.id}" class="ai-input" style="width:100px;padding:6px 8px;font-size:12px;" placeholder="${editPlaceholder}">
-          <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleYatirim('${item.id}')">Güncelle</button>
-          <button class="loan-delete-btn" onclick="deleteYatirim('${item.id}')">Sil</button>
-        </div>
-      </div>
-    </div>
-  `;
+  return satirHtml({
+    led: sonuc.canli === false ? 'red' : 'green',
+    ad: yatirimEtiket(item),
+    alt: parcalar.join(' · '),
+    tutar: '₺' + fmtNumber(sonuc.tutarTL, 2),
+    renk,
+    duzen: { id: 'yatirim-edit-' + item.id, ph, kaydet: `guncelleYatirim('${item.id}')` },
+    sil,
+  });
 }
 
 function renderYatirim(){
@@ -5159,67 +5232,57 @@ function renderYatirim(){
   if(typeof renderVarlik === 'function') renderVarlik(); // Finansal Durumum'daki Toplam Varlık/pasta grafiği bu toplama bağlı
   if(typeof renderIstatistik === 'function') renderIstatistik();   // Portföy İstatistikleri (yaş, pay) aynı verilere bağlı
 
-  // Dağılım grafiği — her kategori kendi satırında, çubuk uzunluğu en büyük kategoriye göre orantılı
+  // Kategori dağılımı — ortak yatay çubuk (Portföy İstatistikleri ile aynı görünüm)
   const dagilimEl = document.getElementById('yatirimDagilimBar');
   if(dagilimEl){
-    const aktifKategoriler = YATIRIM_KATEGORI_SIRA.filter(kat => kategoriToplam[kat] > 0);
-    if(!list.length || toplamYatirim <= 0 || !aktifKategoriler.length){
-      dagilimEl.innerHTML = '<div class="ai-disclaimer" style="margin:0;">Dağılım için henüz veri yok</div>';
-    } else {
-      const maxYuzde = Math.max(...aktifKategoriler.map(kat => kategoriToplam[kat] / toplamYatirim * 100));
-      dagilimEl.innerHTML = aktifKategoriler.map(kat => {
-        const yuzde = kategoriToplam[kat] / toplamYatirim * 100;
-        const barGenislik = (yuzde / maxYuzde * 100).toFixed(1);
-        return `
-          <div class="yatirim-dagilim-row">
-            <div class="yatirim-legend-item"><span class="yatirim-legend-dot" style="background:${YATIRIM_KATEGORI_RENK[kat]};"></span>${YATIRIM_KATEGORI_BASLIK[kat]}</div>
-            <div class="yatirim-dagilim-track"><div class="yatirim-dagilim-fill" style="width:${barGenislik}%;background:${YATIRIM_KATEGORI_RENK[kat]};"></div></div>
-            <div class="yatirim-dagilim-tutar" style="color:${YATIRIM_KATEGORI_RENK[kat]};">₺${fmtNumber(kategoriToplam[kat], 0)}</div>
-            <div class="yatirim-dagilim-pct">%${fmtNumber(yuzde, 1)}</div>
-          </div>
-        `;
-      }).join('');
-    }
+    const aktif = YATIRIM_KATEGORI_SIRA.filter(kat => kategoriToplam[kat] > 0);
+    dagilimEl.innerHTML = (!aktif.length || toplamYatirim <= 0)
+      ? '<div class="ozet-not">Dağılım için henüz veri yok</div>'
+      : aktif.map(kat => {
+          const yuzde = kategoriToplam[kat] / toplamYatirim * 100;
+          return istHbar(YATIRIM_KATEGORI_BASLIK[kat], yuzde, '₺' + fmtNumber(kategoriToplam[kat], 0) + ' · %' + fmtNumber(yuzde, 1), YATIRIM_KATEGORI_RENK[kat]);
+        }).join('');
   }
 
   if(!list.length){
-    container.innerHTML = '<div class="ai-disclaimer">Henüz yatırım eklenmedi — yukarıdan ekleyebilirsin.</div>';
+    container.innerHTML = '<div class="bos-not">Henüz yatırım eklenmedi — sağ üstteki + Ekle ile ekleyebilirsin.</div>';
   } else {
     container.innerHTML = YATIRIM_KATEGORI_SIRA.map(kat => {
       const katListe = list.filter(item => item.tur === kat);
       if(!katListe.length) return '';
-      return `
-        <div class="yatirim-kategori-box yatirim-kategori-${kat}">
-          <div class="yatirim-kategori-baslik" style="color:${YATIRIM_KATEGORI_RENK[kat]};">${YATIRIM_KATEGORI_BASLIK[kat]}</div>
-          ${katListe.map(item => yatirimSatirHtml(item, toplamYatirim)).join('')}
-        </div>
-      `;
+      return `<div class="bolum-alt-baslik" style="color:${YATIRIM_KATEGORI_RENK[kat]};"><span>${YATIRIM_KATEGORI_BASLIK[kat]}</span><span>₺${fmtNumber(kategoriToplam[kat], 0)}</span></div>`
+        + katListe.map(item => yatirimSatirHtml(item, toplamYatirim)).join('');
     }).join('');
   }
 
+  const usd = _fxRates.USD;
   document.getElementById('yatirimToplamDeger').textContent = list.length ? '₺' + fmtNumber(toplamYatirim, 0) : '—';
-  const yatirimUsdEl = document.getElementById('yatirimToplamDegerUSD');
-  if(yatirimUsdEl) yatirimUsdEl.textContent = (list.length && _fxRates.USD) ? '≈ $' + fmtNumber(toplamYatirim / _fxRates.USD, 0) : '';
-  const now = new Date();
-  document.getElementById('yatirimSummaryTarih').textContent = list.length
-    ? now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}) + ' itibarıyla'
-    : 'henüz yatırım eklenmedi';
+  document.getElementById('yatirimToplamDegerUSD').textContent = (list.length && usd) ? '≈ $' + fmtNumber(toplamYatirim / usd, 0) : '';
+  document.getElementById('yatirimBolumToplam').textContent = list.length ? '₺' + fmtNumber(toplamYatirim, 0) : '';
+  const dolarBazli = (kategoriToplam.etf || 0) + (kategoriToplam.kripto || 0) + (kategoriToplam.emtia || 0);
+  ozetDetayYaz('yatirimOzetDetay', list.length ? [
+    ['Varlık', list.length + ' kalem'],
+    toplamYatirim > 0 ? ['Dolar bazlı', '%' + fmtNumber(dolarBazli / toplamYatirim * 100, 1)] : null,
+  ] : []);
 
-  // Yatırım / Borç oranı — renk: yatırım borca eşit/fazlaysa yeşil, en az yarısıysa sarı, azsa kırmızı
+  // Yatırım / Borç oranı — kart kenarı ve değer rengi: borca eşit/fazlaysa yeşil, en az yarısıysa sarı, azsa kırmızı
   const toplamBorc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
   const oranEl = document.getElementById('yatirimBorcOrani');
-  const oranAltEl = document.getElementById('yatirimBorcOraniAlt');
-
+  const oranKart = document.getElementById('yatirimOranKart');
   if(toplamBorc <= 0){
     oranEl.textContent = toplamYatirim > 0 ? 'Borç yok' : '—';
     oranEl.style.color = toplamYatirim > 0 ? 'var(--up)' : '';
-    oranAltEl.textContent = 'Kayıtlı borç bulunmuyor';
+    if(oranKart) oranKart.style.borderLeftColor = toplamYatirim > 0 ? 'var(--up)' : '';
+    document.getElementById('yatirimBorcOraniAlt').textContent = 'Kayıtlı borç bulunmuyor';
+    ozetDetayYaz('yatirimOranDetay', []);
   } else {
     const oran = toplamYatirim / toplamBorc;
     const renk = oran >= 1 ? 'var(--up)' : (oran >= 0.5 ? 'var(--amber)' : 'var(--down)');
     oranEl.textContent = '%' + fmtNumber(oran * 100, 1);
     oranEl.style.color = renk;
-    oranAltEl.textContent = `Yatırım ₺${fmtNumber(toplamYatirim,0)} / Borç ₺${fmtNumber(toplamBorc,0)}`;
+    if(oranKart) oranKart.style.borderLeftColor = renk;
+    document.getElementById('yatirimBorcOraniAlt').textContent = oran >= 1 ? 'Yatırımlar borcu karşılıyor' : 'Yatırımlar borcun altında';
+    ozetDetayYaz('yatirimOranDetay', [['Yatırım', '₺' + fmtNumber(toplamYatirim, 0)], ['Borç', '₺' + fmtNumber(toplamBorc, 0)]]);
   }
 }
 
@@ -5242,6 +5305,7 @@ function addVarlik(){
 
   adInput.value = '';
   degerInput.value = '';
+  document.getElementById('varlikForm').classList.remove('acik');
   renderVarlik();
 }
 
@@ -5273,23 +5337,18 @@ function renderVarlik(){
   const toplam = list.reduce((s, item) => s + (Number(item.deger) || 0), 0);
 
   container.innerHTML = list.length
-    ? list.map(item => `
-        <div class="table-row varlik-satir">
-          <div class="varlik-ad-kol">
-            <div class="r-label" style="font-size:18px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(item.ad)}</div>
-          </div>
-          <div class="r-sub" style="flex:1;">${ledSpan(item.tarih)}${escapeHtml(item.tur)} · ${tarihSaatStr(item.tarih)}</div>
-          <div class="varlik-aksiyon">
-            <div class="r-value" style="font-size:18px;color:var(--up);">₺${fmtNumber(item.deger, 0)}</div>
-            <input type="number" step="0.01" id="varlik-edit-${item.id}" class="ai-input" style="width:110px;padding:6px 8px;font-size:12px;" placeholder="yeni değer">
-            <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleVarlik('${item.id}')">Güncelle</button>
-            <button class="loan-delete-btn" onclick="deleteVarlik('${item.id}')">Sil</button>
-          </div>
-        </div>
-      `).join('')
-    : '<div class="ai-disclaimer">Henüz varlık eklenmedi — yukarıdan ekleyebilirsin.</div>';
+    ? list.map(item => satirHtml({
+        led: ledRengi(item.tarih),
+        ad: item.ad,
+        alt: escapeHtml(item.tur) + ' · Güncelleme ' + tarihSaatStr(item.tarih),
+        tutar: '₺' + fmtNumber(item.deger, 0),
+        renk: VARLIK_KATEGORI_RENK[item.tur] || 'var(--up)',
+        duzen: { id: 'varlik-edit-' + item.id, ph: 'yeni değer (₺)', kaydet: `guncelleVarlik('${item.id}')` },
+        sil: { onclick: `deleteVarlik('${item.id}')`, baslik: 'Sil', ikon: '✕' },
+      })).join('')
+    : '<div class="bos-not">Henüz varlık eklenmedi — sağ üstteki + Ekle ile ekleyebilirsin.</div>';
 
-  document.getElementById('varlikToplamDeger').textContent = '₺' + fmtNumber(toplam, 0);
+  document.getElementById('varlikToplamDeger').textContent = list.length ? '₺' + fmtNumber(toplam, 0) : '';
 
   renderFinansalOzet(toplam, list);
 }
@@ -5320,7 +5379,16 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   borcEl.textContent = '₺' + fmtNumber(toplamBorc, 0);
   if(yatirimEl) yatirimEl.textContent = '₺' + fmtNumber(toplamYatirim, 0);
   netEl.textContent = (netDeger < 0 ? '-' : '') + '₺' + fmtNumber(Math.abs(netDeger), 0);
-  netEl.className = 'summary-value ' + (netDeger >= 0 ? 'pos' : 'neg');
+  netEl.className = 'ozet-deger' + (netDeger < 0 ? ' neg' : '');
+  const netKart = document.getElementById('finansalNetKart');
+  if(netKart) netKart.className = 'ozet-kart ' + (netDeger < 0 ? 'kirmizi' : 'yesil');
+
+  // Kartların alt satırları
+  const brut = toplamVarlikListesi + toplamYatirim;
+  ozetDetayYaz('finansalNetDetay', [['Varlık+yat.', '₺' + fmtNumber(brut, 0)], ['Borç', '−₺' + fmtNumber(toplamBorc, 0)]]);
+  ozetDetayYaz('finansalVarlikDetay', [['Kalem', (varlikListesi || []).length + ' varlık'], brut > 0 ? ['Servetin', '%' + fmtNumber(toplamVarlikListesi / brut * 100, 1)] : null]);
+  ozetDetayYaz('finansalYatirimDetay', [brut > 0 ? ['Servetin', '%' + fmtNumber(toplamYatirim / brut * 100, 1)] : null, ['Kaynak', 'canlı fiyatlar']]);
+  ozetDetayYaz('finansalBorcDetay', [brut > 0 ? ['Servete oranı', '%' + fmtNumber(toplamBorc / brut * 100, 1)] : null]);
 
   // Dolar karşılıkları — USD/TRY kuru henüz gelmediyse (ör. günlük limit dolduysa) boş bırakılır,
   // kur geldiğinde otomatik görünür.
@@ -5365,7 +5433,7 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
 
   legendEl.innerHTML = kategoriler.map(kat => {
     const yuzde = kategoriToplam[kat] / pastaToplam * 100;
-    return `<span style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:${VARLIK_KATEGORI_RENK[kat] || '#888'};display:inline-block;flex-shrink:0;"></span>${escapeHtml(kat)} %${fmtNumber(yuzde,1)}</span>`;
+    return `<span style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap;"><span style="width:8px;height:8px;border-radius:50%;background:${VARLIK_KATEGORI_RENK[kat] || '#888'};display:inline-block;flex-shrink:0;"></span>${escapeHtml(kat)} %${fmtNumber(yuzde,1)}</span>`;
   }).join('');
 }
 
@@ -5399,6 +5467,7 @@ function addNakit(){
   adInput.value = '';
   tutarInput.value = '';
   paraBirimiInput.selectedIndex = 0;
+  document.getElementById('nakitForm').classList.remove('acik');
   renderNakit();
 }
 
@@ -5433,11 +5502,13 @@ function nakitTLHesapla(item){
 function renderNakit(){
   const container = document.getElementById('nakitKartlarContainer');
   const list = manuelListeYukle(NAKIT_KEY);
+  const bolumToplamEl = document.getElementById('nakitBolumToplam');
 
   if(!list.length){
-    container.innerHTML = '<div class="ai-disclaimer">Henüz eklenmedi — aşağıdan ekleyebilirsin.</div>';
+    container.innerHTML = '<div class="bos-not">Henüz eklenmedi — sağ üstteki + Ekle ile ekleyebilirsin.</div>';
     document.getElementById('nakitSummaryToplam').textContent = '—';
     document.getElementById('nakitSummaryTarih').textContent = 'henüz girilmedi';
+    if(bolumToplamEl) bolumToplamEl.textContent = '';
     _bTotals.nakit = 0;
     refreshGrandTotal();
     return;
@@ -5448,21 +5519,10 @@ function renderNakit(){
 
   container.innerHTML = list.map(item => {
     try{
+      const sil = { onclick: `manuelListeSil('${NAKIT_KEY}','nakit','${item.id}')`, baslik: 'Borcu kapattım', ikon: '✓' };
       const sonuc = nakitTLHesapla(item);
-
       if(!sonuc){
-        return `
-          <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
-            <div class="ai-score-num" style="font-size:24px;color:var(--muted-2);">—</div>
-            <div>
-              <div class="ai-score-verdict">${escapeHtml(item.ad || '')} Elden Nakit Borcu</div>
-              <div class="ai-score-meta">${fmtNumber(item.girilenTutar, 2)} ${item.paraBirimi} · kur bekleniyor — birkaç saniye sonra tekrar dene</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
-              <button class="loan-delete-btn" style="margin-left:0;" onclick="manuelListeSil('${NAKIT_KEY}','nakit','${item.id}')">✓ Borcu Kapattım</button>
-            </div>
-          </div>
-        `;
+        return satirHtml({ led: 'red', ad: item.ad || '', alt: `${fmtNumber(item.girilenTutar, 2)} ${item.paraBirimi} · kur bekleniyor`, tutar: '—', renk: 'var(--muted-2)', sil });
       }
 
       const { tutarTL, kur, canliKur, girilenTutar } = sonuc;
@@ -5470,25 +5530,19 @@ function renderNakit(){
       const t = new Date(item.tarih);
       if(!enSonTarih || t > enSonTarih) enSonTarih = t;
 
-      const dovizNotu = item.paraBirimi !== 'TL'
-        ? `${fmtNumber(girilenTutar, 2)} ${item.paraBirimi} · kur ${kur ? fmtNumber(kur, 4) : '—'}${canliKur ? ' (güncel' + (_fxZaman[item.paraBirimi] ? ' · ' + new Date(_fxZaman[item.paraBirimi]).toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }) : '') + ')' : ' (son bilinen)'}`
+      const kurZaman = canliKur && _fxZaman[item.paraBirimi] ? ' · ' + new Date(_fxZaman[item.paraBirimi]).toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }) : '';
+      const doviz = item.paraBirimi !== 'TL'
+        ? `${fmtNumber(girilenTutar, 2)} ${item.paraBirimi} · kur ${kur ? fmtNumber(kur, 4) : '—'} (${canliKur ? 'güncel' + kurZaman : 'son bilinen'}) · `
         : '';
-
-      return `
-        <div class="ai-score-row loan-card-head" style="margin-bottom:10px;flex-wrap:wrap;">
-          <div class="ai-score-num teal" style="font-size:24px;">₺${fmtNumber(tutarTL, 2)}</div>
-          <div>
-            <div class="ai-score-verdict">${escapeHtml(item.ad || '')} Elden Nakit Borcu</div>
-            ${dovizNotu ? `<div class="ai-score-meta">${escapeHtml(dovizNotu)}</div>` : ''}
-            <div class="ai-score-meta">${ledDateHtml(item.tarih)}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
-            <input type="number" step="0.01" id="nakit-edit-${item.id}" class="ai-input" style="width:120px;padding:6px 8px;font-size:12px;" placeholder="yeni tutar (${item.paraBirimi})">
-            <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="nakitGuncelle('${item.id}')">Güncelle</button>
-            <button class="loan-delete-btn" style="margin-left:0;" onclick="manuelListeSil('${NAKIT_KEY}','nakit','${item.id}')">✓ Borcu Kapattım</button>
-          </div>
-        </div>
-      `;
+      return satirHtml({
+        led: ledRengi(item.tarih),
+        ad: item.ad || '',
+        alt: escapeHtml(doviz) + 'Güncelleme ' + tarihSaatStr(item.tarih),
+        tutar: '₺' + fmtNumber(tutarTL, 2),
+        renk: '#5EEAD4',
+        duzen: { id: 'nakit-edit-' + item.id, ph: `yeni tutar (${item.paraBirimi || 'TL'})`, kaydet: `nakitGuncelle('${item.id}')` },
+        sil,
+      });
     }catch(e){
       console.error('Nakit kaydı çizilemedi:', item, e);
       return '';
@@ -5497,8 +5551,9 @@ function renderNakit(){
 
   document.getElementById('nakitSummaryToplam').textContent = '₺' + fmtNumber(toplam, 0);
   document.getElementById('nakitSummaryTarih').innerHTML = enSonTarih
-    ? `<span class="led-dot ${isBugun(enSonTarih) ? 'green' : 'red'}"></span>${enSonTarih.toLocaleDateString('tr-TR')} ${enSonTarih.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})}`
+    ? `<span class="led-dot ${isBugun(enSonTarih) ? 'green' : 'red'}"></span>${list.length} kalem · ${kisaTarihSaat(enSonTarih)}`
     : '—';
+  if(bolumToplamEl) bolumToplamEl.textContent = '₺' + fmtNumber(toplam, 0);
 
   _bTotals.nakit = toplam;
   refreshGrandTotal();
@@ -5656,6 +5711,7 @@ function saveExtractedLoan(){
   saveCustomLoans(list);
 
   cancelLoanPreview();
+  document.getElementById('krediForm').classList.remove('acik');
   updateGarantiLive();
 }
 
@@ -5801,10 +5857,10 @@ async function onLoanExcelSelected(event){
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
   gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
-  finansal: ['Finansal Durumum', ''],
-  yatirim:  ['Yatırımlarım', ''],
+  finansal: ['Finansal Durumum', 'Varlıklar, yatırımlar ve borçlarla net servet'],
+  yatirim:  ['Yatırımlarım', 'Canlı fiyatlarla portföy değeri ve dağılımı'],
   istatistik: ['Portföy İstatistikleri', 'Portföyünü 100 üzerinden puanlayan göstergeler'],
-  borclar:  ['Borçlarım', ''],
+  borclar:  ['Borçlarım', 'Krediler, kartlar, KMH ve elden borçlar — canlı toplam'],
   ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir'],
 };
 function switchTab(tabId){
