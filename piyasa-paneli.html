@@ -2048,7 +2048,7 @@
             <option value="emtia">Emtia</option>
           </select>
           <select id="yatirimSembolSelect" class="ai-input" style="max-width:260px;min-width:200px;"></select>
-          <input type="text" id="yatirimBistAdInput" class="ai-input" style="max-width:160px;min-width:130px;display:none;" placeholder="Hisse adı (ör. THYAO)">
+          <input type="text" id="yatirimBistAdInput" class="ai-input" style="max-width:160px;min-width:130px;display:none;" placeholder="Hisse kodu (ör. THYAO)" onkeydown="if(event.key==='Enter')addYatirim()">
           <input type="number" step="0.000001" id="yatirimAdetInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Adet" onkeydown="if(event.key==='Enter')addYatirim()">
           <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram" onkeydown="if(event.key==='Enter')addYatirim()">
           <input type="number" step="0.01" id="yatirimBistTutarInput" class="ai-input" style="max-width:150px;min-width:120px;display:none;" placeholder="Güncel değer (TL)" onkeydown="if(event.key==='Enter')addYatirim()">
@@ -2058,7 +2058,7 @@
       <div id="yatirimListContainer" class="buyuk-harf"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Toplam Yatırım kartındaki Günlük / Haftalık / Aylık değişim, bugünkü adetlerinin 1, 7 ve 30 gün önceki fiyat ve kurla değerine göredir (yalnızca piyasa hareketi; ekleme/çıkarma etkisi yok, BİST sabit sayılır). ABD ETF/hisse ve kripto fiyatları Piyasa Özeti'ndeki canlı kartlardan (ek istek yapılmadan), altın ve gümüş ons fiyatından gram başına hesaplanır ve güncel dolar kuruyla TL'ye çevrilir. BİST için ücretsiz canlı veri kaynağı olmadığından hisse adını ve güncel TL değerini elle girip ✎ ile güncellersin. LED: yeşil canlı fiyat, kırmızı son bilinen fiyat. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Toplam Yatırım kartındaki Günlük / Haftalık / Aylık değişim, bugünkü adetlerinin 1, 7 ve 30 gün önceki fiyat ve kurla değerine göredir (yalnızca piyasa hareketi; ekleme/çıkarma etkisi yok, BİST sabit sayılır). ABD ETF/hisse ve kripto fiyatları Piyasa Özeti'ndeki canlı kartlardan (ek istek yapılmadan), altın ve gümüş ons fiyatından gram başına hesaplanır ve güncel dolar kuruyla TL'ye çevrilir. BİST hisselerini kod ve adetle eklersin; fiyatlar arka planda 5 dakikada bir Yahoo'dan (≈15 dk gecikmeli) alınır. Eski, elle TL değeri girilmiş BİST kayıtları elle güncellenmeye devam eder. LED: yeşil canlı fiyat, kırmızı son bilinen fiyat. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: YATIRIMLARIM ================= -->
 
@@ -3311,6 +3311,7 @@ async function refreshMarketData(){
   }
 
   await gumusFiyatYenile();
+  await bistFiyatlariYenile();
   // Tüm fiyatlar (altın ve gümüş dahil) tazelendi — TL karşılıklarını son kez güncelle
   tlKarsiliklariniYenile();
 
@@ -4272,7 +4273,7 @@ function bpSnapshotOlustur(paylas, haber){
     yList.forEach(({ item, tl, kat }) => {
       let miktar;
       if(item.tur === 'emtia') miktar = fmtNumber(item.miktar, 2) + ' gr';
-      else if(item.tur === 'bist') miktar = 'elle girilen değer';
+      else if(item.tur === 'bist') miktar = item.kod ? fmtNumber(item.miktar, 0) + ' adet' : 'elle girilen değer';
       else miktar = fmtNumber(item.miktar, 6).replace(/,?0+$/, '') + ' adet';
       const pay = yToplam > 0 ? ' (%' + fmtNumber(tl / yToplam * 100, 1) + ')' : '';
       s.push('- ' + kat + ' | ' + yatirimEtiket(item) + ' | ' + miktar + ' | ₺' + fmtNumber(tl, 0) + pay);
@@ -5289,7 +5290,7 @@ function yatirimTurDegisti(){
     gramInput.style.display = '';
   } else if(tur === 'bist'){
     bistAdInput.style.display = '';
-    bistTutarInput.style.display = '';
+    adetInput.style.display = '';   // BİST: hisse kodu + adet; fiyat arka planda Yahoo'dan (KOD.IS)
   } else {
     sembolSelect.style.display = '';
     adetInput.style.display = '';
@@ -5308,11 +5309,12 @@ function addYatirim(){
     const sembol = document.getElementById('yatirimSembolSelect').value === 'silver' ? 'silver' : 'gold';
     item = { id: 'y-' + Date.now(), tur, sembol, miktar: gram, tarih: new Date().toISOString() };
   } else if(tur === 'bist'){
-    const ad = document.getElementById('yatirimBistAdInput').value.trim();
-    const tutar = parseFloat(document.getElementById('yatirimBistTutarInput').value);
-    if(!ad){ showAlertModal('Lütfen hisse adını yaz.'); return; }
-    if(isNaN(tutar) || tutar < 0){ showAlertModal('Lütfen geçerli bir TL değeri gir.'); return; }
-    item = { id: 'y-' + Date.now(), tur, ad, manuelTutarTL: tutar, tarih: new Date().toISOString() };
+    const kod = istNormalize(document.getElementById('yatirimBistAdInput').value).replace(/\.IS$/, '');
+    const adet = parseFloat(document.getElementById('yatirimAdetInput').value);
+    if(!/^[A-Z0-9]{3,6}$/.test(kod)){ showAlertModal('Lütfen geçerli bir BİST hisse kodu yaz (ör. THYAO).'); return; }
+    if(isNaN(adet) || adet <= 0){ showAlertModal('Lütfen geçerli bir adet gir.'); return; }
+    bistHisseEkle(kod, adet);   // kod Yahoo'da doğrulanır, fiyat alınır, sonra eklenir
+    return;
   } else {
     const sembol = document.getElementById('yatirimSembolSelect').value;
     const adet = parseFloat(document.getElementById('yatirimAdetInput').value);
@@ -5333,6 +5335,48 @@ function addYatirim(){
   if(item.sembol === 'silver') gumusFiyatYenile().then(() => renderYatirim());
 }
 
+// BİST hissesi ekleme: kod Yahoo'da (KOD.IS) doğrulanır; bulunamazsa eklenmez
+async function bistHisseEkle(kod, adet){
+  const btn = document.querySelector('#yatirimForm .ai-btn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Kontrol ediliyor…'; }
+  try{
+    // Önce kendi Worker'ımızla tek deneme: Yahoo "bulunamadı" (404) derse yedek proxy'leri beklemeden hemen uyar
+    try{
+      const on = await fetchWithTimeout(NEWS_PROXIES[0] + encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${kod}.IS?interval=1d&range=5d`), 8000);
+      if(on.status === 404) throw new Error('bulunamadı');
+    }catch(e){ if(e.message === 'bulunamadı') throw e; /* ağ hatası: aşağıda yedeklerle denenir */ }
+    const f = await fetchYahoo(kod + '.IS');
+    if(!(f.price > 0)) throw new Error('fiyat yok');
+    _lastGoodValues['bist:' + kod] = { price: f.price, chgPct: f.chgPct, ts: f.ts || Date.now() };
+    const list = manuelListeYukle(YATIRIM_KEY);
+    list.push({ id: 'y-' + Date.now(), tur: 'bist', ad: kod, kod, miktar: adet, tarih: new Date().toISOString() });
+    manuelListeKaydet(YATIRIM_KEY, list);
+    document.getElementById('yatirimBistAdInput').value = '';
+    document.getElementById('yatirimAdetInput').value = '';
+    document.getElementById('yatirimForm').classList.remove('acik');
+    _perfGecmis.t = 0;   // performans serilerine yeni hisse eklensin
+    renderYatirim();
+  }catch(e){
+    showAlertModal(kod + ' Borsa İstanbul\'da bulunamadı ya da fiyatı şu an alınamadı. Kodu kontrol edip tekrar dene.');
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = 'Yatırım Ekle'; }
+  }
+}
+
+// BİST fiyatları: adetli (canlı) hisseler için 5 dakikada bir Yahoo'dan (≈15 dk gecikmeli)
+let _bistSonCekim = 0;
+async function bistFiyatlariYenile(zorla){
+  const kodlar = [...new Set(manuelListeYukle(YATIRIM_KEY).filter(x => x.tur === 'bist' && x.kod && x.miktar > 0).map(x => x.kod))];
+  if(!kodlar.length || (!zorla && Date.now() - _bistSonCekim < 5 * 60 * 1000)) return;
+  _bistSonCekim = Date.now();
+  await Promise.all(kodlar.map(async kod => {
+    try{
+      const f = await fetchYahoo(kod + '.IS');
+      if(f.price > 0) _lastGoodValues['bist:' + kod] = { price: f.price, chgPct: f.chgPct, ts: f.ts || Date.now() };
+    }catch(e){ /* son bilinen değer kullanılır */ }
+  }));
+}
+
 function deleteYatirim(id){
   showConfirmModal('Bu yatırımı listeden kaldırmak istediğine emin misin?', () => {
     manuelListeKaydet(YATIRIM_KEY, manuelListeYukle(YATIRIM_KEY).filter(k => k.id !== id));
@@ -5350,7 +5394,7 @@ let _perfGecmis = { t: 0, seriler: {}, cekiliyor: false };
 async function perfSerileriGetir(){
   if(_perfGecmis.cekiliyor || Date.now() - _perfGecmis.t < 30 * 60 * 1000) return false;
   const list = manuelListeYukle(YATIRIM_KEY);
-  if(!list.some(it => it.tur !== 'bist')) return false;
+  if(!list.some(it => it.tur !== 'bist' || it.kod)) return false;
   _perfGecmis.cekiliyor = true;
   const yahoo = sembol => async () => {
     const res = await fetchWithFallback(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sembol)}?interval=1d&range=3mo`);
@@ -5368,6 +5412,7 @@ async function perfSerileriGetir(){
     if(it.tur === 'etf' && kart) istek.set(it.sembol, yahoo(kart.symbol));
     else if(it.tur === 'kripto' && kart && kart.bnSymbol) istek.set(it.sembol, binance(kart.bnSymbol));
     else if(it.tur === 'emtia'){ const k = it.sembol === 'silver' ? 'silver' : 'gold'; istek.set(k, yahoo(k === 'silver' ? 'SI=F' : 'GC=F')); }
+    else if(it.tur === 'bist' && it.kod) istek.set('bist:' + it.kod, yahoo(it.kod + '.IS'));
   });
   const seriler = {};
   await Promise.all([...istek].map(async ([k, fn]) => { try{ seriler[k] = await fn(); }catch(e){ /* bu seri yok */ } }));
@@ -5393,7 +5438,8 @@ function yatirimPerformans(bugunTL){
     if(!kur) return { ad, yok: true };
     let gecmis = 0, eksik = false;
     list.forEach(it => {
-      if(it.tur === 'bist'){ gecmis += it.manuelTutarTL || 0; return; }
+      if(it.tur === 'bist' && !it.kod){ gecmis += it.manuelTutarTL || 0; return; }   // eski elle girilen değer: sabit
+      if(it.tur === 'bist'){ const f = seriDeger(S['bist:' + it.kod], ms); if(f == null){ eksik = true; return; } gecmis += f * it.miktar; return; }   // TL, kur yok
       const k = it.tur === 'emtia' ? (it.sembol === 'silver' ? 'silver' : 'gold') : it.sembol;
       const fiyat = seriDeger(S[k], ms);
       if(fiyat == null){ eksik = true; return; }
@@ -5422,8 +5468,8 @@ function guncelleYatirim(id){
   const val = parseFloat(input.value);
   if(isNaN(val) || val < 0){ showAlertModal('Lütfen geçerli bir değer gir.'); return; }
 
-  if(item.tur === 'bist'){
-    item.manuelTutarTL = val;
+  if(item.tur === 'bist' && !item.kod){
+    item.manuelTutarTL = val;   // eski kayıt: elle girilen TL değeri
   } else {
     item.miktar = val;
   }
@@ -5444,8 +5490,18 @@ function yatirimSonFiyatKaydet(){
 // Bir yatırım kaydının güncel TL değerini hesaplar — fiyatlar Piyasa Özeti kartlarının
 // zaten çektiği canlı verilerden (ekstra istek yapılmadan) alınır. BİST elle girilen değeri döner.
 function yatirimDegerHesapla(item){
-  if(item.tur === 'bist'){
+  if(item.tur === 'bist' && !item.kod){   // eski kayıt: elle girilen TL değeri
     return { fiyatBirimUSD: null, tutarTL: item.manuelTutarTL || 0, canli: true, ts: item.tarih ? new Date(item.tarih).getTime() : Date.now() };
+  }
+  if(item.tur === 'bist'){               // canlı: adet × BİST fiyatı (TL, kur gerekmez)
+    const b = _lastGoodValues['bist:' + item.kod];
+    if(b){
+      const sonuc = { fiyatBirimTL: b.price, fiyatBirimUSD: null, tutarTL: b.price * item.miktar, canli: true, ts: b.ts, chgPct: b.chgPct };
+      _yatirimSonFiyat[item.id] = { fiyatTL: b.price, tutarTL: sonuc.tutarTL, ts: b.ts };
+      return sonuc;
+    }
+    const son = _yatirimSonFiyat[item.id];
+    return son ? { fiyatBirimTL: son.fiyatTL, fiyatBirimUSD: null, tutarTL: son.tutarTL, canli: false, ts: son.ts } : null;
   }
 
   const usdtry = _fxRates.USD;
@@ -5505,9 +5561,13 @@ function yatirimSatirHtml(item, toplamYatirim){
   if(item.tur === 'emtia'){
     parcalar = [fmtNumber(item.miktar, 2) + ' gr', '$' + fmtNumber(sonuc.fiyatBirimUSD, 2) + '/gr'];
     ph = 'yeni gram';
-  } else if(item.tur === 'bist'){
+  } else if(item.tur === 'bist' && !item.kod){
     parcalar = ['elle girilen değer'];
     ph = 'yeni TL değeri';
+  } else if(item.tur === 'bist'){
+    parcalar = [fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '') + ' adet', '₺' + fmtNumber(sonuc.fiyatBirimTL, 2),
+      sonuc.chgPct != null && isFinite(sonuc.chgPct) ? (sonuc.chgPct >= 0 ? '▲' : '▼') + ' %' + fmtNumber(Math.abs(sonuc.chgPct), 2) : null, '15 dk gecikmeli'].filter(Boolean);
+    ph = 'yeni adet';
   } else {
     parcalar = [fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '') + ' adet', '$' + fmtNumber(sonuc.fiyatBirimUSD, 2)];
     ph = 'yeni adet';

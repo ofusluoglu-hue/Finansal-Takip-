@@ -73,6 +73,7 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (sen
 | Kripto (BTC, ETH, SOL, AAVE, HYPE) | Binance 24 saatlik ticker (doğrudan, anahtarsız); yedek CoinGecko. Grafikler Binance |
 | Altın (spot ons) | Twelve Data (`/td`) |
 | Brent ve diğerleri | Yahoo Finance / FRED (`/proxy`) |
+| BİST hisseleri (Yatırımlarım, kod + adet) | Yahoo `KOD.IS` (≈15 dk gecikmeli), 5 dakikada bir (`bistFiyatlariYenile`); eklerken kod doğrulanır (404 → hemen uyarı). Eski, elle TL değeri girilmiş BİST kayıtları (`kod` alanı yok) elle güncellenir |
 | Gümüş (yalnızca Yatırımlarım'da gümüş varsa) | Yahoo COMEX gümüş SI=F (`gumusFiyatYenile`); gram = ons ÷ 31,1035 |
 | Uranyum | MetalCharts (`/uranyum`), hata olursa Yahoo |
 | Haberler | Kurumların kendi RSS yayınları (`/proxy`): Investing.com Türkiye (kripto 301, emtia 11, borsa 25, piyasa 285, ekonomi 14), Bloomberg HT, Anadolu Ajansı ekonomi, BBC Business, CNBC Markets, MarketWatch. Reuters ve Bloomberg: Google News RSS (`site:` filtresiyle) |
@@ -153,6 +154,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | BİST hisseleri kod + adetle eklenip arka planda takip ediliyor (Yahoo KOD.IS, 15 dk gecikmeli, günlük değişim, performansa dahil); geçersiz kod anında uyarı |
 | 2026-09-29 | Yatırımlarım: Toplam Yatırım kartında günlük / haftalık / aylık performans (mevcut adetlerin geçmiş fiyatlarla değeri) |
 | 2026-09-29 | Varlık Dağılımı pastası SVG halka grafiğe dönüştü (pürüzsüz kenar, eşit aralıklar, küçük paylar en az 14°) |
 | 2026-09-29 | Yatırımlarım: Emtia'ya gümüş eklendi (fiyat arka planda Yahoo SI=F), kategori ve varlık adları büyük harf; Net Varlık ve Yatırım/Borç Oranı kartlarına renkli ton (oran eşikleri %50 / %100); tonlu kartlarda sol kenar tam renk |

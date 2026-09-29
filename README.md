@@ -11,7 +11,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 |---|---|
 | **Piyasa Özeti** | ETF/hisse, döviz, emtia (altın, Brent, uranyum) ve kripto (Binance) fiyatları; ABD seans öncesi / kapanış / sonrası fiyatları kartta ayrı ayrı; detay grafiği; köklü kurumlardan güncel haberler (Türkçe kaynaklar öncelikli; İngilizceler Türkçe çeviriyle açılır) |
 | **Finansal Durumum** | Varlıklar (konut, otomobil, arsa vb.) ve net finansal durum |
-| **Yatırımlarım** | Portföy takibi: ABD ETF/hisse, kripto, BİST ve emtia (altın, gümüş — gram) |
+| **Yatırımlarım** | Portföy takibi: ABD ETF/hisse, kripto, BİST (kod + adet, fiyat arka planda) ve emtia (altın, gümüş — gram); günlük / haftalık / aylık performans |
 | **Borçlarım** | Krediler (canlı erken kapama hesaplayıcı), kredi kartları, KMH, elden nakit borçlar; kredi planını **PDF'ten** (yapay zekâ) veya **Excel'den** içe aktarma |
 | **Harcama İstatistikleri** | Tek tek harcama kaydı ya da aylık kategori toplamı; 9 kategori (market, akaryakıt, kişisel, fatura ve aidat, ev giderleri, yeme-içme ve eğlence, sağlık, eğitim, diğer); aylık grafik, kategori dağılımı, aylık tablo, yıllık ve aylık ortalamalar |
 | **Portföy İstatistikleri** | Genel puan: portföy yaşı, çeşitlendirme, borç karşılama, döviz koruması |
