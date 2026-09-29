@@ -73,7 +73,7 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (sen
 | Altın (spot ons) | Twelve Data (`/td`) |
 | Brent ve diğerleri | Yahoo Finance / FRED (`/proxy`) |
 | Uranyum | MetalCharts (`/uranyum`), hata olursa Yahoo |
-| Haberler | Google News RSS (`/proxy`) |
+| Haberler | Kurumların kendi RSS yayınları (`/proxy`): Investing.com Türkiye (kripto 301, emtia 11, borsa 25, piyasa 285, ekonomi 14), Bloomberg HT, Anadolu Ajansı ekonomi, BBC Business, CNBC Markets, MarketWatch. Reuters ve Bloomberg: Google News RSS (`site:` filtresiyle) |
 
 Yenileme: fiyatlar 60 sn, haberler 10 dk, senkron 5 dk.
 
@@ -89,6 +89,8 @@ Yenileme: fiyatlar 60 sn, haberler 10 dk, senkron 5 dk.
 | Gece / hafta sonu | Kapanış | Öncesi, Sonrası |
 
 Öncesi yüzdesi önceki kapanışa, Sonrası yüzdesi o günün kapanışına göredir. Sonrası dilimi 16:05'ten başlar (16:00 çubuğu kapanış müzayedesini içerir). **Gece seansı (20:00–04:00 ET) verisi ücretsiz kaynaklarda (Yahoo, Nasdaq, Finnhub) bulunmadığı için gösterilmez.** Seans verisi seans öncesi/sonrası penceresinde her turda, diğer zamanlarda 5 dakikada bir tazelenir.
+**Haber kuralları:** Yalnızca köklü haber kurumları; basın bültenleri (`NEWS_BULTEN_RE`: Chainwire, GlobeNewswire, EQS-News…), fiyat/fon tanıtım sayfaları ve 4 kelimeden kısa başlıklar elenir; son 3 gün. Türkçe haberler doğrudan, BBC/CNBC haberleri Google Çeviri (`*.translate.goog`) ile Türkçe açılır. Google Çeviri'yi engelleyen MarketWatch ve Google News'ten gelen Reuters/Bloomberg "İngilizce" etiketlidir ve sütun başına en fazla 1 tanedir (okunabilir haber azsa boşluğu doldurur). İngilizce başlıklar Claude Haiku ile Türkçeye çevrilir.
+
 Proxy yedekleri (`NEWS_PROXIES` / `fetchWithFallback`): Worker proxy'si başarısız olursa Yahoo, FRED ve haber istekleri sırayla `allorigins.win`, `corsproxy.io` ve `codetabs.com` üzerinden denenir (bu isteklere erişim kodu gönderilmez).
 
 ## 6. Yapay zekâ kullanımı
@@ -124,6 +126,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Haberler kurumların kendi RSS yayınlarından: Türkçe kaynaklar (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı) öncelikli, BBC/CNBC Google Çeviri ile Türkçe açılır; basın bültenleri ve fon sayfaları elenir; Worker proxy izin listesine haber alan adları eklendi |
 | 2026-09-29 | Tüm kartların altında bilgi satırları: Dün/Aralık (döviz, altın, Brent), 24s önce/24s aralık (kripto), Önceki (uranyum, işlem görmeyen ETF) |
 | 2026-09-29 | Piyasa Özeti kartları dikeyde kısaltıldı (yüzde ve seans notu aynı satırda, sıkı seans satırları); 1440×900 ekranda grafik kaydırmadan görünür |
 | 2026-09-29 | Döviz kurları her turun başında çekiliyor, tüm TL karşılıkları hemen güncelleniyor (nakit borçta kurun saati görünür); ETF kartlarında seans öncesi / kapanış / sonrası satırları |

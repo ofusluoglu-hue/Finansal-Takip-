@@ -833,6 +833,7 @@
   @media (max-width:900px){
     .news-cols{grid-template-columns:1fr;}
   }
+  .news-source .news-en{font-weight:600;color:var(--amber);}
   .news-col-title{
     font-size:11px;
     font-weight:700;
@@ -1718,7 +1719,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 10 dakikada bir yenilenir; İngilizce başlıklar Türkçeye çevrilir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca köklü kurumlardan alınır (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı, Reuters, Bloomberg, BBC, CNBC, MarketWatch; basın bültenleri hariç) ve 10 dakikada bir yenilenir. İngilizce başlıklar Türkçeye çevrilir; BBC ve CNBC haberleri Google Çeviri ile Türkçe açılır. Reuters, Bloomberg ve MarketWatch otomatik çevrilemediği için "İngilizce" işaretlidir.
   </div>
 
   </div>
@@ -3303,29 +3304,44 @@ window.addEventListener('resize', ()=>{
 });
 
 // ---------- Güncel Haberler ----------
-// Haber kaynakları: yalnızca güvenilir yayıncılar (Reuters, Bloomberg, Bloomberg HT, Investing.com, CNBC, FT, WSJ, MarketWatch).
-// Türkçe ve İngilizce sürümler birlikte çekilir; İngilizce başlıklar Claude Haiku ile Türkçeye çevrilip tarayıcıda saklanır.
+// Yalnızca köklü haber kurumları. Kurumların kendi RSS yayınları gerçek haber adresini verir: Türkçe olanlar doğrudan,
+// İngilizce olanlar (BBC, CNBC) Google Çeviri üzerinden Türkçe açılır. Çevrilemeyenler — Google Çeviri'yi engelleyen
+// MarketWatch ve açık RSS'i olmadığı için Google News'ten gelen Reuters/Bloomberg — sütun başına en fazla 1 tane alınır
+// ve "İngilizce" işaretlenir. (Investing.com'un İngilizce yayını da Google Çeviri'yi engellediği için kullanılmaz;
+// aynı haberlerin Türkçesi Investing.com Türkiye'de var.)
+const HABER_YAYINLARI = {
+  inv_tr_kripto: { url:'https://tr.investing.com/rss/news_301.rss', kaynak:'Investing.com Türkiye', dil:'tr' },
+  inv_tr_emtia:  { url:'https://tr.investing.com/rss/news_11.rss',  kaynak:'Investing.com Türkiye', dil:'tr' },
+  inv_tr_borsa:  { url:'https://tr.investing.com/rss/news_25.rss',  kaynak:'Investing.com Türkiye', dil:'tr' },
+  inv_tr_piyasa: { url:'https://tr.investing.com/rss/news_285.rss', kaynak:'Investing.com Türkiye', dil:'tr' },   // piyasa özetleri
+  inv_tr_ekonomi:{ url:'https://tr.investing.com/rss/news_14.rss',  kaynak:'Investing.com Türkiye', dil:'tr' },
+  bloomberght:   { url:'https://www.bloomberght.com/rss', kaynak:'Bloomberg HT', dil:'tr' },
+  aa_ekonomi:    { url:'https://www.aa.com.tr/tr/rss/default?cat=ekonomi', kaynak:'Anadolu Ajansı', dil:'tr' },
+  bbc_business:  { url:'https://feeds.bbci.co.uk/news/business/rss.xml', kaynak:'BBC', dil:'en' },
+  cnbc_markets:  { url:'https://www.cnbc.com/id/10000664/device/rss/rss.html', kaynak:'CNBC', dil:'en' },
+  marketwatch:   { url:'https://feeds.content.dowjones.io/public/rss/mw_topstories', kaynak:'MarketWatch', dil:'en', cevrilemez:true },
+};
+
 const NEWS_FEEDS = [
-  { key:'btc',  q_tr:'Bitcoin',                       q_en:'Bitcoin',
+  { key:'btc',  ad:'Bitcoin', yayinlar:['inv_tr_kripto', 'inv_tr_piyasa', 'bloomberght'], gn:'Bitcoin',
     rel:/bitcoin|btc|crypto|kripto|ethereum|stablecoin|coinbase|digital asset|dijital varl/i },
-  { key:'gold', q_tr:'Altın ons Fed',                 q_en:'gold price Fed',
-    rel:/^(?=.*(altın|altin|\bons\b|gümüş|değerli metal|gold|bullion|silver|precious))(?=.*(fiyat|gram|fed|dolar|tahvil|faiz|piyasa|düş|yüksel|rekor|ralli|satış|borsa|talep|merkez banka|enflasyon|price|yield|rate|dollar|treasur|inflation|central bank|demand|record|ounce|futures|safe.haven|slid|fall|drop|rise|rall|surge|slump|climb))/i },
-  { key:'us',   q_tr:'ABD borsa Wall Street S&P 500', q_en:'Wall Street stocks S&P 500',
-    rel:/stock|wall street|s&p|nasdaq|\bdow\b|futures|equit|shares|borsa|hisse|market|\bfed\b|earnings|treasury|yield|vadeli/i },
+  { key:'gold', ad:'Altın',   yayinlar:['inv_tr_emtia', 'inv_tr_piyasa', 'bloomberght', 'aa_ekonomi', 'bbc_business'], gn:'gold price',
+    rel:/^(?=.*(altın|altin|\bons\b|gümüş|değerli metal|kıymetli metal|gold|bullion|silver|precious))(?=.*(fiyat|gram|fed|dolar|tahvil|faiz|piyasa|düş|yüksel|geril|rekor|ralli|satış|borsa|talep|merkez banka|enflasyon|seyr|dip|zirve|price|yield|rate|dollar|treasur|inflation|central bank|demand|record|ounce|futures|safe.haven|slid|fall|drop|rise|rall|surge|slump|climb|low|high))/i },
+  { key:'us',   ad:'ABD borsaları', yayinlar:['inv_tr_piyasa', 'inv_tr_ekonomi', 'inv_tr_borsa', 'bloomberght', 'cnbc_markets', 'marketwatch', 'bbc_business'], gn:'Wall Street stocks',
+    haric:/altın|gold|gümüş|silver|bitcoin|kripto|crypto/i,
+    rel:/wall street|s&p|nasdaq|\bdow\b|stock market|u\.?s\.? (stocks|equities|futures|shares)|stocks? (rise|fall|slip|climb|drop|rall|gain|tumble|end|close)|equities|abd (borsa|hisse|vadeli|endeks)|abd'?li (hisse|yatırımcı)|new york borsa|\bfed\b|treasury|hazine tahvil|tahvil getiri/i },
 ];
 
-// Haber olmayan sayfaları (kur çevirici, canlı fiyat, grafik sayfası, borsa uyarı bildirimleri vb.) ve 3 günden eski kayıtları ele
-const NEWS_JUNK_RE = /\||^convert\b|exchange rate|advanced chart|user rankings|real[- ]time|price live|live index|news today|historical data|stock price|\bcanlı\b|ihtar|uyumsuzluk|listeden çıkar|delisting|deficiency/i;
+// Haber olmayan sayfalar (kur çevirici, canlı fiyat/seviye sayfası, grafik, borsa uyarı bildirimleri) ve 3 günden eski kayıtlar elenir
+const NEWS_JUNK_RE = /\||^about\b|\([A-Z0-9]{1,6}\.[A-Z]{1,3}\)\s*$|^convert\b|exchange rate|advanced chart|user rankings|real[- ]time|price live|live index|live levels|news today|historical data|stock price|\bcanlı\b|ihtar|uyumsuzluk|listeden çıkar|delisting|deficiency/i;
+// Basın bültenleri (şirketlerin kendi duyuruları) haber değildir
+const NEWS_BULTEN_RE = /chainwire|newswire|globe ?newswire|business ?wire|accesswire|newsfile|eqs-news|press release|company announcement|basın bülteni|sponsored/i;
 const NEWS_MAX_AGE_MS = 72 * 3600 * 1000;
 // Başlık zaten Türkçe mi? (Türkçe harf ya da sık geçen Türkçe kelimeler) — Türkçe olanlar çevrilmez
 const NEWS_TR_RE = /[çğıöşüÇĞİÖŞÜ]|\b(ve|ile|için|bu|gibi|kadar|sonra|göre)\b/i;
-
-// Sadece bu güvenilir kaynaklardan haber alınır (Google News aramasına site: filtresiyle eklenir,
-// ayrıca gelen sonuçlar kaynak adına göre bir kez daha süzülür). Son 3 gün ile sınırlı.
-const TRUSTED_SITES = ['reuters.com','bloomberg.com','bloomberght.com','investing.com','cnbc.com','ft.com','wsj.com','marketwatch.com'];
-const TRUSTED_SOURCE_RE = /reuters|bloomberg|investing\.com|cnbc|financial times|(^|\W)ft\.com|wall street journal|wsj|marketwatch/i;
-const NEWS_SITE_FILTER = '(' + TRUSTED_SITES.map(s => 'site:' + s).join(' OR ') + ') when:3d';
-
+// Google News yalnızca Reuters ve Bloomberg için kullanılır
+const NEWS_GN_FILTER = '(site:reuters.com OR site:bloomberg.com) when:3d';
+const NEWS_GN_KAYNAK_RE = /^(reuters|bloomberg)$/i;
 
 const NEWS_PROXIES = [
   MY_WORKER + '/proxy?url=',
@@ -3366,87 +3382,96 @@ function haberGoreliZaman(ts){
   return Math.round(sa / 24) + ' gün önce';
 }
 
-// Google News RSS'ini (tek bir dil sürümü için) çekip [{title, link, source, ts}] döndürür.
-async function fetchNewsEdition(query, edition){
-  const ed = edition === 'tr' ? 'hl=tr&gl=TR&ceid=TR:tr' : 'hl=en-US&gl=US&ceid=US:en';
-  const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query + ' ' + NEWS_SITE_FILTER)}&${ed}`;
+// RSS tarihleri: RFC 822 ("Tue, 29 Sep 2026 11:11:48 +0300") ya da Investing'in saat dilimsiz UTC biçimi ("2026-09-29 08:36:15")
+function rssTarih(metin){
+  const t = String(metin || '').trim();
+  if(/^\d{4}-\d\d-\d\d \d\d:\d\d(:\d\d)?$/.test(t)) return Date.parse(t.replace(' ', 'T') + 'Z') || 0;
+  return Date.parse(t) || 0;
+}
 
-  // 1) Ham RSS, önce kendi Worker'ın üzerinden (önbelleksiz, en taze)
+// Bir kurumun RSS yayınını çekip [{title, link, source, ts, dil, cevrilebilir}] döndürür (yükleme turu başına bir kez)
+async function fetchYayin(anahtar){
+  const y = HABER_YAYINLARI[anahtar];
+  const res = await fetchWithFallback(y.url);
+  const xml = new DOMParser().parseFromString(await res.text(), 'text/xml');
+  return Array.from(xml.querySelectorAll('item')).map(it => ({
+    title: (it.querySelector('title')?.textContent || '').trim(),
+    link: (it.querySelector('link')?.textContent || '').trim(),
+    source: y.kaynak,
+    yazar: it.querySelector('author')?.textContent || '',
+    ts: rssTarih(it.querySelector('pubDate')?.textContent),
+    dil: y.dil,
+    cevrilebilir: !y.cevrilemez,
+  })).filter(it => /^https?:\/\//.test(it.link));
+}
+
+// Google News üzerinden Reuters/Bloomberg başlıkları (İngilizce; bağlantı Google'ın yönlendirmesidir, çevrilemez)
+async function fetchNewsEdition(query){
+  const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query + ' ' + NEWS_GN_FILTER)}&hl=en-US&gl=US&ceid=US:en`;
+  const ayir = (baslik, kaynak) => { const idx = baslik.lastIndexOf(' - '); return { title: idx > 0 ? baslik.slice(0, idx) : baslik, source: kaynak || (idx > 0 ? baslik.slice(idx + 3) : '') }; };
   try{
     const res = await fetchWithFallback(feedUrl);
-    const text = await res.text();
-    const xml = new DOMParser().parseFromString(text, 'text/xml');
-    const items = Array.from(xml.querySelectorAll('item')).map(it => {
-      const rawTitle = it.querySelector('title')?.textContent || '';
-      const idx = rawTitle.lastIndexOf(' - ');
-      return {
-        title: idx > 0 ? rawTitle.slice(0, idx) : rawTitle,
-        link: it.querySelector('link')?.textContent || '#',
-        source: it.querySelector('source')?.textContent || (idx > 0 ? rawTitle.slice(idx + 3) : ''),
-        ts: Date.parse(it.querySelector('pubDate')?.textContent || '') || 0,
-      };
-    });
+    const xml = new DOMParser().parseFromString(await res.text(), 'text/xml');
+    const items = Array.from(xml.querySelectorAll('item')).map(it => Object.assign(
+      ayir(it.querySelector('title')?.textContent || '', it.querySelector('source')?.textContent),
+      { link: it.querySelector('link')?.textContent || '#', ts: rssTarih(it.querySelector('pubDate')?.textContent), dil: 'en', cevrilebilir: false }));
     if(items.length) return items;
-  }catch(e){ /* alttaki yönteme düş */ }
-
-  // 2) Yedek: rss2json (5 dakikalık dilimle önbelleği atlatıyoruz)
+  }catch(e){ /* rss2json yedeğine düş */ }
   try{
     const r2jUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl + '&_=' + Math.floor(Date.now() / 300000))}`;
-    const res = await fetchWithTimeout(r2jUrl);
-    const data = await res.json();
+    const data = await (await fetchWithTimeout(r2jUrl)).json();
     if(data && data.status === 'ok' && Array.isArray(data.items)){
-      return data.items.map(it => {
-        const rawTitle = it.title || '';
-        const idx = rawTitle.lastIndexOf(' - ');
-        return {
-          title: idx > 0 ? rawTitle.slice(0, idx) : rawTitle,
-          link: it.link || '#',
-          source: it.author || (idx > 0 ? rawTitle.slice(idx + 3) : ''),
-          ts: Date.parse((it.pubDate || '').replace(' ', 'T') + 'Z') || 0, // rss2json UTC verir
-        };
-      });
+      return data.items.map(it => Object.assign(ayir(it.title || '', it.author),
+        { link: it.link || '#', ts: Date.parse((it.pubDate || '').replace(' ', 'T') + 'Z') || 0, dil: 'en', cevrilebilir: false }));
     }
   }catch(e){ /* boş döner */ }
-
   return [];
 }
 
-// Türkçe ve İngilizce sürümlerden gelen haberleri birleştirir, sadece güvenilir kaynakları alır,
-// tekrarları eler ve en yeniden eskiye sıralayıp ilk 4'ü döndürür.
-async function fetchNews(feed){
-  const [tr, en] = await Promise.all([
-    fetchNewsEdition(feed.q_tr, 'tr'),
-    fetchNewsEdition(feed.q_en, 'en'),
+// Sütunun kaynaklarını birleştirir: konuyla alakalı, son 3 günlük, basın bülteni olmayanları alır, tekrarları eler.
+// En yeniden eskiye 4 haber: Türkçe okunabilenler (Türkçe ya da çevrilebilir İngilizce) öncelikli, en fazla 1 Reuters/Bloomberg.
+async function fetchNews(feed, yayinOnbellek){
+  const listeler = await Promise.all([
+    ...feed.yayinlar.map(k => (yayinOnbellek[k] = yayinOnbellek[k] || fetchYayin(k).catch(() => []))),
+    fetchNewsEdition(feed.gn).then(l => l.filter(it => NEWS_GN_KAYNAK_RE.test(it.source.trim()))),
   ]);
   const simdi = Date.now();
-  const guvenilir = [...tr, ...en]
+  const uygun = listeler.flat()
     .filter(it => it.title
-      && TRUSTED_SOURCE_RE.test(it.source)      // sadece güvenilir kaynaklar
-      && !NEWS_JUNK_RE.test(it.title)           // fiyat/grafik/çevirici sayfaları ve borsa uyarıları haber değildir
-      && feed.rel.test(it.title)                // sütunun konusuyla alakalı olsun
-      && it.ts && (simdi - it.ts) <= NEWS_MAX_AGE_MS)  // son 3 gün
+      && !NEWS_JUNK_RE.test(it.title)
+      && !NEWS_BULTEN_RE.test(it.title + ' ' + (it.yazar || ''))
+      && it.title.trim().split(/\s+/).length >= 4
+      && feed.rel.test(it.title)
+      && !(feed.haric && feed.haric.test(it.title))
+      && it.ts && (simdi - it.ts) <= NEWS_MAX_AGE_MS && it.ts <= simdi + 3600000)
     .sort((a, b) => b.ts - a.ts);
 
   const goruldu = new Set();
-  const sonuc = [];
-  for(const it of guvenilir){
-    const anahtar = it.title.toLowerCase().slice(0, 50);
-    if(goruldu.has(anahtar)) continue;
-    goruldu.add(anahtar);
-    sonuc.push(it);
-    if(sonuc.length >= 4) break;
+  const tekil = uygun.filter(it => { const k = it.title.toLowerCase().slice(0, 50); if(goruldu.has(k)) return false; goruldu.add(k); return true; });
+  const okunabilir = tekil.filter(it => it.cevrilebilir);
+  const gn = tekil.filter(it => !it.cevrilebilir).sort((a, b) => NEWS_GN_KAYNAK_RE.test(b.source) - NEWS_GN_KAYNAK_RE.test(a.source));   // Reuters/Bloomberg önce
+  const secilen = okunabilir.slice(0, 4);
+  if(gn.length){
+    if(secilen.length === 4) secilen[3] = gn[0];                  // 4. sıra en yeni Reuters/Bloomberg haberine
+    else secilen.push(...gn.slice(0, 4 - secilen.length));        // okunabilir haber azsa boşluğu onlar doldurur
   }
-  return sonuc;
+  return secilen.sort((a, b) => b.ts - a.ts);
 }
 
+// İngilizce haberi Google Çeviri'nin site çevirisiyle Türkçe açar (www.cnbc.com → www-cnbc-com.translate.goog)
+function haberCeviriLinki(url){
+  try{
+    const u = new URL(url);
+    const host = u.hostname.replace(/-/g, '--').replace(/\./g, '-');
+    const q = new URLSearchParams(u.search);
+    q.set('_x_tr_sl', 'auto'); q.set('_x_tr_tl', 'tr'); q.set('_x_tr_hl', 'tr'); q.set('_x_tr_pto', 'wapp');
+    return `https://${host}.translate.goog${u.pathname}?${q.toString()}`;
+  }catch(e){ return url; }
+}
+function haberLinki(it){ return (it.dil === 'en' && it.cevrilebilir) ? haberCeviriLinki(it.link) : it.link; }
+
 function fallbackNewsLink(feed){
-  const searchUrl = `https://news.google.com/search?q=${encodeURIComponent(feed.q_tr + ' ' + NEWS_SITE_FILTER)}&hl=tr&gl=TR&ceid=TR:tr`;
-  return `
-    <a class="news-item" href="${searchUrl}" target="_blank" rel="noopener">
-      Güvenilir kaynaklardan güncel haber bulunamadı — Google News'te aramak için tıkla
-      <span class="news-source">Google News</span>
-    </a>
-  `;
+  return `<div class="news-loading">Güvenilir kaynaklardan son 3 günde ${escapeHtml(feed.ad)} haberi bulunamadı.</div>`;
 }
 
 // ---------- Haber başlıklarını Türkçeye çevirme (Claude Haiku, sonuçlar tarayıcıda saklanır) ----------
@@ -3475,11 +3500,13 @@ function renderHaberler(){
     if(!container || !items) return;
     if(!items.length){ container.innerHTML = fallbackNewsLink(feed); return; }
     container.innerHTML = items.map(it => {
-      const c = _haberCeviri[haberCeviriAnahtar(it.title)];
+      const c = it.dil === 'tr' ? null : _haberCeviri[haberCeviriAnahtar(it.title)];
+      const ipucu = it.dil === 'tr' ? '' : ('Orijinal: ' + it.title + (it.cevrilebilir ? ' — haber Google Çeviri ile Türkçe açılır' : ' — bu kaynak otomatik çevrilemez, haber İngilizce açılır'));
+      const etiket = it.dil === 'tr' ? '' : (it.cevrilebilir ? ' · Türkçe çeviri' : ' · <b class="news-en">İngilizce</b>');
       return `
-        <a class="news-item" href="${escapeHtml(it.link)}" target="_blank" rel="noopener"${c ? ' title="Orijinal: ' + escapeHtml(it.title).replace(/"/g, '&quot;') + '"' : ''}>
+        <a class="news-item" href="${escapeHtml(haberLinki(it))}" target="_blank" rel="noopener"${ipucu ? ' title="' + escapeHtml(ipucu).replace(/"/g, '&quot;') + '"' : ''}>
           ${escapeHtml(c ? c.tr : it.title)}
-          <span class="news-source">${escapeHtml(it.source)}${it.ts ? ' · ' + haberGoreliZaman(it.ts) : ''}${c ? ' · çeviri' : ''}</span>
+          <span class="news-source">${escapeHtml(it.source)}${it.ts ? ' · ' + haberGoreliZaman(it.ts) : ''}${etiket}</span>
         </a>`;
     }).join('');
   });
@@ -3491,7 +3518,7 @@ async function haberleriCevir(){
   const bekleyen = [];
   Object.values(_sonHaberler).flat().forEach(it => {
     const k = haberCeviriAnahtar(it.title);
-    if(NEWS_TR_RE.test(it.title) || _haberCeviri[k] || gorulen.has(k)) return;   // zaten Türkçe ya da çevrilmiş
+    if(it.dil === 'tr' || NEWS_TR_RE.test(it.title) || _haberCeviri[k] || gorulen.has(k)) return;   // zaten Türkçe ya da çevrilmiş
     gorulen.add(k);
     bekleyen.push(it.title);
   });
@@ -3532,9 +3559,10 @@ async function haberleriCevir(){
 }
 
 async function loadNews(){
+  const yayinOnbellek = {};   // aynı yayın (ör. Bloomberg HT) birden fazla sütunda kullanılsa da bir kez çekilir
   await Promise.all(NEWS_FEEDS.map(async feed => {
     try{
-      const items = await fetchNews(feed);
+      const items = await fetchNews(feed, yayinOnbellek);
       // Çekme tamamen başarısız olduysa (boş dönerse) elimizdeki son haberleri koru
       if(items.length || !(_sonHaberler[feed.key] || []).length) _sonHaberler[feed.key] = items;
     }catch(e){

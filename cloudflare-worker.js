@@ -4,7 +4,7 @@
 //   GÜVENLİK: Worker'a gelen HER istek (kök adres hariç) erişim koduyla doğrulanır. Kod yanlışsa istek reddedilir,
 //   8 yanlış denemeden sonra o IP 15 dakika kilitlenir. Böylece adresi bilen biri senin Claude/veri kotanı kullanamaz.
 //
-//   1) /proxy?url=...    -> CORS proxy (Yahoo, Google News, FRED)
+//   1) /proxy?url=...    -> CORS proxy (Yahoo, FRED, Google News, haber kurumlarının RSS yayınları)
 //   2) /ai                -> Anthropic API geçidi (Bay Piyasa, haber çevirisi)
 //   3) /extract-loan      -> Kredi ödeme planı PDF'ini okuyup JSON'a çevirir
 //   4) /td, /td-series    -> Twelve Data geçidi (altın spot ons, döviz yedeği)
@@ -269,6 +269,13 @@ export default {
         'fred.stlouisfed.org',
         'news.google.com',
         'stooq.com',
+        // Haber kurumlarının RSS yayınları (Piyasa Özeti › Güncel Haberler)
+        'investing.com',               // www. ve tr. alt alan adları
+        'bloomberght.com',
+        'aa.com.tr',
+        'feeds.bbci.co.uk',
+        'cnbc.com',
+        'feeds.content.dowjones.io',   // MarketWatch
       ];
       let targetHost;
       try {

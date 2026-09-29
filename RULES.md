@@ -29,6 +29,12 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 4. Kullanıcı verisi (kredi, borç, portföy) koddan sabit değer olarak üretilmez veya uydurulmaz.
 5. Senkronlanan listelere türetilmiş veya önbellek bilgisi (son fiyat, hesaplanan tutar vb.) yazılmaz; bunlar yalnızca yerel anahtarlarda tutulur. Senkron listeleri yalnızca kullanıcı bir şeyi eklediğinde, değiştirdiğinde veya sildiğinde yazılır.
 
+## Haberler
+
+1. Yalnızca köklü, kurumsal haber kaynakları kullanılır (Reuters, Bloomberg, Bloomberg HT, BBC, Anadolu Ajansı, Investing.com, CNBC, MarketWatch vb.). Yeni kaynak eklemek bilinçli bir karardır ve Worker proxy izin listesine de eklenmelidir.
+2. Basın bültenleri, sponsorlu içerik ve fiyat/fon tanıtım sayfaları haber olarak gösterilmez.
+3. Türkçe okunabilir haber (Türkçe kaynak ya da Google Çeviri ile açılabilen İngilizce kaynak) önceliklidir; çevrilemeyen kaynaklar "İngilizce" diye işaretlenir.
+
 ## Yapay zekâ
 
 1. Kullanılan model adları Worker'daki `ALLOWED_MODELS` ile ön yüzdeki model listesinde aynı olmalıdır.

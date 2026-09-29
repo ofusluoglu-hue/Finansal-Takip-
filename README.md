@@ -9,7 +9,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 
 | Sekme | İçerik |
 |---|---|
-| **Piyasa Özeti** | ETF/hisse, döviz, emtia (altın, Brent, uranyum) ve kripto (Binance) fiyatları; ABD seans öncesi / kapanış / sonrası fiyatları kartta ayrı ayrı; detay grafiği; Türkçeye çevrilmiş güncel haberler |
+| **Piyasa Özeti** | ETF/hisse, döviz, emtia (altın, Brent, uranyum) ve kripto (Binance) fiyatları; ABD seans öncesi / kapanış / sonrası fiyatları kartta ayrı ayrı; detay grafiği; köklü kurumlardan güncel haberler (Türkçe kaynaklar öncelikli; İngilizceler Türkçe çeviriyle açılır) |
 | **Finansal Durumum** | Varlıklar (konut, otomobil, arsa vb.) ve net finansal durum |
 | **Yatırımlarım** | Portföy takibi, kâr/zarar |
 | **Borçlarım** | Krediler (canlı erken kapama hesaplayıcı), kredi kartları, KMH, elden nakit borçlar; kredi planını **PDF'ten** (yapay zekâ) veya **Excel'den** içe aktarma |
@@ -24,7 +24,7 @@ Telefonda da kullanılabilir: menü alta sabit sekme çubuğuna dönüşür.
 Tarayıcı (GitHub Pages)                Cloudflare Worker                 Dış servisler
 piyasa-paneli.html  ── Bearer kod ──▶  cloudflare-worker.js  ──────▶  Anthropic, Twelve Data,
   localStorage (önbellek)              D1 veritabanı (senkron)           Finnhub, Yahoo, FRED,
-                                                                         Google News, MetalCharts
+                                                                         haber RSS'leri, MetalCharts
 ```
 
 Ayrıntılar için [PROJECT.md](PROJECT.md).
