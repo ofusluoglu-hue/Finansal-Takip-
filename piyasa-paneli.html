@@ -1695,6 +1695,27 @@
     .ozet-kart.vurgu{grid-column:1 / -1;}
   }
 
+  /* Portföy yaşı: ince liste — kod · yaş çubuğu (ortalama çizgisi) · yaş (tıkla-düzenle) · pay */
+  .yas-ust{display:flex;align-items:center;gap:16px;font-size:11.5px;color:var(--muted);padding:2px 0 8px;border-bottom:1px solid var(--border);margin-bottom:6px;}
+  .yas-ust b{color:var(--text);font-weight:700;}
+  .yas-ust-sag{margin-left:auto;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-2);}
+  .yas-ort-simge{display:inline-block;width:2px;height:12px;background:var(--amber);border-radius:1px;margin-right:6px;vertical-align:-2px;}
+  .yas-liste{display:flex;flex-direction:column;gap:2px;padding-bottom:6px;}
+  .yas-satir{display:grid;grid-template-columns:78px minmax(60px,1fr) 78px 52px;align-items:center;gap:12px;padding:4px 0;border-radius:6px;}
+  .yas-satir:hover{background:#171c25;}
+  .yas-kod{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .yas-cubuk{position:relative;height:8px;border-radius:4px;background:#1b212a;}
+  .yas-cubuk.bos{background:repeating-linear-gradient(90deg, #1b212a 0 6px, transparent 6px 10px);}
+  .yas-dolgu{height:100%;border-radius:4px;}
+  .yas-ort{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--amber);border-radius:1px;}
+  .yas-deger-kap{text-align:right;}
+  .yas-deger{background:transparent;border:1px solid transparent;color:var(--text);font-family:inherit;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;padding:3px 6px;border-radius:6px;cursor:pointer;white-space:nowrap;}
+  .yas-deger:hover{border-color:var(--border);}
+  .yas-deger.bos{color:var(--amber);font-weight:600;font-size:11.5px;}
+  .yas-girdi{width:64px;background:var(--panel-2);border:1px solid var(--amber);border-radius:6px;color:var(--text);font-family:inherit;font-size:12.5px;padding:3px 6px;text-align:right;}
+  .yas-pay{text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  @media (max-width:640px){ .yas-satir{grid-template-columns:62px minmax(40px,1fr) 70px 44px;gap:8px;} }
+
   /* Portföy İstatistikleri kutuları da ortak kart dilinde */
   .ist-kutu{background:var(--panel-2);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:10px;padding:10px 13px 9px;}
   .ist-etiket{font-size:10.5px;font-weight:600;letter-spacing:.03em;color:var(--muted);}
@@ -2044,10 +2065,9 @@
         <span class="bolum-baslik">Portföy yaşı</span>
         <span class="bolum-toplam" id="istBaslik"></span>
       </div>
-      <div class="ozet-not" id="istVarlikSay" style="margin-bottom:8px;"></div>
       <div id="istGrafikAlan"></div>
       <div id="istTablo"></div>
-      <div id="istUyari" class="ozet-not" style="white-space:normal;margin:8px 0 6px;"></div>
+
     </div>
     <div class="bolum">
       <div class="bolum-bas">
@@ -2072,7 +2092,7 @@
     </div>
 
     <div class="footnote"><b>Not:</b> Her kriter 0–100 arası puanlanır; genel puan dördünün basit ortalamasıdır. Derece: 70 ve üzeri <b style="color:var(--up)">İyi</b> · 40–69 <b>Orta</b> · 40 altı <b style="color:var(--down)">Zayıf</b>.
-      <b>Portföy yaşı</b> = ortalama şirket/fon/coin yaşı ÷ 100 yıl × 100; yaşlar tablodan değiştirilebilir, aynı varlık birden fazla kayıtsa tek satırda sayılır, "ağırlıklı yaş" tutarı büyük varlıklara daha çok ağırlık verir.
+      <b>Portföy yaşı</b> = ortalama şirket/fon/coin yaşı ÷ 100 yıl × 100; yaşa tıklayıp değiştirebilirsin, yaşı girilmemiş varlıklar ortalamaya katılmaz, aynı varlık birden fazla kayıtsa tek satırda sayılır, sarı dikey çizgi ortalamadır, "ağırlıklı yaş" tutarı büyük varlıklara daha çok ağırlık verir.
       <b>Çeşitlendirme</b> = (etkin varlık sayısı − 1) ÷ 9 × 100; etkin varlık sayısı = 1 ÷ Σ(pay²) — 10 eşit ağırlıklı varlık 100 puan, tek varlığa yaslanan portföy 0 puan.
       <b>Borç karşılama</b> = yatırımlar ÷ toplam borç × 100 (en fazla 100; borç yoksa tam puan); konut/arsa gibi likit olmayan varlıklar puana katılmaz, "tüm varlıkla" oranı onları da sayar.
       <b>Döviz koruması</b> = dolar bazlı varlık payı × 100; ABD ETF/hisse, kripto ve altın dolar bazlı, BİST hisseleri TL bazlıdır; konut/arsa dahil değildir.</div>
@@ -3819,6 +3839,19 @@ function istGrupla(){
   return [...gruplar.values()].sort((a, b) => YATIRIM_KATEGORI_SIRA.indexOf(a.tur) - YATIRIM_KATEGORI_SIRA.indexOf(b.tur));
 }
 
+let _yasDuzen = { anahtar: null, deger: '' };
+let _yasCiziliyor = false;
+function istYasDuzenle(anahtar, mevcut){ _yasDuzen = { anahtar, deger: mevcut != null ? String(mevcut) : '' }; renderIstatistik(); }
+function istYasTus(e, el){
+  if(e.key === 'Enter'){ e.preventDefault(); istYasBitir(el, true); }
+  if(e.key === 'Escape'){ _yasDuzen = { anahtar: null, deger: '' }; renderIstatistik(); }
+}
+function istYasBitir(el, kaydet){
+  if(!_yasDuzen.anahtar || el.dataset.anahtar !== _yasDuzen.anahtar) return;
+  const { anahtar, deger } = _yasDuzen;
+  _yasDuzen = { anahtar: null, deger: '' };
+  if(kaydet) istYasKaydet(anahtar, deger); else renderIstatistik();
+}
 function istYasKaydet(anahtar, deger){
   const bos = String(deger).trim() === '';
   const v = bos ? null : parseFloat(String(deger).replace(',', '.'));
@@ -3948,41 +3981,40 @@ function renderIstatistik(){
   istYaz('istVarlikSay', Y ? Y.n + ' varlık üzerinden' + (Y.n < gruplar.length ? ' (' + (gruplar.length - Y.n) + ' varlığın yaşı boş)' : '') : '');
   istPuanYaz('ist', Y ? Y.puan : null);
 
-  // Yatay çubuk grafiği (diğer bölümlerdeki dağılım grafikleriyle aynı görünüm) — Excel'deki
-  // "Şirket Yaşı-Portföy Yaşı" grafiğinin karşılığı. Ortalama, tüm satırların üzerinden geçen kesikli çizgiyle gösterilir.
+  // İnce liste (Çeşitlendirme çubuklarıyla aynı dil): kod · yaş çubuğu (ortalama = sarı dikey çizgi) · yaş · pay.
+  // Yaş düz metindir; tıklayınca satır içinde düzenlenir (Enter kaydeder, Esc vazgeçer). Tam ad satırın ipucunda.
+  document.getElementById('istGrafikAlan').innerHTML = '';
   const enBuyuk = yasli.length ? Math.max(...yasli.map(g => g.yas)) : 10;
-  const tepe = Math.max(10, Math.ceil(enBuyuk * 1.12 / 10) * 10);
-  const satirlarYas = gruplar.map(g => {
-    const renk = YATIRIM_KATEGORI_RENK[g.tur] || 'var(--text)';
-    if(g.yas == null) return istHbar(g.kod, 0, 'yaş yok', 'var(--muted-2)');
-    return istHbar(g.kod, g.yas / tepe * 100, fmtNumber(g.yas, g.yas % 1 ? 1 : 0) + ' yıl', renk);
-  }).join('');
-  // Ortalama, aynı ölçekte ayrı ve vurgulu bir satır olarak gösterilir (listenin üstünde, ayraçla ayrılmış)
-  const ortSatir = Y ? `<div class="ist-ort-satir">${istHbar('Ortalama', Y.ortYas / tepe * 100, fmtNumber(Y.ortYas, 1) + ' yıl', 'var(--amber)')}</div>` : '';
-  document.getElementById('istGrafikAlan').innerHTML =
-    '<div class="ist-grafik-baslik">Şirket / fon / coin yaşı (yıl)</div>' +
-    `${ortSatir}<div class="ist-detay">${satirlarYas}</div>`;
-
-  tabloEl.innerHTML = `<div class="ist-tablo-kap"><table class="ist-tablo">
-    <thead><tr><th>Varlık</th><th>Kod</th><th>Kategori</th><th class="sag">Yaş (yıl)</th><th class="sag">Portföy payı</th></tr></thead>
-    <tbody>${gruplar.map(g => {
+  const tepe = Math.max(10, Math.ceil(enBuyuk * 1.1 / 5) * 5);
+  const ortSol = Y ? Math.min(100, Y.ortYas / tepe * 100).toFixed(1) : null;
+  const sirali = [...gruplar].sort((a, b) => (b.yas != null) - (a.yas != null) || (b.yas || 0) - (a.yas || 0));
+  _yasCiziliyor = true;   // yeniden çizimde odaktaki kutu kaldırılırken gelen "blur" kaydetme sayılmasın
+  tabloEl.innerHTML = `
+    <div class="yas-ust">
+      ${Y ? `<span><i class="yas-ort-simge"></i>Ortalama <b>${fmtNumber(Y.ortYas, 1)} yıl</b> <span class="ozet-soluk">(${Y.n}/${gruplar.length} varlık)</span></span>` : '<span>Ortalama için en az bir varlığın yaşını gir</span>'}
+      ${Y && Y.agirlikli != null ? `<span>Ağırlıklı <b>${fmtNumber(Y.agirlikli, 1)} yıl</b></span>` : ''}
+      <span class="yas-ust-sag">yaş · pay</span>
+    </div>
+    <div class="yas-liste">${sirali.map(g => {
       const renk = YATIRIM_KATEGORI_RENK[g.tur] || 'var(--text)';
       const pay = tumTl > 0 ? '%' + fmtNumber(g.tl / tumTl * 100, 1) : '—';
-      return `<tr>
-        <td>${escapeHtml(g.ad)}</td>
-        <td><b>${escapeHtml(g.kod)}</b></td>
-        <td><span class="ist-kat-nokta" style="background:${renk};"></span>${YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur}</td>
-        <td class="sag"><input type="number" min="0" max="500" step="1" value="${g.yas != null ? g.yas : ''}" placeholder="?" onchange="istYasKaydet('${g.anahtar}', this.value)"></td>
-        <td class="sag">${pay}</td>
-      </tr>`;
-    }).join('')}</tbody>
-    <tfoot><tr><td colspan="3">Toplam yaş · Ortalama yaş</td><td class="sag">${Y ? fmtNumber(Y.toplamYas, 0) : '—'}</td><td class="sag">${Y ? fmtNumber(Y.ortYas, 1) : '—'}</td></tr></tfoot>
-  </table></div>`;
+      const duzen = _yasDuzen.anahtar === g.anahtar;
+      const deger = duzen
+        ? `<input class="yas-girdi" type="number" min="0" max="500" step="1" value="${escapeHtml(_yasDuzen.deger)}" data-anahtar="${g.anahtar}"
+             oninput="_yasDuzen.deger = this.value" onkeydown="istYasTus(event, this)" onblur="if(!_yasCiziliyor) istYasBitir(this, true)">`
+        : `<button class="yas-deger${g.yas == null ? ' bos' : ''}" title="Yaşı düzenle" onclick="istYasDuzenle('${g.anahtar}', ${g.yas != null ? g.yas : 'null'})">${g.yas != null ? fmtNumber(g.yas, g.yas % 1 ? 1 : 0) + ' yıl' : '+ yaş gir'}</button>`;
+      return `<div class="yas-satir" title="${escapeHtml(g.ad)} · ${escapeHtml(YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur)}">
+        <div class="yas-kod"><span class="ist-kat-nokta" style="background:${renk};"></span>${escapeHtml(g.kod)}</div>
+        <div class="yas-cubuk${g.yas == null ? ' bos' : ''}">${g.yas != null ? `<div class="yas-dolgu" style="width:${Math.min(100, g.yas / tepe * 100).toFixed(1)}%;background:${renk};"></div>` : ''}${ortSol != null ? `<div class="yas-ort" style="left:${ortSol}%;"></div>` : ''}</div>
+        <div class="yas-deger-kap">${deger}</div>
+        <div class="yas-pay">${pay}</div>
+      </div>`;
+    }).join('')}</div>`;
+  _yasCiziliyor = false;
+  if(_yasDuzen.anahtar){ const inp = tabloEl.querySelector('.yas-girdi'); if(inp && document.activeElement !== inp){ inp.focus(); const v = inp.value; inp.value = ''; inp.value = v; } }
 
   const bos = gruplar.filter(g => g.yas == null).map(g => g.kod);
-  document.getElementById('istUyari').innerHTML = bos.length
-    ? '<b style="color:var(--amber);">Yaşı girilmemiş:</b> ' + bos.map(escapeHtml).join(', ') + ' — bu varlıklar ortalamaya dahil edilmedi; tablodan girebilirsin.'
-    : '';
+  // Yaşı girilmemiş varlıklar satırda "+ yaş gir" ile gösterilir (ortalamaya katılmazlar)
 
   // ---- 2) Çeşitlendirme ----
   const C = H.ces;

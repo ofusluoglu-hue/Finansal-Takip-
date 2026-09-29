@@ -135,6 +135,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
   - Bölüm `.bolum`: başlık + bölüm toplamı + **+ Ekle** (`bolumFormAc`) ile açılan `.bolum-form`.
   - Liste satırı `satirHtml()`: LED, ad, alt bilgi, tutar, ✎ (satır içi düzenleme) ve ✕ sil / ✓ kapattım. Düzenleme durumu `_duzen` ile saklanır; dakikalık yeniden çizimde açık kutu ve yazılan değer korunur.
   - Açıklamalar her sayfanın altında tek bir **Not** satırındadır.
+- **Portföy yaşı** bölümü ince bir listedir (grafik + tablo birleşik): kod · yaş çubuğu (kategori rengi; sarı dikey çizgi = ortalama) · yaş · pay, yaşa göre sıralı. Yaşa tıklanınca satır içinde düzenlenir (`istYasDuzenle`; Enter kaydeder, Esc vazgeçer, odaktan çıkınca kaydeder). Yeniden çizimde açık kutu ve değer korunur; çizim sırasında kaldırılan kutunun `blur`'u kaydetme sayılmaz (`_yasCiziliyor`).
 - **Öne çıkan kart** `.ozet-kart.vurgu`: sayfanın tek ana göstergesi için (ör. Portföy İstatistikleri'nde genel puan) — 2 sütun, 34 px değer, derece rozeti `.puan-rozet`, kalın çubuk, puan renginde hafif zemin; telefonda tam genişlik. Sayfa başına en fazla bir tane.
 - Piyasa Özeti kartları kompakttır: yüzde değişim ve seans notu aynı satırda, ETF seans satırları ince bir çizgiyle ayrılır. Hedef: 1440×900 ekranda kartlar ve grafik kaydırmadan görünsün.
 
@@ -148,6 +149,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Portföy yaşı bölümü sadeleşti: ayrı grafik ve tablo tek ince listede birleşti (≈500 → 290 px), yaş tıkla-düzenle, ortalama çizgisi; tekrar eden uyarılar kaldırıldı |
 | 2026-09-29 | Portföy İstatistikleri'nde genel puan öne çıkan kart oldu (2 sütun, büyük puan, derece rozeti) |
 | 2026-09-29 | Sol menü gruplandı (Varlık ve borç · İstatistikler · Asistan); görev testi: 7 görevin hepsi tek tık |
 | 2026-09-29 | Harcama İstatistikleri ve Portföy İstatistikleri ortak tasarım diline uyduruldu: anlamlı kart renkleri (puana göre yeşil/sarı/kırmızı), yıl/ay seçimi bölüm başlığında, ortak tablo ve çubuk stili, bölüm başlığında puan/toplam, açıklamalar sayfa sonundaki Not'ta |
