@@ -37,10 +37,10 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_bay_piyasa_v1` | Bay Piyasa sohbetleri, ayarları, harcama |
 | `ft_haber_ceviri_v1` | Haber başlığı çeviri önbelleği |
 
-Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar).
+Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
 **Senkron akışı:**
-- `localStorage.setItem` sarmalanmıştır; senkron anahtarlarına yazılan her değişiklik "bekleyen" olarak işaretlenir ve Worker'a `PUT /data/:anahtar` ile gönderilir.
+- `localStorage.setItem` sarmalanmıştır; senkron anahtarlarına yazılan her **değişiklik** "bekleyen" olarak işaretlenir (değer aynıysa gönderilmez) ve Worker'a `PUT /data/:anahtar` ile gönderilir.
 - Çekme: `GET /data?since=<zaman>`, yalnızca son çekmeden sonra değişenler gelir. Açılışta, sekmeye dönüldüğünde ve 5 dakikada bir çalışır.
 - Çakışma: istemci `expected` (son bildiği `updated_at`) gönderir; sunucudaki kayıt daha yeniyse Worker 409 ve güncel değeri döner.
 - `updated_at` tüm anahtarlar genelinde kesinlikle artandır (aynı milisaniyedeki yazmalar `since` çekmesinde kaybolmasın diye).
@@ -57,7 +57,7 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (sen
 | `/data/:anahtar` | PUT | Kayıt yazar (`{value, expected}`), en fazla 1,5 MB |
 | `/proxy?url=` | GET | CORS proxy; yalnızca Yahoo, FRED, Google News, Stooq |
 | `/ai` | POST | Anthropic Messages API geçidi (model beyaz listesi, `max_tokens` 200–4000, isteğe bağlı web araması) |
-| `/extract-loan` | POST | Kredi planı PDF'ini (`pdfBase64`) Claude ile JSON'a çevirir |
+| `/extract-loan` | POST | Kredi planı PDF'ini (`pdfBase64`) Claude ile JSON'a çevirir (banka, faiz, anapara, kullandırım tarihi, ödeme planı) |
 | `/td` | GET | Twelve Data anlık fiyat |
 | `/td-series` | GET | Twelve Data geçmiş veri (grafik) |
 | `/fh` | GET | Finnhub anlık fiyat |
@@ -68,8 +68,10 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (sen
 | Veri | Kaynak |
 |---|---|
 | ABD hisse ve ETF'leri (QQQM, VOO, URA, XLE, REMX, NVDA…) | Finnhub (`/fh`) |
-| Dolar/TL, Euro/TL | Twelve Data (`/td`) |
-| Altın, Brent, kripto ve diğerleri | Yahoo Finance / FRED (`/proxy`) |
+| Dolar/TL, Euro/TL | Yahoo Finance (`/proxy`); yedek Twelve Data |
+| Kripto (BTC, ETH, SOL, AAVE, HYPE) | Binance 24 saatlik ticker (doğrudan, anahtarsız); yedek CoinGecko. Grafikler Binance |
+| Altın (spot ons) | Twelve Data (`/td`) |
+| Brent ve diğerleri | Yahoo Finance / FRED (`/proxy`) |
 | Uranyum | MetalCharts (`/uranyum`), hata olursa Yahoo |
 | Haberler | Google News RSS (`/proxy`) |
 
@@ -86,13 +88,25 @@ Proxy yedekleri (`NEWS_PROXIES` / `fetchWithFallback`): Worker proxy'si başarı
 
 Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_IPUCU` vb.) uyumlu tutulmalıdır.
 
-## 7. Deploy
+## 7. Krediler
+
+- Ödeme planı bilinen krediler (`mode: 'schedule'`): güncel borç = son geçen taksitteki kalan anapara + o tarihten bugüne işleyen faiz + KKDF + BSMV.
+- **İlk taksit henüz gelmediyse** borç, kullandırılan anaparadır (`orijinalAnapara`; yoksa ilk iki satırın farkından tahmin edilir). Faiz `kullandirimTarihi` biliniyorsa oradan işler. Kartta "İlk taksit GG.AA.YYYY" yazar.
+- İçe aktarma: PDF (Claude, `/extract-loan`) veya Excel ([kredi-odeme-plani-sablon.xlsx](kredi-odeme-plani-sablon.xlsx) şablonu). Excel tarihleri saat dilimi kaymasını önlemek için ham gün numarasından okunur; "Kalan Ana Para" sütunu ödenen anapara sanılmaz.
+
+## 8. Arayüz
+
+- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur, senkron durumu ve çıkış üstte ince bir satırda kalır.
+- Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
+
+## 9. Deploy
 
 - **Ön yüz:** `main` dalına push → GitHub Pages.
 - **Worker:** `npx.cmd wrangler deploy` ([wrangler.toml](wrangler.toml)). `keep_vars = true` panelden eklenen değişkenleri korur; secret'lar deploy'dan etkilenmez.
 
-## 8. Sürüm geçmişi
+## 10. Sürüm geçmişi
 
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Test sonrası düzeltmeler: ilk taksidi gelmemiş krediler görünür; kripto fiyatları Binance'e taşındı (CoinGecko 429); yatırım listesi artık dakikada bir sunucuya yazılmıyor; Excel tarih kayması ve "Kalan Ana Para" sütunu düzeltildi; Excel şablonu eklendi; telefon görünümü (alt sekme çubuğu, taşmalar) düzeltildi; sekme simgesi eklendi |

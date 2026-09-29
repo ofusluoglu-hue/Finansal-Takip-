@@ -18,7 +18,8 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 2. Dış kütüphane yalnızca gerçekten gerekiyorsa ve güvenilir bir CDN'den (cdnjs) eklenir.
 3. Kod mevcut stile uyar: **Türkçe** değişken/fonksiyon adları ve yorumlar, bölümler `// ---------- Başlık ----------` ile ayrılır.
 4. Hata mesajları kullanıcıya Türkçe ve anlaşılır gösterilir.
-5. Native `confirm`/`alert` yerine panelin kendi pencereleri kullanılır: `showConfirmModal` (onay) ve `showAlertModal` (uyarı).
+5. Her ekran telefon genişliğinde (390 px) yatay taşma olmadan çalışmalıdır; sabit genişlikli satırlar için `@media (max-width:640px)` kuralı yazılır.
+6. Native `confirm`/`alert` yerine panelin kendi pencereleri kullanılır: `showConfirmModal` (onay) ve `showAlertModal` (uyarı).
 
 ## Veri
 
@@ -26,6 +27,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 2. Veri anahtarları `ft_<ad>_v<sürüm>` biçimindedir (istisna: yalnızca yerelde tutulan `ft_erisim` ve `ft_senkron_meta`). Veri yapısı geriye uyumsuz değişirse sürüm artırılır (`_v2`) ve eski veriden taşıma yazılır.
 3. Tek kayıt 1,5 MB'ı geçemez (D1 sınırı).
 4. Kullanıcı verisi (kredi, borç, portföy) koddan sabit değer olarak üretilmez veya uydurulmaz.
+5. Senkronlanan listelere türetilmiş veya önbellek bilgisi (son fiyat, hesaplanan tutar vb.) yazılmaz; bunlar yalnızca yerel anahtarlarda tutulur. Senkron listeleri yalnızca kullanıcı bir şeyi eklediğinde, değiştirdiğinde veya sildiğinde yazılır.
 
 ## Yapay zekâ
 

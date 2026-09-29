@@ -2,7 +2,8 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E7A83B' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M7 14l4-5 3 3 5-7'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Piyasa Özeti</title>
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="referrer" content="no-referrer">
@@ -51,7 +52,7 @@
     .sidebar{width:100%;flex:none;}
     .main{width:100%;}
   }
-  .nav-panel{
+  .sidebar-kutu{
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:12px;
@@ -88,6 +89,22 @@
     border-left:2px solid var(--amber);
   }
   .nav-item.active svg{opacity:1;stroke:var(--amber);}
+  /* Telefon/tablet: menü alta sabit sekme çubuğu olur; senkron durumu ve çıkış üstte ince bir satırda kalır */
+  @media (max-width:900px){
+    .sidebar-kutu{position:static;padding:8px 12px;}
+    .nav-panel{
+      position:fixed;left:0;right:0;bottom:0;z-index:500;
+      display:flex;background:var(--panel);border-top:1px solid var(--border);
+      padding:4px 4px calc(4px + env(safe-area-inset-bottom));
+    }
+    .nav-item{flex:1 1 0;min-width:0;flex-direction:column;justify-content:center;gap:3px;padding:7px 2px;font-size:10px;line-height:1.15;text-align:center;border-left:none;border-top:2px solid transparent;border-radius:6px;}
+    .nav-item + .nav-item{margin-top:0;}
+    .nav-item.active{border-left:none;border-top:2px solid var(--amber);}
+    .nav-item small{display:none;}
+    .nav-item svg{width:19px;height:19px;}
+    .nav-alt{flex-direction:row !important;align-items:center;justify-content:space-between;margin-top:0 !important;padding:0 !important;border-top:none !important;}
+    .wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important;}
+  }
 
   .tab-panel{display:none;}
   .tab-panel.active{display:block;}
@@ -1110,6 +1127,12 @@
     align-items:center;
     gap:10px;
   }
+  /* Telefon: tutar üstte, açıklama altında tam genişlikte, butonlar en altta */
+  @media (max-width:640px){
+    .loan-card-head{flex-wrap:wrap;row-gap:6px;}
+    .loan-card-head > div:nth-child(2){flex:1 1 100%;min-width:0;}
+    .loan-card-head > .loan-delete-btn{margin-left:0;}
+  }
   .bank-chip{
     display:inline-flex;
     align-items:center;
@@ -1319,6 +1342,26 @@
     flex:0 0 auto;
   }
   .yatirim-aksiyon input{width:78px !important;}
+
+  /* ---- Telefon düzeni: Yatırımlarım ve Varlıklarım ---- */
+  .summary-grid.yatirim-summary-grid{grid-template-columns:0.8fr 0.8fr 1.8fr;}
+  .varlik-ad-kol{width:340px;flex:0 0 340px;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+  .varlik-aksiyon{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  @media (max-width:900px){
+    .summary-grid.yatirim-summary-grid{grid-template-columns:repeat(2, minmax(0,1fr));}
+    .summary-grid.yatirim-summary-grid > .summary-card:last-child{grid-column:1 / -1;}
+  }
+  @media (max-width:640px){
+    .yatirim-meta{white-space:normal;}
+    .yatirim-aksiyon{flex:1 1 100%;}
+    .yatirim-aksiyon input{flex:1;width:auto !important;min-width:0;}
+    .table-row.varlik-satir{flex-wrap:wrap;}
+    .varlik-ad-kol{flex:1 1 100%;width:auto;}
+    .varlik-satir .r-sub{flex:1 1 100% !important;}
+    .varlik-aksiyon{width:100%;}
+    .varlik-aksiyon .r-value{margin-right:auto;}
+    .varlik-aksiyon input{flex:1;min-width:0;}
+  }
 
   .section-divider{
     height:1px;
@@ -1556,6 +1599,7 @@
 <div class="layout">
 
   <div class="sidebar">
+   <div class="sidebar-kutu">
     <div class="nav-panel" id="navPanel">
       <div class="nav-item active" data-tab="gunluk" onclick="switchTab('gunluk')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg>
@@ -1581,11 +1625,12 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
         <span>Portföy İstatistikleri</span>
       </div>
-      <div class="nav-alt">
-        <div id="senkronDurum" data-durum="senkron">☁ Senkronize ediliyor…</div>
-        <button class="cikis-btn" onclick="cikisYap()">🔒 Çıkış yap</button>
-      </div>
     </div>
+    <div class="nav-alt">
+      <div id="senkronDurum" data-durum="senkron">☁ Senkronize ediliyor…</div>
+      <button class="cikis-btn" onclick="cikisYap()">🔒 Çıkış yap</button>
+    </div>
+   </div>
   </div>
 
   <div class="main">
@@ -1664,7 +1709,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto CoinGecko'dan gelir. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 10 dakikada bir yenilenir; İngilizce başlıklar Türkçeye çevrilir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 10 dakikada bir yenilenir; İngilizce başlıklar Türkçeye çevrilir.
   </div>
 
   </div>
@@ -1725,7 +1770,7 @@
         <button class="ai-btn" onclick="addVarlik()">+ Varlık Ekle</button>
       </div>
       <div class="ai-disclaimer" style="margin-top:10px;font-size:10px;line-height:1.5;">
-        Konut, otomobil, arsa, dükkan gibi taşınır/taşınmaz varlıklarını buradan ekleyip elle güncel değerini girersin — canlı fiyat çekilmez, tamamen senin girdiğin tutar esas alınır. Tarayıcı hafızasında (localStorage) saklanır.
+        Konut, otomobil, arsa, dükkan gibi taşınır/taşınmaz varlıklarını buradan ekleyip elle güncel değerini girersin — canlı fiyat çekilmez, tamamen senin girdiğin tutar esas alınır. Hesabında saklanır ve tüm cihazlarında senkronlanır.
       </div>
       <div id="varlikListContainer" style="margin-top:14px;"></div>
       <div class="varlik-toplam-row">
@@ -1741,7 +1786,7 @@
       <h1>Yatırımlarım</h1>
     </div>
 
-    <div class="summary-grid" style="grid-template-columns:0.8fr 0.8fr 1.8fr;">
+    <div class="summary-grid yatirim-summary-grid">
       <div class="summary-card">
         <div class="summary-label">Toplam Yatırım</div>
         <div class="summary-value" style="color:var(--up);font-size:28px;" id="yatirimToplamDeger">—</div>
@@ -1789,7 +1834,7 @@
         ABD ETF/Hisse ve Kripto fiyatları Piyasa Özeti'nde zaten canlı takip ettiğimiz kartlardan (ekstra istek
         yapılmadan) alınır. Emtia (Altın) ons fiyatından gram başına hesaplanır. <b>BİST için ücretsiz canlı veri
         kaynağımız olmadığından</b> hisse adını ve güncel TL değerini elle girip elle güncellersin — tıpkı Kredi
-        Kartlarım gibi. Tarayıcı hafızasında (localStorage) saklanır.
+        Kartlarım gibi. Hesabında saklanır ve tüm cihazlarında senkronlanır.
       </div>
     </div>
 
@@ -2017,7 +2062,7 @@
       </div>
       <div class="ai-disclaimer" style="margin-top:10px;">
         Rakamlar otomatik hesaplanmaz — her kartın ekstresinden gördüğün güncel borcu elle girip
-        güncellersin. Tarayıcı hafızasında (localStorage) saklanır.
+        güncellersin. Hesabında saklanır ve tüm cihazlarında senkronlanır.
       </div>
     </div>
 
@@ -2046,7 +2091,7 @@
       </div>
       <div class="ai-disclaimer" style="margin-top:10px;">
         Kredili mevduat hesabı (KMH) borcu — rakamlar otomatik hesaplanmaz, hesap özetinden gördüğün
-        güncel bakiyeyi elle girip güncellersin. Tarayıcı hafızasında (localStorage) saklanır.
+        güncel bakiyeyi elle girip güncellersin. Hesabında saklanır ve tüm cihazlarında senkronlanır.
       </div>
     </div>
 
@@ -2066,7 +2111,7 @@
       <div class="ai-disclaimer" style="margin-top:10px;">
         Elden (banka dışı) nakit borçlar — kimden aldığını yazıp tutarı ve para birimini girersin.
         USD/EUR seçersen güncel kurdan TL karşılığı hesaplanıp kaydedilir. Rakamlar otomatik
-        hesaplanmaz, elle güncellersin. Tarayıcı hafızasında (localStorage) saklanır.
+        hesaplanmaz, elle güncellersin. Hesabında saklanır ve tüm cihazlarında senkronlanır.
       </div>
     </div>
   </div>
@@ -2238,8 +2283,10 @@ function senkronDurumYaz(tur){
 
 // localStorage'a yazılan senkron anahtarlarını kuyruğa al
 Storage.prototype.setItem = function(k, v){
+  const izlenen = this === localStorage && SENKRON_ANAHTARLARI.has(k);
+  const ayni = izlenen && this.getItem(k) === String(v);   // değer değişmediyse sunucuya boşuna gönderme
   _depoSetItem.call(this, k, v);
-  if(this === localStorage && _senkronHazir && SENKRON_ANAHTARLARI.has(k)){
+  if(izlenen && !ayni && _senkronHazir){
     _snMeta.bekleyen[k] = true;
     _snMetaKaydet();
     senkronDurumYaz('bekliyor');
@@ -2406,11 +2453,12 @@ const CARDS = [
   { key:'uranium',label:'URANYUM',      source:'yahoo',    symbol:'UX=F',     fmt:'usd2',    fallback:{price:78.50, chg:0.65} },
   { key:'rexc',   label:'REXC ETF (Sprott Rare Earths Ex-China)', source:'finnhub', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
   { key:'remx',   label:'REMX ETF (VanEck Rare Earth)', source:'finnhub', symbol:'REMX', fmt:'usd2', fallback:{price:68.00, chg:0.20} },
-  { key:'btc',    label:'BİTCOİN',      source:'coingecko',symbol:'bitcoin',  fmt:'usd0',    fallback:{price:78170.59, chg:-0.15} },
-  { key:'eth',    label:'ETHEREUM',     source:'coingecko',symbol:'ethereum', fmt:'usd2',    fallback:{price:3120.40, chg:0.85} },
-  { key:'hype',   label:'HYPE',         source:'coingecko',symbol:'hyperliquid', fmt:'usd2', fallback:{price:35.00, chg:0.50} },
-  { key:'aave',   label:'AAVE',         source:'coingecko',symbol:'aave',     fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
-  { key:'sol',    label:'SOL',          source:'coingecko',symbol:'solana',   fmt:'usd2',    fallback:{price:150.00, chg:0.50} },
+  // Kripto: Binance (anahtarsız, geniş istek sınırı); Binance cevap vermezse CoinGecko (symbol) yedeği
+  { key:'btc',    label:'BİTCOİN',      source:'kripto', bnSymbol:'BTCUSDT',  symbol:'bitcoin',     fmt:'usd0', fallback:{price:78170.59, chg:-0.15} },
+  { key:'eth',    label:'ETHEREUM',     source:'kripto', bnSymbol:'ETHUSDT',  symbol:'ethereum',    fmt:'usd2', fallback:{price:3120.40, chg:0.85} },
+  { key:'hype',   label:'HYPE',         source:'kripto', bnSymbol:'HYPEUSDT', symbol:'hyperliquid', fmt:'usd2', fallback:{price:35.00, chg:0.50} },
+  { key:'aave',   label:'AAVE',         source:'kripto', bnSymbol:'AAVEUSDT', symbol:'aave',        fmt:'usd2', fallback:{price:180.00, chg:0.50} },
+  { key:'sol',    label:'SOL',          source:'kripto', bnSymbol:'SOLUSDT',  symbol:'solana',      fmt:'usd2', fallback:{price:150.00, chg:0.50} },
   { key:'nvda',   label:'NVDA',         source:'finnhub', symbol:'NVDA',   fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
 ];
 
@@ -2804,18 +2852,33 @@ async function fetchCoingecko(ids){
 
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 
+// Binance: tüm coinler TEK istekte (24 saatlik değişim dahil). CoinGecko'nun ücretsiz servisi aynı IP'den
+// sık istekte 429 verdiği için birincil kaynak Binance'tir.
+async function fetchBinanceTicker(symbols){
+  const url = 'https://api.binance.com/api/v3/ticker/24hr?symbols=' + encodeURIComponent(JSON.stringify(symbols));
+  const res = await fetchWithTimeout(url, 10000);
+  if(!res.ok) throw new Error('binance hata (' + res.status + ')');
+  const sonuc = {};
+  (await res.json()).forEach(t => { sonuc[t.symbol] = { price: parseFloat(t.lastPrice), chgPct: parseFloat(t.priceChangePercent) }; });
+  return sonuc;
+}
+
 async function refreshCrypto(){
-  const coinCards = CARDS.filter(c=>c.source==='coingecko');
-  const ids = coinCards.map(c=>c.symbol);
+  const coinCards = CARDS.filter(c=>c.source==='kripto');
+  let bn = {};
+  try{ bn = await fetchBinanceTicker(coinCards.map(c=>c.bnSymbol)); }catch(e){ /* CoinGecko'ya düş */ }
+  const eksik = coinCards.filter(cfg => { const d = bn[cfg.bnSymbol]; return !(d && isFinite(d.price)); });
+  coinCards.filter(c => !eksik.includes(c)).forEach(cfg => { const d = bn[cfg.bnSymbol]; renderCard(cfg, d.price, isFinite(d.chgPct) ? d.chgPct : 0, false); });
+  if(!eksik.length) return;
   try{
-    const cgData = await fetchCoingecko(ids);
-    coinCards.forEach(cfg=>{
+    const cgData = await fetchCoingecko(eksik.map(c=>c.symbol));
+    eksik.forEach(cfg=>{
       const d = cgData[cfg.symbol];
       if(d) renderCard(cfg, d.usd, d.usd_24h_change, false);
       else renderStale(cfg);
     });
   }catch(e){
-    coinCards.forEach(cfg=>{
+    eksik.forEach(cfg=>{
       renderStale(cfg);
     });
     throw e;
@@ -2834,10 +2897,11 @@ async function refreshMarketData(){
   try{
     await refreshCrypto();
   }catch(e){ anyError = true; lastErrorMsg = e.message || String(e); }
+  if(typeof renderYatirim === 'function') renderYatirim();   // kripto fiyatları geldi — portföyü hemen güncelle
 
-  // ---- Twelve Data: sadece Dolar/TL ve Euro/TL — ETF/hisseler Finnhub'da. 2 sembol kaldığı için
-  // günlük 800 kredi sınırına çok uzağız, yine de temkinli bir aralık koyuyoruz.
-  const TD_MIN_INTERVAL_MS = 4 * 60 * 1000; // 4 dakika → günde en fazla ~720 kredi (2 sembol × 360 tur), 800 sınırının altında
+  // ---- Twelve Data: yalnızca altın (XAU/USD) — ETF/hisseler Finnhub'da, Dolar/Euro Yahoo'da (Twelve Data yedek).
+  // Günlük 800 kredi sınırını korumak için temkinli bir aralık konur.
+  const TD_MIN_INTERVAL_MS = 4 * 60 * 1000; // 4 dakika → günde en fazla ~360 kredi
   const tdCards = CARDS.filter(c => c.source === 'twelvedata');
   const tdSuresiDoldu = (Date.now() - _lastTdFetchTime) >= TD_MIN_INTERVAL_MS;
 
@@ -2884,6 +2948,7 @@ async function refreshMarketData(){
     }
     await sleep(350);
   }
+  if(typeof renderYatirim === 'function') renderYatirim();   // ETF/hisse fiyatları geldi — portföyü hemen güncelle
 
   // ---- Yahoo/FRED kaynaklı kartlar: az sayıda, art arda (aralıklı) ----
   const otherCards = CARDS.filter(c => c.source === 'yahoo' || c.source === 'fred');
@@ -3031,9 +3096,8 @@ async function fetchHistory(cfg, period){
     return ts.map((t,i)=>({ t: t*1000, v: closes[i] })).filter(p=>p.v!=null);
   }
 
-  if(cfg.source === 'coingecko'){
-    const symbolMap = { bitcoin: 'BTCUSDT', ethereum: 'ETHUSDT', hyperliquid: 'HYPEUSDT', aave: 'AAVEUSDT', solana: 'SOLUSDT' };
-    const symbol = symbolMap[cfg.symbol];
+  if(cfg.source === 'kripto'){
+    const symbol = cfg.bnSymbol;
     const interval = period === 'daily' ? '1d' : '1w';
     const limit = period === 'daily' ? 30 : 52;
     const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
@@ -4308,7 +4372,7 @@ const LOANS_TOHUM = [
 
 function loanGuncelBorc(loan, now = new Date()){
   const bugun = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // saat bilgisini at, sadece takvim günü
-  let tabanTarih, kalanAnapara, kalanTaksit;
+  let tabanTarih, kalanAnapara, kalanTaksit, ilkTaksitOncesi = false;
 
   if(loan.mode === 'schedule'){
     const sch = loan.schedule;
@@ -4316,25 +4380,36 @@ function loanGuncelBorc(loan, now = new Date()){
     for(let i=0;i<sch.length;i++){
       if(new Date(sch[i].tarih + 'T00:00:00') <= bugun) baseIdx = i; else break;
     }
-    if(baseIdx === -1) return null;
-    tabanTarih = sch[baseIdx].tarih;
-    kalanAnapara = sch[baseIdx].kalanAnapara;
-    kalanTaksit = sch.length - (baseIdx + 1);
+    if(baseIdx === -1){
+      // İlk taksit henüz gelmedi: borç = kullandırılan anapara. Belgede yoksa ilk iki satırın farkından tahmin edilir.
+      if(!sch.length) return null;
+      const tahmini = sch.length >= 2 ? sch[0].kalanAnapara + (sch[0].kalanAnapara - sch[1].kalanAnapara) : null;
+      kalanAnapara = loan.orijinalAnapara != null ? Number(loan.orijinalAnapara) : tahmini;
+      if(kalanAnapara == null || !isFinite(kalanAnapara)) return null;
+      // Faiz, kullandırım tarihinden itibaren işler; tarih bilinmiyorsa birikmiş faiz 0 kabul edilir
+      tabanTarih = loan.kullandirimTarihi && new Date(loan.kullandirimTarihi + 'T00:00:00') <= bugun ? loan.kullandirimTarihi : null;
+      kalanTaksit = sch.length;
+      ilkTaksitOncesi = true;
+    } else {
+      tabanTarih = sch[baseIdx].tarih;
+      kalanAnapara = sch[baseIdx].kalanAnapara;
+      kalanTaksit = sch.length - (baseIdx + 1);
+    }
   } else { // 'anchor'
     tabanTarih = loan.tabanTarih;
     kalanAnapara = loan.kalanAnaparaTaban;
     kalanTaksit = loan.kalanTaksitSayisi;
   }
 
-  const tabanDate = new Date(tabanTarih + 'T00:00:00');
-  const gun = Math.max(0, Math.round((bugun - tabanDate) / 86400000));
+  const gun = tabanTarih ? Math.max(0, Math.round((bugun - new Date(tabanTarih + 'T00:00:00')) / 86400000)) : 0;
   const gunlukOran = loan.faizOraniAylik / 100 / 30;
   const faiz = kalanAnapara * gunlukOran * gun;
   const fon = faiz * (loan.kkdfOrani / 100);
   const vergi = faiz * (loan.bsmvOrani / 100);
   const toplam = kalanAnapara + faiz + fon + vergi;
 
-  return { kalanAnapara, gun, faiz, fon, vergi, toplam, tabanTarih, kalanTaksit };
+  return { kalanAnapara, gun, faiz, fon, vergi, toplam, tabanTarih, kalanTaksit, ilkTaksitOncesi,
+           ilkTaksitTarihi: ilkTaksitOncesi ? loan.schedule[0].tarih : null };
 }
 
 // ---------- Kullanıcının eklediği krediler + kapattığı krediler (tarayıcı localStorage'ı) ----------
@@ -4425,7 +4500,7 @@ function updateGarantiLive(){
         <div class="ai-score-num mid" style="font-size:24px;">₺${fmtNumber(r.toplam, 2)}</div>
         <div>
           <div class="ai-score-verdict">${escapeHtml(loan.ad)} Kredi Borcu (%${oranStr} ${aySayisi} Ay)</div>
-          <div class="ai-score-meta"><span class="led-dot green"></span>${simdiStr} · Kalan Taksit: ${r.kalanTaksit}</div>
+          <div class="ai-score-meta"><span class="led-dot green"></span>${simdiStr} · Kalan Taksit: ${r.kalanTaksit}${r.ilkTaksitOncesi ? ' · İlk taksit ' + r.ilkTaksitTarihi.split('-').reverse().join('.') : ''}</div>
         </div>
         <button class="loan-delete-btn" onclick="closeLoan('${loan.id}', ${!!loan.custom})">✓ Krediyi Kapattım</button>
       </div>
@@ -4799,6 +4874,15 @@ function guncelleYatirim(id){
   renderYatirim();
 }
 
+// Son başarıyla hesaplanan fiyat/tutarlar yalnızca bu cihazda tutulur (senkronlanmaz): fiyat her yenilendiğinde
+// yatırım listesinin sunucuya yeniden yazılmasını ve cihazlar arası çakışmaları önler.
+const YATIRIM_SON_FIYAT_KEY = 'ft_yatirim_son_fiyat_v1';
+let _yatirimSonFiyat = {};
+try{ _yatirimSonFiyat = JSON.parse(localStorage.getItem(YATIRIM_SON_FIYAT_KEY) || '{}') || {}; }catch(e){ _yatirimSonFiyat = {}; }
+function yatirimSonFiyatKaydet(){
+  try{ localStorage.setItem(YATIRIM_SON_FIYAT_KEY, JSON.stringify(_yatirimSonFiyat)); }catch(e){ /* localStorage dolu/erişilemez */ }
+}
+
 // Bir yatırım kaydının güncel TL değerini hesaplar — fiyatlar Piyasa Özeti kartlarının
 // zaten çektiği canlı verilerden (ekstra istek yapılmadan) alınır. BİST elle girilen değeri döner.
 function yatirimDegerHesapla(item){
@@ -4820,16 +4904,17 @@ function yatirimDegerHesapla(item){
   }
 
   if(sonuc){
-    // Az önce başarıyla hesaplandı — bir sonraki geçici başarısızlıkta buna dönebilmek için kalıcı olarak sakla
-    item.sonBilinenFiyatUSD = sonuc.fiyatBirimUSD;
-    item.sonBilinenTutarTL = sonuc.tutarTL;
-    item.sonBilinenTs = sonuc.ts;
+    // Az önce başarıyla hesaplandı — bir sonraki geçici başarısızlıkta buna dönebilmek için (bu cihazda) sakla
+    _yatirimSonFiyat[item.id] = { fiyatUSD: sonuc.fiyatBirimUSD, tutarTL: sonuc.tutarTL, ts: sonuc.ts };
     return sonuc;
   }
 
-  // Şu an canlı fiyat/kur yok — ama daha önce başarıyla hesaplanmış bir değer varsa onu göster (sıfırlamak yerine)
-  if(item.sonBilinenTutarTL != null){
-    return { fiyatBirimUSD: item.sonBilinenFiyatUSD, tutarTL: item.sonBilinenTutarTL, canli: false, ts: item.sonBilinenTs || null };
+  // Şu an canlı fiyat/kur yok — ama daha önce başarıyla hesaplanmış bir değer varsa onu göster (sıfırlamak yerine).
+  // Eski kayıtlarda bu bilgi listenin içinde (sonBilinen* alanları) duruyordu.
+  const son = _yatirimSonFiyat[item.id]
+    || (item.sonBilinenTutarTL != null ? { fiyatUSD: item.sonBilinenFiyatUSD, tutarTL: item.sonBilinenTutarTL, ts: item.sonBilinenTs } : null);
+  if(son){
+    return { fiyatBirimUSD: son.fiyatUSD, tutarTL: son.tutarTL, canli: false, ts: son.ts || null };
   }
 
   return null;
@@ -4918,7 +5003,17 @@ function renderYatirim(){
     return s + tutar;
   }, 0);
 
-  if(list.length) manuelListeKaydet(YATIRIM_KEY, list); // sonBilinen* alanları güncellenmiş olabilir, kalıcı hale getir
+  yatirimSonFiyatKaydet();
+  // Eski sürümün listeye yazdığı sonBilinen* alanlarını bir kez temizle (artık yalnızca bu cihazda tutuluyor).
+  // İlk senkron bittikten sonra yapılır ki temizlenmiş liste sunucuya da gitsin.
+  if(_senkronHazir && list.some(item => 'sonBilinenTutarTL' in item)){
+    list.forEach(item => {
+      if(item.sonBilinenTutarTL != null && !_yatirimSonFiyat[item.id]) _yatirimSonFiyat[item.id] = { fiyatUSD: item.sonBilinenFiyatUSD, tutarTL: item.sonBilinenTutarTL, ts: item.sonBilinenTs };
+      delete item.sonBilinenFiyatUSD; delete item.sonBilinenTutarTL; delete item.sonBilinenTs;
+    });
+    yatirimSonFiyatKaydet();
+    manuelListeKaydet(YATIRIM_KEY, list);
+  }
 
   _toplamYatirimTL = toplamYatirim;
   if(typeof renderVarlik === 'function') renderVarlik(); // Finansal Durumum'daki Toplam Varlık/pasta grafiği bu toplama bağlı
@@ -5039,12 +5134,12 @@ function renderVarlik(){
 
   container.innerHTML = list.length
     ? list.map(item => `
-        <div class="table-row">
-          <div style="width:340px;flex:0 0 340px;overflow:hidden;text-overflow:ellipsis;">
+        <div class="table-row varlik-satir">
+          <div class="varlik-ad-kol">
             <div class="r-label" style="font-size:18px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(item.ad)}</div>
           </div>
           <div class="r-sub" style="flex:1;">${ledSpan(item.tarih)}${escapeHtml(item.tur)} · ${tarihSaatStr(item.tarih)}</div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <div class="varlik-aksiyon">
             <div class="r-value" style="font-size:18px;color:var(--up);">₺${fmtNumber(item.deger, 0)}</div>
             <input type="number" step="0.01" id="varlik-edit-${item.id}" class="ai-input" style="width:110px;padding:6px 8px;font-size:12px;" placeholder="yeni değer">
             <button class="loan-btn-save" style="padding:6px 10px;font-size:11px;" onclick="guncelleVarlik('${item.id}')">Güncelle</button>
@@ -5368,6 +5463,7 @@ function renderLoanPreview(data){
       <div class="loan-preview-row"><span class="r-label">Banka</span><span>${escapeHtml(data.banka || '—')}</span></div>
       <div class="loan-preview-row"><span class="r-label">Aylık Faiz Oranı</span><span>%${data.faizOraniAylik ?? '—'}</span></div>
       <div class="loan-preview-row"><span class="r-label">KKDF / BSMV</span><span>%${data.kkdfOrani ?? '—'} / %${data.bsmvOrani ?? '—'}</span></div>
+      <div class="loan-preview-row"><span class="r-label">Kullandırım Tarihi</span><span>${data.kullandirimTarihi ? data.kullandirimTarihi.split('-').reverse().join('.') : '—'}</span></div>
       <div class="loan-preview-row"><span class="r-label">Orijinal Anapara</span><span>${data.orijinalAnapara != null ? '₺'+fmtNumber(data.orijinalAnapara,2) : '—'}</span></div>
       <div class="loan-preview-row"><span class="r-label">Ödeme Planı Satır Sayısı</span><span>${data.schedule.length}</span></div>
       <div class="loan-preview-row"><span class="r-label">İlk Satır</span><span>${ilkSatir.tarih.split('-').reverse().join('.')} · ₺${fmtNumber(ilkSatir.kalanAnapara,2)}</span></div>
@@ -5408,6 +5504,8 @@ function saveExtractedLoan(){
     bsmvOrani: data.bsmvOrani ?? 15,
     mode: 'schedule',
     schedule: data.schedule,
+    orijinalAnapara: data.orijinalAnapara ?? null,
+    kullandirimTarihi: data.kullandirimTarihi || null,
     custom: true,
     kaynakNotu: kaynakMetni +
       (data.dogrulamaTutari != null ? ` Belgedeki doğrulama tutarı: ₺${fmtNumber(data.dogrulamaTutari,2)} (${(data.dogrulamaTarihi||'').split('-').reverse().join('.')})` : ''),
@@ -5435,8 +5533,9 @@ function excelTarihToISO(cell){
   if(cell instanceof Date){
     d = cell;
   } else if(typeof cell === 'number'){
-    // Excel seri tarih numarası (nadiren, cellDates kapalıysa)
-    d = new Date(Date.UTC(1899, 11, 30) + cell * 86400000);
+    // Excel seri tarih numarası (gün sayısı). En yakın güne yuvarlanır: bazı dosyalarda saat dilimi kayması
+    // yüzünden 46341.125 gibi küsuratlı değerler olabiliyor.
+    d = new Date(Date.UTC(1899, 11, 30) + Math.round(cell) * 86400000);
   } else if(typeof cell === 'string'){
     const m = cell.trim().match(/^(\d{1,2})[.\/](\d{1,2})[.\/](\d{4})$/);
     if(m) d = new Date(Date.UTC(+m[3], +m[2]-1, +m[1]));
@@ -5471,7 +5570,9 @@ async function onLoanExcelSelected(event){
 
   try{
     const buf = await file.arrayBuffer();
-    const wb = XLSX.read(buf, { type: 'array', cellDates: true });
+    // cellDates kapalı: tarihler ham gün numarası olarak okunur. (Açıkken kütüphane 1899'daki İstanbul yerel saat
+    // farkını uyguladığı için bazı tarihler bir gün geri kayıyordu.)
+    const wb = XLSX.read(buf, { type: 'array', cellDates: false });
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
 
@@ -5486,7 +5587,7 @@ async function onLoanExcelSelected(event){
         headerIdx = i;
         norm.forEach((h, idx) => {
           if(h.includes('ODEME TARIHI') || h === 'TARIH') colTarih = idx;
-          else if(h.includes('ANA PARA')) colAnapara = idx;
+          else if(h.includes('ANA PARA') && !h.includes('KALAN')) colAnapara = idx;   // "Kalan Ana Para" sütunu ödenen anapara değildir
           else if(h.includes('FAIZ')) colFaiz = idx;
           else if(h.includes('BSMV') || h.includes('BMSV')) colBsmv = idx;
           else if(h.includes('KKDF')) colKkdf = idx;
@@ -5576,6 +5677,7 @@ function switchTab(tabId){
     document.getElementById('appBarSub').textContent = b[1];
   }
   if(tabId === 'ai' && typeof bpTabAcildi === 'function') bpTabAcildi();
+  window.scrollTo(0, 0);
 }
 
 buildCards();

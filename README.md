@@ -9,12 +9,14 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 
 | Sekme | İçerik |
 |---|---|
-| **Piyasa Özeti** | ETF/hisse, döviz, emtia (altın, Brent, uranyum) ve kripto fiyatları; ABD seans öncesi/sonrası fiyatlar; detay grafiği; Türkçeye çevrilmiş güncel haberler |
+| **Piyasa Özeti** | ETF/hisse, döviz, emtia (altın, Brent, uranyum) ve kripto (Binance) fiyatları; ABD seans öncesi/sonrası fiyatlar; detay grafiği; Türkçeye çevrilmiş güncel haberler |
 | **Finansal Durumum** | Varlıklar (konut, otomobil, arsa vb.) ve net finansal durum |
 | **Yatırımlarım** | Portföy takibi, kâr/zarar |
 | **Borçlarım** | Krediler (canlı erken kapama hesaplayıcı), kredi kartları, KMH, elden nakit borçlar; kredi planını **PDF'ten** (yapay zekâ) veya **Excel'den** içe aktarma |
 | **Portföy İstatistikleri** | Genel puan: portföy yaşı, çeşitlendirme, borç karşılama, döviz koruması |
 | **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması) |
+
+Telefonda da kullanılabilir: menü alta sabit sekme çubuğuna dönüşür.
 
 ## Mimari (özet)
 
@@ -34,6 +36,7 @@ Ayrıntılar için [PROJECT.md](PROJECT.md).
 | [piyasa-paneli.html](piyasa-paneli.html) | Uygulamanın tamamı (HTML + CSS + JS, derleme adımı yok) |
 | [cloudflare-worker.js](cloudflare-worker.js) | Arka uç: kimlik doğrulama, API geçitleri, veri senkronu |
 | [wrangler.toml](wrangler.toml) | Worker deploy ayarları |
+| [kredi-odeme-plani-sablon.xlsx](kredi-odeme-plani-sablon.xlsx) | Excel'den kredi eklemek için ödeme planı şablonu |
 | [PROJECT.md](PROJECT.md) | Teknik dokümantasyon |
 | [RULES.md](RULES.md) | Geliştirme kuralları |
 

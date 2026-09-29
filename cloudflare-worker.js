@@ -160,6 +160,7 @@ planı tablosunu SADECE aşağıdaki JSON şemasında, başka hiçbir metin/aç�
   "kkdfOrani": number (KKDF/Fon oranının faize oranı, % olarak — genelde tabloda Fon sütunu Faiz sütununun yaklaşık %15'i ise 15 yaz),
   "bsmvOrani": number (BSMV/Vergi oranının faize oranı, % olarak — genelde 15),
   "orijinalAnapara": number veya null (belgede varsa toplam/orijinal kredi tutarı),
+  "kullandirimTarihi": "YYYY-MM-DD" veya null (kredinin kullandırıldığı/açıldığı tarih, belgede varsa),
   "dogrulamaTarihi": "YYYY-MM-DD" veya null (belgede "bugünkü kredi borcu" gibi bir anlık rakam varsa o rakamın tarihi),
   "dogrulamaTutari": number veya null (o anlık "bugünkü borç" rakamı, varsa),
   "schedule": [
