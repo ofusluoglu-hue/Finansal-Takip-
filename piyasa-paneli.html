@@ -504,7 +504,7 @@
   .grid{
     display:grid;
     grid-template-columns:repeat(6, 1fr);
-    gap:12px;
+    gap:10px;
   }
   @media (max-width:980px){
     .grid{grid-template-columns:repeat(3, 1fr);}
@@ -519,12 +519,12 @@
     border:1px solid var(--border);
     border-left:3px solid var(--border);
     border-radius:10px;
-    padding:14px 15px 13px;
-    min-height:96px;
+    padding:10px 13px 9px;
+    min-height:0;
     display:flex;
     flex-direction:column;
-    justify-content:space-between;
-    gap:10px;
+    justify-content:flex-start;
+    gap:5px;
     transition:border-left-color .3s ease;
     position:relative;
     overflow:hidden;
@@ -581,14 +581,18 @@
   }
 
   .card-value{
-    font-size:22px;
+    font-size:20px;
     font-weight:700;
     font-variant-numeric:tabular-nums;
     letter-spacing:-0.01em;
     color:var(--text);
     line-height:1.1;
-    min-height:26px;
+    min-height:22px;
   }
+  /* Değişim yüzdesi ve seans notu ("Piyasa öncesi" vb.) aynı satırda — kart dikeyde kısa kalsın */
+  .card-alt{display:flex;align-items:baseline;gap:8px;min-width:0;}
+  .card-alt .card-change{flex-shrink:0;}
+  .card-alt .card-note{margin:0 0 0 auto;min-width:0;text-align:right;font-size:10.5px;}
   .card-value.skeleton{
     color:transparent;
     background:linear-gradient(90deg,#1a1f27 25%,#232a34 37%,#1a1f27 63%);
@@ -655,7 +659,7 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .card-seanslar{margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .card-seanslar{margin-top:1px;padding-top:4px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:1px;font-size:10.5px;line-height:1.3;color:var(--muted);font-variant-numeric:tabular-nums;}
   .card-seanslar:empty{display:none;}
   .card-seanslar div{display:flex;align-items:baseline;gap:6px;white-space:nowrap;overflow:hidden;}
   .card-seanslar .s-ad{min-width:50px;color:var(--muted-2);}
@@ -2507,8 +2511,10 @@ function buildCards(){
       </div>
       <span class="card-live-led" id="stale-${c.key}"></span>
       <div class="card-value skeleton" id="val-${c.key}">0</div>
-      <div class="card-change flat" id="chg-${c.key}"><span class="arrow">–</span><span>—</span></div>
-      <div class="card-note" id="note-${c.key}" style="display:none;"></div>
+      <div class="card-alt">
+        <div class="card-change flat" id="chg-${c.key}"><span class="arrow">–</span><span>—</span></div>
+        <div class="card-note" id="note-${c.key}" style="display:none;"></div>
+      </div>
       ${c.source === 'finnhub' ? `<div class="card-seanslar" id="seanslar-${c.key}"></div>` : ''}
     `;
     el.addEventListener('click', ()=> openChart(c.key));
@@ -2630,7 +2636,7 @@ function renderCard(cfg, price, chgPct, stale, meta){
     if(!stale && meta) etiket = (meta.not !== undefined) ? meta.not : (SEANS_ETIKET[meta.seans] || '');
     seansNotEl.textContent = etiket;
     seansNotEl.style.display = etiket ? 'block' : 'none';
-    seansNotEl.title = (etiket && meta && meta.kapanis) ? 'Son resmi kapanış: ' + fmtNumber(meta.kapanis, 2) : '';
+    seansNotEl.title = (etiket && meta && meta.kapanis) ? 'Son resmi kapanış: ' + fmtNumber(meta.kapanis, 2) : etiket;   // dar kartta kısalan not üzerine gelince tam görünür
   }
 
   // ABD ETF/hisse: diğer seansların fiyatları (öncesi / kapanış / sonrası). Veri gelmezse son gösterilen kalır.
