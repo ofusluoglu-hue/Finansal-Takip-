@@ -7,6 +7,9 @@ compatibility_date = "2026-09-25"
 # Panelden eklenen değişkenleri deploy sırasında silme
 keep_vars = true
 
+# Sürüme özel önizleme adreslerini kapat (gereksiz erişim noktası olmasın)
+preview_urls = false
+
 [[d1_databases]]
 binding = "DB"
 database_name = "finansal-takip"
