@@ -1379,7 +1379,12 @@
   .ozet-cubuk > div{height:100%;border-radius:2px;transition:width .3s ease;}
   .ozet-not{font-size:10.5px;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .pasta-satir{display:flex;align-items:center;gap:12px;margin-top:2px;}
-  .pasta{width:62px;height:62px;border-radius:50%;flex-shrink:0;background:#1b212a;box-shadow:0 0 0 1px #07090c;}   /* ince koyu dış kontur */
+  .pasta{width:66px;height:66px;flex-shrink:0;}
+  .pasta svg{display:block;overflow:visible;}
+  .pasta path{transition:opacity .15s;}
+  .pasta path:hover{opacity:.8;}
+  .halka-orta{fill:var(--text);font-size:13px;font-weight:700;font-family:inherit;}
+  .halka-orta-alt{fill:var(--muted-2);font-size:7px;font-family:inherit;}
   .pasta-legend{display:flex;flex-direction:column;gap:3px;min-width:0;}
   @media (max-width:980px){
     .ozet-grid, .ozet-grid.k4{grid-template-columns:repeat(3, minmax(0,1fr));}
@@ -5601,6 +5606,36 @@ const VARLIK_KATEGORI_RENK = {
   'Yatırımlar': '#FF8A65',
 };
 
+// Halka (donut) grafik — SVG. Dilimler arasında her yerde aynı kalınlıkta aralık (kart zemini rengi, 2 px);
+// çok küçük paylar (ör. %0,5) görünür ve rengi seçilebilir kalsın diye her dilim en az EN_AZ_ACI (14°) çizilir, fazlası büyük dilimlerden
+// orantılı düşülür. Gerçek yüzdeler açıklamada ve dilimin ipucunda yazar.
+function halkaGrafikSvg(dilimler, toplam){
+  const R = 31, r = 18, M = 32, EN_AZ_ACI = 14, ARALIK = 2;
+  const oranlar = dilimler.map(d => d.deger / toplam);
+  let acilar = oranlar.map(o => o * 360);
+  if(dilimler.length > 1){
+    const kucuk = acilar.map(a => a < EN_AZ_ACI);
+    const eksik = acilar.reduce((t, a, i) => t + (kucuk[i] ? EN_AZ_ACI - a : 0), 0);
+    const buyukToplam = acilar.reduce((t, a, i) => t + (kucuk[i] ? 0 : a), 0);
+    acilar = acilar.map((a, i) => kucuk[i] ? EN_AZ_ACI : a - eksik * a / buyukToplam);
+  }
+  const nokta = (yaricap, derece) => { const rad = (derece - 90) * Math.PI / 180; return (M + yaricap * Math.cos(rad)).toFixed(3) + ' ' + (M + yaricap * Math.sin(rad)).toFixed(3); };
+  const ipucu = (d, o) => escapeHtml(d.ad + ' · %' + fmtNumber(o * 100, 1) + ' · ₺' + fmtNumber(d.deger, 0));
+  let aci = 0;
+  const parcalar = dilimler.map((d, i) => {
+    if(dilimler.length === 1){
+      return `<circle cx="${M}" cy="${M}" r="${(R + r) / 2}" fill="none" stroke="${d.renk}" stroke-width="${R - r}"><title>${ipucu(d, 1)}</title></circle>`;
+    }
+    const a0 = aci, a1 = aci + acilar[i];
+    aci = a1;
+    const buyuk = a1 - a0 > 180 ? 1 : 0;
+    return `<path d="M ${nokta(R, a0)} A ${R} ${R} 0 ${buyuk} 1 ${nokta(R, a1)} L ${nokta(r, a1)} A ${r} ${r} 0 ${buyuk} 0 ${nokta(r, a0)} Z" fill="${d.renk}" stroke="var(--panel)" stroke-width="${ARALIK}" stroke-linejoin="round"><title>${ipucu(d, oranlar[i])}</title></path>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${M * 2} ${M * 2}" width="100%" height="100%" role="img" aria-label="Varlık dağılımı">${parcalar}
+    <text x="${M}" y="${M + 1}" text-anchor="middle" dominant-baseline="middle" class="halka-orta">${dilimler.length}</text>
+    <text x="${M}" y="${M + 10}" text-anchor="middle" class="halka-orta-alt">tür</text></svg>`;
+}
+
 // Finansal Durumum'un üst 4 kutusu: canlı Toplam Varlık / Toplam Borç / Net Değer ve
 // Varlıklarım'ın türe göre dairesel (pasta) dağılım grafiği.
 function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
@@ -5656,22 +5691,12 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   const pastaToplam = toplamVarlikListesi + toplamYatirim;
 
   if(!kategoriler.length || pastaToplam <= 0){
-    pastaEl.style.background = '#1b212a';
+    pastaEl.innerHTML = '';
     legendEl.innerHTML = '<span style="font-size:11px;color:var(--muted-2);">Henüz varlık yok</span>';
     return;
   }
 
-  // Dilimler arasında ince siyah ayırıcı (dilimler birbirine karışmasın); tek dilimde ayırıcı yok
-  const AYRAC = kategoriler.length > 1 ? 0.9 : 0;   // yüzde (≈3°)
-  let acisum = 0;
-  const dilimler = kategoriler.map(kat => {
-    const yuzde = kategoriToplam[kat] / pastaToplam * 100;
-    const baslangic = acisum;
-    acisum += yuzde;
-    const son = Math.max(baslangic, acisum - AYRAC);
-    return `${VARLIK_KATEGORI_RENK[kat] || '#888'} ${baslangic.toFixed(2)}% ${son.toFixed(2)}%` + (AYRAC ? `, #07090c ${son.toFixed(2)}% ${acisum.toFixed(2)}%` : '');
-  });
-  pastaEl.style.background = `conic-gradient(${dilimler.join(', ')})`;
+  pastaEl.innerHTML = halkaGrafikSvg(kategoriler.map(kat => ({ ad: kat, deger: kategoriToplam[kat], renk: VARLIK_KATEGORI_RENK[kat] || '#888' })), pastaToplam);
 
   legendEl.innerHTML = kategoriler.map(kat => {
     const yuzde = kategoriToplam[kat] / pastaToplam * 100;
