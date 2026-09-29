@@ -1691,6 +1691,8 @@
   .ozet-kart.vurgu .ozet-deger{font-size:34px;letter-spacing:-0.02em;}
   .ozet-kart.vurgu .ozet-deger .ist-puan-ust{font-size:14px;}
   .ozet-kart.vurgu .ozet-cubuk{height:6px;border-radius:3px;}
+  .ozet-kart.vurgu.orta .ozet-deger{font-size:26px;}   /* öne çıkan ama "bir tık" büyük (ör. Borçlarım › Toplam Borç) */
+  #yatirimToplamDeger{color:var(--up);font-size:23px;}   /* Yatırımlarım › Toplam Yatırım: yeşil, biraz büyük (nabız efekti yukarıda) */
   .puan-rozet{display:inline-block;padding:1px 9px;border-radius:10px;font-size:11.5px;font-weight:700;background:color-mix(in srgb, currentColor 16%, transparent);border:1px solid color-mix(in srgb, currentColor 45%, transparent);margin-right:4px;}
   .puan-rozet:empty{display:none;}
   @media (max-width:980px){
@@ -2127,8 +2129,8 @@
   <div class="tab-panel" id="tab-borclar">
     <div class="page-head"><h1>Borçlarım</h1></div>
 
-    <div class="ozet-grid" id="borcKategoriListesi">
-      <div class="ozet-kart kirmizi">
+    <div class="ozet-grid ist-grid" id="borcKategoriListesi">
+      <div class="ozet-kart vurgu kirmizi orta">
         <div class="ozet-etiket">Toplam Borç</div>
         <div class="ozet-deger neg" id="grandTotal">—</div>
         <div class="ozet-alt" id="grandTotalUSD"></div>
