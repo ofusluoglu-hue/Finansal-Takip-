@@ -1720,6 +1720,7 @@
   .harcama-tablo .ozet-kolon{color:var(--muted);font-weight:600;}
   .harcama-tablo tfoot td{font-weight:700;color:var(--text);background:var(--panel-2);border-bottom:none;}
   .harcama-tablo tfoot td:first-child{background:var(--panel-2);}
+  .harcama-tablo tfoot tr.karsilik td{font-weight:600;color:var(--muted);font-size:11.5px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
   .harcama-ay-sec{flex:0 0 auto !important;min-width:0 !important;width:auto;min-height:0 !important;padding:5px 8px !important;font-size:12px !important;}
   @media (max-width:900px){ .harcama-ikili{grid-template-columns:1fr;gap:0;} }
@@ -2311,7 +2312,7 @@
       <div id="harcamaKayitlar"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Harcamaları tek tek girersin (tarih, kategori, tutar, not); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. İstersen bir ayın kategori toplamını tablodan doğrudan da yazabilirsin — o ay ve kategori için elle yazılan toplam esas alınır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Harcamaları tek tek girersin (tarih, kategori, tutar, not); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. İstersen bir ayın kategori toplamını tablodan doğrudan da yazabilirsin — o ay ve kategori için elle yazılan toplam esas alınır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: HARCAMA İSTATİSTİKLERİ ================= -->
 
@@ -6006,6 +6007,7 @@ const HARCAMA_KATEGORILER = [
   { k:'saglik',    ad:'Sağlık' },
   { k:'egitim',    ad:'Eğitim' },
   { k:'diger',     ad:'Diğer' },
+  { k:'genel',     ad:'Kategorisiz', gizli:true },   // kategori ayrımı olmayan eski aylık toplamlar (ör. 2025); formda seçilmez
 ];
 const HARCAMA_KAT_AD = Object.fromEntries(HARCAMA_KATEGORILER.map(x => [x.k, x.ad]));
 const AY_KISA = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
@@ -6016,6 +6018,75 @@ let _harcamaHepsi = false;                // kayıt listesinde ilk 10 yerine tü
 const HARCAMA_LISTE_ILK = 10;
 
 function harcamaYukle(){ return manuelListeYukle(HARCAMA_KEY); }
+
+// ---- Aylık ortalama kurlar: her ayın harcaması O AYIN ortalama dolar kuru ve gram altın fiyatıyla çevrilir ----
+// Kaynak: Yahoo günlük kapanışları (USDTRY=X ve COMEX altın vadelisi GC=F; gram = ons × kur ÷ 31,1035). Yalnızca bu
+// cihazda önbelleğe alınır (senkronlanmaz); tamamlanmış aylar bir kez, süren ay 6 saatte bir hesaplanır.
+const AYLIK_KUR_KEY = 'ft_aylik_kur_v1';
+let _aylikKur = {};
+try{ _aylikKur = JSON.parse(localStorage.getItem(AYLIK_KUR_KEY) || '{}') || {}; }catch(e){ _aylikKur = {}; }
+let _aylikKurCekiliyor = false;
+
+async function aylikKurlariGuncelle(){
+  if(_aylikKurCekiliyor) return;
+  const simdi = new Date(), buAyK = ayAnahtar(simdi.getFullYear(), simdi.getMonth());
+  const gerekli = new Set();
+  harcamaYukle().forEach(x => { const k = x.tur === 'aylik' ? x.ay : String(x.tarih || '').slice(0, 7); if(/^\d{4}-\d\d$/.test(k)) gerekli.add(k); });
+  const eksik = [...gerekli].filter(k => !_aylikKur[k] || (k === buAyK && Date.now() - (_aylikKur[k].t || 0) > 6 * 3600 * 1000));
+  if(!eksik.length) return;
+  _aylikKurCekiliyor = true;
+  try{
+    const enEski = eksik.sort()[0];
+    const yilFarki = simdi.getFullYear() - +enEski.slice(0, 4);
+    const aralik = yilFarki >= 4 ? '10y' : (yilFarki >= 1 ? '5y' : '2y');
+    const seri = async sembol => {
+      const res = await fetchWithFallback(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sembol)}?interval=1d&range=${aralik}`);
+      const r = (await res.json()).chart.result[0];
+      const cl = (r.indicators.quote[0] || {}).close || [];
+      return new Map((r.timestamp || []).map((t, i) => [new Date(t * 1000).toISOString().slice(0, 10), cl[i]]).filter(x => x[1] != null));
+    };
+    const [usd, ons] = await Promise.all([seri('USDTRY=X'), seri('GC=F')]);
+    const toplam = {};
+    usd.forEach((u, gun) => {
+      const k = gun.slice(0, 7);
+      const a = toplam[k] = toplam[k] || { u: 0, nu: 0, g: 0, ng: 0 };
+      a.u += u; a.nu++;
+      const o = ons.get(gun);
+      if(o){ a.g += o * u / 31.1034768; a.ng++; }
+    });
+    Object.entries(toplam).forEach(([k, a]) => {
+      if(gerekli.has(k) && a.nu) _aylikKur[k] = { usd: a.u / a.nu, gramAltin: a.ng ? a.g / a.ng : null, gun: a.nu, t: Date.now() };
+    });
+    try{ localStorage.setItem(AYLIK_KUR_KEY, JSON.stringify(_aylikKur)); }catch(e){ /* yer yok */ }
+    const sekme = document.getElementById('tab-harcama');
+    if(sekme && sekme.classList.contains('active')) renderHarcama();
+  }catch(e){ /* kur alınamazsa karşılıklar "—" kalır, bir sonraki yenilemede tekrar denenir */ }
+  finally{ _aylikKurCekiliyor = false; }
+}
+// Bir TL tutarının belirli aydaki dolar / gram altın karşılığı (kur yoksa null)
+function ayKarsilik(yil, ay, tl){
+  const k = _aylikKur[ayAnahtar(yil, ay)];
+  return { usd: k && k.usd ? tl / k.usd : null, gr: k && k.gramAltin ? tl / k.gramAltin : null, kur: k || null };
+}
+function fmtGr(x){ return fmtNumber(x, x < 100 ? 1 : 0) + ' gr'; }
+
+// Tüm yıllar boyunca tamamlanmış ayların ortalaması (TL, $, gr) — yıllar arası karşılaştırma için
+function harcamaTumDonem(){
+  const simdi = new Date();
+  const yillar = new Set(harcamaYukle().map(x => +String(x.tur === 'aylik' ? x.ay : x.tarih).slice(0, 4)).filter(Boolean));
+  const aylar = [];
+  [...yillar].sort().forEach(yil => {
+    const T = harcamaTablosu(yil);
+    T.ayToplam.forEach((v, ay) => {
+      if(v > 0 && !(yil === simdi.getFullYear() && ay === simdi.getMonth())){
+        const kar = ayKarsilik(yil, ay, v);
+        aylar.push({ yil, ay, tl: v, usd: kar.usd, gr: kar.gr });
+      }
+    });
+  });
+  const ort = f => { const x = aylar.filter(a => a[f] != null); return x.length ? x.reduce((t, a) => t + a[f], 0) / x.length : null; };
+  return { aylar, tl: ort('tl'), usd: ort('usd'), gr: ort('gr'), ilk: aylar[0], son: aylar[aylar.length - 1] };
+}
 function harcamaKaydet(list){ manuelListeKaydet(HARCAMA_KEY, list); }
 function ayAnahtar(yil, ay){ return yil + '-' + String(ay + 1).padStart(2, '0'); }
 function bugunISO(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -6051,7 +6122,12 @@ function harcamaTablosu(yil){
   const ortAylar = tamamAylar.length ? tamamAylar : veriliAylar;
   const ortalama = ortAylar.length ? ortAylar.reduce((t, i) => t + ayToplam[i], 0) / ortAylar.length : 0;
   const katOrtalama = Object.fromEntries(HARCAMA_KATEGORILER.map(({ k }) => [k, ortAylar.length ? ortAylar.reduce((t, i) => t + hucre[k][i].tutar, 0) / ortAylar.length : 0]));
-  return { hucre, ayToplam, katToplam, katOrtalama, yilToplam, veriliAylar, ortAylar, surenAy, ortalama };
+  const ayUSD = ayToplam.map((v, i) => v > 0 ? ayKarsilik(yil, i, v).usd : null);
+  const ayGr  = ayToplam.map((v, i) => v > 0 ? ayKarsilik(yil, i, v).gr : null);
+  const ortOf = dizi => { const x = ortAylar.map(i => dizi[i]).filter(v => v != null); return x.length ? x.reduce((t, v) => t + v, 0) / x.length : null; };
+  const topOf = dizi => { const x = veriliAylar.map(i => dizi[i]); return x.length && x.every(v => v != null) ? x.reduce((t, v) => t + v, 0) : null; };
+  return { hucre, ayToplam, katToplam, katOrtalama, yilToplam, veriliAylar, ortAylar, surenAy, ortalama,
+           ayUSD, ayGr, ortUSD: ortOf(ayUSD), ortGr: ortOf(ayGr), yilUSD: topOf(ayUSD), yilGr: topOf(ayGr) };
 }
 
 // Eksen için "güzel" adım: 1, 2, 2,5, 5 × 10^n
@@ -6105,6 +6181,7 @@ function harcamaGrafikCiz(T){
     ipucu.textContent = '';
     const b = document.createElement('b'); b.textContent = '₺' + fmtNumber(v, 0); ipucu.appendChild(b);
     const baslik = document.createElement('div'); baslik.textContent = AY_UZUN[ay] + ' ' + _harcamaYil + (T.ortalama && v ? ' · ort. ' + (v >= T.ortalama ? '+' : '−') + '%' + fmtNumber(Math.abs(v / T.ortalama - 1) * 100, 0) : ''); ipucu.appendChild(baslik);
+    if(T.ayUSD[ay] != null){ const kr = document.createElement('div'); kr.textContent = '$' + fmtNumber(T.ayUSD[ay], 0) + ' · ' + fmtGr(T.ayGr[ay]); kr.style.color = 'var(--text)'; ipucu.appendChild(kr); }
     HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][ay].tutar]).filter(x => x[1] > 0).sort((a, b2) => b2[1] - a[1]).slice(0, 3).forEach(([ad, t]) => {
       const sat = document.createElement('div');
       const s1 = document.createElement('span'); s1.textContent = ad;
@@ -6154,20 +6231,29 @@ function renderHarcama(){
     } else degEl.textContent = v > 0 ? '' : 'henüz harcama yok';
   }
   const ayKat = HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][refAy].tutar]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
-  ozetDetayYaz('harcamaBuAyDetay', [ayKat[0] ? ['En büyük', ayKat[0][0] + ' ₺' + fmtNumber(ayKat[0][1], 0)] : null,
+  const buAyKar = v > 0 ? ayKarsilik(_harcamaYil, refAy, v) : null;
+  ozetDetayYaz('harcamaBuAyDetay', [buAyKar && buAyKar.usd != null ? ['Dolar / altın', '$' + fmtNumber(buAyKar.usd, 0) + ' · ' + fmtGr(buAyKar.gr)] : (ayKat[0] ? ['En büyük', ayKat[0][0] + ' ₺' + fmtNumber(ayKat[0][1], 0)] : null),
     suruyor ? (onceki > 0 ? [AY_UZUN[refAy - 1], '₺' + fmtNumber(onceki, 0)] : null)
             : (T.ortalama && v ? ['Ortalamaya', (v >= T.ortalama ? '+' : '−') + '%' + fmtNumber(Math.abs(v / T.ortalama - 1) * 100, 0)] : null)]);
 
   istYaz('harcamaOrtEtiket', _harcamaYil + ' aylık ortalama');
   istYaz('harcamaOrtalama', T.ortalama ? '₺' + fmtNumber(T.ortalama, 0) : '—');
   istYaz('harcamaOrtAlt', T.ortAylar.length ? T.ortAylar.length + (T.ortAylar.length < T.veriliAylar.length ? ' tamamlanmış ay' : ' ay') + ' üzerinden' : '');
-  const siraliAy = T.ortAylar.map(i => [i, T.ayToplam[i]]).sort((a, b) => b[1] - a[1]);
-  ozetDetayYaz('harcamaOrtDetay', siraliAy.length > 1 ? [['En yüksek', AY_UZUN[siraliAy[0][0]] + ' ₺' + fmtNumber(siraliAy[0][1], 0)], ['En düşük', AY_UZUN[siraliAy[siraliAy.length - 1][0]] + ' ₺' + fmtNumber(siraliAy[siraliAy.length - 1][1], 0)]] : []);
+  const TD = harcamaTumDonem();
+  ozetDetayYaz('harcamaOrtDetay', [
+    T.ortUSD != null ? ['Dolar / altın', '$' + fmtNumber(T.ortUSD, 0) + ' · ' + fmtGr(T.ortGr)] : null,
+    TD.aylar.length > T.ortAylar.length ? ['Tüm dönem', '₺' + fmtNumber(TD.tl, 0) + (TD.usd != null ? ' · $' + fmtNumber(TD.usd, 0) : '') + ' (' + TD.aylar.length + ' ay)'] : null,
+  ]);
+  const ortEl = document.getElementById('harcamaOrtDetay');
+  if(ortEl && TD.aylar.length > T.ortAylar.length) ortEl.title = 'Tüm dönem: ' + AY_UZUN[TD.ilk.ay] + ' ' + TD.ilk.yil + ' – ' + AY_UZUN[TD.son.ay] + ' ' + TD.son.yil + ', ' + TD.aylar.length + ' tamamlanmış ay; ortalama ₺' + fmtNumber(TD.tl, 0) + (TD.usd != null ? ', $' + fmtNumber(TD.usd, 0) : '') + (TD.gr != null ? ', ' + fmtGr(TD.gr) : '');
 
   istYaz('harcamaYilEtiket', _harcamaYil + ' toplamı');
   istYaz('harcamaYilToplam', '₺' + fmtNumber(T.yilToplam, 0));
-  istYaz('harcamaYilUSD', T.yilToplam && _fxRates.USD ? '≈ $' + fmtNumber(T.yilToplam / _fxRates.USD, 0) : '');
-  ozetDetayYaz('harcamaYilDetay', T.ortalama ? [['Yıl sonu tah.', '₺' + fmtNumber(T.ortalama * 12, 0)]] : []);
+  // Dolar/altın toplamı her ayın kendi ortalama kuruyla (bugünün kuruyla değil)
+  istYaz('harcamaYilUSD', T.yilUSD != null ? '$' + fmtNumber(T.yilUSD, 0) + ' · ' + fmtGr(T.yilGr) : (T.yilToplam ? 'kurlar yükleniyor…' : ''));
+  ozetDetayYaz('harcamaYilDetay', !T.ortalama ? [] : buYil
+    ? [['Yıl sonu tah.', '₺' + fmtNumber(T.ortalama * 12, 0)], T.ortUSD != null ? ['Tahmin $', '$' + fmtNumber(T.ortUSD * 12, 0)] : null]   // yalnızca süren yıl için
+    : [['Ay sayısı', T.veriliAylar.length + ' ay'], T.ortUSD != null ? ['Aylık ort. $', '$' + fmtNumber(T.ortUSD, 0)] : null]);
 
   const katSira = HARCAMA_KATEGORILER.map(({ k, ad }) => ({ k, ad, t: T.katToplam[k] })).filter(x => x.t > 0).sort((a, b) => b.t - a.t);
   istYaz('harcamaEnBuyuk', katSira[0] ? '₺' + fmtNumber(katSira[0].t, 0) : '—');
@@ -6201,7 +6287,9 @@ function renderHarcama(){
         const ipucu = h.elle ? `Elle yazılan toplam${h.kayitSayisi ? ' (kayıtların toplamı ₺' + fmtNumber(h.kayitToplam, 0) + ')' : ''}` : (h.kayitSayisi ? h.kayitSayisi + ' kayıt' : 'Toplam yazmak için tıkla');
         return `<td class="${sinif}" title="${ipucu}" onclick="harcamaHucreDuzenle(this, '${k}', ${a})">${h.tutar ? fmtNumber(h.tutar, 0) : '—'}</td>`;
       }).join('')}<td class="ozet-kolon">${T.katOrtalama[k] ? fmtNumber(T.katOrtalama[k], 0) : '—'}</td><td class="ozet-kolon">${T.katToplam[k] ? fmtNumber(T.katToplam[k], 0) : '—'}</td></tr>`).join('')}</tbody>
-      <tfoot><tr><td>Toplam</td>${T.ayToplam.map(v2 => `<td>${v2 ? fmtNumber(v2, 0) : '—'}</td>`).join('')}<td>${T.ortalama ? fmtNumber(T.ortalama, 0) : '—'}</td><td>${T.yilToplam ? fmtNumber(T.yilToplam, 0) : '—'}</td></tr></tfoot>`;
+      <tfoot><tr><td>Toplam ₺</td>${T.ayToplam.map(v2 => `<td>${v2 ? fmtNumber(v2, 0) : '—'}</td>`).join('')}<td>${T.ortalama ? fmtNumber(T.ortalama, 0) : '—'}</td><td>${T.yilToplam ? fmtNumber(T.yilToplam, 0) : '—'}</td></tr>
+      <tr class="karsilik"><td>Dolar karşılığı $</td>${T.ayUSD.map((u, a) => { const k = _aylikKur[ayAnahtar(_harcamaYil, a)]; return `<td title="${k ? 'O ayın ortalama kuru: ₺' + fmtNumber(k.usd, 2) + ' (' + k.gun + ' iş günü)' : ''}">${u != null ? fmtNumber(u, 0) : (T.ayToplam[a] ? '…' : '—')}</td>`; }).join('')}<td>${T.ortUSD != null ? fmtNumber(T.ortUSD, 0) : '—'}</td><td>${T.yilUSD != null ? fmtNumber(T.yilUSD, 0) : '—'}</td></tr>
+      <tr class="karsilik"><td>Gram altın karşılığı</td>${T.ayGr.map((g, a) => { const k = _aylikKur[ayAnahtar(_harcamaYil, a)]; return `<td title="${k && k.gramAltin ? 'O ayın ortalama gram altını: ₺' + fmtNumber(k.gramAltin, 0) : ''}">${g != null ? fmtNumber(g, 1) : (T.ayToplam[a] ? '…' : '—')}</td>`; }).join('')}<td>${T.ortGr != null ? fmtNumber(T.ortGr, 1) : '—'}</td><td>${T.yilGr != null ? fmtNumber(T.yilGr, 1) : '—'}</td></tr></tfoot>`;
   }
   istYaz('harcamaTabloToplam', T.yilToplam ? '₺' + fmtNumber(T.yilToplam, 0) : '');
 
@@ -6228,7 +6316,7 @@ function renderHarcama(){
 
   // Form varsayılanları
   const katInput = document.getElementById('harcamaKatInput');
-  if(katInput && !katInput.options.length) katInput.innerHTML = HARCAMA_KATEGORILER.map(({ k, ad }) => `<option value="${k}">${escapeHtml(ad)}</option>`).join('');
+  if(katInput && !katInput.options.length) katInput.innerHTML = HARCAMA_KATEGORILER.filter(x => !x.gizli).map(({ k, ad }) => `<option value="${k}">${escapeHtml(ad)}</option>`).join('');
   const tarihInput = document.getElementById('harcamaTarihInput');
   if(tarihInput && !tarihInput.value) tarihInput.value = bugunISO();
 }
@@ -6309,6 +6397,8 @@ function harcamaOzetMetni(){
   const buAyKat = HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][ay].tutar]).filter(x => x[1] > 0).map(([ad, t]) => ad + ' ₺' + fmtNumber(t, 0)).join(', ');
   return 'Harcamalar ' + yil + ': yıl toplamı ₺' + fmtNumber(T.yilToplam, 0) + ', aylık ortalama ₺' + fmtNumber(T.ortalama, 0) + ' (' + T.ortAylar.length + ' tamamlanmış ay)'
     + ' | Bu ay (' + AY_UZUN[ay] + ', ayın ' + new Date().getDate() + '. günü, sürüyor) ₺' + fmtNumber(T.ayToplam[ay], 0) + (buAyKat ? ': ' + buAyKat : '')
+    + (T.ortUSD != null ? ' | Aylık ortalama dolar ve altın karşılığı (her ay kendi ortalama kuruyla): $' + fmtNumber(T.ortUSD, 0) + ', ' + fmtGr(T.ortGr) : '')
+    + (() => { const TD = harcamaTumDonem(); return TD.aylar.length > T.ortAylar.length ? ' | Tüm dönem (' + TD.aylar.length + ' tamamlanmış ay, başlangıç ' + AY_UZUN[TD.ilk.ay] + ' ' + TD.ilk.yil + ') aylık ortalama ₺' + fmtNumber(TD.tl, 0) + (TD.usd != null ? ', $' + fmtNumber(TD.usd, 0) : '') : ''; })()
     + ' | Kategoriler: ' + katlar
     + ' | Aylık toplamlar: ' + T.ayToplam.map((v, i) => v ? AY_KISA[i] + ' ₺' + fmtNumber(v, 0) : null).filter(Boolean).join(', ');
 }
@@ -6339,7 +6429,7 @@ function switchTab(tabId){
     document.getElementById('appBarSub').textContent = b[1];
   }
   if(tabId === 'ai' && typeof bpTabAcildi === 'function') bpTabAcildi();
-  if(tabId === 'harcama') renderHarcama();   // grafik görünür genişlikle çizilsin
+  if(tabId === 'harcama'){ renderHarcama(); aylikKurlariGuncelle(); }   // grafik görünür genişlikle çizilsin; eksik aylık kurlar çekilsin
   window.scrollTo(0, 0);
 }
 
@@ -6352,6 +6442,7 @@ renderVarlik();
 yatirimTurDegisti();
 renderYatirim();
 renderHarcama();
+setTimeout(aylikKurlariGuncelle, 8000);   // açılıştaki fiyat turunu beklemeden, ama onunla yarışmadan
 if(location.protocol === 'file:'){
   document.getElementById('fileWarning').style.display = 'block';
 }
