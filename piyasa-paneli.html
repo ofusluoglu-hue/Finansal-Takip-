@@ -1701,9 +1701,11 @@
   .yas-ust-sag{margin-left:auto;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-2);}
   .yas-ort-simge{display:inline-block;width:2px;height:12px;background:var(--amber);border-radius:1px;margin-right:6px;vertical-align:-2px;}
   .yas-liste{display:flex;flex-direction:column;gap:2px;padding-bottom:6px;}
-  .yas-satir{display:grid;grid-template-columns:78px minmax(60px,1fr) 78px 52px;align-items:center;gap:12px;padding:4px 0;border-radius:6px;}
+  .yas-satir{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(90px,1fr) 78px 52px;align-items:center;gap:14px;padding:4px 6px;border-radius:6px;}
   .yas-satir:hover{background:#171c25;}
   .yas-kod{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .yas-kod .yas-ad{font-weight:500;color:var(--muted);margin-left:8px;}
+  .yas-kod .yas-kat-ad{font-weight:500;font-size:11px;color:var(--muted-2);margin-left:8px;}
   .yas-cubuk{position:relative;height:8px;border-radius:4px;background:#1b212a;}
   .yas-cubuk.bos{background:repeating-linear-gradient(90deg, #1b212a 0 6px, transparent 6px 10px);}
   .yas-dolgu{height:100%;border-radius:4px;}
@@ -1714,7 +1716,11 @@
   .yas-deger.bos{color:var(--amber);font-weight:600;font-size:11.5px;}
   .yas-girdi{width:64px;background:var(--panel-2);border:1px solid var(--amber);border-radius:6px;color:var(--text);font-family:inherit;font-size:12.5px;padding:3px 6px;text-align:right;}
   .yas-pay{text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;}
-  @media (max-width:640px){ .yas-satir{grid-template-columns:62px minmax(40px,1fr) 70px 44px;gap:8px;} }
+  @media (max-width:640px){
+    .yas-satir{grid-template-columns:minmax(0,1.2fr) minmax(50px,1fr) 62px 44px;gap:8px;padding:4px 2px;}
+    .yas-kod .yas-kat-ad{display:none;}
+    .yas-kod .yas-ad{display:block;margin:1px 0 0 14px;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}   /* telefonda ad, kodun altında */
+  }
 
   /* Portföy İstatistikleri kutuları da ortak kart dilinde */
   .ist-kutu{background:var(--panel-2);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:10px;padding:10px 13px 9px;}
@@ -4004,7 +4010,7 @@ function renderIstatistik(){
              oninput="_yasDuzen.deger = this.value" onkeydown="istYasTus(event, this)" onblur="if(!_yasCiziliyor) istYasBitir(this, true)">`
         : `<button class="yas-deger${g.yas == null ? ' bos' : ''}" title="Yaşı düzenle" onclick="istYasDuzenle('${g.anahtar}', ${g.yas != null ? g.yas : 'null'})">${g.yas != null ? fmtNumber(g.yas, g.yas % 1 ? 1 : 0) + ' yıl' : '+ yaş gir'}</button>`;
       return `<div class="yas-satir" title="${escapeHtml(g.ad)} · ${escapeHtml(YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur)}">
-        <div class="yas-kod"><span class="ist-kat-nokta" style="background:${renk};"></span>${escapeHtml(g.kod)}</div>
+        <div class="yas-kod"><span class="ist-kat-nokta" style="background:${renk};"></span>${escapeHtml(g.kod)}${istNormalize(g.ad) !== istNormalize(g.kod) ? `<span class="yas-ad">${escapeHtml(g.ad)}</span>` : ''}<span class="yas-kat-ad">${escapeHtml(YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur)}</span></div>
         <div class="yas-cubuk${g.yas == null ? ' bos' : ''}">${g.yas != null ? `<div class="yas-dolgu" style="width:${Math.min(100, g.yas / tepe * 100).toFixed(1)}%;background:${renk};"></div>` : ''}${ortSol != null ? `<div class="yas-ort" style="left:${ortSol}%;"></div>` : ''}</div>
         <div class="yas-deger-kap">${deger}</div>
         <div class="yas-pay">${pay}</div>
