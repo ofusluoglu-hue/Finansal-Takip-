@@ -1700,6 +1700,17 @@
   .yas-ust b{color:var(--text);font-weight:700;}
   .yas-ust-sag{margin-left:auto;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-2);}
   .yas-ort-simge{display:inline-block;width:2px;height:12px;background:var(--amber);border-radius:1px;margin-right:6px;vertical-align:-2px;}
+  /* Çeşitlendirme / Borç karşılama / Döviz koruması: açıklama sütunu geniş, çubuk ~%15 kısa */
+  #istCesDetay .ist-hlbl, #istBorcDetay .ist-hlbl, #istDovDetay .ist-hlbl{flex-basis:250px;}
+  #istCesDetay .ist-hval, #istBorcDetay .ist-hval, #istDovDetay .ist-hval{flex:0 0 150px;}   /* sabit: bütün çubuklar aynı yerde biter */
+  @media (max-width:640px){
+    /* Telefonda üst satır açıklama + değer, altında tam genişlik çubuk (eşit uzunlukta) */
+    #istCesDetay .ist-hrow, #istBorcDetay .ist-hrow, #istDovDetay .ist-hrow{flex-wrap:wrap;row-gap:5px;column-gap:8px;}
+    #istCesDetay .ist-hlbl, #istBorcDetay .ist-hlbl, #istDovDetay .ist-hlbl{flex:1 1 auto;order:1;min-width:0;}
+    #istCesDetay .ist-hval, #istBorcDetay .ist-hval, #istDovDetay .ist-hval{flex:0 0 auto;order:2;min-width:0;}
+    #istCesDetay .ist-htrack, #istBorcDetay .ist-htrack, #istDovDetay .ist-htrack{flex:1 1 100%;order:3;height:7px;}
+    #istCesDetay .ist-detay, #istBorcDetay .ist-detay, #istDovDetay .ist-detay{gap:12px;}
+  }
   .yas-liste{display:flex;flex-direction:column;gap:2px;padding-bottom:6px;}
   .yas-satir{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(90px,1fr) 78px 52px;align-items:center;gap:14px;padding:4px 6px;border-radius:6px;}
   .yas-satir:hover{background:#171c25;}
@@ -4032,7 +4043,7 @@ function renderIstatistik(){
   istYaz('istCesKat', C ? '%' + fmtNumber(C.enBuyukKatPay, 1) : '—');
   istYaz('istCesKatAd', C ? (YATIRIM_KATEGORI_BASLIK[C.enBuyukKat] || C.enBuyukKat) : '');
   document.getElementById('istCesDetay').innerHTML = C
-    ? '<div class="ist-detay">' + C.pozlar.map(g => istHbar(g.kod, g.tl / tumTl * 100, '%' + fmtNumber(g.tl / tumTl * 100, 1) + ' · ₺' + fmtNumber(g.tl, 0), YATIRIM_KATEGORI_RENK[g.tur] || 'var(--text)')).join('') + '</div>'
+    ? '<div class="ist-detay">' + C.pozlar.map(g => istHbar(g.kod + (istNormalize(g.ad) !== istNormalize(g.kod) ? ' · ' + g.ad : ''), g.tl / tumTl * 100, '%' + fmtNumber(g.tl / tumTl * 100, 1) + ' · ₺' + fmtNumber(g.tl, 0), YATIRIM_KATEGORI_RENK[g.tur] || 'var(--text)')).join('') + '</div>'
     : '';
 
   // ---- 3) Borç karşılama ----
