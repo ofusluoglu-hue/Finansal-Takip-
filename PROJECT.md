@@ -121,13 +121,13 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Aylık ortalama = seçili yılda harcama girilmiş **tamamlanmış** ayların ortalaması (süren ay yarım olduğu için katılmaz; kategori ortalamaları da aynı); yıl sonu tahmini = ortalama × 12. Süren ay kartında önceki ayla kıyas yerine "ortalamanın %X kadarı · ayın G/N günü" gösterilir.
 - 2025 Mart–Aralık aylık toplamları (HrcmAylık sayfası, toplam ₺675.029) `genel` kategorisinde aylık toplam olarak eklendi.
 - 2026 Ocak–Eylül verisi eski bütçe Excel'inden (Bütçe Hedef Gider 2026.xlsx) bir kereliğine aktarıldı: Ocak–Ağustos aylık kategori toplamı (`kaynak:'excel'`), Eylül tek tek kayıt (`xl-2026-09-*`). Excel artık kullanılmıyor; harcamalar panelden girilir.
-- Grafik (`harcamaGrafikCiz`): tek renk sütunlar (≤24 px, 4 px yuvarlak üst), ortalama çizgisi, bant genişliğinde isabet alanıyla fare/klavye ipucu; aylık tablo grafiğin tablo karşılığıdır. Kategori dağılımı tek renk yatay çubuk (kimliği etiket taşır; 9 kategori renkle ayırt edilmez).
+- Grafik (`harcamaGrafikCiz`, yükseklik `HARCAMA_GRAFIK_H` = 165 px; grafik + Kategoriler satırı ≈223 px): tek renk sütunlar (≤24 px, 4 px yuvarlak üst), ortalama çizgisi, bant genişliğinde isabet alanıyla fare/klavye ipucu; aylık tablo grafiğin tablo karşılığıdır. Kategori dağılımı tek renk yatay çubuk (kimliği etiket taşır; 9 kategori renkle ayırt edilmez); çubuklar en büyük kategoriye göre ölçeklenir, değer sütunu sabit (yıl toplamı + silik aylık ortalama).
 - Bay Piyasa: portföy paylaşımı açıkken harcama özeti bağlama eklenir; "💸 Harcama analizi" hazır raporu vardır.
 
 ## 9. Arayüz
 
 - Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **İstatistikler** (Harcama İstatistikleri, Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
-- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur (grup başlıkları gizlenir, sıra aynı kalır), senkron durumu ve çıkış üstte ince bir satırda kalır.
+- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur (grup başlıkları gizlenir, sıra aynı kalır; etiketler kısalır: Piyasa · Durum · Yatırım · Borç · Harcama · Portföy · Asistan — `data-kisa`), senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
 - **Ortak tasarım dili** (Finansal Durumum, Yatırımlarım, Borçlarım, Harcama İstatistikleri, Portföy İstatistikleri — Piyasa Özeti kartlarıyla aynı). Her sayfa üstte özet kartları, altında başlığında toplamı/puanı olan bölümler ve sonda tek Not ile kurulur; tablolar `.ist-tablo`, dağılım çubukları `istHbar`, başlıktaki seçiciler `.bolum-secim`:
@@ -150,6 +150,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Harcama grafiği ve Kategoriler dikeyde ≈%23 küçüldü (288 → 223 px); kategori çubukları en büyüğe göre ölçekli; telefon alt menüsünde kısa etiketler (7 sekme sığmıyordu, Bay Piyasa kesiliyordu) |
 | 2026-09-29 | Çeşitlendirme, Borç karşılama ve Döviz koruması: açıklamaya yer açıldı (çubuk ≈%18 kısa, sabit değer sütunu), telefonda çubuklar tam genişlik ve eşit |
 | 2026-09-29 | Portföy yaşı bölümü sadeleşti: ayrı grafik ve tablo tek ince listede birleşti (≈500 → 290 px), yaş tıkla-düzenle, ortalama çizgisi; tekrar eden uyarılar kaldırıldı |
 | 2026-09-29 | Portföy İstatistikleri'nde genel puan öne çıkan kart oldu (2 sütun, büyük puan, derece rozeti) |
