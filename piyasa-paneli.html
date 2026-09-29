@@ -662,7 +662,7 @@
   .card-seanslar{margin-top:1px;padding-top:4px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:1px;font-size:10.5px;line-height:1.3;color:var(--muted);font-variant-numeric:tabular-nums;}
   .card-seanslar:empty{display:none;}
   .card-seanslar div{display:flex;align-items:baseline;gap:6px;white-space:nowrap;overflow:hidden;}
-  .card-seanslar .s-ad{min-width:50px;color:var(--muted-2);}
+  .card-seanslar .s-ad{min-width:54px;color:var(--muted-2);}
   .card-seanslar b{font-weight:600;color:var(--text);}
   .card-value.calm{color:#8FE3BC;}
   .card-value.normal{color:#8FB4FF;}
@@ -1718,7 +1718,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 10 dakikada bir yenilenir; İngilizce başlıklar Türkçeye çevrilir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Haberler yalnızca Reuters, Bloomberg, Investing.com, CNBC, FT, WSJ ve MarketWatch'tan alınır ve 10 dakikada bir yenilenir; İngilizce başlıklar Türkçeye çevrilir.
   </div>
 
   </div>
@@ -2515,7 +2515,7 @@ function buildCards(){
         <div class="card-change flat" id="chg-${c.key}"><span class="arrow">–</span><span>—</span></div>
         <div class="card-note" id="note-${c.key}" style="display:none;"></div>
       </div>
-      ${c.source === 'finnhub' ? `<div class="card-seanslar" id="seanslar-${c.key}"></div>` : ''}
+      <div class="card-seanslar" id="seanslar-${c.key}"></div>
     `;
     el.addEventListener('click', ()=> openChart(c.key));
     grid.appendChild(el);
@@ -2639,13 +2639,18 @@ function renderCard(cfg, price, chgPct, stale, meta){
     seansNotEl.title = (etiket && meta && meta.kapanis) ? 'Son resmi kapanış: ' + fmtNumber(meta.kapanis, 2) : etiket;   // dar kartta kısalan not üzerine gelince tam görünür
   }
 
-  // ABD ETF/hisse: diğer seansların fiyatları (öncesi / kapanış / sonrası). Veri gelmezse son gösterilen kalır.
+  // Kartın alt satırları: ETF'lerde diğer seanslar (öncesi / kapanış / sonrası), diğerlerinde "Dün" ve "Aralık".
+  // Veri gelmezse son gösterilen kalır.
   const seanslarEl = document.getElementById('seanslar-' + cfg.key);
   if(seanslarEl && !stale && meta && meta.seanslar){
     seanslarEl.innerHTML = meta.seanslar.map(x => {
-      const renk = x.chg == null ? '' : (x.chg > 0 ? 'var(--up)' : (x.chg < 0 ? 'var(--down)' : ''));
-      const yuzde = x.chg == null ? '' : (x.chg > 0 ? '+' : '') + '%' + fmtNumber(x.chg, 2);
-      return `<div><span class="s-ad">${x.ad}</span><b>${fmtNumber(x.fiyat, 2)}</b><span style="color:${renk}">${yuzde}</span></div>`;
+      const ond = altSatirOndalik(cfg, x.fiyat || 0);
+      if(x.metin != null) return `<div><span class="s-ad">${x.ad}</span><b>${x.metin}</b></div>`;
+      const d = x.chg != null ? x.chg : x.fark;
+      const renk = d == null ? '' : (d > 0 ? 'var(--up)' : (d < 0 ? 'var(--down)' : ''));
+      const ek = x.chg != null ? (x.chg > 0 ? '+' : '') + '%' + fmtNumber(x.chg, 2)
+               : (x.fark != null ? (x.fark > 0 ? '+' : '') + fmtNumber(x.fark, ond) : '');
+      return `<div><span class="s-ad">${x.ad}</span><b>${fmtNumber(x.fiyat, ond)}</b><span style="color:${renk}">${ek}</span></div>`;
     }).join('');
   }
 
@@ -2722,7 +2727,8 @@ async function fetchYahoo(symbol){
         try{ onceki = await fxGunlukTaban(symbol); }catch(e){ /* günlük çubuk tabanı kalır */ }
       }
       const chgPct = onceki ? ((price - onceki) / onceki) * 100 : 0; // taban yoksa (işlem görmeyen kontrat) değişim bilinmiyor → 0
-      return { price, chgPct, ts: meta.regularMarketTime ? meta.regularMarketTime * 1000 : null };
+      return { price, chgPct, ts: meta.regularMarketTime ? meta.regularMarketTime * 1000 : null,
+               onceki, dusuk: meta.regularMarketDayLow, yuksek: meta.regularMarketDayHigh };
     }catch(e){
       lastErr = e;
       if(attempt === 1) await sleep(1200); // Yahoo'nun bot koruması kararsız — kısa bekleyip bir kez daha dene
@@ -2887,6 +2893,7 @@ async function fetchEtfHibrit(symbol){
   }
   if(!isFinite(sonuc.chgPct)) sonuc.chgPct = fh.chgPct;
   sonuc.seanslar = sonuc.seanslar.filter(Boolean);
+  if(!sonuc.seanslar.length && isFinite(fh.pc) && fh.pc > 0) sonuc.seanslar.push({ ad: 'Önceki', fiyat: fh.pc, fark: fh.price - fh.pc });
   return Object.assign(sonuc, { seans, kapanis: fh.price });
 }
 
@@ -2937,7 +2944,8 @@ async function fetchBinanceTicker(symbols){
   const res = await fetchWithTimeout(url, 10000);
   if(!res.ok) throw new Error('binance hata (' + res.status + ')');
   const sonuc = {};
-  (await res.json()).forEach(t => { sonuc[t.symbol] = { price: parseFloat(t.lastPrice), chgPct: parseFloat(t.priceChangePercent) }; });
+  (await res.json()).forEach(t => { sonuc[t.symbol] = { price: parseFloat(t.lastPrice), chgPct: parseFloat(t.priceChangePercent),
+    acilis: parseFloat(t.openPrice), dusuk: parseFloat(t.lowPrice), yuksek: parseFloat(t.highPrice) }; });
   return sonuc;
 }
 
@@ -2946,7 +2954,7 @@ async function refreshCrypto(){
   let bn = {};
   try{ bn = await fetchBinanceTicker(coinCards.map(c=>c.bnSymbol)); }catch(e){ /* CoinGecko'ya düş */ }
   const eksik = coinCards.filter(cfg => { const d = bn[cfg.bnSymbol]; return !(d && isFinite(d.price)); });
-  coinCards.filter(c => !eksik.includes(c)).forEach(cfg => { const d = bn[cfg.bnSymbol]; renderCard(cfg, d.price, isFinite(d.chgPct) ? d.chgPct : 0, false); });
+  coinCards.filter(c => !eksik.includes(c)).forEach(cfg => { const d = bn[cfg.bnSymbol]; renderCard(cfg, d.price, isFinite(d.chgPct) ? d.chgPct : 0, false, { seanslar: kartEkSatirlari(cfg, d.price, d.acilis, d.dusuk, d.yuksek) }); });
   if(!eksik.length) return;
   try{
     const cgData = await fetchCoingecko(eksik.map(c=>c.symbol));
@@ -2998,7 +3006,7 @@ async function refreshMarketData(){
           const d = batch[cfg.symbol];
           const price = d ? parseFloat(d.close) : NaN;
           if(d && !d.code && !isNaN(price)){
-            renderCard(cfg, price, parseFloat(d.percent_change) || 0, false);
+            renderCard(cfg, price, parseFloat(d.percent_change) || 0, false, { seanslar: kartEkSatirlari(cfg, price, parseFloat(d.previous_close), parseFloat(d.low), parseFloat(d.high)) });
           } else {
             anyError = true;
             lastErrorMsg = (d && d.message) || 'twelvedata veri yok';
@@ -3055,19 +3063,36 @@ async function refreshMarketData(){
   }
 }
 
+// ETF dışı kartların alt satırları: "Dün" (önceki kapanış + düne göre fark) ve "Aralık" (günün en düşük – en yüksek).
+// Kriptoda 24 saatlik pencere kullanılır ("24s önce", "24s aralık"). Değeri olmayan satır eklenmez.
+// Alt satırlarda ondalık: TL kurlarında 4; 1000 ve üstü fiyatlarda (BTC, ETH, altın) 0 — dar kartta satır kesilmesin
+function altSatirOndalik(cfg, deger){ return cfg.fmt === 'try4' ? 4 : (Math.abs(deger) >= 1000 ? 0 : 2); }
+
+function kartEkSatirlari(cfg, fiyat, onceki, dusuk, yuksek){
+  const kripto = cfg.source === 'kripto';
+  const satirlar = [];
+  if(isFinite(onceki) && onceki > 0) satirlar.push({ ad: kripto ? '24s önce' : (cfg.key === 'uranium' ? 'Önceki' : 'Dün'), fiyat: onceki, fark: isFinite(fiyat) ? fiyat - onceki : null });
+  if(isFinite(dusuk) && isFinite(yuksek) && dusuk > 0 && yuksek >= dusuk){
+    const ond = altSatirOndalik(cfg, yuksek);
+    satirlar.push({ ad: kripto ? '24s aralık' : 'Aralık', metin: fmtNumber(dusuk, ond) + ' – ' + fmtNumber(yuksek, ond) });
+  }
+  return satirlar;
+}
+
 // Yahoo/FRED kaynaklı tek bir kartı yeniler; hata olursa mesajını, yoksa null döndürür
 async function kartYahooYenile(cfg){
   if(cfg.key === 'uranium'){
     try{
       const u = await fetchUranyum();
-      renderCard(cfg, u.price, u.chgPct, false, { not: u.not, led: u.led });
+      const uOnceki = u.chgPct ? u.price / (1 + u.chgPct / 100) : null;
+      renderCard(cfg, u.price, u.chgPct, false, { not: u.not, led: u.led, seanslar: kartEkSatirlari(cfg, u.price, uOnceki, null, null) });
       return null;
     }catch(e){ /* Yahoo'ya düş */ }
   }
   try{
     if(cfg.source === 'yahoo'){
-      const { price, chgPct, ts } = await fetchYahoo(cfg.symbol);
-      renderCard(cfg, price, chgPct, false, yahooNotMeta(cfg, ts));
+      const { price, chgPct, ts, onceki, dusuk, yuksek } = await fetchYahoo(cfg.symbol);
+      renderCard(cfg, price, chgPct, false, Object.assign({}, yahooNotMeta(cfg, ts), { seanslar: kartEkSatirlari(cfg, price, onceki, dusuk, yuksek) }));
     } else if(cfg.source === 'fred'){
       const { price, chgPct } = await fetchFred(cfg.symbol);
       renderCard(cfg, price, chgPct, false);
@@ -3081,7 +3106,7 @@ async function kartYahooYenile(cfg){
         const d = (await fetchTwelveDataBatch([cfg.tdSymbol]))[cfg.tdSymbol];
         const fiyat = d ? parseFloat(d.close) : NaN;
         if(d && !d.code && isFinite(fiyat)){
-          renderCard(cfg, fiyat, parseFloat(d.percent_change) || 0, false);
+          renderCard(cfg, fiyat, parseFloat(d.percent_change) || 0, false, { seanslar: kartEkSatirlari(cfg, fiyat, parseFloat(d.previous_close), parseFloat(d.low), parseFloat(d.high)) });
           return null;
         }
       }catch(e2){ /* aşağıda eski değere dönülür */ }
@@ -3895,7 +3920,7 @@ function bpSnapshotOlustur(paylas, haber){
     if(!v || !isFinite(v.price)) return;
     const ch = (v.chgPct >= 0 ? '+' : '') + fmtNumber(v.chgPct, 2) + '%';
     const seans = (v.seans && SEANS_ETIKET[v.seans]) ? ' [' + SEANS_ETIKET[v.seans].toLowerCase() + ']' : '';
-    const digerSeanslar = (v.seanslar || []).map(x => x.ad.toLowerCase() + ' ' + fmtNumber(x.fiyat, 2) + (x.chg != null ? ' (' + (x.chg >= 0 ? '+' : '') + fmtNumber(x.chg, 2) + '%)' : '')).join(', ');
+    const digerSeanslar = (v.seanslar || []).map(x => x.ad.toLowerCase() + ' ' + (x.metin != null ? x.metin : fmtNumber(x.fiyat, c.fmt === 'try4' ? 4 : 2)) + (x.chg != null ? ' (' + (x.chg >= 0 ? '+' : '') + fmtNumber(x.chg, 2) + '%)' : '')).join(', ');
     s.push('- ' + c.label + ': ' + fmtNumber(v.price, c.fmt === 'usd0' ? 0 : (c.fmt === 'try4' ? 4 : 2)) + ' (' + ch + ')' + seans + (digerSeanslar ? ' — ' + digerSeanslar : ''));
   });
 
