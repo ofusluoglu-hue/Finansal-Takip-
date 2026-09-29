@@ -1,0 +1,13 @@
+# Cloudflare Worker ayarları — deploy: npx.cmd wrangler deploy
+# Anahtarlar ve erişim kodu burada DEĞİL, Cloudflare'de secret olarak saklanır.
+name = "weathered-dream-54b3"
+main = "cloudflare-worker.js"
+compatibility_date = "2026-09-25"
+
+# Panelden eklenen değişkenleri deploy sırasında silme
+keep_vars = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "finansal-takip"
+database_id = "6cc1d6f4-3f4e-48fa-8ad9-a64360ca2da0"
