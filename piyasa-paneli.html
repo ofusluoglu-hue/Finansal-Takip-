@@ -1702,6 +1702,13 @@
   .ozet-kart.vurgu .ozet-cubuk{height:6px;border-radius:3px;}
   .ozet-kart.vurgu.orta .ozet-deger{font-size:26px;}   /* öne çıkan ama "bir tık" büyük (ör. Borçlarım › Toplam Borç) */
   #yatirimToplamDeger{color:var(--up);font-size:23px;}
+  .perf-tl{opacity:.85;}
+  .perf-tl .kisa{display:none;}
+  @media (max-width:640px){
+    .perf-satir .s-ad{min-width:44px;}
+    .perf-tl .uzun{display:none;}
+    .perf-tl .kisa{display:inline;}
+  }
   #finansalNetDeger{color:var(--up);}          /* Finansal Durumum › Net Varlık: yeşil (eksi ise .neg → kırmızı) */
   #finansalNetDeger.neg{color:var(--down);}   /* Yatırımlarım › Toplam Yatırım: yeşil, biraz büyük (nabız efekti yukarıda) */
   .puan-rozet{display:inline-block;padding:1px 9px;border-radius:10px;font-size:11.5px;font-weight:700;background:color-mix(in srgb, currentColor 16%, transparent);border:1px solid color-mix(in srgb, currentColor 45%, transparent);margin-right:4px;}
@@ -2051,7 +2058,7 @@
       <div id="yatirimListContainer" class="buyuk-harf"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> ABD ETF/hisse ve kripto fiyatları Piyasa Özeti'ndeki canlı kartlardan (ek istek yapılmadan), altın ons fiyatından gram başına hesaplanır ve güncel dolar kuruyla TL'ye çevrilir. BİST için ücretsiz canlı veri kaynağı olmadığından hisse adını ve güncel TL değerini elle girip ✎ ile güncellersin. LED: yeşil canlı fiyat, kırmızı son bilinen fiyat. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Toplam Yatırım kartındaki Günlük / Haftalık / Aylık değişim, bugünkü adetlerinin 1, 7 ve 30 gün önceki fiyat ve kurla değerine göredir (yalnızca piyasa hareketi; ekleme/çıkarma etkisi yok, BİST sabit sayılır). ABD ETF/hisse ve kripto fiyatları Piyasa Özeti'ndeki canlı kartlardan (ek istek yapılmadan), altın ve gümüş ons fiyatından gram başına hesaplanır ve güncel dolar kuruyla TL'ye çevrilir. BİST için ücretsiz canlı veri kaynağı olmadığından hisse adını ve güncel TL değerini elle girip ✎ ile güncellersin. LED: yeşil canlı fiyat, kırmızı son bilinen fiyat. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: YATIRIMLARIM ================= -->
 
@@ -5332,6 +5339,78 @@ function deleteYatirim(id){
   });
 }
 
+// ---------- Yatırım performansı: günlük / haftalık / aylık ----------
+// Mevcut adetler 1 gün, 7 gün ve 30 gün önceki kapanış fiyatları ve o günkü dolar kuruyla değerlenir; bugünkü değerle
+// karşılaştırılır. Böylece değişim yalnızca piyasa hareketini gösterir (ekleme/çıkarma etkisi yok). BİST elle girildiği için
+// sabit sayılır. Seriler: ETF/altın/gümüş/kur Yahoo günlük, kripto Binance günlük; 30 dakikada bir tazelenir (bellekte).
+const PERF_ARALIKLAR = [['Günlük', 1], ['Haftalık', 7], ['Aylık', 30]];
+let _perfGecmis = { t: 0, seriler: {}, cekiliyor: false };
+
+async function perfSerileriGetir(){
+  if(_perfGecmis.cekiliyor || Date.now() - _perfGecmis.t < 30 * 60 * 1000) return false;
+  const list = manuelListeYukle(YATIRIM_KEY);
+  if(!list.some(it => it.tur !== 'bist')) return false;
+  _perfGecmis.cekiliyor = true;
+  const yahoo = sembol => async () => {
+    const res = await fetchWithFallback(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sembol)}?interval=1d&range=3mo`);
+    const r = (await res.json()).chart.result[0];
+    const cl = (r.indicators.quote[0] || {}).close || [];
+    return (r.timestamp || []).map((t, i) => [t * 1000, cl[i]]).filter(x => x[1] != null);
+  };
+  const binance = sembol => async () => {
+    const res = await fetchWithTimeout(`https://api.binance.com/api/v3/klines?symbol=${sembol}&interval=1d&limit=40`, 10000);
+    return (await res.json()).map(k => [k[0], parseFloat(k[4])]);   // günün açılış zamanı (tarih için), kapanış
+  };
+  const istek = new Map([['USDTRY', yahoo('USDTRY=X')]]);
+  list.forEach(it => {
+    const kart = CARDS.find(c => c.key === it.sembol);
+    if(it.tur === 'etf' && kart) istek.set(it.sembol, yahoo(kart.symbol));
+    else if(it.tur === 'kripto' && kart && kart.bnSymbol) istek.set(it.sembol, binance(kart.bnSymbol));
+    else if(it.tur === 'emtia'){ const k = it.sembol === 'silver' ? 'silver' : 'gold'; istek.set(k, yahoo(k === 'silver' ? 'SI=F' : 'GC=F')); }
+  });
+  const seriler = {};
+  await Promise.all([...istek].map(async ([k, fn]) => { try{ seriler[k] = await fn(); }catch(e){ /* bu seri yok */ } }));
+  _perfGecmis = { t: Date.now(), seriler, cekiliyor: false };
+  return true;
+}
+// Verilen günün (UTC takvim günü) ya da öncesindeki son kapanış. Saate göre değil güne göre seçilir: Yahoo günlük çubuğu
+// açılış saatiyle işaretlidir; saate göre kesmek "dün"ü bir önceki işlem gününe kaydırırdı. Hafta sonu/tatilde son işlem günü.
+function seriDeger(seri, ms){
+  if(!seri || !seri.length) return null;
+  const hedef = new Date(ms).toISOString().slice(0, 10);
+  let v = null;
+  for(const [t, c] of seri){ if(new Date(t).toISOString().slice(0, 10) <= hedef) v = c; else break; }
+  return v;
+}
+function yatirimPerformans(bugunTL){
+  const list = manuelListeYukle(YATIRIM_KEY);
+  const S = _perfGecmis.seriler;
+  if(!list.length || !S.USDTRY) return null;
+  return PERF_ARALIKLAR.map(([ad, gun]) => {
+    const ms = Date.now() - gun * 86400000;
+    const kur = seriDeger(S.USDTRY, ms);
+    if(!kur) return { ad, yok: true };
+    let gecmis = 0, eksik = false;
+    list.forEach(it => {
+      if(it.tur === 'bist'){ gecmis += it.manuelTutarTL || 0; return; }
+      const k = it.tur === 'emtia' ? (it.sembol === 'silver' ? 'silver' : 'gold') : it.sembol;
+      const fiyat = seriDeger(S[k], ms);
+      if(fiyat == null){ eksik = true; return; }
+      gecmis += (it.tur === 'emtia' ? fiyat / 31.1034768 : fiyat) * it.miktar * kur;
+    });
+    if(eksik || !(gecmis > 0)) return { ad, yok: true };
+    return { ad, fark: bugunTL - gecmis, yuzde: (bugunTL / gecmis - 1) * 100 };
+  });
+}
+function perfSatirHtml(p){
+  if(!p || p.yok) return `<div><span class="s-ad">${p ? p.ad : ''}</span><b style="color:var(--muted-2);">—</b></div>`;
+  const yon = p.yuzde > 0.005 ? 'up' : (p.yuzde < -0.005 ? 'down' : 'flat');
+  const renk = yon === 'up' ? 'var(--up)' : (yon === 'down' ? 'var(--down)' : 'var(--muted)');
+  const ok = yon === 'up' ? '▲' : (yon === 'down' ? '▼' : '–');
+  const isaret = p.fark >= 0 ? '+' : '−';
+  return `<div class="perf-satir"><span class="s-ad">${p.ad}</span><b style="color:${renk};">${ok} %${fmtNumber(Math.abs(p.yuzde), 2)}</b><span class="perf-tl" style="color:${renk};"><span class="uzun">${isaret}₺${fmtNumber(Math.abs(p.fark), 0)}</span><span class="kisa">${isaret}${kisaTL(Math.abs(p.fark))}</span></span></div>`;
+}
+
 // ETF/Kripto: adet günceller. Emtia: gram günceller. BİST: TL değerini günceller.
 function guncelleYatirim(id){
   const list = manuelListeYukle(YATIRIM_KEY);
@@ -5502,10 +5581,11 @@ function renderYatirim(){
   document.getElementById('yatirimToplamDegerUSD').textContent = (list.length && usd) ? '≈ $' + fmtNumber(toplamYatirim / usd, 0) : '';
   document.getElementById('yatirimBolumToplam').textContent = list.length ? '₺' + fmtNumber(toplamYatirim, 0) : '';
   const dolarBazli = (kategoriToplam.etf || 0) + (kategoriToplam.kripto || 0) + (kategoriToplam.emtia || 0);
-  ozetDetayYaz('yatirimOzetDetay', list.length ? [
-    ['Varlık', list.length + ' kalem'],
-    toplamYatirim > 0 ? ['Dolar bazlı', '%' + fmtNumber(dolarBazli / toplamYatirim * 100, 1)] : null,
-  ] : []);
+  const perf = list.length ? yatirimPerformans(toplamYatirim) : null;
+  const perfEl = document.getElementById('yatirimOzetDetay');
+  if(perfEl) perfEl.innerHTML = !list.length ? '' : (perf ? perf.map(perfSatirHtml).join('')
+    : '<div><span class="s-ad">Performans</span><b style="color:var(--muted-2);">yükleniyor…</b></div>');
+  perfSerileriGetir().then(yeni => { if(yeni) renderYatirim(); });
 
   // Yatırım / Borç oranı — kart kenarı ve değer rengi: borca eşit/fazlaysa yeşil, en az yarısıysa sarı, azsa kırmızı
   const toplamBorc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
