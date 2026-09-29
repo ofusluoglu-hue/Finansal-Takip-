@@ -115,7 +115,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 ## 8. Harcama İstatistikleri
 
 - Veri `ft_harcamalar_v1` dizisinde (senkronda id'ye göre birleşir):
-  - `{ id:'h-…', tur:'kayit', tarih:'YYYY-MM-DD', kat, tutar, not }` — tek harcama
+  - `{ id:'h-…', tur:'kayit', tarih:'YYYY-MM-01', kat, tutar, not }` — harcama kalemi. Harcamalar **ay bazında tek kalem** girilir (ör. Eylül · Market · ₺32.000): formda gün yerine ay seçilir (son 18 ay; ayın ilk 10 gününde varsayılan önceki ay), listede "Eylül 2026" görünür, aynı ay ve kategorideki kalemler toplanır, aynı ayda en son eklenen üstte
   - `{ id:'ay-YYYY-MM-kat', tur:'aylik', ay:'YYYY-MM', kat, tutar }` — o ayın kategori toplamı; varsa o ay ve kategori için **kayıtların toplamı yerine** geçer (tabloda ✎ ile işaretli)
 - Kategoriler (`HARCAMA_KATEGORILER`): market, akaryakıt, kişisel, fatura ve aidat, ev giderleri, yeme-içme ve eğlence, sağlık, eğitim, diğer; ayrıca formda seçilmeyen **Kategorisiz** (`genel`) — kategori ayrımı olmayan eski aylık toplamlar (2025 Mart–Aralık) için.
 - **Dolar ve gram altın karşılığı:** her ayın harcaması o ayın ortalama kuruyla çevrilir (`aylikKurlariGuncelle`: Yahoo günlük USDTRY=X ve GC=F kapanışlarının ay ortalaması; gram = ons × kur ÷ 31,1035). Tablo altında $ ve gr satırları, kartlarda ve grafik ipucunda gösterilir; yıl toplamı $/gr her ayın kendi kuruyla toplanır.
@@ -154,6 +154,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Harcama girişi ay bazında: tarih yerine ay seçimi (ayın ilk 10 gününde önceki ay varsayılan), kayıtlarda "Eylül 2026", en son eklenen üstte |
 | 2026-09-29 | BİST hisseleri kod + adetle eklenip arka planda takip ediliyor (Yahoo KOD.IS, 15 dk gecikmeli, günlük değişim, performansa dahil); geçersiz kod anında uyarı |
 | 2026-09-29 | Yatırımlarım: Toplam Yatırım kartında günlük / haftalık / aylık performans (mevcut adetlerin geçmiş fiyatlarla değeri) |
 | 2026-09-29 | Varlık Dağılımı pastası SVG halka grafiğe dönüştü (pürüzsüz kenar, eşit aralıklar, küçük paylar en az 14°) |
