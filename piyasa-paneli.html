@@ -2311,7 +2311,7 @@
       <div id="harcamaKayitlar"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Harcamaları tek tek girersin (tarih, kategori, tutar, not); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. İstersen bir ayın kategori toplamını tablodan doğrudan da yazabilirsin — o ay ve kategori için elle yazılan toplam esas alınır. Aylık ortalama, seçili yılda harcama girilmiş aylar üzerinden hesaplanır; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Harcamaları tek tek girersin (tarih, kategori, tutar, not); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. İstersen bir ayın kategori toplamını tablodan doğrudan da yazabilirsin — o ay ve kategori için elle yazılan toplam esas alınır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: HARCAMA İSTATİSTİKLERİ ================= -->
 
@@ -6043,8 +6043,15 @@ function harcamaTablosu(yil){
   const katToplam = Object.fromEntries(HARCAMA_KATEGORILER.map(({ k }) => [k, hucre[k].reduce((t, h) => t + h.tutar, 0)]));
   const yilToplam = ayToplam.reduce((t, x) => t + x, 0);
   const veriliAylar = ayToplam.map((x, i) => x > 0 ? i : -1).filter(i => i >= 0);
-  const ortalama = veriliAylar.length ? yilToplam / veriliAylar.length : 0;
-  return { hucre, ayToplam, katToplam, yilToplam, veriliAylar, ortalama };
+  // Ortalama yalnızca tamamlanmış aylardan: süren ay (bu yılın bu ayı) yarım olduğu için ortalamayı düşürürdü.
+  // Yalnızca süren ayda veri varsa o kullanılır.
+  const simdi = new Date();
+  const surenAy = yil === simdi.getFullYear() ? simdi.getMonth() : -1;
+  const tamamAylar = veriliAylar.filter(i => i !== surenAy);
+  const ortAylar = tamamAylar.length ? tamamAylar : veriliAylar;
+  const ortalama = ortAylar.length ? ortAylar.reduce((t, i) => t + ayToplam[i], 0) / ortAylar.length : 0;
+  const katOrtalama = Object.fromEntries(HARCAMA_KATEGORILER.map(({ k }) => [k, ortAylar.length ? ortAylar.reduce((t, i) => t + hucre[k][i].tutar, 0) / ortAylar.length : 0]));
+  return { hucre, ayToplam, katToplam, katOrtalama, yilToplam, veriliAylar, ortAylar, surenAy, ortalama };
 }
 
 // Eksen için "güzel" adım: 1, 2, 2,5, 5 × 10^n
@@ -6136,19 +6143,25 @@ function renderHarcama(){
   istYaz('harcamaBuAyEtiket', (buYil ? 'Bu ay · ' : '') + AY_UZUN[refAy]);
   istYaz('harcamaBuAy', '₺' + fmtNumber(v, 0));
   const degEl = document.getElementById('harcamaBuAyDegisim');
+  const suruyor = refAy === T.surenAy;
   if(degEl){
-    if(onceki > 0 && v > 0){
+    if(suruyor && v > 0 && T.ortalama > 0){
+      const gun = simdi.getDate(), ayGun = new Date(simdi.getFullYear(), simdi.getMonth() + 1, 0).getDate();
+      degEl.innerHTML = `ortalamanın <b style="color:var(--text);">%${fmtNumber(v / T.ortalama * 100, 0)}</b> kadarı <span class="ozet-soluk">· ayın ${gun}/${ayGun} günü</span>`;
+    } else if(onceki > 0 && v > 0){
       const d = (v / onceki - 1) * 100;
       degEl.innerHTML = `<span style="color:${d > 0 ? 'var(--down)' : 'var(--up)'};">${d > 0 ? '▲' : '▼'} %${fmtNumber(Math.abs(d), 1)}</span> <span class="ozet-soluk">${AY_UZUN[refAy - 1]} ayına göre</span>`;
     } else degEl.textContent = v > 0 ? '' : 'henüz harcama yok';
   }
   const ayKat = HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][refAy].tutar]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
-  ozetDetayYaz('harcamaBuAyDetay', [ayKat[0] ? ['En büyük', ayKat[0][0] + ' ₺' + fmtNumber(ayKat[0][1], 0)] : null, T.ortalama && v ? ['Ortalamaya', (v >= T.ortalama ? '+' : '−') + '%' + fmtNumber(Math.abs(v / T.ortalama - 1) * 100, 0)] : null]);
+  ozetDetayYaz('harcamaBuAyDetay', [ayKat[0] ? ['En büyük', ayKat[0][0] + ' ₺' + fmtNumber(ayKat[0][1], 0)] : null,
+    suruyor ? (onceki > 0 ? [AY_UZUN[refAy - 1], '₺' + fmtNumber(onceki, 0)] : null)
+            : (T.ortalama && v ? ['Ortalamaya', (v >= T.ortalama ? '+' : '−') + '%' + fmtNumber(Math.abs(v / T.ortalama - 1) * 100, 0)] : null)]);
 
   istYaz('harcamaOrtEtiket', _harcamaYil + ' aylık ortalama');
   istYaz('harcamaOrtalama', T.ortalama ? '₺' + fmtNumber(T.ortalama, 0) : '—');
-  istYaz('harcamaOrtAlt', T.veriliAylar.length ? T.veriliAylar.length + ' ay üzerinden' : '');
-  const siraliAy = T.veriliAylar.map(i => [i, T.ayToplam[i]]).sort((a, b) => b[1] - a[1]);
+  istYaz('harcamaOrtAlt', T.ortAylar.length ? T.ortAylar.length + (T.ortAylar.length < T.veriliAylar.length ? ' tamamlanmış ay' : ' ay') + ' üzerinden' : '');
+  const siraliAy = T.ortAylar.map(i => [i, T.ayToplam[i]]).sort((a, b) => b[1] - a[1]);
   ozetDetayYaz('harcamaOrtDetay', siraliAy.length > 1 ? [['En yüksek', AY_UZUN[siraliAy[0][0]] + ' ₺' + fmtNumber(siraliAy[0][1], 0)], ['En düşük', AY_UZUN[siraliAy[siraliAy.length - 1][0]] + ' ₺' + fmtNumber(siraliAy[siraliAy.length - 1][1], 0)]] : []);
 
   istYaz('harcamaYilEtiket', _harcamaYil + ' toplamı');
@@ -6170,12 +6183,11 @@ function renderHarcama(){
   const katEl = document.getElementById('harcamaKategoriler');
   if(katEl){
     const enBuyuk = katSira.length ? katSira[0].t : 1;
-    const aySay = T.veriliAylar.length || 1;
     katEl.innerHTML = katSira.length ? katSira.map(x => `
-      <div class="hk-satir" title="${escapeHtml(x.ad)}: yıl toplamı ₺${fmtNumber(x.t, 0)}, aylık ortalama ₺${fmtNumber(x.t / aySay, 0)}">
+      <div class="hk-satir" title="${escapeHtml(x.ad)}: yıl toplamı ₺${fmtNumber(x.t, 0)}, aylık ortalama ₺${fmtNumber(T.katOrtalama[x.k], 0)}">
         <div class="hk-ad">${escapeHtml(x.ad)}</div>
         <div class="hk-iz"><div style="width:${(x.t / enBuyuk * 100).toFixed(1)}%;"></div></div>
-        <div class="hk-deger">₺${fmtNumber(x.t, 0)}<small>₺${fmtNumber(x.t / aySay, 0)}/ay</small></div>
+        <div class="hk-deger">₺${fmtNumber(x.t, 0)}<small>₺${fmtNumber(T.katOrtalama[x.k], 0)}/ay</small></div>
       </div>`).join('') : '<div class="bos-not">Henüz harcama yok.</div>';
   }
 
@@ -6183,13 +6195,12 @@ function renderHarcama(){
   const tablo = document.getElementById('harcamaTablo');
   if(tablo){
     const gelecekMi = a => buYil && a > simdi.getMonth();
-    const aySay = T.veriliAylar.length || 1;
     tablo.innerHTML = `<thead><tr><th>Kategori</th>${AY_KISA.map((a, i) => `<th class="${buYil && i === simdi.getMonth() ? 'bu-ay' : ''}">${a}</th>`).join('')}<th>Ort.</th><th>Toplam</th></tr></thead>
       <tbody>${HARCAMA_KATEGORILER.map(({ k, ad }) => `<tr><td>${escapeHtml(ad)}</td>${T.hucre[k].map((h, a) => {
         const sinif = ['hucre', h.tutar ? '' : 'bos', gelecekMi(a) ? 'gelecek' : '', h.elle ? 'elle' : ''].filter(Boolean).join(' ');
         const ipucu = h.elle ? `Elle yazılan toplam${h.kayitSayisi ? ' (kayıtların toplamı ₺' + fmtNumber(h.kayitToplam, 0) + ')' : ''}` : (h.kayitSayisi ? h.kayitSayisi + ' kayıt' : 'Toplam yazmak için tıkla');
         return `<td class="${sinif}" title="${ipucu}" onclick="harcamaHucreDuzenle(this, '${k}', ${a})">${h.tutar ? fmtNumber(h.tutar, 0) : '—'}</td>`;
-      }).join('')}<td class="ozet-kolon">${T.katToplam[k] ? fmtNumber(T.katToplam[k] / aySay, 0) : '—'}</td><td class="ozet-kolon">${T.katToplam[k] ? fmtNumber(T.katToplam[k], 0) : '—'}</td></tr>`).join('')}</tbody>
+      }).join('')}<td class="ozet-kolon">${T.katOrtalama[k] ? fmtNumber(T.katOrtalama[k], 0) : '—'}</td><td class="ozet-kolon">${T.katToplam[k] ? fmtNumber(T.katToplam[k], 0) : '—'}</td></tr>`).join('')}</tbody>
       <tfoot><tr><td>Toplam</td>${T.ayToplam.map(v2 => `<td>${v2 ? fmtNumber(v2, 0) : '—'}</td>`).join('')}<td>${T.ortalama ? fmtNumber(T.ortalama, 0) : '—'}</td><td>${T.yilToplam ? fmtNumber(T.yilToplam, 0) : '—'}</td></tr></tfoot>`;
   }
   istYaz('harcamaTabloToplam', T.yilToplam ? '₺' + fmtNumber(T.yilToplam, 0) : '');
@@ -6294,10 +6305,10 @@ function harcamaOzetMetni(){
   const T = harcamaTablosu(yil);
   if(!T.yilToplam) return null;
   const katlar = HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.katToplam[k]]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1])
-    .map(([ad, t]) => ad + ' ₺' + fmtNumber(t, 0) + ' (ort. ₺' + fmtNumber(t / (T.veriliAylar.length || 1), 0) + '/ay)').join(', ');
+    .map(([ad, t]) => ad + ' ₺' + fmtNumber(t, 0) + ' (ort. ₺' + fmtNumber(T.katOrtalama[HARCAMA_KATEGORILER.find(x => x.ad === ad).k], 0) + '/ay)').join(', ');
   const buAyKat = HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][ay].tutar]).filter(x => x[1] > 0).map(([ad, t]) => ad + ' ₺' + fmtNumber(t, 0)).join(', ');
-  return 'Harcamalar ' + yil + ': yıl toplamı ₺' + fmtNumber(T.yilToplam, 0) + ', aylık ortalama ₺' + fmtNumber(T.ortalama, 0) + ' (' + T.veriliAylar.length + ' ay)'
-    + ' | Bu ay (' + AY_UZUN[ay] + ') ₺' + fmtNumber(T.ayToplam[ay], 0) + (buAyKat ? ': ' + buAyKat : '')
+  return 'Harcamalar ' + yil + ': yıl toplamı ₺' + fmtNumber(T.yilToplam, 0) + ', aylık ortalama ₺' + fmtNumber(T.ortalama, 0) + ' (' + T.ortAylar.length + ' tamamlanmış ay)'
+    + ' | Bu ay (' + AY_UZUN[ay] + ', ayın ' + new Date().getDate() + '. günü, sürüyor) ₺' + fmtNumber(T.ayToplam[ay], 0) + (buAyKat ? ': ' + buAyKat : '')
     + ' | Kategoriler: ' + katlar
     + ' | Aylık toplamlar: ' + T.ayToplam.map((v, i) => v ? AY_KISA[i] + ' ₺' + fmtNumber(v, 0) : null).filter(Boolean).join(', ');
 }
