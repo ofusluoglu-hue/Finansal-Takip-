@@ -1390,6 +1390,9 @@
   .bolum-toplam{margin-left:auto;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;}
   .bolum-ekle{background:transparent;border:1px solid var(--border);color:var(--amber);font-family:inherit;font-size:12px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;}
   .bolum-ekle:hover{border-color:var(--amber);}
+  .bolum-secim{background:transparent;border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;font-weight:600;padding:4px 6px;border-radius:7px;cursor:pointer;}
+  .bolum-secim:hover, .bolum-secim:focus{border-color:var(--amber);outline:none;}
+  .bolum-secim option{background:var(--panel);color:var(--text);}
   .bolum-toplam:empty + .bolum-ekle{margin-left:auto;}
   .bolum-form{display:none;background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:12px 12px 6px;margin:6px 0 8px;}
   .bolum-form.acik{display:block;}
@@ -1679,8 +1682,6 @@
   .ist-deger{font-size:20px;font-weight:700;margin-top:4px;}
   .section-title{font-size:15px;}
   /* ---- Harcama İstatistikleri ---- */
-  .harcama-filtre{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--muted);}
-  .harcama-filtre .ai-input{flex:0 0 auto;min-width:0;width:auto;min-height:0;padding:6px 10px;font-size:13px;}
   .harcama-ikili{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;}
   .harcama-ikili > .bolum{margin-bottom:14px;}
   .harcama-grafik{position:relative;min-height:230px;}
@@ -1698,18 +1699,14 @@
   .harcama-ipucu div{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums;}
   .harcama-bos{display:flex;align-items:center;justify-content:center;min-height:200px;font-size:12px;color:var(--muted-2);text-align:center;}
   .harcama-kat-liste{display:flex;flex-direction:column;gap:9px;padding:4px 0 8px;}
-  .hk-satir{display:grid;grid-template-columns:minmax(0,120px) minmax(40px,1fr) auto;align-items:center;gap:10px;font-size:12.5px;}
-  .hk-ad{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .hk-iz{height:9px;border-radius:5px;background:#1b212a;overflow:hidden;}
-  .hk-iz > div{height:100%;border-radius:0 4px 4px 0;background:var(--amber);}
-  .hk-deger{text-align:right;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .hk-deger small{font-weight:500;color:var(--muted-2);margin-left:6px;}
-  .harcama-tablo-kap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;margin-top:4px;}
-  .harcama-tablo{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums;}
-  .harcama-tablo th, .harcama-tablo td{padding:7px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--border);}
-  .harcama-tablo th{font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);background:var(--panel-2);}
-  .harcama-tablo th:first-child, .harcama-tablo td:first-child{text-align:left;position:sticky;left:0;background:var(--panel);z-index:1;}
-  .harcama-tablo th:first-child{background:var(--panel-2);}
+  .harcama-kat-liste .ist-hlbl{flex-basis:130px;}
+  .harcama-kat-liste .ist-hval{color:var(--text) !important;font-size:12px;}
+  /* Aylık tablo = Portföy İstatistikleri tablosu (.ist-tablo) + 14 sütun için sıkı hücreler ve yapışkan ilk sütun */
+  .ist-tablo.harcama-tablo{font-size:12px;font-variant-numeric:tabular-nums;}
+  .ist-tablo.harcama-tablo th, .ist-tablo.harcama-tablo td{padding:7px 8px;text-align:right;white-space:nowrap;}
+  .ist-tablo.harcama-tablo th{font-size:10.5px;}
+  .harcama-tablo th:first-child, .harcama-tablo td:first-child{text-align:left !important;position:sticky;left:0;background:var(--panel);z-index:1;}
+  .harcama-tablo th:first-child{background:#1b222c;}
   .harcama-tablo td.hucre{cursor:pointer;color:var(--text);}
   .harcama-tablo td.hucre:hover{background:#1a212b;}
   .harcama-tablo td.hucre.bos{color:var(--muted-2);}
@@ -1718,11 +1715,10 @@
   .harcama-tablo td.hucre input{width:84px;background:var(--panel-2);border:1px solid var(--amber);border-radius:5px;color:var(--text);font-family:inherit;font-size:12px;padding:3px 5px;text-align:right;}
   .harcama-tablo th.bu-ay{color:var(--amber);}
   .harcama-tablo .ozet-kolon{color:var(--muted);font-weight:600;}
-  .harcama-tablo tfoot td{font-weight:700;color:var(--text);background:var(--panel-2);border-bottom:none;}
-  .harcama-tablo tfoot td:first-child{background:var(--panel-2);}
+  .ist-tablo.harcama-tablo tfoot td{font-weight:800;color:var(--text);background:#161c25;border-bottom:1px solid var(--border);}
+  .harcama-tablo tfoot td:first-child{background:#161c25;}
   .harcama-tablo tfoot tr.karsilik td{font-weight:600;color:var(--muted);font-size:11.5px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
-  .harcama-ay-sec{flex:0 0 auto !important;min-width:0 !important;width:auto;min-height:0 !important;padding:5px 8px !important;font-size:12px !important;}
   @media (max-width:900px){ .harcama-ikili{grid-template-columns:1fr;gap:0;} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1983,88 +1979,81 @@
   <div class="tab-panel" id="tab-istatistik">
     <div class="page-head"><h1>Portföy İstatistikleri</h1></div>
 
-    <div class="section-panel ist-genel-panel">
-      <div class="section-title">Genel Portföy Puanı</div>
-      <div class="ist-genel">
-        <div class="ist-genel-sol">
-          <div class="ist-etiket">4 kriterin ortalaması</div>
-          <div class="ist-genel-puan"><span id="istGenelPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
-          <div class="ist-genel-derece" id="istGenelDerece"></div>
-          <div class="ist-bar"><div id="istGenelBar"></div></div>
-        </div>
-        <div class="ist-genel-sag" id="istGenelListe"></div>
+    <div class="ozet-grid">
+      <div class="ozet-kart" id="istGenelKart">
+        <div class="ozet-etiket">Genel portföy puanı</div>
+        <div class="ozet-deger"><span id="istGenelPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
+        <div class="ozet-alt"><span id="istGenelDerece"></span> <span class="ozet-soluk">· 4 kriterin ortalaması</span></div>
+        <div class="ozet-cubuk"><div id="istGenelBar"></div></div>
+        <div class="card-seanslar"><div><span class="s-ad">En güçlü</span><b><span id="istGenelEnIyi">—</span></b></div><div><span class="s-ad">En zayıf</span><b><span id="istGenelEnKotu">—</span></b></div></div>
       </div>
-      <div class="ist-uyari">Derece aralıkları: 70 ve üzeri <b style="color:var(--up)">İyi</b> · 40–69 <b>Orta</b> · 40 altı <b style="color:var(--down)">Zayıf</b>. Her kriter 0–100 arası puanlanır, genel puan bunların basit ortalamasıdır.</div>
+      <div class="ozet-kart" id="istKart">
+        <div class="ozet-etiket">Portföy yaşı</div>
+        <div class="ozet-deger"><span id="istPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
+        <div class="ozet-alt">Ort. <span id="istOrtYas">—</span></div>
+        <div class="ozet-cubuk"><div id="istBar"></div></div>
+        <div class="card-seanslar"><div><span class="s-ad">Ağırlıklı</span><b><span id="istAgirlikliYas">—</span></b></div><div><span class="s-ad">Toplam yaş</span><b><span id="istToplamYas">—</span></b></div></div>
+      </div>
+      <div class="ozet-kart" id="istCesKart">
+        <div class="ozet-etiket">Çeşitlendirme</div>
+        <div class="ozet-deger"><span id="istCesPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
+        <div class="ozet-alt">Etkin <span id="istCesNeff">—</span> varlık <span class="ozet-soluk" id="istCesN"></span></div>
+        <div class="ozet-cubuk"><div id="istCesBar"></div></div>
+        <div class="card-seanslar"><div><span class="s-ad">En büyük</span><b><span id="istCesEnBuyuk">—</span> <span id="istCesEnBuyukAd"></span></b></div><div><span class="s-ad">Kategori</span><b><span id="istCesKat">—</span> <span id="istCesKatAd"></span></b></div></div>
+      </div>
+      <div class="ozet-kart" id="istBorcKart">
+        <div class="ozet-etiket">Borç karşılama</div>
+        <div class="ozet-deger"><span id="istBorcPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
+        <div class="ozet-alt"><span id="istBorcKat">—</span> <span class="ozet-soluk">tüm varlıkla</span></div>
+        <div class="ozet-cubuk"><div id="istBorcBar"></div></div>
+        <div class="card-seanslar"><div><span class="s-ad">Yatırım</span><b><span id="istBorcYatirim">—</span></b></div><div><span class="s-ad">Borç</span><b><span id="istBorcToplam">—</span></b></div></div>
+      </div>
+      <div class="ozet-kart" id="istDovKart">
+        <div class="ozet-etiket">Döviz koruması</div>
+        <div class="ozet-deger"><span id="istDovPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
+        <div class="ozet-alt">Dolar bazlı <span id="istDovDolar">—</span></div>
+        <div class="ozet-cubuk"><div id="istDovBar"></div></div>
+        <div class="card-seanslar"><div><span class="s-ad">TL bazlı</span><b><span id="istDovTl">—</span></b></div><div><span class="s-ad">Dolar tutar</span><b><span id="istDovUsd">—</span> <span class="ozet-soluk" id="istDovUsdAlt"></span></b></div></div>
+      </div>
     </div>
 
-    <div class="section-panel">
-      <div class="section-title">1. Portföy Yaşı</div>
-      <div class="ist-ozet">
-        <div class="ist-kutu ist-puan">
-          <div class="ist-etiket">Portföy yaşı puanı</div>
-          <div class="ist-deger"><span id="istPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
-          <div class="ist-bar"><div id="istBar"></div></div>
-          <div class="ist-alt">Puan = ortalama yaş ÷ 100 yıl × 100</div>
-        </div>
-        <div class="ist-kutu"><div class="ist-etiket">Ortalama yaş</div><div class="ist-deger" id="istOrtYas">—</div><div class="ist-alt" id="istVarlikSay"></div></div>
-        <div class="ist-kutu"><div class="ist-etiket">Değere göre ağırlıklı yaş</div><div class="ist-deger" id="istAgirlikliYas">—</div><div class="ist-alt">tutarı büyük varlık daha çok etkiler</div></div>
-        <div class="ist-kutu"><div class="ist-etiket">Toplam yaş</div><div class="ist-deger" id="istToplamYas">—</div><div class="ist-alt">tüm varlıkların yaşları toplamı</div></div>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Portföy yaşı</span>
+        <span class="bolum-toplam" id="istBaslik"></span>
       </div>
+      <div class="ozet-not" id="istVarlikSay" style="margin-bottom:8px;"></div>
       <div id="istGrafikAlan"></div>
       <div id="istTablo"></div>
-      <div id="istUyari" class="ist-uyari"></div>
+      <div id="istUyari" class="ozet-not" style="white-space:normal;margin:8px 0 6px;"></div>
+    </div>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Çeşitlendirme</span>
+        <span class="bolum-toplam" id="istCesBaslik"></span>
+      </div>
+      <div id="istCesDetay" style="padding-bottom:8px;"></div>
+    </div>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Borç karşılama</span>
+        <span class="bolum-toplam" id="istBorcBaslik"></span>
+      </div>
+      <div id="istBorcDetay" style="padding-bottom:8px;"></div>
+    </div>
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Döviz koruması</span>
+        <span class="bolum-toplam" id="istDovBaslik"></span>
+      </div>
+      <div id="istDovDetay" style="padding-bottom:8px;"></div>
     </div>
 
-    <div class="section-panel">
-      <div class="section-title">2. Çeşitlendirme</div>
-      <div class="ist-ozet">
-        <div class="ist-kutu ist-puan">
-          <div class="ist-etiket">Çeşitlendirme puanı</div>
-          <div class="ist-deger"><span id="istCesPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
-          <div class="ist-bar"><div id="istCesBar"></div></div>
-          <div class="ist-alt">Puan = (etkin varlık sayısı − 1) ÷ 9 × 100</div>
-        </div>
-        <div class="ist-kutu"><div class="ist-etiket">Etkin varlık sayısı</div><div class="ist-deger" id="istCesNeff">—</div><div class="ist-alt" id="istCesN"></div></div>
-        <div class="ist-kutu"><div class="ist-etiket">En büyük pozisyon</div><div class="ist-deger" id="istCesEnBuyuk">—</div><div class="ist-alt" id="istCesEnBuyukAd"></div></div>
-        <div class="ist-kutu"><div class="ist-etiket">En büyük kategori</div><div class="ist-deger" id="istCesKat">—</div><div class="ist-alt" id="istCesKatAd"></div></div>
-      </div>
-      <div id="istCesDetay"></div>
-      <div class="ist-uyari">Etkin varlık sayısı = 1 ÷ Σ(pay²). 10 varlık eşit ağırlıkta olsaydı etkin sayı 10, puan 100 olurdu; tek bir varlığa yaslanan portföy 0 alır.</div>
-    </div>
-
-    <div class="section-panel">
-      <div class="section-title">3. Borç Karşılama</div>
-      <div class="ist-ozet">
-        <div class="ist-kutu ist-puan">
-          <div class="ist-etiket">Borç karşılama puanı</div>
-          <div class="ist-deger"><span id="istBorcPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
-          <div class="ist-bar"><div id="istBorcBar"></div></div>
-          <div class="ist-alt">Puan = yatırımlar ÷ toplam borç × 100</div>
-        </div>
-        <div class="ist-kutu"><div class="ist-etiket">Yatırımlarım</div><div class="ist-deger" id="istBorcYatirim">—</div><div class="ist-alt">canlı portföy değeri</div></div>
-        <div class="ist-kutu"><div class="ist-etiket">Toplam borç</div><div class="ist-deger" id="istBorcToplam" style="color:var(--down)">—</div><div class="ist-alt">kredi, kart, KMH, nakit borç</div></div>
-        <div class="ist-kutu"><div class="ist-etiket">Toplam varlıkla karşılama</div><div class="ist-deger" id="istBorcKat">—</div><div class="ist-alt">(varlıklarım + yatırımlarım) ÷ borç</div></div>
-      </div>
-      <div id="istBorcDetay"></div>
-      <div class="ist-uyari">Yatırımların borcun tamamını karşılaması 100 puandır (en fazla 100). Borç yoksa tam puan verilir. Konut/arsa gibi likit olmayan varlıklar bu puana dahil değildir, yanındaki "toplam varlıkla karşılama" onları da sayar.</div>
-    </div>
-
-    <div class="section-panel">
-      <div class="section-title">4. Döviz Koruması</div>
-      <div class="ist-ozet">
-        <div class="ist-kutu ist-puan">
-          <div class="ist-etiket">Döviz koruması puanı</div>
-          <div class="ist-deger"><span id="istDovPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
-          <div class="ist-bar"><div id="istDovBar"></div></div>
-          <div class="ist-alt">Puan = dolar bazlı varlık payı × 100</div>
-        </div>
-        <div class="ist-kutu"><div class="ist-etiket">Dolar bazlı</div><div class="ist-deger" id="istDovDolar">—</div><div class="ist-alt">ABD ETF/hisse, kripto, altın</div></div>
-        <div class="ist-kutu"><div class="ist-etiket">TL bazlı</div><div class="ist-deger" id="istDovTl">—</div><div class="ist-alt">BİST hisseleri</div></div>
-        <div class="ist-kutu"><div class="ist-etiket">Dolar bazlı tutar</div><div class="ist-deger" id="istDovUsd">—</div><div class="ist-alt" id="istDovUsdAlt">güncel kurla</div></div>
-      </div>
-      <div id="istDovDetay"></div>
-      <div class="ist-uyari">TL değer kaybederse dolar bazlı varlıklar (ABD ETF ve hisseler, kripto, altın) değerini korur. BİST hisseleri TL bazlıdır. Konut/arsa bu hesaba dahil değildir.</div>
-    </div>
+    <div class="footnote"><b>Not:</b> Her kriter 0–100 arası puanlanır; genel puan dördünün basit ortalamasıdır. Derece: 70 ve üzeri <b style="color:var(--up)">İyi</b> · 40–69 <b>Orta</b> · 40 altı <b style="color:var(--down)">Zayıf</b>.
+      <b>Portföy yaşı</b> = ortalama şirket/fon/coin yaşı ÷ 100 yıl × 100; yaşlar tablodan değiştirilebilir, aynı varlık birden fazla kayıtsa tek satırda sayılır, "ağırlıklı yaş" tutarı büyük varlıklara daha çok ağırlık verir.
+      <b>Çeşitlendirme</b> = (etkin varlık sayısı − 1) ÷ 9 × 100; etkin varlık sayısı = 1 ÷ Σ(pay²) — 10 eşit ağırlıklı varlık 100 puan, tek varlığa yaslanan portföy 0 puan.
+      <b>Borç karşılama</b> = yatırımlar ÷ toplam borç × 100 (en fazla 100; borç yoksa tam puan); konut/arsa gibi likit olmayan varlıklar puana katılmaz, "tüm varlıkla" oranı onları da sayar.
+      <b>Döviz koruması</b> = dolar bazlı varlık payı × 100; ABD ETF/hisse, kripto ve altın dolar bazlı, BİST hisseleri TL bazlıdır; konut/arsa dahil değildir.</div>
   </div>
   <!-- ================= /TAB: PORTFÖY İSTATİSTİKLERİ ================= -->
 
@@ -2235,31 +2224,26 @@
   <div class="tab-panel" id="tab-harcama">
     <div class="page-head"><h1>Harcama İstatistikleri</h1></div>
 
-    <div class="harcama-filtre">
-      <label for="harcamaYil">Yıl</label>
-      <select id="harcamaYil" class="ai-input" onchange="_harcamaYil = +this.value; renderHarcama();"></select>
-    </div>
-
     <div class="ozet-grid k4">
-      <div class="ozet-kart sari">
+      <div class="ozet-kart sari" id="harcamaBuAyKart">
         <div class="ozet-etiket" id="harcamaBuAyEtiket">Bu ay</div>
         <div class="ozet-deger" id="harcamaBuAy">—</div>
         <div class="ozet-alt" id="harcamaBuAyDegisim"></div>
         <div class="card-seanslar" id="harcamaBuAyDetay"></div>
       </div>
-      <div class="ozet-kart sari">
+      <div class="ozet-kart mavi">
         <div class="ozet-etiket" id="harcamaOrtEtiket">Aylık ortalama</div>
         <div class="ozet-deger" id="harcamaOrtalama">—</div>
         <div class="ozet-alt" id="harcamaOrtAlt"></div>
         <div class="card-seanslar" id="harcamaOrtDetay"></div>
       </div>
-      <div class="ozet-kart sari">
+      <div class="ozet-kart kirmizi">
         <div class="ozet-etiket" id="harcamaYilEtiket">Yıl toplamı</div>
         <div class="ozet-deger" id="harcamaYilToplam">—</div>
         <div class="ozet-alt" id="harcamaYilUSD"></div>
         <div class="card-seanslar" id="harcamaYilDetay"></div>
       </div>
-      <div class="ozet-kart sari">
+      <div class="ozet-kart mor">
         <div class="ozet-etiket">En büyük kategori</div>
         <div class="ozet-deger" id="harcamaEnBuyuk">—</div>
         <div class="ozet-alt" id="harcamaEnBuyukAlt"></div>
@@ -2271,16 +2255,17 @@
       <div class="bolum">
         <div class="bolum-bas">
           <span class="bolum-baslik">Aylık harcamalar</span>
-          <span class="bolum-toplam ozet-soluk" id="harcamaGrafikAlt" style="font-size:12px;font-weight:600;"></span>
+          <select id="harcamaYil" class="bolum-secim" title="Yıl" onchange="_harcamaYil = +this.value; renderHarcama();"></select>
+          <span class="bolum-toplam" id="harcamaGrafikAlt" style="color:var(--amber);"></span>
         </div>
         <div class="harcama-grafik" id="harcamaGrafik"></div>
       </div>
       <div class="bolum">
         <div class="bolum-bas">
           <span class="bolum-baslik">Kategoriler</span>
-          <span class="bolum-toplam ozet-soluk" style="font-size:12px;font-weight:600;">toplam · aylık ort.</span>
+          <span class="bolum-toplam" id="harcamaKatSayisi" style="color:var(--muted);font-size:12px;"></span>
         </div>
-        <div id="harcamaKategoriler" class="harcama-kat-liste"></div>
+        <div id="harcamaKategoriler" class="ist-detay harcama-kat-liste"></div>
       </div>
     </div>
 
@@ -2289,14 +2274,14 @@
         <span class="bolum-baslik">Aylık tablo</span>
         <span class="bolum-toplam" id="harcamaTabloToplam"></span>
       </div>
-      <div class="harcama-tablo-kap"><table class="harcama-tablo" id="harcamaTablo"></table></div>
+      <div class="ist-tablo-kap"><table class="ist-tablo harcama-tablo" id="harcamaTablo"></table></div>
       <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Bir hücreye tıklayıp o ayın kategori toplamını doğrudan yazabilirsin (Enter kaydeder, boş bırakıp Enter tek tek kayıtların toplamına döner). Elle yazılan toplamlar <b>✎</b> ile işaretlidir.</div>
     </div>
 
     <div class="bolum">
       <div class="bolum-bas">
         <span class="bolum-baslik">Harcama kayıtları</span>
-        <select id="harcamaAy" class="ai-input harcama-ay-sec" onchange="_harcamaAy = +this.value; _harcamaHepsi = false; renderHarcama();"></select>
+        <select id="harcamaAy" class="bolum-secim" title="Ay" onchange="_harcamaAy = +this.value; _harcamaHepsi = false; renderHarcama();"></select>
         <span class="bolum-toplam" id="harcamaKayitToplam"></span>
         <button class="bolum-ekle" onclick="bolumFormAc('harcamaForm')">+ Ekle</button>
       </div>
@@ -3888,7 +3873,12 @@ function istPuanlariHesapla(){
   return sonuc;
 }
 
+function istPuanRenkSinif(p){ return p >= 70 ? 'yesil' : (p >= 40 ? 'sari' : 'kirmizi'); }
 function istPuanYaz(onek, puan){
+  const kart = document.getElementById(onek + 'Kart');
+  if(kart) kart.className = 'ozet-kart' + (puan != null ? ' ' + istPuanRenkSinif(puan) : '');
+  const bas = document.getElementById(onek + 'Baslik');
+  if(bas){ bas.textContent = puan != null ? fmtNumber(puan, 1) + ' · ' + istDerece(puan) : ''; bas.style.color = puan != null ? istPuanRenk(puan) : ''; }
   const t = document.getElementById(onek + 'Puan'), b = document.getElementById(onek + 'Bar');
   if(t){ t.textContent = puan != null ? fmtNumber(puan, 1) : '—'; t.style.color = puan != null ? istPuanRenk(puan) : ''; const k = t.closest('.ist-kutu'); if(k) k.style.borderLeftColor = puan != null ? istPuanRenk(puan) : ''; }
   if(b){ b.style.width = (puan != null ? puan : 0).toFixed(1) + '%'; b.style.background = puan != null ? istPuanRenk(puan) : ''; }
@@ -3911,6 +3901,7 @@ function renderIstatistik(){
     ['istOrtYas', 'istToplamYas', 'istAgirlikliYas', 'istCesNeff', 'istCesEnBuyuk', 'istCesKat', 'istBorcYatirim', 'istBorcToplam', 'istBorcKat', 'istDovDolar', 'istDovTl', 'istDovUsd'].forEach(id => istYaz(id, '—'));
     ['istVarlikSay', 'istCesN', 'istCesEnBuyukAd', 'istCesKatAd', 'istGenelDerece'].forEach(id => istYaz(id, ''));
     ['istGrafikAlan', 'istUyari', 'istCesDetay', 'istBorcDetay', 'istDovDetay', 'istGenelListe'].forEach(id => { const e = document.getElementById(id); if(e) e.innerHTML = ''; });
+    ['istGenelEnIyi', 'istGenelEnKotu'].forEach(id => istYaz(id, '—'));
     tabloEl.innerHTML = '<div class="ai-disclaimer">Yatırımlarım sekmesine varlık ekleyince portföy puanları burada hesaplanır.</div>';
     return;
   }
@@ -3920,7 +3911,11 @@ function renderIstatistik(){
   const derEl = document.getElementById('istGenelDerece');
   if(derEl){ derEl.textContent = H.genel != null ? istDerece(H.genel) : ''; derEl.style.color = H.genel != null ? istPuanRenk(H.genel) : ''; }
   const kriterler = [['1. Portföy yaşı', H.yas], ['2. Çeşitlendirme', H.ces], ['3. Borç karşılama', H.borc], ['4. Döviz koruması', H.dov]];
-  document.getElementById('istGenelListe').innerHTML = kriterler.map(([ad, k]) =>
+  const puanli = kriterler.filter(([, k]) => k).sort((a, b) => b[1].puan - a[1].puan);
+  istYaz('istGenelEnIyi', puanli.length ? puanli[0][0].replace(/^\d\.\s*/, '') + ' ' + fmtNumber(puanli[0][1].puan, 0) : '—');
+  istYaz('istGenelEnKotu', puanli.length ? puanli[puanli.length - 1][0].replace(/^\d\.\s*/, '') + ' ' + fmtNumber(puanli[puanli.length - 1][1].puan, 0) : '—');
+  const genelListe = document.getElementById('istGenelListe');
+  if(genelListe) genelListe.innerHTML = kriterler.map(([ad, k]) =>
     k ? istHbar(ad, k.puan, fmtNumber(k.puan, 1) + ' · ' + istDerece(k.puan), istPuanRenk(k.puan)) : istHbar(ad, 0, 'veri yok', 'var(--muted-2)')).join('');
 
   // ---- 1) Portföy yaşı ----
@@ -3963,10 +3958,9 @@ function renderIstatistik(){
   </table></div>`;
 
   const bos = gruplar.filter(g => g.yas == null).map(g => g.kod);
-  document.getElementById('istUyari').innerHTML =
-    (bos.length ? '<b>Yaşı girilmemiş:</b> ' + bos.map(escapeHtml).join(', ') + ' — bu varlıklar ortalamaya dahil edilmedi.<br>' : '') +
-    'Yaşlar senin Excel tablonla başladı (QQQM 6, VOO 16, URA 16 …); tablodan değiştirebilirsin. Aynı varlık birden fazla kayıtsa tek satırda sayılır. ' +
-    'Ortalama yaş, Excel\'deki gibi basit ortalamadır; "ağırlıklı yaş" ise tutarı büyük varlıklara daha çok ağırlık verir.';
+  document.getElementById('istUyari').innerHTML = bos.length
+    ? '<b style="color:var(--amber);">Yaşı girilmemiş:</b> ' + bos.map(escapeHtml).join(', ') + ' — bu varlıklar ortalamaya dahil edilmedi; tablodan girebilirsin.'
+    : '';
 
   // ---- 2) Çeşitlendirme ----
   const C = H.ces;
@@ -6107,7 +6101,7 @@ function harcamaTablosu(yil){
   list.forEach(x => {
     if(x.tur === 'aylik' && hucre[x.kat] && String(x.ay).startsWith(yil + '-')){
       const h = hucre[x.kat][+x.ay.slice(5, 7) - 1];
-      h.tutar = Number(x.tutar) || 0; h.elle = true;
+      h.tutar = Number(x.tutar) || 0; h.elle = true; h.aktarim = x.kaynak === 'excel';
     }
   });
   const ayToplam = Array.from({ length: 12 }, (_, a) => HARCAMA_KATEGORILER.reduce((t, { k }) => t + hucre[k][a].tutar, 0));
@@ -6221,6 +6215,9 @@ function renderHarcama(){
   istYaz('harcamaBuAy', '₺' + fmtNumber(v, 0));
   const degEl = document.getElementById('harcamaBuAyDegisim');
   const suruyor = refAy === T.surenAy;
+  // Kart kenarı: süren ay sarı; tamamlanmış ay ortalamanın altındaysa yeşil, üstündeyse kırmızı
+  const buAyKart = document.getElementById('harcamaBuAyKart');
+  if(buAyKart) buAyKart.className = 'ozet-kart ' + (suruyor || !T.ortalama || !v ? 'sari' : (v <= T.ortalama ? 'yesil' : 'kirmizi'));
   if(degEl){
     if(suruyor && v > 0 && T.ortalama > 0){
       const gun = simdi.getDate(), ayGun = new Date(simdi.getFullYear(), simdi.getMonth() + 1, 0).getDate();
@@ -6261,21 +6258,20 @@ function renderHarcama(){
   ozetDetayYaz('harcamaEnBuyukDetay', katSira[1] ? [['2.', katSira[1].ad + ' %' + fmtNumber(katSira[1].t / T.yilToplam * 100, 0)], katSira[2] ? ['3.', katSira[2].ad + ' %' + fmtNumber(katSira[2].t / T.yilToplam * 100, 0)] : null] : []);
 
   // ---- Grafik (yalnızca sekme görünürken çizilir; gizli sekmede genişlik 0'dır)
-  istYaz('harcamaGrafikAlt', T.yilToplam ? _harcamaYil + ' · aylık toplam' : '');
+  istYaz('harcamaGrafikAlt', T.yilToplam ? '₺' + fmtNumber(T.yilToplam, 0) : '');
   const sekme = document.getElementById('tab-harcama');
   if(sekme && sekme.classList.contains('active')) harcamaGrafikCiz(T);
 
   // ---- Kategoriler (tek renk yatay çubuk; kategori adı etiketle, renk kimlik taşımaz)
   const katEl = document.getElementById('harcamaKategoriler');
   if(katEl){
-    const enBuyuk = katSira.length ? katSira[0].t : 1;
-    katEl.innerHTML = katSira.length ? katSira.map(x => `
-      <div class="hk-satir" title="${escapeHtml(x.ad)}: yıl toplamı ₺${fmtNumber(x.t, 0)}, aylık ortalama ₺${fmtNumber(T.katOrtalama[x.k], 0)}">
-        <div class="hk-ad">${escapeHtml(x.ad)}</div>
-        <div class="hk-iz"><div style="width:${(x.t / enBuyuk * 100).toFixed(1)}%;"></div></div>
-        <div class="hk-deger">₺${fmtNumber(x.t, 0)}<small>₺${fmtNumber(T.katOrtalama[x.k], 0)}/ay</small></div>
-      </div>`).join('') : '<div class="bos-not">Henüz harcama yok.</div>';
+    // Pay: yıl toplamı içindeki oran (çubuk uzunluğu); değer: yıl toplamı · aylık ortalama
+    katEl.innerHTML = katSira.length
+      ? katSira.map(x => istHbar(x.ad, x.t / T.yilToplam * 100, '₺' + fmtNumber(x.t, 0) + ' · ₺' + fmtNumber(T.katOrtalama[x.k], 0) + '/ay', 'var(--amber)')).join('')
+      : '<div class="bos-not">Henüz harcama yok.</div>';
   }
+
+  istYaz('harcamaKatSayisi', katSira.length ? 'yıl toplamı · aylık ort.' : '');
 
   // ---- Aylık tablo (grafiğin tablo karşılığı; hücreye tıklayınca o ayın toplamı yazılabilir)
   const tablo = document.getElementById('harcamaTablo');
@@ -6283,8 +6279,8 @@ function renderHarcama(){
     const gelecekMi = a => buYil && a > simdi.getMonth();
     tablo.innerHTML = `<thead><tr><th>Kategori</th>${AY_KISA.map((a, i) => `<th class="${buYil && i === simdi.getMonth() ? 'bu-ay' : ''}">${a}</th>`).join('')}<th>Ort.</th><th>Toplam</th></tr></thead>
       <tbody>${HARCAMA_KATEGORILER.map(({ k, ad }) => `<tr><td>${escapeHtml(ad)}</td>${T.hucre[k].map((h, a) => {
-        const sinif = ['hucre', h.tutar ? '' : 'bos', gelecekMi(a) ? 'gelecek' : '', h.elle ? 'elle' : ''].filter(Boolean).join(' ');
-        const ipucu = h.elle ? `Elle yazılan toplam${h.kayitSayisi ? ' (kayıtların toplamı ₺' + fmtNumber(h.kayitToplam, 0) + ')' : ''}` : (h.kayitSayisi ? h.kayitSayisi + ' kayıt' : 'Toplam yazmak için tıkla');
+        const sinif = ['hucre', h.tutar ? '' : 'bos', gelecekMi(a) ? 'gelecek' : '', h.elle && !h.aktarim ? 'elle' : ''].filter(Boolean).join(' ');
+        const ipucu = h.elle ? `${h.aktarim ? 'Excel’den aktarılan aylık toplam' : 'Elle yazılan toplam'}${h.kayitSayisi ? ' (kayıtların toplamı ₺' + fmtNumber(h.kayitToplam, 0) + ')' : ''} — değiştirmek için tıkla` : (h.kayitSayisi ? h.kayitSayisi + ' kayıt — toplam yazmak için tıkla' : 'Toplam yazmak için tıkla');
         return `<td class="${sinif}" title="${ipucu}" onclick="harcamaHucreDuzenle(this, '${k}', ${a})">${h.tutar ? fmtNumber(h.tutar, 0) : '—'}</td>`;
       }).join('')}<td class="ozet-kolon">${T.katOrtalama[k] ? fmtNumber(T.katOrtalama[k], 0) : '—'}</td><td class="ozet-kolon">${T.katToplam[k] ? fmtNumber(T.katToplam[k], 0) : '—'}</td></tr>`).join('')}</tbody>
       <tfoot><tr><td>Toplam ₺</td>${T.ayToplam.map(v2 => `<td>${v2 ? fmtNumber(v2, 0) : '—'}</td>`).join('')}<td>${T.ortalama ? fmtNumber(T.ortalama, 0) : '—'}</td><td>${T.yilToplam ? fmtNumber(T.yilToplam, 0) : '—'}</td></tr>
@@ -6303,8 +6299,8 @@ function renderHarcama(){
     const elleNot = _harcamaAy >= 0 ? HARCAMA_KATEGORILER.filter(({ k }) => T.hucre[k][_harcamaAy].elle && T.hucre[k][_harcamaAy].kayitSayisi).map(({ ad }) => ad) : [];
     kayitEl.innerHTML = (elleNot.length ? `<div class="ozet-not" style="padding:4px 2px;white-space:normal;">✎ ${elleNot.map(escapeHtml).join(', ')} için bu ayın toplamı tablodan elle yazıldı; aşağıdaki kayıtlar o toplama eklenmez.</div>` : '')
       + (kayitlar.length ? kayitlar.slice(0, _harcamaHepsi ? kayitlar.length : HARCAMA_LISTE_ILK).map(x => satirHtml({
-          ad: (HARCAMA_KAT_AD[x.kat] || x.kat) + (x.not ? ' · ' + x.not : ''),
-          alt: new Date(x.tarih + 'T12:00:00').toLocaleDateString('tr-TR', { day:'2-digit', month:'long', year:'numeric', weekday:'short' }),
+          ad: x.not ? String(x.not).split(' — ')[0] : (HARCAMA_KAT_AD[x.kat] || x.kat),
+          alt: escapeHtml((HARCAMA_KAT_AD[x.kat] || x.kat) + (x.not && x.not.includes(' — ') ? ' · ' + x.not.split(' — ').slice(1).join(' — ') : '')) + ' · ' + new Date(x.tarih + 'T12:00:00').toLocaleDateString('tr-TR', { day:'2-digit', month:'short', year:'numeric' }),
           tutar: '₺' + fmtNumber(x.tutar, 2),
           duzen: { id: 'harcama-edit-' + x.id, ph: 'yeni tutar (₺)', kaydet: `harcamaGuncelle('${x.id}')` },
           sil: { onclick: `harcamaSil('${x.id}')`, baslik: 'Sil', ikon: '✕' },

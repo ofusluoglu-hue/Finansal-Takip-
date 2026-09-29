@@ -19,7 +19,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 3. Kod mevcut stile uyar: **Türkçe** değişken/fonksiyon adları ve yorumlar, bölümler `// ---------- Başlık ----------` ile ayrılır.
 4. Hata mesajları kullanıcıya Türkçe ve anlaşılır gösterilir.
 5. Her ekran telefon genişliğinde (390 px) yatay taşma olmadan çalışmalıdır; sabit genişlikli satırlar için `@media (max-width:640px)` kuralı yazılır.
-6. Yeni ekranlar ortak tasarım dilini kullanır: özet için `.ozet-kart`, bölüm için `.bolum` + `bolumFormAc`, liste için `satirHtml()`. Açıklama metinleri sayfa sonundaki tek **Not** satırına yazılır.
+6. Yeni ekranlar ortak tasarım dilini kullanır: üstte özet için `.ozet-kart` (kenar rengi anlam taşır: yeşil iyi/varlık, sarı orta/süren, kırmızı zayıf/borç/gider), bölüm için `.bolum` + `bolumFormAc` (başlığın sağında toplam ya da puan), liste için `satirHtml()`, tablo için `.ist-tablo`, dağılım için `istHbar`, başlıkta seçim için `.bolum-secim`. Sayfanın en üstüne ayrı filtre satırı konmaz. Açıklama metinleri sayfa sonundaki tek **Not** satırına yazılır.
 7. Native `confirm`/`alert` yerine panelin kendi pencereleri kullanılır: `showConfirmModal` (onay) ve `showAlertModal` (uyarı).
 
 ## Veri
