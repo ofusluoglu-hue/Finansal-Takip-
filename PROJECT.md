@@ -73,6 +73,7 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (sen
 | Kripto (BTC, ETH, SOL, AAVE, HYPE) | Binance 24 saatlik ticker (doğrudan, anahtarsız); yedek CoinGecko. Grafikler Binance |
 | Altın (spot ons) | Twelve Data (`/td`) |
 | Brent ve diğerleri | Yahoo Finance / FRED (`/proxy`) |
+| Gümüş (yalnızca Yatırımlarım'da gümüş varsa) | Yahoo COMEX gümüş SI=F (`gumusFiyatYenile`); gram = ons ÷ 31,1035 |
 | Uranyum | MetalCharts (`/uranyum`), hata olursa Yahoo |
 | Haberler | Kurumların kendi RSS yayınları (`/proxy`): Investing.com Türkiye (kripto 301, emtia 11, borsa 25, piyasa 285, ekonomi 14), Bloomberg HT, Anadolu Ajansı ekonomi, BBC Business, CNBC Markets, MarketWatch. Reuters ve Bloomberg: Google News RSS (`site:` filtresiyle) |
 
@@ -137,7 +138,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
   - Açıklamalar her sayfanın altında tek bir **Not** satırındadır.
 - **Portföy yaşı** bölümü ince bir listedir (grafik + tablo birleşik): kod + tam ad + kategori (geniş sütun; telefonda ad kodun altında) · daha kısa yaş çubuğu (kategori rengi; sarı dikey çizgi = ortalama) · yaş · pay, yaşa göre sıralı. Yaşa tıklanınca satır içinde düzenlenir (`istYasDuzenle`; Enter kaydeder, Esc vazgeçer, odaktan çıkınca kaydeder). Yeniden çizimde açık kutu ve değer korunur; çizim sırasında kaldırılan kutunun `blur`'u kaydetme sayılmaz (`_yasCiziliyor`).
 - Çeşitlendirme / Borç karşılama / Döviz koruması çubukları: açıklama sütunu 250 px (Çeşitlendirme'de kod + tam ad), değer sütunu sabit 150 px (çubuklar aynı yerde biter), çubuk ≈%18 kısa; telefonda üst satır açıklama + değer, altında tam genişlik çubuk.
-- **Öne çıkan kart** `.ozet-kart.vurgu`: sayfanın tek ana göstergesi için (ör. Portföy İstatistikleri'nde genel puan) — 2 sütun, 34 px değer, derece rozeti `.puan-rozet`, kalın çubuk, puan renginde hafif zemin; telefonda tam genişlik. Sayfa başına en fazla bir tane. `.orta` varyantı 26 px değer kullanır (Borçlarım › Toplam Borç; nabız efektiyle). Yatırımlarım › Toplam Yatırım yeşil 23 px ve nabızlı; kartında `.ton` varyantı var (öne çıkan kartın renkli çerçevesi ve zemin yansıması, genişlik değişmeden).
+- **Öne çıkan kart** `.ozet-kart.vurgu`: sayfanın tek ana göstergesi için (ör. Portföy İstatistikleri'nde genel puan) — 2 sütun, 34 px değer, derece rozeti `.puan-rozet`, kalın çubuk, puan renginde hafif zemin; telefonda tam genişlik. Sayfa başına en fazla bir tane. `.orta` varyantı 26 px değer kullanır (Borçlarım › Toplam Borç; nabız efektiyle). Yatırımlarım › Toplam Yatırım yeşil 23 px ve nabızlı; kartında `.ton` varyantı var (öne çıkan kartın renkli çerçevesi ve zemin yansıması, genişlik değişmeden; sol kenar tam renk). `.ton` ayrıca: Finansal Durumum › Net Varlık (yeşil; eksi ise kırmızı), Yatırımlarım › Yatırım / Borç Oranı (%50 altı kırmızı, %50–99 sarı, %100+ yeşil — kenar, çerçeve ve zemin birlikte).
 - Piyasa Özeti kartları kompakttır: yüzde değişim ve seans notu aynı satırda, ETF seans satırları ince bir çizgiyle ayrılır. Hedef: 1440×900 ekranda kartlar ve grafik kaydırmadan görünsün.
 
 ## 10. Deploy
@@ -150,6 +151,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Yatırımlarım: Emtia'ya gümüş eklendi (fiyat arka planda Yahoo SI=F), kategori ve varlık adları büyük harf; Net Varlık ve Yatırım/Borç Oranı kartlarına renkli ton (oran eşikleri %50 / %100); tonlu kartlarda sol kenar tam renk |
 | 2026-09-29 | Borçlarım'da Toplam Borç öne çıkan kart (2 sütun, 26 px, kırmızı ton, nabız); Yatırımlarım'da Toplam Yatırım yeşil ve 23 px |
 | 2026-09-29 | Harcama grafiği ve Kategoriler dikeyde ≈%23 küçüldü (288 → 223 px); kategori çubukları en büyüğe göre ölçekli; telefon alt menüsünde kısa etiketler (7 sekme sığmıyordu, Bay Piyasa kesiliyordu) |
 | 2026-09-29 | Çeşitlendirme, Borç karşılama ve Döviz koruması: açıklamaya yer açıldı (çubuk ≈%18 kısa, sabit değer sütunu), telefonda çubuklar tam genişlik ve eşit |

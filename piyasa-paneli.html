@@ -1412,6 +1412,8 @@
   .satir{display:flex;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--border);min-width:0;}
   .satir:last-child{border-bottom:none;}
   .satir > .led-dot{flex-shrink:0;margin-right:0;}
+  /* Yatırımlarım: kategori ve varlık adları büyük harf (lang="tr" → i/İ doğru) */
+  .buyuk-harf .satir-ad, .buyuk-harf .ist-hlbl{text-transform:uppercase;letter-spacing:.02em;}
   .satir-ana{flex:1 1 auto;min-width:0;}
   .satir-ad{font-size:13.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .satir-alt{font-size:11px;color:var(--muted-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
@@ -1683,10 +1685,12 @@
 
   /* Portföy İstatistikleri: genel puan öne çıkan kart (2 sütun, büyük puan, derece rozeti, puan renginde hafif zemin) */
   .ozet-grid.ist-grid{grid-template-columns:repeat(6, minmax(0,1fr));}
-  .ozet-kart.vurgu{grid-column:span 2;padding:12px 16px 11px;gap:6px;justify-content:center;background:linear-gradient(135deg, color-mix(in srgb, var(--vurgu-renk, var(--amber)) 10%, var(--panel)) 0%, var(--panel) 70%);border-color:color-mix(in srgb, var(--vurgu-renk, var(--amber)) 35%, var(--border));border-left-width:4px;}
+  .ozet-kart.vurgu{grid-column:span 2;padding:12px 16px 11px;gap:6px;justify-content:center;background:linear-gradient(135deg, color-mix(in srgb, var(--vurgu-renk, var(--amber)) 10%, var(--panel)) 0%, var(--panel) 70%);border-color:color-mix(in srgb, var(--vurgu-renk, var(--amber)) 35%, var(--border));border-left-width:4px;border-left-color:var(--vurgu-renk, var(--amber));}
   .ozet-kart.vurgu.yesil, .ozet-kart.ton.yesil{--vurgu-renk:var(--up);}
+  .ozet-kart.ton.sari{--vurgu-renk:var(--amber);}
+  .ozet-kart.ton.kirmizi{--vurgu-renk:var(--down);}
   /* Ton: öne çıkan kartın renkli çerçevesi ve zemin yansıması, ama genişlik/boyut değişmeden */
-  .ozet-kart.ton{background:linear-gradient(135deg, color-mix(in srgb, var(--vurgu-renk, var(--amber)) 10%, var(--panel)) 0%, var(--panel) 70%);border-color:color-mix(in srgb, var(--vurgu-renk, var(--amber)) 35%, var(--border));border-left-width:4px;}
+  .ozet-kart.ton{background:linear-gradient(135deg, color-mix(in srgb, var(--vurgu-renk, var(--amber)) 10%, var(--panel)) 0%, var(--panel) 70%);border-color:color-mix(in srgb, var(--vurgu-renk, var(--amber)) 35%, var(--border));border-left-width:4px;border-left-color:var(--vurgu-renk, var(--amber));}   /* sol kenar tam renk */
   .ozet-kart.vurgu.sari{--vurgu-renk:var(--amber);}
   .ozet-kart.vurgu.kirmizi{--vurgu-renk:var(--down);}
   .ozet-kart.vurgu .ozet-etiket{font-size:11px;color:var(--text);letter-spacing:.06em;}
@@ -1934,7 +1938,7 @@
     <div class="page-head"><h1>Finansal Durumum</h1></div>
 
     <div class="ozet-grid">
-      <div class="ozet-kart yesil" id="finansalNetKart">
+      <div class="ozet-kart yesil ton" id="finansalNetKart">
         <div class="ozet-etiket">Net Varlık Değerim</div>
         <div class="ozet-deger" id="finansalNetDeger">₺0</div>
         <div class="ozet-alt" id="finansalNetDegerUSD"></div>
@@ -2005,7 +2009,7 @@
         <div class="ozet-alt" id="yatirimToplamDegerUSD"></div>
         <div class="card-seanslar" id="yatirimOzetDetay"></div>
       </div>
-      <div class="ozet-kart sari" id="yatirimOranKart">
+      <div class="ozet-kart sari ton" id="yatirimOranKart">
         <div class="ozet-etiket">Yatırım / Borç Oranı</div>
         <div class="ozet-deger" id="yatirimBorcOrani">—</div>
         <div class="ozet-alt" id="yatirimBorcOraniAlt"></div>
@@ -2013,7 +2017,7 @@
       </div>
       <div class="ozet-kart genis">
         <div class="ozet-etiket">Kategori Dağılımı</div>
-        <div id="yatirimDagilimBar" class="ist-detay"></div>
+        <div id="yatirimDagilimBar" class="ist-detay buyuk-harf"></div>
       </div>
     </div>
 
@@ -2034,12 +2038,12 @@
           <select id="yatirimSembolSelect" class="ai-input" style="max-width:260px;min-width:200px;"></select>
           <input type="text" id="yatirimBistAdInput" class="ai-input" style="max-width:160px;min-width:130px;display:none;" placeholder="Hisse adı (ör. THYAO)">
           <input type="number" step="0.000001" id="yatirimAdetInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Adet" onkeydown="if(event.key==='Enter')addYatirim()">
-          <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram (Altın)" onkeydown="if(event.key==='Enter')addYatirim()">
+          <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram" onkeydown="if(event.key==='Enter')addYatirim()">
           <input type="number" step="0.01" id="yatirimBistTutarInput" class="ai-input" style="max-width:150px;min-width:120px;display:none;" placeholder="Güncel değer (TL)" onkeydown="if(event.key==='Enter')addYatirim()">
           <button class="ai-btn" onclick="addYatirim()">Yatırım Ekle</button>
         </div>
       </div>
-      <div id="yatirimListContainer"></div>
+      <div id="yatirimListContainer" class="buyuk-harf"></div>
     </div>
 
     <div class="footnote"><b>Not:</b> ABD ETF/hisse ve kripto fiyatları Piyasa Özeti'ndeki canlı kartlardan (ek istek yapılmadan), altın ons fiyatından gram başına hesaplanır ve güncel dolar kuruyla TL'ye çevrilir. BİST için ücretsiz canlı veri kaynağı olmadığından hisse adını ve güncel TL değerini elle girip ✎ ile güncellersin. LED: yeşil canlı fiyat, kırmızı son bilinen fiyat. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
@@ -3294,7 +3298,8 @@ async function refreshMarketData(){
     document.getElementById('fileWarning').style.display = 'block';
   }
 
-  // Tüm fiyatlar (altın dahil) tazelendi — TL karşılıklarını son kez güncelle
+  await gumusFiyatYenile();
+  // Tüm fiyatlar (altın ve gümüş dahil) tazelendi — TL karşılıklarını son kez güncelle
   tlKarsiliklariniYenile();
 
   if(anyError){
@@ -3359,6 +3364,15 @@ async function kartYahooYenile(cfg){
     renderStale(cfg);
     return e.message || String(e);
   }
+}
+
+// Gümüş fiyatı (Piyasa Özeti'nde kartı yok; yalnızca Yatırımlarım'da gümüş varsa arka planda çekilir)
+async function gumusFiyatYenile(){
+  if(!manuelListeYukle(YATIRIM_KEY).some(x => x.tur === 'emtia' && x.sembol === 'silver')) return;
+  try{
+    const { price, chgPct } = await fetchYahoo('SI=F');
+    if(isFinite(price) && price > 0) _lastGoodValues['silver'] = { price, chgPct, ts: Date.now() };
+  }catch(e){ /* alınamazsa son bilinen değer kullanılır */ }
 }
 
 // Döviz kuruna bağlı tüm TL karşılıklarını yeniden hesaplar: elden nakit borçlar (USD/EUR), yatırımlar
@@ -3831,12 +3845,12 @@ function istNormalize(s){
   return String(s || '').toLocaleUpperCase('tr').replace(/Ç/g, 'C').replace(/Ğ/g, 'G').replace(/İ/g, 'I').replace(/Ö/g, 'O').replace(/Ş/g, 'S').replace(/Ü/g, 'U').replace(/[^A-Z0-9]/g, '');
 }
 function istAnahtar(item){
-  if(item.tur === 'emtia') return 'emtia';
+  if(item.tur === 'emtia') return 'emtia:' + (item.sembol === 'silver' ? 'silver' : 'gold');
   if(item.tur === 'bist') return 'bist:' + istNormalize(item.ad);
   return item.sembol;
 }
 function istKod(item){
-  if(item.tur === 'emtia') return 'ALTIN';
+  if(item.tur === 'emtia') return item.sembol === 'silver' ? 'GÜMÜŞ' : 'ALTIN';
   if(item.tur === 'bist') return String(item.ad || '').toLocaleUpperCase('tr');
   return IST_KOD[item.sembol] || String(item.sembol || '').toUpperCase();
 }
@@ -5226,6 +5240,11 @@ const KRIPTO_OPTIONS = [
   { key:'aave', label:'AAVE' },
   { key:'sol',  label:'Solana (SOL)' },
 ];
+const EMTIA_OPTIONS = [
+  { key:'gold',   label:'Altın (gram)' },
+  { key:'silver', label:'Gümüş (gram)' },
+];
+const EMTIA_AD = { gold:'Altın', silver:'Gümüş' };
 const YATIRIM_LABELS = {}; // key -> label, hem ETF hem kripto listesinden doldurulur
 [...ETF_OPTIONS, ...KRIPTO_OPTIONS].forEach(o => YATIRIM_LABELS[o.key] = o.label);
 
@@ -5252,6 +5271,8 @@ function yatirimTurDegisti(){
   bistTutarInput.style.display = 'none';
 
   if(tur === 'emtia'){
+    sembolSelect.style.display = '';
+    sembolSelect.innerHTML = EMTIA_OPTIONS.map(o => `<option value="${o.key}">${escapeHtml(o.label)}</option>`).join('');
     gramInput.style.display = '';
   } else if(tur === 'bist'){
     bistAdInput.style.display = '';
@@ -5271,7 +5292,8 @@ function addYatirim(){
   if(tur === 'emtia'){
     const gram = parseFloat(document.getElementById('yatirimGramInput').value);
     if(isNaN(gram) || gram <= 0){ showAlertModal('Lütfen geçerli bir gram gir.'); return; }
-    item = { id: 'y-' + Date.now(), tur, sembol: 'gold', miktar: gram, tarih: new Date().toISOString() };
+    const sembol = document.getElementById('yatirimSembolSelect').value === 'silver' ? 'silver' : 'gold';
+    item = { id: 'y-' + Date.now(), tur, sembol, miktar: gram, tarih: new Date().toISOString() };
   } else if(tur === 'bist'){
     const ad = document.getElementById('yatirimBistAdInput').value.trim();
     const tutar = parseFloat(document.getElementById('yatirimBistTutarInput').value);
@@ -5295,6 +5317,7 @@ function addYatirim(){
   document.getElementById('yatirimBistTutarInput').value = '';
   document.getElementById('yatirimForm').classList.remove('acik');
   renderYatirim();
+  if(item.sembol === 'silver') gumusFiyatYenile().then(() => renderYatirim());
 }
 
 function deleteYatirim(id){
@@ -5345,7 +5368,7 @@ function yatirimDegerHesapla(item){
 
   if(usdtry){
     if(item.tur === 'emtia'){
-      const ons = _lastGoodValues['gold'];
+      const ons = _lastGoodValues[item.sembol === 'silver' ? 'silver' : 'gold'];
       if(ons) sonuc = { fiyatBirimUSD: ons.price / 31.1034768, tutarTL: (ons.price / 31.1034768) * item.miktar * usdtry, canli: true, ts: ons.ts };
     } else {
       const cached = _lastGoodValues[item.sembol];
@@ -5371,7 +5394,7 @@ function yatirimDegerHesapla(item){
 }
 
 function yatirimEtiket(item){
-  if(item.tur === 'emtia') return 'Altın';
+  if(item.tur === 'emtia') return EMTIA_AD[item.sembol] || 'Altın';
   if(item.tur === 'bist') return item.ad;
   return YATIRIM_LABELS[item.sembol] || item.sembol;
 }
@@ -5486,7 +5509,7 @@ function renderYatirim(){
   if(toplamBorc <= 0){
     oranEl.textContent = toplamYatirim > 0 ? 'Borç yok' : '—';
     oranEl.style.color = toplamYatirim > 0 ? 'var(--up)' : '';
-    if(oranKart) oranKart.style.borderLeftColor = toplamYatirim > 0 ? 'var(--up)' : '';
+    if(oranKart) oranKart.className = 'ozet-kart ton ' + (toplamYatirim > 0 ? 'yesil' : 'sari');
     document.getElementById('yatirimBorcOraniAlt').textContent = 'Kayıtlı borç bulunmuyor';
     ozetDetayYaz('yatirimOranDetay', []);
   } else {
@@ -5494,7 +5517,7 @@ function renderYatirim(){
     const renk = oran >= 1 ? 'var(--up)' : (oran >= 0.5 ? 'var(--amber)' : 'var(--down)');
     oranEl.textContent = '%' + fmtNumber(oran * 100, 1);
     oranEl.style.color = renk;
-    if(oranKart) oranKart.style.borderLeftColor = renk;
+    if(oranKart) oranKart.className = 'ozet-kart ton ' + (oran >= 1 ? 'yesil' : (oran >= 0.5 ? 'sari' : 'kirmizi'));   // %50 altı kırmızı, %50–99 sarı, %100+ yeşil
     document.getElementById('yatirimBorcOraniAlt').textContent = oran >= 1 ? 'Yatırımlar borcu karşılıyor' : 'Yatırımlar borcun altında';
     ozetDetayYaz('yatirimOranDetay', [['Yatırım', '₺' + fmtNumber(toplamYatirim, 0)], ['Borç', '₺' + fmtNumber(toplamBorc, 0)]]);
   }
@@ -5595,7 +5618,7 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   netEl.textContent = (netDeger < 0 ? '-' : '') + '₺' + fmtNumber(Math.abs(netDeger), 0);
   netEl.className = 'ozet-deger' + (netDeger < 0 ? ' neg' : '');
   const netKart = document.getElementById('finansalNetKart');
-  if(netKart) netKart.className = 'ozet-kart ' + (netDeger < 0 ? 'kirmizi' : 'yesil');
+  if(netKart) netKart.className = 'ozet-kart ton ' + (netDeger < 0 ? 'kirmizi' : 'yesil');
 
   // Kartların alt satırları
   const brut = toplamVarlikListesi + toplamYatirim;
