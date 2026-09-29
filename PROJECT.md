@@ -126,7 +126,8 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 ## 9. Arayüz
 
-- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur, senkron durumu ve çıkış üstte ince bir satırda kalır.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **İstatistikler** (Harcama İstatistikleri, Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur (grup başlıkları gizlenir, sıra aynı kalır), senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
 - **Ortak tasarım dili** (Finansal Durumum, Yatırımlarım, Borçlarım, Harcama İstatistikleri, Portföy İstatistikleri — Piyasa Özeti kartlarıyla aynı). Her sayfa üstte özet kartları, altında başlığında toplamı/puanı olan bölümler ve sonda tek Not ile kurulur; tablolar `.ist-tablo`, dağılım çubukları `istHbar`, başlıktaki seçiciler `.bolum-secim`:
@@ -146,6 +147,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-29 | Sol menü gruplandı (Varlık ve borç · İstatistikler · Asistan); görev testi: 7 görevin hepsi tek tık |
 | 2026-09-29 | Harcama İstatistikleri ve Portföy İstatistikleri ortak tasarım diline uyduruldu: anlamlı kart renkleri (puana göre yeşil/sarı/kırmızı), yıl/ay seçimi bölüm başlığında, ortak tablo ve çubuk stili, bölüm başlığında puan/toplam, açıklamalar sayfa sonundaki Not'ta |
 | 2026-09-29 | Harcamalarda dolar ve gram altın karşılıkları (her ay kendi ortalama kuruyla), tüm dönem ortalaması, Kategorisiz kategori; 2025 Mart–Aralık aylık toplamları D1'e eklendi |
 | 2026-09-29 | 2026 Ocak–Eylül harcamaları bütçe Excel'inden D1'e bir kereliğine aktarıldı (79 kayıt, 8 ay toplamı Excel ile birebir); ortalamalar yalnızca tamamlanmış aylardan hesaplanıyor |
