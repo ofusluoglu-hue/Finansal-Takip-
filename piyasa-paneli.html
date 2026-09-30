@@ -2784,7 +2784,12 @@
     <div class="bolum">
       <div class="bolum-bas sarmal">
         <span class="bolum-baslik">Net varlık</span>
-        <div class="period-toggle" id="ngAraliklar" style="margin-left:auto;">
+        <div class="period-toggle" id="ngBirimler" style="margin-left:auto;">
+          <button class="period-btn" data-birim="TL" onclick="netBirimSec('TL')">₺ TL</button>
+          <button class="period-btn" data-birim="USD" onclick="netBirimSec('USD')">$ Dolar</button>
+          <button class="period-btn" data-birim="ALTIN" onclick="netBirimSec('ALTIN')">Altın (gr)</button>
+        </div>
+        <div class="period-toggle" id="ngAraliklar">
           <button class="period-btn" data-gun="30" onclick="netAralikSec(30)">30 gün</button>
           <button class="period-btn" data-gun="90" onclick="netAralikSec(90)">90 gün</button>
           <button class="period-btn" data-gun="365" onclick="netAralikSec(365)">1 yıl</button>
@@ -2800,7 +2805,7 @@
       <div style="height:8px;"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Net varlık = varlıklar + yatırımlar − borçlar (Finansal Durumum'daki hesabın aynısı). Panel açık olduğu her gün, fiyatlar yenilendikten sonra bir kayıt alınır; gün içinde değer anlamlı değişirse en fazla yarım saatte bir güncellenir. Panelin açılmadığı günler için kayıt yoktur, çizgi komşu günleri birleştirir. Geçmiş geriye dönük tahmin edilmez; kayıt ilk açılış gününden başlar. Dolar karşılığı her günün kendi kuruyla hesaplanır. Kayıtlar hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Net varlık = varlıklar + yatırımlar − borçlar (Finansal Durumum'daki hesabın aynısı). Panel açık olduğu her gün, fiyatlar yenilendikten sonra bir kayıt alınır; gün içinde değer anlamlı değişirse en fazla yarım saatte bir güncellenir. Panelin açılmadığı günler için kayıt yoktur, çizgi komşu günleri birleştirir. Geçmiş geriye dönük tahmin edilmez; kayıt ilk açılış gününden başlar. Dolar ve altın karşılıkları her günün kendi kuruyla hesaplanır; altın, gram 24 ayar (saf) altındır: ons fiyatı ÷ 31,1035 × dolar kuru (piyasa fiyatı — kuyumcu ya da banka satış fiyatı biraz farklı olabilir). Kur ve gram fiyatı kayıtla birlikte saklanır; bunları içermeyen eski kayıtlarda o günün kapanışı kullanılır. Kayıtlar hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: NET VARLIK GEÇMİŞİ ================= -->
 
@@ -8524,6 +8529,62 @@ function odemeOzetMetni(){
 // Geçmiş geriye dönük uydurulmaz; kayıt panelin açık olduğu günlerde, fiyat turu bittikten sonra alınır.
 const NET_GECMIS_KEY = 'ft_net_gecmis_v1';
 let _netAralik = 90;   // grafikte gösterilen gün (0: tümü)
+let _netBirim = 'TL';  // grafiğin birimi: 'TL' | 'USD' | 'ALTIN' (gram 24 ayar)
+// Gram 24 ayar altının TL fiyatı: ons (USD) ÷ 31,1035 × dolar kuru
+function gramAltinTL(){ const g = _lastGoodValues.gold; return g && g.price && _fxRates.USD ? g.price / 31.1034768 * _fxRates.USD : null; }
+// Kurları olmayan eski kayıtlar için günlük kapanışlar (Yahoo USDTRY=X ve GC=F); yalnızca bu cihazda: ft_gunluk_kur_v1 { 'YYYY-MM-DD': { usd, gram } }
+const GUNLUK_KUR_KEY = 'ft_gunluk_kur_v1';
+let _gunlukKur = {};
+try{ _gunlukKur = JSON.parse(localStorage.getItem(GUNLUK_KUR_KEY) || '{}') || {}; }catch(e){ _gunlukKur = {}; }
+let _gunlukKurCekiliyor = false;
+// Bir kaydın dolar kuru ve gram altın fiyatı: önce kaydın kendisi, yoksa o günün (ya da önceki en yakın iş gününün) kapanışı
+function netKayitKur(x){
+  let usd = x.usd || null, gram = x.gram || null;
+  for(let i = 0; i < 5 && (!usd || !gram); i++){
+    const d = new Date(x.id + 'T00:00:00'); d.setDate(d.getDate() - i);
+    const k = _gunlukKur[isoGun(d)];
+    if(k){ usd = usd || k.usd || null; gram = gram || k.gram || null; }
+  }
+  return { usd, gram };
+}
+async function gunlukKurlariTamamla(list){
+  if(_gunlukKurCekiliyor) return;
+  const eksik = list.filter(x => x.id < bugunISO()).filter(x => { const k = netKayitKur(x); return !k.usd || !k.gram; });
+  if(!eksik.length) return;
+  let sonDeneme = 0;
+  try{ sonDeneme = +(sessionStorage.getItem('ft_gunluk_kur_deneme') || 0); }catch(e){ /* yok */ }
+  if(Date.now() - sonDeneme < 10 * 60000) return;   // başarısızsa her çizimde tekrar denemesin
+  try{ sessionStorage.setItem('ft_gunluk_kur_deneme', String(Date.now())); }catch(e){ /* yok */ }
+  _gunlukKurCekiliyor = true;
+  try{
+    const gun = Math.ceil((Date.now() - new Date(eksik[0].id + 'T00:00:00').getTime()) / 86400000);
+    const aralik = gun <= 25 ? '1mo' : gun <= 85 ? '3mo' : gun <= 360 ? '1y' : gun <= 1800 ? '5y' : '10y';
+    const seri = async sembol => {
+      const res = await fetchWithFallback(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sembol)}?interval=1d&range=${aralik}`);
+      const r0 = (await res.json()).chart.result[0], cl = (r0.indicators.quote[0] || {}).close || [];
+      return new Map((r0.timestamp || []).map((t, i) => [new Date(t * 1000).toISOString().slice(0, 10), cl[i]]).filter(v => v[1] != null));
+    };
+    const [usd, ons] = await Promise.all([seri('USDTRY=X'), seri('GC=F')]);
+    usd.forEach((u, g) => { const o = ons.get(g); _gunlukKur[g] = { usd: Math.round(u * 10000) / 10000, gram: o ? Math.round(o / 31.1034768 * u * 100) / 100 : null }; });
+    try{ localStorage.setItem(GUNLUK_KUR_KEY, JSON.stringify(_gunlukKur)); }catch(e){ /* yer yok */ }
+    const s2 = document.getElementById('tab-netgecmis');
+    if(s2 && s2.classList.contains('active')) renderNetGecmis();
+  }catch(e){ /* kur alınamazsa dolar/altın "—" kalır */ }
+  finally{ _gunlukKurCekiliyor = false; }
+}
+function netBirimDeger(x, birim){
+  if(birim === 'TL') return x.net;
+  const k = netKayitKur(x);
+  return birim === 'USD' ? (k.usd ? x.net / k.usd : null) : (k.gram ? x.net / k.gram : null);
+}
+function netBirimFmt(v, birim, kisa){
+  if(v == null) return '—';
+  const isr = v < 0 ? '−' : '', a = Math.abs(v);
+  if(birim === 'TL') return kisa ? isr + kisaTL(a) : isr + '₺' + fmtNumber(a, 0);
+  if(birim === 'USD') return isr + '$' + (kisa && a >= 1e3 ? fmtNumber(a / 1e3, a >= 1e4 ? 0 : 1) + ' bin' : fmtNumber(a, 0));
+  return isr + (kisa && a >= 1e5 ? fmtNumber(a / 1e3, 0) + ' bin' : fmtNumber(a, 0)) + ' gr';
+}
+function netBirimSec(b){ _netBirim = b; renderNetGecmis(); }
 function netGecmisYukle(){ return manuelListeYukle(NET_GECMIS_KEY).filter(x => x && /^\d{4}-\d\d-\d\d$/.test(x.id)).sort((a, b) => a.id.localeCompare(b.id)); }
 // Finansal Durumum'daki hesabın aynısı
 function netDurum(){
@@ -8539,12 +8600,14 @@ function netGecmisKaydet(){
     const d = netDurum();
     if(!(d.varlik || d.yatirim || d.borc)) return;
     const id = bugunISO(), list = manuelListeYukle(NET_GECMIS_KEY);
-    const kayit = { id, net: Math.round(d.net), varlik: Math.round(d.varlik), yatirim: Math.round(d.yatirim), borc: Math.round(d.borc), usd: _fxRates.USD ? Math.round(_fxRates.USD * 10000) / 10000 : null, t: Date.now() };
+    const gr = gramAltinTL();
+    const kayit = { id, net: Math.round(d.net), varlik: Math.round(d.varlik), yatirim: Math.round(d.yatirim), borc: Math.round(d.borc), usd: _fxRates.USD ? Math.round(_fxRates.USD * 10000) / 10000 : null, gram: gr ? Math.round(gr * 100) / 100 : null, t: Date.now() };
     const i = list.findIndex(x => x.id === id);
     if(i >= 0){
       const e = list[i];
       // Gün içinde en fazla yarım saatte bir ve yalnızca anlamlı değişimde güncellenir (her fiyat turunda senkron yazılmasın)
-      if(Date.now() - (e.t || 0) < 30 * 60000 || Math.abs(kayit.net - e.net) < Math.max(100, Math.abs(e.net) * 0.001)) return;
+      const kurEksik = (!e.gram && kayit.gram) || (!e.usd && kayit.usd);   // eski kayıtta dolar/altın yoksa beklemeden tamamla
+      if(!kurEksik && (Date.now() - (e.t || 0) < 30 * 60000 || Math.abs(kayit.net - e.net) < Math.max(100, Math.abs(e.net) * 0.001))) return;
       list[i] = kayit;
     } else list.push(kayit);
     manuelListeKaydet(NET_GECMIS_KEY, list.sort((a, b) => a.id.localeCompare(b.id)).slice(-3650));
@@ -8572,7 +8635,8 @@ function renderNetGecmis(){
   // ---- 1) Bugün
   const netEl = document.getElementById('ngNet');
   if(netEl){ netEl.textContent = (d.net < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(d.net), 0); netEl.style.color = d.net < 0 ? 'var(--down)' : 'var(--up)'; }
-  istYaz('ngNetAlt', _fxRates.USD ? '$' + fmtNumber(d.net / _fxRates.USD, 0) : '');
+  const grBugun = gramAltinTL();
+  istYaz('ngNetAlt', [_fxRates.USD ? '$' + fmtNumber(d.net / _fxRates.USD, 0) : null, grBugun ? fmtNumber(d.net / grBugun, 0) + ' gr altın' : null].filter(Boolean).join(' · '));
   ozetDetayYaz('ngNetDetay', [['Varlık + yatırım', '₺' + fmtNumber(d.varlik + d.yatirim, 0)], ['Borç', '₺' + fmtNumber(d.borc, 0)]]);
   // ---- 2–4) Değişimler
   const yaz = (id, gun, etiket) => {
@@ -8595,7 +8659,9 @@ function renderNetGecmis(){
       const f = son.net - ilk.net;
       basEl.textContent = isaretliTL(f); basEl.style.color = f >= 0 ? 'var(--up)' : 'var(--down)';
       istYaz('ngBasAlt', 'başlangıç: ' + new Date(ilk.id + 'T00:00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }));
-      ozetDetayYaz('ngBasDetay', [['Kayıtlı gün', list.length + ''], ilk.usd && son.usd ? ['Dolar bazında', (son.net / son.usd - ilk.net / ilk.usd >= 0 ? '+$' : '−$') + fmtNumber(Math.abs(son.net / son.usd - ilk.net / ilk.usd), 0)] : null]);
+      const uS = netBirimDeger(son, 'USD'), uI = netBirimDeger(ilk, 'USD'), gS = netBirimDeger(son, 'ALTIN'), gI = netBirimDeger(ilk, 'ALTIN');
+      const fU = uS != null && uI != null ? uS - uI : null, fG = gS != null && gI != null ? gS - gI : null;
+      ozetDetayYaz('ngBasDetay', [fU != null ? ['Dolar bazında', (fU >= 0 ? '+' : '') + netBirimFmt(fU, 'USD')] : ['Kayıtlı gün', list.length + ''], fG != null ? ['Altın bazında', (fG >= 0 ? '+' : '') + netBirimFmt(fG, 'ALTIN')] : null]);
     } else {
       basEl.textContent = '—'; basEl.style.color = '';
       istYaz('ngBasAlt', list.length ? 'kayıt bugün başladı' : 'kayıt fiyatlar gelince başlar');
@@ -8605,7 +8671,7 @@ function renderNetGecmis(){
 
   // ---- Grafik
   const sekme = document.getElementById('tab-netgecmis');
-  if(sekme && sekme.classList.contains('active')) netGrafikCiz(list);
+  if(sekme && sekme.classList.contains('active')){ netGrafikCiz(list); gunlukKurlariTamamla(list); }
 
   // ---- Aylık özet: her ayın son kaydı
   const ayl = document.getElementById('ngAylik');
@@ -8613,30 +8679,44 @@ function renderNetGecmis(){
     const aySon = {};
     list.forEach(x => { aySon[x.id.slice(0, 7)] = x; });
     const aylar = Object.keys(aySon).sort().reverse();
-    ayl.innerHTML = aylar.length ? `<thead><tr><th>Ay</th><th class="sag">Net varlık</th><th class="sag">Değişim</th><th class="sag">Varlık</th><th class="sag">Yatırım</th><th class="sag">Borç</th><th class="sag">Dolar</th></tr></thead><tbody>${aylar.map((k, i) => {
+    ayl.innerHTML = aylar.length ? `<thead><tr><th>Ay</th><th class="sag">Net varlık</th><th class="sag">Değişim</th><th class="sag">Varlık</th><th class="sag">Yatırım</th><th class="sag">Borç</th><th class="sag">Dolar</th><th class="sag" title="O günkü gram 24 ayar altın fiyatıyla">Altın (gr)</th></tr></thead><tbody>${aylar.map((k, i) => {
       const x = aySon[k], onceki = aySon[aylar[i + 1]];
       const f = onceki ? x.net - onceki.net : null;
       return `<tr><td>${ayAdi(k)}<span class="ozet-soluk" style="font-size:11px;"> · ${+x.id.slice(8)}. gün</span></td><td class="sag"><b>₺${fmtNumber(x.net, 0)}</b></td>
         <td class="sag" style="color:${f == null ? 'var(--muted)' : f >= 0 ? 'var(--up)' : 'var(--down)'};">${f == null ? '—' : isaretliTL(f)}</td>
         <td class="sag">₺${fmtNumber(x.varlik, 0)}</td><td class="sag">₺${fmtNumber(x.yatirim, 0)}</td><td class="sag" style="color:#FF8A8A;">₺${fmtNumber(x.borc, 0)}</td>
-        <td class="sag" style="color:var(--muted);">${x.usd ? '$' + fmtNumber(x.net / x.usd, 0) : '—'}</td></tr>`;
+        ${ngKurHucreleri(x)}</tr>`;
     }).join('')}</tbody>` : '<tbody><tr><td style="color:var(--muted-2);white-space:normal;">Henüz kayıt yok.</td></tr></tbody>';
   }
 }
 
+// Aylık özet satırının Dolar ve Altın hücreleri (o günün kuruyla)
+function ngKurHucreleri(x){
+  const k = netKayitKur(x);
+  return `<td class="sag" title="${k.usd ? 'O günkü kur ₺' + fmtNumber(k.usd, 4) : ''}">${k.usd ? '$' + fmtNumber(x.net / k.usd, 0) : '—'}</td>`
+    + `<td class="sag" style="color:var(--amber);" title="${k.gram ? 'O günkü gram altın ₺' + fmtNumber(k.gram, 2) : ''}">${k.gram ? fmtNumber(x.net / k.gram, 0) + ' gr' : '—'}</td>`;
+}
 function netGrafikCiz(list){
   const kap = document.getElementById('ngGrafik');
   if(!kap) return;
   document.querySelectorAll('#ngAraliklar button').forEach(b => b.classList.toggle('active', +b.dataset.gun === _netAralik));
+  document.querySelectorAll('#ngBirimler button').forEach(b => b.classList.toggle('active', b.dataset.birim === _netBirim));
   let l = list;
   if(_netAralik && list.length){ const s = new Date(); s.setDate(s.getDate() - _netAralik); const sS = isoGun(s); l = list.filter(x => x.id >= sS); }
+  const B = _netBirim;
+  const tumu = l.length;
+  l = l.map(x => Object.assign({}, x, { v: netBirimDeger(x, B) })).filter(x => x.v != null);   // kuru bilinmeyen gün bu birimde çizilmez
+  if(l.length < 2 && tumu >= 2){
+    kap.innerHTML = `<div class="harcama-bos" style="min-height:200px;">${B === 'USD' ? 'Dolar' : 'Altın'} bazında çizmek için günlük kurlar yükleniyor…</div>`;
+    return;
+  }
   if(l.length < 2){
     kap.innerHTML = `<div class="harcama-bos" style="min-height:200px;flex-direction:column;gap:6px;"><b style="color:var(--text);font-size:13px;">${list.length ? 'Kayıt başladı — ilk nokta ' + new Date(list[0].id + 'T00:00:00').toLocaleDateString('tr-TR') : 'Kayıt, fiyatlar gelince başlar'}</b><span>Panel açık olduğu her gün net varlığın bir kez kaydedilir; grafik ikinci günden itibaren çizilir. Geçmiş geriye dönük tahmin edilmez.</span></div>`;
     return;
   }
   const W = Math.max(kap.clientWidth || 0, 300), H = 210, PL = 60, PR = 12, PT = 12, PB = 24;
   const t0 = new Date(l[0].id + 'T00:00:00').getTime(), t1 = new Date(l[l.length - 1].id + 'T00:00:00').getTime();
-  const dgr = l.map(x => x.net), mn = Math.min(...dgr), mx = Math.max(...dgr);
+  const dgr = l.map(x => x.v), mn = Math.min(...dgr), mx = Math.max(...dgr);
   const pay = (mx - mn) * 0.15 || Math.abs(mx) * 0.02 || 1;
   const adim = guzelAdim((mx - mn + 2 * pay) / 4);
   const alt = Math.floor((mn - pay) / adim) * adim, ust = Math.ceil((mx + pay) / adim) * adim;
@@ -8645,16 +8725,16 @@ function netGrafikCiz(list){
   let svg = '';
   for(let v = alt; v <= ust + 1e-9; v += adim){
     svg += `<line x1="${PL}" x2="${W - PR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="#222a35"/>`;
-    svg += `<text class="hc-eksen" x="${PL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end">${kisaTL(Math.abs(v)).replace('₺', v < 0 ? '−₺' : '₺')}</text>`;
+    svg += `<text class="hc-eksen" x="${PL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end">${netBirimFmt(v, B, true)}</text>`;
   }
   // Tarih etiketleri: en fazla 6
   const n = Math.min(6, l.length), secilen = new Set(Array.from({ length: n }, (_, i) => Math.round(i * (l.length - 1) / Math.max(1, n - 1))));
   [...secilen].forEach(i => { const dd = new Date(l[i].id + 'T00:00:00'); svg += `<text class="hc-eksen" x="${x(l[i].id).toFixed(1)}" y="${H - 7}" text-anchor="${i === 0 ? 'start' : i === l.length - 1 ? 'end' : 'middle'}">${dd.getDate()} ${AY_KISA[dd.getMonth()]}</text>`; });
-  const yol = l.map((p, i) => (i ? 'L' : 'M') + x(p.id).toFixed(1) + ',' + y(p.net).toFixed(1)).join(' ');
-  const artis = l[l.length - 1].net >= l[0].net, renk = artis ? 'var(--up)' : 'var(--down)';
+  const yol = l.map((p, i) => (i ? 'L' : 'M') + x(p.id).toFixed(1) + ',' + y(p.v).toFixed(1)).join(' ');
+  const artis = l[l.length - 1].v >= l[0].v, renk = artis ? 'var(--up)' : 'var(--down)';
   svg += `<path d="${yol} L${x(l[l.length - 1].id).toFixed(1)},${H - PB} L${x(l[0].id).toFixed(1)},${H - PB} Z" fill="${artis ? 'rgba(51,192,124,.10)' : 'rgba(255,92,92,.10)'}"/>`;
   svg += `<path d="${yol}" fill="none" stroke="${renk}" stroke-width="2" stroke-linejoin="round"/>`;
-  svg += `<circle cx="${x(l[l.length - 1].id).toFixed(1)}" cy="${y(l[l.length - 1].net).toFixed(1)}" r="3.5" fill="${renk}"/>`;
+  svg += `<circle cx="${x(l[l.length - 1].id).toFixed(1)}" cy="${y(l[l.length - 1].v).toFixed(1)}" r="3.5" fill="${renk}"/>`;
   svg += `<line id="ngImlec" x1="0" x2="0" y1="${PT}" y2="${H - PB}" stroke="var(--muted-2)" stroke-dasharray="3 3" style="display:none;"/>`;
   kap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Net varlık geçmişi">${svg}<rect x="${PL}" y="${PT}" width="${W - PL - PR}" height="${H - PT - PB}" fill="transparent" id="ngHedef"/></svg><div class="harcama-ipucu" id="ngIpucu"></div>`;
   const hedef = document.getElementById('ngHedef'), ipucu = document.getElementById('ngIpucu'), imlec = document.getElementById('ngImlec');
@@ -8664,8 +8744,13 @@ function netGrafikCiz(list){
     l.forEach(p => { if(Math.abs(x(p.id) - fx) < Math.abs(x(en.id) - fx)) en = p; });
     imlec.setAttribute('x1', x(en.id)); imlec.setAttribute('x2', x(en.id)); imlec.style.display = '';
     ipucu.textContent = '';
-    const b = document.createElement('b'); b.textContent = '₺' + fmtNumber(en.net, 0); ipucu.appendChild(b);
+    const b = document.createElement('b'); b.textContent = netBirimFmt(en.v, B); ipucu.appendChild(b);
     const t = document.createElement('div'); t.textContent = new Date(en.id + 'T00:00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }); ipucu.appendChild(t);
+    const kk = netKayitKur(en);
+    [['Net', B !== 'TL' ? '₺' + fmtNumber(en.net, 0) : null], ['Dolar', B !== 'USD' && kk.usd ? '$' + fmtNumber(en.net / kk.usd, 0) : null], ['Altın', B !== 'ALTIN' && kk.gram ? fmtNumber(en.net / kk.gram, 0) + ' gr' : null]].forEach(([ad, v]) => {
+      if(v == null) return;
+      const s = document.createElement('div'); const a = document.createElement('span'); a.textContent = ad; const c = document.createElement('span'); c.textContent = v; c.style.color = 'var(--amber)'; s.append(a, c); ipucu.appendChild(s);
+    });
     [['Varlık', en.varlik], ['Yatırım', en.yatirim], ['Borç', -en.borc]].forEach(([ad, v]) => { const s = document.createElement('div'); const a = document.createElement('span'); a.textContent = ad; const c = document.createElement('span'); c.textContent = (v < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(v), 0); c.style.color = 'var(--text)'; s.append(a, c); ipucu.appendChild(s); });
     ipucu.style.display = 'block';
     const px = x(en.id) / W * r.width;

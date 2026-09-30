@@ -41,11 +41,11 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_gelirler_v1` | Gelirler: `{ id, tur:'duzenli', ad, tutar, baslangic, bitis }` ya da `{ id, tur:'tek', ad, tutar, ay }` (aylar `YYYY-MM`) |
 | `ft_borc_plan_v1` | Borç planı ayarları: `{ id:'ayar', ek, tek, strateji }` ve faiz işleyen kartlar `{ id:'kart-<kartId>', faizli, oran, asgari }` |
 | `ft_odemeler_v1` | Ödeme Takvimi: düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
-| `ft_net_gecmis_v1` | Günlük net varlık kaydı `{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, t }` |
+| `ft_net_gecmis_v1` | Günlük net varlık kaydı `{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, gram, t }` (`gram`: o anki gram 24 ayar altın TL fiyatı) |
 | `ft_hedefler_v1` | Birikim hedefleri `{ id:'hd-…', ad, hedef, birim:'TL'\|'USD', ay, kaynak:'elle'\|'tum'\|'y:<yatırımId>', birikmis, baslangic, baslangicDeger }` |
 | `ft_raporlar_v1` | Aylık Rapor'un Bay Piyasa yorumları `{ id:'YYYY-MM', metin, model, maliyet, ts }` (son 36 ay) |
 
-Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
+Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_gunluk_kur_v1` (günlük USD/TRY ve gram altın kapanışları; kuru olmayan eski net varlık kayıtları için), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
 **Senkron akışı:**
 - `localStorage.setItem` sarmalanmıştır; senkron anahtarlarına yazılan her **değişiklik** "bekleyen" olarak işaretlenir (değer aynıysa gönderilmez) ve Worker'a `PUT /data/:anahtar` ile gönderilir.
@@ -178,6 +178,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Kayıt (`netGecmisKaydet`): `refreshAll` fiyat turu bitince; `_senkronHazir` değilse ya da yatırım varken `_toplamYatirimTL` 0 ise yazmaz. Günde bir kayıt (id = tarih); aynı gün yalnızca 30 dakika geçmiş ve net en az ₺100 / %0,1 değişmişse güncellenir. En fazla 3650 gün tutulur.
 - `netDurum()` Finansal Durumum'un hesabıyla aynı: varlıklar + yatırımlar − (kredi + kart + KMH + elden).
 - Kartlar: bugünkü net (canlı) ve $ karşılığı; 7 ve 30 gün değişimi (hedef güne eşit ya da önceki en yakın kayda göre; yatırım ve borç katkısıyla); başlangıçtan beri (TL ve günün kuruyla $).
+- Birim: grafik ₺ TL / $ Dolar / Altın (gram 24 ayar) arasında seçilir (`_netBirim`); her gün kendi kuruyla çevrilir (`netKayitKur`: önce kayıttaki `usd`/`gram`, yoksa `ft_gunluk_kur_v1`'deki o gün ya da önceki 4 günün kapanışı — `gunlukKurlariTamamla`, Yahoo USDTRY=X ve GC=F, 10 dakikada en fazla bir deneme). Gram = ons ÷ 31,1035 × kur (`gramAltinTL`). Bugünkü kayıtta kur ya da gram eksikse yarım saat kuralı beklenmeden tamamlanır. Aylık özette Dolar ve Altın (gr) sütunları; bugün kartında $ ve gr; başlangıçtan beri kartında dolar ve altın bazında değişim.
 - Grafik 30/90/365 gün/tümü; fareyle en yakın günün varlık/yatırım/borç dökümü. Aylık özet: her ayın son kaydı ve önceki aya göre değişim.
 - Geriye dönük doldurma yok: kayıt ilk açılış gününden başlar (RULES › Veri 5 istisnası).
 
@@ -225,6 +226,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Net Varlık Geçmişi: grafik TL / dolar / gram 24 ayar altın bazında; kayda gram altın fiyatı eklendi; aylık özete Altın (gr) sütunu; kuru olmayan eski kayıtlara günlük kapanış |
 | 2026-09-30 | Yatırımlarım'da her tür (ABD ETF, Kripto, BİST, Emtia) ayrı çerçevede (tür, kalem sayısı, pay, toplam, o türü seçili açan +); yatırım çerçeveleri yeşil, borç çerçeveleri kırmızı 4 px sol çizgi + hafif yansıma |
 | 2026-09-30 | "Harcama İstatistikleri" sayfasının adı "Harcama Takibim" oldu (menü, başlık, notlar) |
 | 2026-09-30 | Aylık Rapor: ayın harcama/bütçe/nakit/borç/net varlık özeti, kurallı öne çıkanlar, kategori tablosu, kaydedilen Bay Piyasa yorumu, yazdır/PDF |

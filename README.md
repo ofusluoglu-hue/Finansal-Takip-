@@ -19,7 +19,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 | **Ödeme Takvimi** | Kredi taksitleri (ödeme planından), kart son ödeme günleri, fatura/kira/sigorta ve abonelikler tek takvimde; 45 günlük yaklaşan ödemeler, aylık takvim, abonelik maliyetleri; 3 gün içinde ödeme varsa Piyasa Özeti'nde uyarı şeridi |
 | **Borç Kapatma Planı** | Ayda ek ödeme ve bugün tek seferlik ödemeyle borçların hangi sırayla ve ne zaman biteceği; Çığ (önce en yüksek faiz) ile Kartopu (önce en küçük borç) karşılaştırması, ödenecek faiz, borç azalış grafiği; faiz işleyen kartlar isteğe bağlı plana dahil |
 | **Birikim Hedefleri** | Tutar (TL ya da $) ve tarihli hedefler; ayda ayrılması gereken tutar, plana göre önde/geride, Nakit Akışı'ndaki ay sonu kalanla kıyas; birikim elle ya da bir yatırıma bağlı (canlı değer) |
-| **Net Varlık Geçmişi** | Her gün otomatik net varlık kaydı; 7 gün / 30 gün / başlangıçtan beri değişim (TL ve dolar), 30 gün–1 yıl–tümü grafiği, aylık özet tablosu |
+| **Net Varlık Geçmişi** | Her gün otomatik net varlık kaydı; 7 gün / 30 gün / başlangıçtan beri değişim (TL, dolar ve altın bazında), TL / $ / gram 24 ayar altın seçmeli grafik (30 gün–1 yıl–tümü), aylık özette o günün dolar ve gram altın karşılığı |
 | **Portföy İstatistikleri** | Genel puan: portföy yaşı, çeşitlendirme, borç karşılama, döviz koruması |
 | **Aylık Rapor** | Seçilen ayın özeti: harcama (önceki ay ve 6 ay ortalamasına göre), bütçe uyumu, ay sonu kalan, kredi anaparasındaki azalış, net varlık değişimi; kurallı "öne çıkanlar"; isteğe bağlı Bay Piyasa yorumu (ay başına kaydedilir); yazdır / PDF |
 | **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması) |
