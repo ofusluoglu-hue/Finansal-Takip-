@@ -40,7 +40,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_butce_v1` | Bütçe: kategori başına aylık sınır `[{ id:'b-<kat>', kat, limit, tarih }]` |
 | `ft_gelirler_v1` | Gelirler: `{ id, tur:'duzenli', ad, tutar, baslangic, bitis }` ya da `{ id, tur:'tek', ad, tutar, ay }` (aylar `YYYY-MM`) |
 | `ft_borc_plan_v1` | Borç planı ayarları: `{ id:'ayar', ek, tek, strateji }` ve faiz işleyen kartlar `{ id:'kart-<kartId>', faizli, oran, asgari }` |
-| `ft_odemeler_v1` | Ödeme Takvimi (kart kaydında ayrıca `donem`, `ekstre`, `asgari`, `plan`: `{ 'YYYY-MM': tutar }`): düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
+| `ft_odemeler_v1` | Ödeme Takvimi (kart kaydında ayrıca `donem`, `ekstre`, `asgari`, `plan`: `{ 'YYYY-MM': tutar }`; düzenli ödemede `harcamaKat`, `atla`): düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
 | `ft_net_gecmis_v1` | Günlük net varlık kaydı `{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, gram, t }` (`gram`: o anki gram 24 ayar altın TL fiyatı) |
 | `ft_hedefler_v1` | Birikim hedefleri `{ id:'hd-…', ad, hedef, birim:'TL'\|'USD', ay, kaynak:'elle'\|'tum'\|'y:<yatırımId>', birikmis, baslangic, baslangicDeger }` |
 | `ft_raporlar_v1` | Aylık Rapor'un Bay Piyasa yorumları `{ id:'YYYY-MM', metin, model, maliyet, ts }` (son 36 ay) |
@@ -191,7 +191,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Takvim ızgarası (Pzt başlangıç), güne tıklayınca o günün ödemeleri. "Yaklaşan ödemeler" listesi takvimle **aynı ayı** gösterir (iki seçici birlikte değişir; liste bir sonraki aya taşmaz): bu aydaysa bugünden sonrası, gelecek ayda tamamı, geçmiş ayda soluk. Varsayılan ay: bu ayda bugünden sonra ödeme kalmışsa bu ay, yoksa sonraki ay.
 - Kart tutarı yalnızca **sıradaki** son ödeme gününde (bugünden itibaren hesaplanır) bugünkü kart borcudur; hangi ay görüntülenirse görüntülensin sonrakiler "ekstreye göre" (toplama girmez).
 - Piyasa Özeti'nin üstünde `#odemeSerit`: 3 gün içindeki ödemeler (tıklayınca Ödeme Takvimi). Açılışta ve saatte bir tazelenir.
-- Nakit Akışı'na eklenmez (faturalar harcamalarda zaten var); yalnızca hatırlatma.
+- **Düzenli ödemeler → Harcama Takibim** (`duzenliHarcamaEkle`; senkron hazır olunca, saatlik şerit tazelemesinde ve ödeme eklenince): her düzenli ödeme için **bu ay ve gelecek ay** birer harcama kaydı `{ id:'od-<ödemeId>-YYYY-MM', tur:'kayit', tarih:'YYYY-MM-01', kat, tutar, not:'<ad> — düzenli ödeme', kaynak:'odeme', odemeId }` (yıllık ödeme yalnızca kendi ayında; sabit id ile kopya/çakışma olmaz). Kategori `odemeHarcamaKat`: ödemedeki `harcamaKat`, yoksa abonelik → Yeme-içme ve eğlence, fatura ve kira → Fatura ve aidat, sigorta → Sigorta, diğer → Diğer; 'yok' = eklenmez (satırda ve formda seçilir). Harcamalardan silinen ay ödemenin `atla` listesine yazılır, tekrar eklenmez; elle tutarı değiştirilen kayıt `elle:true` olur ve kendiliğinden güncellenmez. Ödeme tutarı/kategorisi değişince bu ay ve sonrası güncellenir, ödeme silinince bu ay ve sonrası kalkar (geçmiş kalır). Harcama listesinde ↻ ile işaretlidir. Nakit Akışı giderleri harcamalardan geldiği için orada da sayılır.
 
 ## 8d. Borç Kapatma Planı
 
@@ -229,6 +229,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Düzenli ödemeler ve abonelikler Harcama Takibim'e bu ay ve gelecek ay için otomatik eklenir (harcama kategorisi seçilebilir; silinen ay geri gelmez, elle değiştirilen korunur) |
 | 2026-09-30 | Ödeme Takvimi: kartın sıradaki dönemi için dönem borcu, asgari ve ödeyeceğim tutarı; takvim ödeyeceğin tutarı kullanır; kalan borç ve asgari uyarıları, ödeme sonrası güncelleme hatırlatması |
 | 2026-09-30 | Ödeme Takvimi kartları: 1. "Ekim ödemeleri" ayın sabit toplamı, 2. "Ekim kalan" (Önümüzdeki 7 gün kaldırıldı); kart dönem tutarı kaydedilir, ödeme günü geçince toplam değişmez |
 | 2026-09-30 | Harcama ve bütçe grubunda sıra: Harcama Takibim, Ödeme Takvimi, Nakit Akışı, Bütçe |

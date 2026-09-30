@@ -1901,6 +1901,10 @@
   .odeme-satir.odendi{opacity:.5;}
   .odeme-satir.odendi .satir-tutar{text-decoration:line-through;text-decoration-color:var(--muted-2);}
   .tk-odendi{color:var(--up);font-weight:800;}
+  .mini-secim{background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-family:inherit;font-size:10.5px;padding:0 3px;max-width:150px;cursor:pointer;}
+  .mini-secim:hover, .mini-secim:focus{border-color:var(--amber);color:var(--text);outline:none;}
+  .mini-secim option{background:var(--panel);color:var(--text);}
+  #odemeDuzenli .satir-alt{white-space:normal;line-height:1.7;}
   .satir.kart-satir{flex-wrap:wrap;row-gap:8px;}
   .kart-donem{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 10px;margin-left:0;border:1px dashed var(--border);border-radius:9px;background:var(--panel-2);}
   .kart-donem-bas{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--amber);}
@@ -2883,6 +2887,7 @@
           <select id="odemeKatInput" class="ai-input" style="max-width:160px;min-width:120px;">
             <option value="abonelik">Abonelik</option><option value="fatura">Fatura</option><option value="kira">Kira / aidat</option><option value="sigorta">Sigorta / vergi</option><option value="diger">Diğer</option>
           </select>
+          <select id="odemeHarcamaKatInput" class="ai-input" style="max-width:220px;min-width:150px;" title="Harcama Takibim'e hangi kategoriyle eklensin"></select>
           <select id="odemePeriyotInput" class="ai-input" style="max-width:120px;min-width:100px;" onchange="odemeFormTurDegisti()">
             <option value="aylik">Her ay</option><option value="yillik">Her yıl</option>
           </select>
@@ -2901,7 +2906,7 @@
       <div id="odemeKartlar"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Kredi taksitleri ödeme planından tarih ve tutarıyla otomatik gelir. Kartın son ödeme gününü bir kez yazman yeter. Sıradaki dönem için dönem borcunu (ekstre), asgariyi ve ödeyeceğin tutarı yazabilirsin; takvimde önce ödeyeceğin tutar, yoksa dönem borcu, o da yoksa toplam kart borcu kullanılır. Ödedikten sonra kalan bakiyeyi Borçlarım'dan güncellersin. Sonraki aylar ekstreye göre değişir. Düzenli ödemeler ve abonelikler her ay ya da her yıl aynı gün takvime düşer; ayın 31'i olmayan aylarda son güne kayar. Hafta sonuna denk gelen banka ödemeleri genellikle bir sonraki iş gününe kayar. İlk kart ayın bütün ödemelerinin toplamıdır ve sabit kalır; ikinci kart kalandır. Bugünden önceki ödemeler ödenmiş sayılır: listede ✓ ödendi olarak soluk görünür, kalan tutara girmez. Yaklaşan ödemeler, takvim ve ay kartı aynı ayı gösterir (ay bazında; bir sonraki aya taşmaz): varsayılan ay bu aydır, bu ayda ödeme kalmadıysa sonraki ay. Bu sayfa hatırlatma içindir: faturalar zaten harcamalarında olduğundan Nakit Akışı'na ayrıca eklenmez. Önümüzdeki 3 günde ödeme varsa Piyasa Özeti'nin üstünde uyarı çıkar.</div>
+    <div class="footnote"><b>Not:</b> Kredi taksitleri ödeme planından tarih ve tutarıyla otomatik gelir. Kartın son ödeme gününü bir kez yazman yeter. Sıradaki dönem için dönem borcunu (ekstre), asgariyi ve ödeyeceğin tutarı yazabilirsin; takvimde önce ödeyeceğin tutar, yoksa dönem borcu, o da yoksa toplam kart borcu kullanılır. Ödedikten sonra kalan bakiyeyi Borçlarım'dan güncellersin. Sonraki aylar ekstreye göre değişir. Düzenli ödemeler ve abonelikler her ay ya da her yıl aynı gün takvime düşer; ayın 31'i olmayan aylarda son güne kayar. Hafta sonuna denk gelen banka ödemeleri genellikle bir sonraki iş gününe kayar. İlk kart ayın bütün ödemelerinin toplamıdır ve sabit kalır; ikinci kart kalandır. Bugünden önceki ödemeler ödenmiş sayılır: listede ✓ ödendi olarak soluk görünür, kalan tutara girmez. Yaklaşan ödemeler, takvim ve ay kartı aynı ayı gösterir (ay bazında; bir sonraki aya taşmaz): varsayılan ay bu aydır, bu ayda ödeme kalmadıysa sonraki ay. Düzenli ödemeler ve abonelikler Harcama Takibim'e bu ay ve gelecek ay için kendiliğinden eklenir (ay dönünce bir sonraki ay da eklenir; ↻ ile işaretli); kategoriyi satırdaki "harcamaya" seçiminden değiştirebilir ya da "eklenmesin" diyebilirsin. Harcamalardan sildiğin bir ay tekrar eklenmez; tutarını elle değiştirdiğin kayıt kendiliğinden güncellenmez. Nakit Akışı giderleri harcamalardan aldığı için bunlar orada da görünür. Önümüzdeki 3 günde ödeme varsa Piyasa Özeti'nin üstünde uyarı çıkar.</div>
   </div>
   <!-- ================= /TAB: ÖDEME TAKVİMİ ================= -->
 
@@ -3396,6 +3401,7 @@ async function senkronBaslat(){
   }
   _senkronHazir = true;
   if(typeof krediTohumla === 'function') krediTohumla();     // sabit kredileri ilk kez D1'e yaz
+  if(typeof duzenliHarcamaEkle === 'function') duzenliHarcamaEkle();   // düzenli ödemeler → bu ay ve gelecek ayın harcamaları
   if(Object.keys(_snMeta.bekleyen).length) senkronGonder(); else if(_snSonCekme) senkronDurumYaz('ok');
 }
 
@@ -7424,7 +7430,7 @@ function renderHarcama(){
     kayitEl.innerHTML = (elleNot.length ? `<div class="ozet-not" style="padding:4px 2px;white-space:normal;">✎ ${elleNot.map(escapeHtml).join(', ')} için bu ayın toplamı tablodan elle yazıldı; aşağıdaki kayıtlar o toplama eklenmez.</div>` : '')
       + (kayitlar.length ? kayitlar.slice(0, _harcamaHepsi ? kayitlar.length : HARCAMA_LISTE_ILK).map(x => satirHtml({
           ad: x.not ? String(x.not).split(' — ')[0] : (HARCAMA_KAT_AD[x.kat] || x.kat),
-          alt: escapeHtml((HARCAMA_KAT_AD[x.kat] || x.kat) + (x.not && x.not.includes(' — ') ? ' · ' + x.not.split(' — ').slice(1).join(' — ') : '')) + ' · ' + AY_UZUN[+x.tarih.slice(5, 7) - 1] + ' ' + x.tarih.slice(0, 4),
+          alt: (x.kaynak === 'odeme' ? '<span title="Ödeme Takvimi\'ndeki düzenli ödemeden otomatik eklendi" style="color:#6EC3FF;">↻</span> ' : '') + escapeHtml((HARCAMA_KAT_AD[x.kat] || x.kat) + (x.not && x.not.includes(' — ') ? ' · ' + x.not.split(' — ').slice(1).join(' — ') : '')) + ' · ' + AY_UZUN[+x.tarih.slice(5, 7) - 1] + ' ' + x.tarih.slice(0, 4),
           tutar: '₺' + fmtNumber(x.tutar, 2),
           duzen: { id: 'harcama-edit-' + x.id, ph: 'yeni tutar (₺)', kaydet: `harcamaGuncelle('${x.id}')` },
           sil: { onclick: `harcamaSil('${x.id}')`, baslik: 'Sil', ikon: '✕' },
@@ -7476,13 +7482,19 @@ function harcamaGuncelle(id){
   const x = list.find(k => k.id === id);
   if(!x) return;
   x.tutar = val;
+  if(x.kaynak === 'odeme') x.elle = true;   // düzenli ödemeden gelen kayıt elle değişti: artık kendiliğinden güncellenmez
   harcamaKaydet(list);
   renderHarcama();
 }
 
 function harcamaSil(id){
-  showConfirmModal('Bu harcama kaydını silmek istediğine emin misin?', () => {
+  const x = harcamaYukle().find(k => k.id === id);
+  showConfirmModal(x && x.kaynak === 'odeme' ? 'Bu kayıt Ödeme Takvimi\'ndeki düzenli ödemeden geldi. Silersen bu ay için tekrar eklenmez. Emin misin?' : 'Bu harcama kaydını silmek istediğine emin misin?', () => {
     harcamaKaydet(harcamaYukle().filter(k => k.id !== id));
+    if(x && x.kaynak === 'odeme'){   // bu ay için atla
+      const ol = odemeYukle(), o = ol.find(q => q.id === x.odemeId);
+      if(o){ o.atla = Array.from(new Set([...(o.atla || []), x.tarih.slice(0, 7)])).sort().slice(-24); manuelListeKaydet(ODEME_KEY, ol); }
+    }
     renderHarcama();
   });
 }
@@ -8475,12 +8487,16 @@ function renderOdeme(){
     const sira = duzenli.slice().sort((a, b) => (a.kat === 'abonelik') - (b.kat === 'abonelik') || yillikTutar(b) - yillikTutar(a));
     dz.innerHTML = sira.length ? sira.map(o => satirHtml({
       ad: o.ad,
-      alt: escapeHtml((ODEME_KAT[o.kat] || 'Düzenli') + ' · ' + (o.periyot === 'yillik' ? 'her yıl ' + (+o.gun || 1) + ' ' + AY_UZUN[(+o.ay || 1) - 1] : 'her ayın ' + (+o.gun || 1) + '’i') + (o.periyot === 'yillik' ? ' · ayda ₺' + fmtNumber(yillikTutar(o) / 12, 0) : ' · yılda ₺' + fmtNumber(yillikTutar(o), 0))),
+      alt: escapeHtml((ODEME_KAT[o.kat] || 'Düzenli') + ' · ' + (o.periyot === 'yillik' ? 'her yıl ' + (+o.gun || 1) + ' ' + AY_UZUN[(+o.ay || 1) - 1] : 'her ayın ' + (+o.gun || 1) + '’i') + (o.periyot === 'yillik' ? ' · ayda ₺' + fmtNumber(yillikTutar(o) / 12, 0) : ' · yılda ₺' + fmtNumber(yillikTutar(o), 0)))
+        + ` · harcamaya: <select class="mini-secim" title="Harcama Takibim'e hangi kategoriyle eklensin" onchange="odemeHarcamaKatSec('${o.id}', this.value)">${HARCAMA_KATEGORILER.filter(x => !x.gizli).map(x => `<option value="${x.k}"${odemeHarcamaKat(o) === x.k ? ' selected' : ''}>${escapeHtml(x.ad)}</option>`).join('')}<option value="yok"${odemeHarcamaKat(o) === 'yok' ? ' selected' : ''}>eklenmesin</option></select>`,
       tutar: '₺' + fmtNumber(o.tutar, 0), renk: ODEME_RENK[o.kat] || 'var(--text)',
       duzen: { id: 'odeme-edit-' + o.id, ph: 'yeni tutar (₺)', kaydet: `odemeGuncelle('${o.id}')` },
       sil: { onclick: `odemeSil('${o.id}')`, baslik: 'Sil', ikon: '✕' },
     })).join('') : '<div class="bos-not">Kira, aidat, fatura, sigorta ve abonelikleri (Netflix, Spotify, internet…) bir kez ekle; her ay ya da her yıl takvime kendiliğinden düşer.</div>';
   }
+
+  const hkIn = document.getElementById('odemeHarcamaKatInput');
+  if(hkIn && !hkIn.options.length) hkIn.innerHTML = '<option value="varsayilan">Harcamaya: türüne göre</option>' + HARCAMA_KATEGORILER.filter(x => !x.gizli).map(x => `<option value="${x.k}">Harcamaya: ${escapeHtml(x.ad)}</option>`).join('') + '<option value="yok">Harcamaya eklenmesin</option>';
 
   // ---- Kart son ödeme günleri
   const kk = document.getElementById('odemeKartlar');
@@ -8557,6 +8573,7 @@ function odemeKartDonemKaydet(){
 }
 function odemeSeritGuncelle(ileri){
   odemeKartDonemKaydet();
+  duzenliHarcamaEkle();
   const el = document.getElementById('odemeSerit');
   if(!el) return;
   try{
@@ -8569,6 +8586,50 @@ function odemeSeritGuncelle(ileri){
   }catch(e){ el.style.display = 'none'; }
 }
 
+// ---------- Düzenli ödemeler → Harcama Takibim (bu ay ve gelecek ay; ay dönünce bir sonraki eklenir) ----------
+// Kayıt: { id:'od-<ödemeId>-YYYY-MM', tur:'kayit', tarih:'YYYY-MM-01', kat, tutar, not:'<ad> — düzenli ödeme', kaynak:'odeme', odemeId, elle? }
+// Ödemede: harcamaKat (harcama kategorisi; 'yok' = eklenmesin), atla: ['YYYY-MM', …] (kullanıcının sildiği aylar tekrar eklenmez)
+const ODEME_HARCAMA_KAT = { abonelik: 'yemeicme', fatura: 'fatura', kira: 'fatura', sigorta: 'sigorta', diger: 'diger' };
+function odemeHarcamaKat(o){ return o.harcamaKat || ODEME_HARCAMA_KAT[o.kat] || 'diger'; }
+function odemeAydaVar(o, ay){ return o.periyot !== 'yillik' || +o.ay === +ay.slice(5, 7); }
+function duzenliHarcamaEkle(){
+  try{
+    if(!_senkronHazir) return;   // sunucudaki kayıtlar gelmeden ekleme (başka cihazdan gelenle çakışmasın)
+    const odemeler = odemeYukle().filter(o => o.tur === 'duzenli' && odemeHarcamaKat(o) !== 'yok' && Number(o.tutar) > 0);
+    if(!odemeler.length) return;
+    const list = harcamaYukle(), idler = new Set(list.map(x => x.id)), buAy = buAyAnahtar();
+    let eklendi = 0;
+    [buAy, ayKaydir(buAy, 1)].forEach(ay => odemeler.forEach(o => {
+      const id = 'od-' + o.id + '-' + ay;
+      if(idler.has(id) || !odemeAydaVar(o, ay) || (o.atla || []).includes(ay)) return;
+      list.push({ id, tur: 'kayit', tarih: ay + '-01', kat: odemeHarcamaKat(o), tutar: Number(o.tutar), not: o.ad + ' — düzenli ödeme', kaynak: 'odeme', odemeId: o.id });
+      idler.add(id); eklendi++;
+    }));
+    if(!eklendi) return;
+    harcamaKaydet(list);
+    const h = document.getElementById('tab-harcama');
+    if(h && h.classList.contains('active')) renderHarcama();
+  }catch(e){ /* bir sonraki tazelemede tekrar denenir */ }
+}
+// Ödeme değişince bu ay ve sonrasının (elle değiştirilmemiş) otomatik kayıtlarını uyarla; kat 'yok' ya da silme → kaldır
+function duzenliHarcamaUyarla(o, silindi){
+  const buAy = buAyAnahtar(), onek = 'od-' + o.id + '-';
+  let list = harcamaYukle(), degisti = false;
+  const hedef = x => x.id.startsWith(onek) && x.tarih.slice(0, 7) >= buAy && !x.elle;
+  if(silindi || odemeHarcamaKat(o) === 'yok'){
+    const once = list.length; list = list.filter(x => !hedef(x)); degisti = list.length !== once;
+  } else list.forEach(x => { if(hedef(x)){ x.tutar = Number(o.tutar); x.kat = odemeHarcamaKat(o); x.not = o.ad + ' — düzenli ödeme'; degisti = true; } });
+  if(degisti) harcamaKaydet(list);
+  if(!silindi) duzenliHarcamaEkle();
+}
+function odemeHarcamaKatSec(id, kat){
+  const list = odemeYukle(), o = list.find(x => x.id === id);
+  if(!o) return;
+  o.harcamaKat = kat;
+  manuelListeKaydet(ODEME_KEY, list);
+  duzenliHarcamaUyarla(o, false);
+  renderOdeme();
+}
 function odemeFormTurDegisti(){
   const yillik = document.getElementById('odemePeriyotInput').value === 'yillik';
   document.getElementById('odemeAyInput').style.display = yillik ? '' : 'none';
@@ -8584,8 +8645,10 @@ function odemeEkle(){
   if(!(tutar > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
   if(!(gun >= 1 && gun <= 31)){ showAlertModal('Ödeme günü 1 ile 31 arasında olmalı.'); return; }
   const list = odemeYukle();
-  list.push({ id: 'o-' + Date.now(), tur: 'duzenli', ad, tutar, gun, periyot, ay: periyot === 'yillik' ? ay : null, kat });
+  const hk = document.getElementById('odemeHarcamaKatInput');
+  list.push(Object.assign({ id: 'o-' + Date.now(), tur: 'duzenli', ad, tutar, gun, periyot, ay: periyot === 'yillik' ? ay : null, kat }, hk && hk.value !== 'varsayilan' ? { harcamaKat: hk.value } : {}));
   manuelListeKaydet(ODEME_KEY, list);
+  duzenliHarcamaEkle();
   ['odemeAdInput', 'odemeTutarInput', 'odemeGunInput'].forEach(id => { document.getElementById(id).value = ''; });
   renderOdeme();
   document.getElementById('odemeAdInput').focus();
@@ -8598,10 +8661,16 @@ function odemeGuncelle(id){
   if(!o) return;
   o.tutar = t;
   manuelListeKaydet(ODEME_KEY, list);
+  duzenliHarcamaUyarla(o, false);   // bu ay ve sonrasının harcama kayıtları yeni tutarla
   renderOdeme();
 }
 function odemeSil(id){
-  showConfirmModal('Bu düzenli ödemeyi silmek istediğine emin misin?', () => { manuelListeKaydet(ODEME_KEY, odemeYukle().filter(x => x.id !== id)); renderOdeme(); });
+  const o = odemeYukle().find(x => x.id === id);
+  showConfirmModal('Bu düzenli ödemeyi silmek istediğine emin misin? Harcama Takibim\'deki bu ay ve sonraki kayıtları da kalkar (geçmiş aylar kalır).', () => {
+    manuelListeKaydet(ODEME_KEY, odemeYukle().filter(x => x.id !== id));
+    if(o) duzenliHarcamaUyarla(o, true);
+    renderOdeme();
+  });
 }
 // Geçen dönemde ödeme planlandıysa ve kart borcu o tarihten beri güncellenmediyse hatırlat
 function kartGuncelleHatirlat(o, k){
