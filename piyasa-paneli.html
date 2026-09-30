@@ -90,6 +90,18 @@
     border-left:2px solid var(--amber);
   }
   .nav-item.active svg{opacity:1;stroke:var(--amber);}
+  .nav-diger{display:none !important;}
+  /* Telefonda "Diğer" menüsü: alt çubukta yer almayan sayfalar alttan açılan bir listede */
+  .diger-perde{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;}
+  .diger-sayfa{width:100%;max-height:78vh;overflow-y:auto;background:var(--panel);border-top:1px solid var(--border);border-radius:16px 16px 0 0;padding:8px 14px calc(14px + env(safe-area-inset-bottom));box-sizing:border-box;}
+  .diger-tutamak{width:40px;height:4px;border-radius:2px;background:var(--border);margin:2px auto 6px;}
+  .diger-grup{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);padding:10px 4px 6px;}
+  .diger-izgara{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .diger-oge{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--panel-2);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;min-width:0;}
+  .diger-oge svg{width:18px;height:18px;flex-shrink:0;opacity:.8;}
+  .diger-oge span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .diger-oge.active{border-color:var(--amber);color:var(--amber);}
+  .diger-oge.active svg{stroke:var(--amber);opacity:1;}
   /* Telefon/tablet: menü alta sabit sekme çubuğu olur; senkron durumu ve çıkış üstte ince bir satırda kalır */
   @media (max-width:900px){
     .sidebar-kutu{position:static;padding:8px 12px;}
@@ -107,6 +119,8 @@
     .nav-item > span{font-size:0;}
     .nav-item > span::after{content:attr(data-kisa);font-size:10px;line-height:1.15;}
     .nav-item svg{width:19px;height:19px;}
+    .nav-item:not([data-alt]){display:none;}
+    .nav-diger{display:flex !important;}
     .nav-alt{flex-direction:row !important;align-items:center;justify-content:space-between;margin-top:0 !important;padding:0 !important;border-top:none !important;}
     .wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important;}
   }
@@ -1823,6 +1837,45 @@
   .harcama-tablo tfoot td:first-child{background:#161c25;}
   .harcama-tablo tfoot tr.karsilik td{font-weight:600;color:var(--muted);font-size:11.5px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
+  /* Bütçe: kategori satırı = ad | ilerleme çubuğu | harcanan / bütçe | yüzde | aksiyon */
+  .satir.butce-satir{padding:7px 2px;display:grid;grid-template-columns:minmax(120px,200px) minmax(60px,1fr) 190px 54px 64px;grid-template-areas:"ad cubuk deger yuzde aks";align-items:center;column-gap:14px;}
+  .butce-satir .satir-ana{grid-area:ad;}
+  .butce-satir .butce-cubuk{grid-area:cubuk;}
+  .butce-satir .satir-tutar{grid-area:deger;font-size:13px;}
+  .butce-satir .satir-tutar small{font-weight:500;color:var(--muted-2);font-size:11.5px;}
+  .butce-satir .butce-yuzde{grid-area:yuzde;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .butce-satir .satir-aksiyon, .butce-satir .satir-duzen{grid-area:aks;justify-self:end;}
+  .butce-satir.duzenleniyor{grid-template-columns:minmax(120px,200px) minmax(60px,1fr) 190px 54px auto;}
+  .butce-satir.bossuz .satir-ad{color:var(--muted);}
+  .butce-cubuk{position:relative;height:9px;border-radius:5px;background:#1b212a;}
+  .butce-cubuk > i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;}
+  .butce-cubuk > em{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--text);opacity:.55;border-radius:1px;}
+  .butce-cubuk > b{position:absolute;top:-4px;bottom:-4px;width:2px;border-radius:1px;background:var(--muted);opacity:.8;}
+  .butce-bos{padding:6px 2px 12px;font-size:13px;color:var(--muted);line-height:1.6;}
+  .butce-bos .ai-btn{margin-top:10px;}
+  .butce-oneri-liste{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .butce-oneri-liste span{border:1px solid var(--border);border-radius:7px;padding:4px 9px;font-size:12px;color:var(--text);background:var(--panel-2);font-variant-numeric:tabular-nums;}
+  .butce-oneri-liste span small{color:var(--muted-2);margin-right:5px;}
+  .ist-tablo.butce-isi{font-size:12px;font-variant-numeric:tabular-nums;}
+  .ist-tablo.butce-isi th, .ist-tablo.butce-isi td{padding:7px 8px;text-align:center;white-space:nowrap;}
+  .ist-tablo.butce-isi th{font-size:10.5px;}
+  .butce-isi th:first-child, .butce-isi td:first-child{text-align:left !important;position:sticky;left:0;background:var(--panel);z-index:1;}
+  .butce-isi th:first-child{background:#1b222c;}
+  .butce-isi td.iyi{background:rgba(51,192,124,.13);color:var(--up);}
+  .butce-isi td.sinir{background:rgba(231,168,59,.16);color:var(--amber);}
+  .butce-isi td.asim{background:rgba(255,92,92,.16);color:var(--down);font-weight:700;}
+  .butce-isi td.yok{color:#3a4453;}
+  .butce-isi tr.toplam td{font-weight:800;border-top:1px solid var(--border);}
+  .butce-isi th.secili{color:var(--amber);}
+  @media (max-width:640px){
+    .satir.butce-satir, .butce-satir.duzenleniyor{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"ad deger aks" "cubuk cubuk yuzde";row-gap:6px;column-gap:10px;}
+    .butce-satir .butce-yuzde{font-size:12px;}
+    .bolum-bas.sarmal{flex-wrap:wrap;row-gap:8px;}
+    .bolum-bas.sarmal .bolum-baslik{flex:1 1 100%;}
+    .bolum-bas.sarmal .bolum-toplam{font-size:13px;}
+    .butce-satir.duzenleniyor{grid-template-areas:"ad ad deger" "aks aks aks" "cubuk cubuk yuzde";}
+    .butce-satir.duzenleniyor .satir-duzen{justify-self:stretch;}
+  }
   @media (max-width:900px){ .harcama-ikili{grid-template-columns:1fr;gap:0;} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1855,36 +1908,45 @@
   <div class="sidebar">
    <div class="sidebar-kutu">
     <div class="nav-panel" id="navPanel">
-      <div class="nav-item active" data-tab="gunluk" onclick="switchTab('gunluk')">
+      <div class="nav-item active" data-tab="gunluk" data-alt="1" onclick="switchTab('gunluk')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg>
         <span data-kisa="Piyasa">Piyasa Özeti</span>
       </div>
       <div class="nav-grup">Varlık ve borç</div>
-      <div class="nav-item" data-tab="finansal" onclick="switchTab('finansal')">
+      <div class="nav-item" data-tab="finansal" data-alt="1" onclick="switchTab('finansal')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
         <span data-kisa="Durum">Finansal Durumum</span>
       </div>
-      <div class="nav-item" data-tab="yatirim" onclick="switchTab('yatirim')">
+      <div class="nav-item" data-tab="yatirim" data-alt="1" onclick="switchTab('yatirim')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 7l-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
         <span data-kisa="Yatırım">Yatırımlarım</span>
       </div>
-      <div class="nav-item" data-tab="borclar" onclick="switchTab('borclar')">
+      <div class="nav-item" data-tab="borclar" data-alt="1" onclick="switchTab('borclar')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
         <span data-kisa="Borç">Borçlarım</span>
       </div>
-      <div class="nav-grup">İstatistikler</div>
-      <div class="nav-item" data-tab="harcama" onclick="switchTab('harcama')">
+      <div class="nav-grup">Harcama ve bütçe</div>
+      <div class="nav-item" data-tab="harcama" data-alt="1" onclick="switchTab('harcama')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>
         <span data-kisa="Harcama">Harcama İstatistikleri</span>
       </div>
+      <div class="nav-item" data-tab="butce" onclick="switchTab('butce')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6.4 6.4"/></svg>
+        <span data-kisa="Bütçe">Bütçe</span>
+      </div>
+      <div class="nav-grup">İstatistikler</div>
       <div class="nav-item" data-tab="istatistik" onclick="switchTab('istatistik')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
         <span data-kisa="Portföy">Portföy İstatistikleri</span>
       </div>
       <div class="nav-grup">Asistan</div>
-      <div class="nav-item" data-tab="ai" onclick="switchTab('ai')">
+      <div class="nav-item" data-tab="ai" data-alt="1" onclick="switchTab('ai')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg>
         <span data-kisa="Asistan">Bay Piyasa <small style="font-size:11px;font-weight:500;opacity:.75;">(AI Asistan)</small></span>
+      </div>
+      <div class="nav-item nav-diger" onclick="digerMenuAc()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span data-kisa="Diğer">Diğer</span>
       </div>
     </div>
     <div class="nav-alt">
@@ -2420,6 +2482,67 @@
   </div>
   <!-- ================= /TAB: HARCAMA İSTATİSTİKLERİ ================= -->
 
+  <!-- ================= TAB: BÜTÇE ================= -->
+  <div class="tab-panel" id="tab-butce">
+    <div class="page-head"><h1>Bütçe</h1></div>
+
+    <div class="ozet-grid k4">
+      <div class="ozet-kart mavi">
+        <div class="ozet-etiket">Aylık bütçe</div>
+        <div class="ozet-deger" id="butceToplam">—</div>
+        <div class="ozet-alt" id="butceToplamAlt"></div>
+        <div class="card-seanslar" id="butceToplamDetay"></div>
+      </div>
+      <div class="ozet-kart sari" id="butceHarcKart">
+        <div class="ozet-etiket" id="butceHarcEtiket">Harcama</div>
+        <div class="ozet-deger" id="butceHarc">—</div>
+        <div class="ozet-alt" id="butceHarcAlt"></div>
+        <div class="card-seanslar" id="butceHarcDetay"></div>
+      </div>
+      <div class="ozet-kart yesil" id="butceKalanKart">
+        <div class="ozet-etiket" id="butceKalanEtiket">Kalan</div>
+        <div class="ozet-deger" id="butceKalan">—</div>
+        <div class="ozet-alt" id="butceKalanAlt"></div>
+        <div class="card-seanslar" id="butceKalanDetay"></div>
+      </div>
+      <div class="ozet-kart mor">
+        <div class="ozet-etiket">Son 6 ay</div>
+        <div class="ozet-deger" id="butceUyum">—</div>
+        <div class="ozet-alt" id="butceUyumAlt"></div>
+        <div class="card-seanslar" id="butceUyumDetay"></div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas sarmal">
+        <span class="bolum-baslik">Kategori bütçeleri</span>
+        <select id="butceAy" class="bolum-secim" title="Ay" onchange="_butceAy = this.value; renderButce();"></select>
+        <span class="bolum-toplam" id="butceBolumToplam"></span>
+        <button class="bolum-ekle" onclick="butceFormAc()">+ Bütçe koy</button>
+      </div>
+      <div class="bolum-form" id="butceForm">
+        <div class="loan-add-row">
+          <select id="butceKatInput" class="ai-input" style="max-width:220px;min-width:170px;" onchange="butceFormOneri()"></select>
+          <input type="number" step="100" min="0" id="butceTutarInput" class="ai-input" style="max-width:170px;min-width:130px;" placeholder="Aylık bütçe (TL)" onkeydown="if(event.key==='Enter')butceEkle()">
+          <button class="ai-btn" onclick="butceEkle()">Bütçeyi Kaydet</button>
+        </div>
+      </div>
+      <div id="butceListe"></div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Son 12 ay</span>
+        <span class="bolum-toplam" id="butceIsiAlt" style="color:var(--muted);font-size:12px;font-weight:600;"></span>
+      </div>
+      <div class="ist-tablo-kap"><table class="ist-tablo butce-isi" id="butceIsi"></table></div>
+      <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Her hücre o ayın harcamasının bugünkü bütçeye oranıdır: <span style="color:var(--up);">%90'a kadar</span> · <span style="color:var(--amber);">%90–100</span> · <span style="color:var(--down);">bütçe aşıldı</span>. Ay başlığına tıklarsan üstte o ay gösterilir.</div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Her harcama kategorisine aylık bir üst sınır koyarsın; harcamalar Harcama İstatistikleri'nde girdiğin aylık tutarlardan otomatik gelir. Önerilen bütçe, kategorinin son 6 tamamlanmış aydaki <b>medyanıdır</b> (ortadaki değer; tek seferlik büyük bir ay öneriyi şişirmesin diye ortalama kullanılmaz), 500 TL'ye yukarı yuvarlanır. Süren ayda çubuktaki ince çizgi ayın ne kadarının geçtiğini gösterir; harcama bu çizginin belirgin önündeyse kategori sarı yanar. Toplam, bütçesi olmayan kategoriler ve kategorisiz (2025) tutarlar dahil ayın bütün harcamasıdır. Geçmiş aylar da bugünkü bütçeyle karşılaştırılır. Bütçeler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+  </div>
+  <!-- ================= /TAB: BÜTÇE ================= -->
+
   <!-- ================= TAB: BAY PİYASA ================= -->
   <div class="tab-panel" id="tab-ai">
     <div class="page-head"><h1>Bay Piyasa</h1></div>
@@ -2502,6 +2625,7 @@ const SENKRON_ANAHTARLARI = new Set([
   'ft_yatirimlar_v1', 'ft_varliklarim_v1', 'ft_custom_loans_v1', 'ft_closed_loans_v1',
   'ft_kredi_kartlari_v1', 'ft_kmh_v1', 'ft_elden_nakit_v1', 'ft_sabit_krediler_v1',
   'ft_bay_piyasa_v1', 'ft_haber_ceviri_v1', 'ft_harcamalar_v1',
+  'ft_butce_v1', 'ft_gelirler_v1', 'ft_odemeler_v1', 'ft_borc_plan_v1', 'ft_hedefler_v1', 'ft_net_gecmis_v1', 'ft_raporlar_v1',
 ]);
 
 const _depoSetItem = Storage.prototype.setItem;
@@ -4348,6 +4472,7 @@ function bpSnapshotOlustur(paylas, haber){
     const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
     s.push('Toplam borç: ₺' + fmtNumber(borc, 0));
     try{ const h = harcamaOzetMetni(); if(h) s.push(h); }catch(e){ /* harcama özeti eklenemezse bağlam yine gider */ }
+    try{ const b = butceOzetMetni(); if(b) s.push(b); }catch(e){ /* bütçe özeti eklenemezse bağlam yine gider */ }
     s.push('Net değer (Varlıklar + Yatırımlar − Borç): ₺' + fmtNumber(vToplam + yToplam - borc, 0)
       + (usdtry ? ' (≈ $' + fmtNumber((vToplam + yToplam - borc) / usdtry, 0) + ')' : ''));
     if(borc > 0) s.push('Yatırım / Borç oranı: %' + fmtNumber(yToplam / borc * 100, 1));
@@ -6846,6 +6971,264 @@ window.addEventListener('resize', () => {
   _harcamaBoyutZamanlayici = setTimeout(() => { const s = document.getElementById('tab-harcama'); if(s && s.classList.contains('active')) harcamaGrafikCiz(harcamaTablosu(_harcamaYil)); }, 200);
 });
 
+// ---------- Telefonda "Diğer" menüsü: alt çubukta olmayan sayfalar, menüdeki gruplarıyla ----------
+function digerMenuAc(){
+  digerMenuKapat();
+  let html = '', grup = null, ogeler = '';
+  const bitir = () => { if(ogeler) html += (grup ? `<div class="diger-grup">${escapeHtml(grup)}</div>` : '') + `<div class="diger-izgara">${ogeler}</div>`; ogeler = ''; };
+  document.querySelectorAll('#navPanel > .nav-grup, #navPanel > .nav-item[data-tab]').forEach(el => {
+    if(el.classList.contains('nav-grup')){ bitir(); grup = el.textContent.trim(); return; }
+    if(el.hasAttribute('data-alt')) return;
+    const svg = el.querySelector('svg'), ad = el.querySelector('span');
+    ogeler += `<div class="diger-oge${el.classList.contains('active') ? ' active' : ''}" onclick="switchTab('${el.dataset.tab}')">${svg ? svg.outerHTML : ''}<span>${escapeHtml(ad ? ad.firstChild.textContent.trim() : '')}</span></div>`;
+  });
+  bitir();
+  const perde = document.createElement('div');
+  perde.className = 'diger-perde'; perde.id = 'digerPerde';
+  perde.innerHTML = `<div class="diger-sayfa" role="dialog" aria-label="Diğer sayfalar"><div class="diger-tutamak"></div>${html}</div>`;
+  perde.addEventListener('click', e => { if(e.target === perde) digerMenuKapat(); });
+  document.body.appendChild(perde);
+}
+function digerMenuKapat(){ const p = document.getElementById('digerPerde'); if(p) p.remove(); }
+document.addEventListener('keydown', e => { if(e.key === 'Escape') digerMenuKapat(); });
+
+// ---------- Bütçe: kategori başına aylık sınır (ft_butce_v1: [{ id:'b-<kat>', kat, limit, tarih }]) ----------
+const BUTCE_KEY = 'ft_butce_v1';
+let _butceAy = null;   // gösterilen ay 'YYYY-MM' (null: veri girilmiş son ay)
+let _butceOneri = {};
+function butceYukle(){ return manuelListeYukle(BUTCE_KEY); }
+function butceLimitleri(){
+  const m = {};
+  butceYukle().forEach(b => { if(b && b.kat && Number(b.limit) > 0) m[b.kat] = Number(b.limit); });
+  return m;
+}
+function ayKaydir(anahtar, n){ const d = new Date(+anahtar.slice(0, 4), +anahtar.slice(5, 7) - 1 + n, 1); return ayAnahtar(d.getFullYear(), d.getMonth()); }
+function ayAdi(anahtar){ return AY_UZUN[+anahtar.slice(5, 7) - 1] + ' ' + anahtar.slice(0, 4); }
+function buAyAnahtar(){ const d = new Date(); return ayAnahtar(d.getFullYear(), d.getMonth()); }
+// Bir ayın kategori tutarları (harcamaTablosu yıl başına bir kez hesaplanır)
+function butceAyHarcama(onbellek, anahtar){
+  const yil = +anahtar.slice(0, 4), ay = +anahtar.slice(5, 7) - 1;
+  const T = onbellek[yil] || (onbellek[yil] = harcamaTablosu(yil));
+  const kat = {};
+  HARCAMA_KATEGORILER.forEach(({ k }) => { kat[k] = T.hucre[k][ay].tutar; });
+  return { anahtar, kat, toplam: T.ayToplam[ay] };
+}
+// Öneri: kategorinin son 6 tamamlanmış (kategorili) aydaki medyanı, 500 TL'ye yukarı yuvarlanmış
+function butceOnerileri(onbellek){
+  const aylar = [];
+  let k = ayKaydir(buAyAnahtar(), -1);
+  for(let i = 0; i < 36 && aylar.length < 6; i++, k = ayKaydir(k, -1)){
+    const v = butceAyHarcama(onbellek, k);
+    if(HARCAMA_KATEGORILER.some(x => !x.gizli && v.kat[x.k] > 0)) aylar.push(v);
+  }
+  const oneri = {};
+  HARCAMA_KATEGORILER.filter(x => !x.gizli).forEach(({ k: kat }) => {
+    const d = aylar.map(a => a.kat[kat] || 0).sort((a, b) => a - b);
+    if(!d.length) return;
+    const n = d.length, med = n % 2 ? d[(n - 1) / 2] : (d[n / 2 - 1] + d[n / 2]) / 2;
+    if(med > 0) oneri[kat] = Math.ceil(med / 500) * 500;
+  });
+  return { oneri, aySayisi: aylar.length };
+}
+// Durum: aşım (> %100) · sınırda (> %90, ya da süren ayda geçen günlerin belirgin önünde) · iyi
+function butceDurum(oran, tempo){
+  if(oran > 1) return 'asim';
+  if(oran > 0.9 || (tempo != null && oran > tempo + 0.15)) return 'sinir';
+  return 'iyi';
+}
+const BUTCE_RENK = { iyi: 'var(--up)', sinir: 'var(--amber)', asim: 'var(--down)' };
+const BUTCE_OLCEK = 1.5;   // çubuk %150'ye kadar çizer; bütçe sınırı çubuğun üçte ikisinde bir çizgiyle işaretlidir (aşımın büyüklüğü görünsün)
+
+function renderButce(){
+  const onb = {};
+  const limit = butceLimitleri();
+  const { oneri, aySayisi } = butceOnerileri(onb);
+  _butceOneri = oneri;
+  const simdiK = buAyAnahtar(), simdi = new Date();
+
+  // Varsayılan ay: harcama girilmiş en son ay (harcamalar çoğunlukla ay bitince girilir)
+  if(!_butceAy){
+    _butceAy = simdiK;
+    for(let i = 0, k = simdiK; i < 24; i++, k = ayKaydir(k, -1)) if(butceAyHarcama(onb, k).toplam > 0){ _butceAy = k; break; }
+  }
+  const aySec = document.getElementById('butceAy');
+  if(aySec) aySec.innerHTML = Array.from({ length: 24 }, (_, i) => ayKaydir(simdiK, -i))
+    .map(k => `<option value="${k}"${k === _butceAy ? ' selected' : ''}>${ayAdi(k)}${k === simdiK ? ' (bu ay)' : ''}</option>`).join('');
+
+  const A = butceAyHarcama(onb, _butceAy);
+  const katlar = HARCAMA_KATEGORILER.filter(x => !x.gizli && limit[x.k]).sort((a, b) => limit[b.k] - limit[a.k]);
+  const toplamLimit = katlar.reduce((t, x) => t + limit[x.k], 0);
+  const suren = _butceAy === simdiK;
+  const ayGun = new Date(simdi.getFullYear(), simdi.getMonth() + 1, 0).getDate();
+  const tempo = suren ? simdi.getDate() / ayGun : null;
+  const butcesiz = A.toplam - katlar.reduce((t, x) => t + (A.kat[x.k] || 0), 0);
+
+  // ---- 1) Aylık bütçe
+  const oneriToplam = Object.values(oneri).reduce((t, v) => t + v, 0);
+  istYaz('butceToplam', toplamLimit ? '₺' + fmtNumber(toplamLimit, 0) : '—');
+  istYaz('butceToplamAlt', toplamLimit ? katlar.length + ' kategori' : 'henüz bütçe yok');
+  ozetDetayYaz('butceToplamDetay', [oneriToplam ? ['Önerilen', '₺' + fmtNumber(oneriToplam, 0) + ' (' + aySayisi + ' ay)'] : null]);
+
+  // ---- 2) Ayın harcaması
+  const oranT = toplamLimit ? A.toplam / toplamLimit : null;
+  const durumT = oranT != null && A.toplam > 0 ? butceDurum(oranT, tempo) : null;
+  istYaz('butceHarcEtiket', ayAdi(_butceAy) + (suren ? ' · sürüyor' : ''));
+  istYaz('butceHarc', '₺' + fmtNumber(A.toplam, 0));
+  const harcAlt = document.getElementById('butceHarcAlt');
+  if(harcAlt) harcAlt.innerHTML = !A.toplam ? (suren ? 'henüz harcama girilmedi' : 'bu ay için harcama yok')
+    : oranT != null ? `<span style="color:${BUTCE_RENK[durumT]};">bütçenin %${fmtNumber(oranT * 100, 0)}'i</span>` : '';
+  const harcKart = document.getElementById('butceHarcKart');
+  if(harcKart) harcKart.className = 'ozet-kart ' + (durumT === 'asim' ? 'kirmizi' : durumT === 'iyi' ? 'yesil' : 'sari');
+  ozetDetayYaz('butceHarcDetay', [
+    suren ? ['Geçen gün', simdi.getDate() + ' / ' + ayGun + ' (%' + fmtNumber(tempo * 100, 0) + ')'] : null,
+    butcesiz > 0 && toplamLimit ? ['Bütçesiz', '₺' + fmtNumber(butcesiz, 0)] : null,
+  ]);
+
+  // ---- 3) Kalan / aşım
+  const kalan = toplamLimit - A.toplam;
+  const asanlar = katlar.filter(x => (A.kat[x.k] || 0) > limit[x.k]).sort((a, b) => (A.kat[b.k] - limit[b.k]) - (A.kat[a.k] - limit[a.k]));
+  istYaz('butceKalanEtiket', toplamLimit && kalan < 0 ? 'Bütçe aşımı' : 'Kalan');
+  const kalanEl = document.getElementById('butceKalan');
+  if(kalanEl){ kalanEl.textContent = toplamLimit ? '₺' + fmtNumber(Math.abs(kalan), 0) : '—'; kalanEl.style.color = !toplamLimit ? '' : kalan >= 0 ? 'var(--up)' : 'var(--down)'; }
+  const kalanKart = document.getElementById('butceKalanKart');
+  if(kalanKart) kalanKart.className = 'ozet-kart ' + (toplamLimit && kalan < 0 ? 'kirmizi' : 'yesil');
+  istYaz('butceKalanAlt', !toplamLimit ? '' : asanlar.length ? asanlar.length + ' kategoride aşım' : (A.toplam ? 'bütün kategoriler sınır içinde' : ''));
+  ozetDetayYaz('butceKalanDetay', asanlar.slice(0, 2).map(x => [x.ad.split(' ')[0], '+₺' + fmtNumber(A.kat[x.k] - limit[x.k], 0)]));
+
+  // ---- 4) Son 6 ay uyumu (tamamlanmış, harcama girilmiş aylar; toplam bütçeye göre)
+  const gecmis = [];
+  for(let i = 0, k = ayKaydir(simdiK, -1); i < 24 && gecmis.length < 6; i++, k = ayKaydir(k, -1)){ const v = butceAyHarcama(onb, k); if(v.toplam > 0) gecmis.push(v); }
+  const icinde = toplamLimit ? gecmis.filter(v => v.toplam <= toplamLimit).length : 0;
+  istYaz('butceUyum', toplamLimit && gecmis.length ? icinde + ' / ' + gecmis.length + ' ay' : '—');
+  istYaz('butceUyumAlt', toplamLimit && gecmis.length ? 'toplam bütçe içinde kaldı' : '');
+  const asimSay = katlar.map(x => ({ x, n: gecmis.filter(v => (v.kat[x.k] || 0) > limit[x.k]).length })).filter(o => o.n).sort((a, b) => b.n - a.n);
+  ozetDetayYaz('butceUyumDetay', [asimSay[0] ? ['En sık aşan', asimSay[0].x.ad.split(' ')[0] + ' · ' + asimSay[0].n + ' ay'] : null,
+    gecmis.length ? ['Ort. harcama', '₺' + fmtNumber(gecmis.reduce((t, v) => t + v.toplam, 0) / gecmis.length, 0)] : null]);
+
+  // ---- Kategori satırları
+  istYaz('butceBolumToplam', toplamLimit ? '₺' + fmtNumber(A.toplam, 0) + ' / ₺' + fmtNumber(toplamLimit, 0) : '');
+  const liste = document.getElementById('butceListe');
+  if(liste){
+    if(!katlar.length){
+      const onList = HARCAMA_KATEGORILER.filter(x => oneri[x.k]);
+      liste.innerHTML = `<div class="butce-bos">Henüz bütçe koymadın.${onList.length ? ` Harcamalarına göre hazır bir öneri var — her kategori için son ${aySayisi} ayın medyanı:
+        <div class="butce-oneri-liste">${onList.map(x => `<span><small>${escapeHtml(x.ad)}</small>₺${fmtNumber(oneri[x.k], 0)}</span>`).join('')}</div>
+        <button class="ai-btn" onclick="butceOnerileriUygula()">Önerilen bütçeyi kullan · ₺${fmtNumber(oneriToplam, 0)}/ay</button>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted-2);">Sonra her tutarı ✎ ile değiştirebilir ya da + Bütçe koy ile kendin girebilirsin.</div>` : ' Sağ üstteki + Bütçe koy ile başlayabilirsin.'}</div>`;
+    } else {
+      const satir = (x, lim) => {
+        const h = A.kat[x.k] || 0, oran = lim ? h / lim : 0, d = butceDurum(oran, tempo), renk = lim ? BUTCE_RENK[d] : 'var(--muted-2)';
+        const id = 'butce-edit-' + x.k, duzenAcik = _duzen.id === id;
+        const oneriMetni = oneri[x.k] && oneri[x.k] !== lim ? 'öneri ₺' + fmtNumber(oneri[x.k], 0) : '';
+        const alt = lim ? (h > lim ? '₺' + fmtNumber(h - lim, 0) + ' aştı' : A.toplam ? '₺' + fmtNumber(lim - h, 0) + ' kaldı' : '') : 'bütçe yok';
+        return `<div class="satir butce-satir${lim ? '' : ' bossuz'}${duzenAcik ? ' duzenleniyor' : ''}">
+          <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt">${[alt, oneriMetni].filter(Boolean).join(' · ')}</div></div>
+          <div class="butce-cubuk" title="${lim ? '%' + fmtNumber(oran * 100, 0) : ''}">${lim ? `<i style="width:${(Math.min(oran, BUTCE_OLCEK) / BUTCE_OLCEK * 100).toFixed(1)}%;background:${renk};"></i><em style="left:${(100 / BUTCE_OLCEK).toFixed(1)}%;" title="Bütçe sınırı"></em>` : ''}${lim && tempo != null ? `<b style="left:calc(${(tempo / BUTCE_OLCEK * 100).toFixed(1)}% - 1px);" title="Ayın %${fmtNumber(tempo * 100, 0)}'i geçti"></b>` : ''}</div>
+          <div class="satir-tutar">₺${fmtNumber(h, 0)}${lim ? ` <small>/ ₺${fmtNumber(lim, 0)}</small>` : ''}</div>
+          <div class="butce-yuzde" style="color:${renk};">${lim ? '%' + fmtNumber(oran * 100, 0) : ''}</div>
+          <div class="satir-duzen">
+            <input type="number" step="100" min="0" id="${id}" placeholder="${oneri[x.k] ? 'öneri ' + oneri[x.k] : 'aylık bütçe (₺)'}" value="${duzenAcik ? escapeHtml(_duzen.deger) : ''}"
+              oninput="_duzen.deger = this.value" onkeydown="if(event.key==='Enter') this.nextElementSibling.click(); if(event.key==='Escape') satirDuzenIptal(this);">
+            <button class="loan-btn-save" onclick="_duzen.id = null; butceLimitKaydet('${x.k}')">Kaydet</button>
+            <button class="ikon-btn" title="Vazgeç" onclick="satirDuzenIptal(this)">✕</button>
+          </div>
+          <div class="satir-aksiyon">
+            ${lim ? `<button class="ikon-btn" title="Bütçeyi değiştir" onclick="satirDuzenle(this, '${id}')">✎</button><button class="ikon-btn sil" title="Bütçeyi kaldır" onclick="butceSil('${x.k}')">✕</button>`
+                  : `<button class="ikon-btn" title="Bütçe koy" style="color:var(--amber);" onclick="satirDuzenle(this, '${id}')">+</button>`}
+          </div>
+        </div>`;
+      };
+      const butcesizKatlar = HARCAMA_KATEGORILER.filter(x => !x.gizli && !limit[x.k] && (A.kat[x.k] || 0) > 0);
+      const genel = A.kat.genel || 0;
+      liste.innerHTML = katlar.map(x => satir(x, limit[x.k])).join('')
+        + (butcesizKatlar.length ? `<div class="bolum-alt-baslik" style="color:var(--muted);"><span>Bütçesi olmayan</span><span>₺${fmtNumber(butcesizKatlar.reduce((t, x) => t + A.kat[x.k], 0), 0)}</span></div>` + butcesizKatlar.map(x => satir(x, 0)).join('') : '')
+        + (genel ? `<div class="ozet-not" style="padding:8px 2px;white-space:normal;">${ayAdi(_butceAy)} kategori ayrımı olmadan girilmiş (Kategorisiz ₺${fmtNumber(genel, 0)}); yalnızca toplam bütçeyle karşılaştırılır.</div>` : '');
+    }
+  }
+
+  // ---- Son 12 ay ısı tablosu (seçili ayla biten)
+  const isi = document.getElementById('butceIsi');
+  if(isi){
+    if(!katlar.length){
+      isi.innerHTML = '<tbody><tr><td style="text-align:left !important;color:var(--muted-2);white-space:normal;">Bütçe koyunca burada son 12 ayın kategori bazında bütçeye uyumu görünür.</td></tr></tbody>';
+      istYaz('butceIsiAlt', '');
+    } else {
+      const aylar = Array.from({ length: 12 }, (_, i) => butceAyHarcama(onb, ayKaydir(_butceAy, i - 11)));
+      const hucre = (h, lim, veriVar, baslik) => {
+        if(!veriVar) return `<td class="yok" title="${escapeHtml(baslik)}: veri yok">—</td>`;
+        const o = h / lim, d = butceDurum(o, null);
+        return `<td class="${d}" title="${escapeHtml(baslik)}: ₺${fmtNumber(h, 0)} / ₺${fmtNumber(lim, 0)}">%${fmtNumber(o * 100, 0)}</td>`;
+      };
+      const kategorili = a => HARCAMA_KATEGORILER.some(x => !x.gizli && a.kat[x.k] > 0);
+      isi.innerHTML = `<thead><tr><th>Kategori</th>${aylar.map(a => `<th class="${a.anahtar === _butceAy ? 'secili' : ''}" style="cursor:pointer;" title="${ayAdi(a.anahtar)} ayını göster" onclick="_butceAy='${a.anahtar}'; renderButce();">${AY_KISA[+a.anahtar.slice(5, 7) - 1]} ${a.anahtar.slice(2, 4)}</th>`).join('')}</tr></thead>
+        <tbody>${katlar.map(x => `<tr><td>${escapeHtml(x.ad)}</td>${aylar.map(a => hucre(a.kat[x.k] || 0, limit[x.k], kategorili(a), x.ad + ' · ' + ayAdi(a.anahtar))).join('')}</tr>`).join('')}
+        <tr class="toplam"><td>Toplam</td>${aylar.map(a => hucre(a.toplam, toplamLimit, a.toplam > 0, 'Toplam · ' + ayAdi(a.anahtar))).join('')}</tr></tbody>`;
+      const kap = isi.parentElement; if(kap) kap.scrollLeft = kap.scrollWidth;   // dar ekranda en yeni aylar görünsün
+      const dolu = aylar.filter(a => a.toplam > 0);
+      istYaz('butceIsiAlt', dolu.length ? dolu.filter(a => a.toplam <= toplamLimit).length + ' / ' + dolu.length + ' ay toplam bütçe içinde' : '');
+    }
+  }
+
+  // Form: bütçesi olmayan kategoriler önce
+  const katInput = document.getElementById('butceKatInput');
+  if(katInput){
+    const secili = katInput.value;
+    katInput.innerHTML = HARCAMA_KATEGORILER.filter(x => !x.gizli).sort((a, b) => (!!limit[a.k]) - (!!limit[b.k]))
+      .map(x => `<option value="${x.k}">${escapeHtml(x.ad)}${limit[x.k] ? ' (₺' + fmtNumber(limit[x.k], 0) + ')' : ''}</option>`).join('');
+    if(secili) katInput.value = secili;
+  }
+}
+function butceFormAc(){ bolumFormAc('butceForm'); butceFormOneri(); }
+function butceFormOneri(){
+  const k = document.getElementById('butceKatInput').value, i = document.getElementById('butceTutarInput');
+  if(i) i.placeholder = _butceOneri[k] ? 'öneri ₺' + fmtNumber(_butceOneri[k], 0) : 'Aylık bütçe (TL)';
+}
+function butceYaz(kat, tutar){
+  const list = butceYukle().filter(b => b.kat !== kat);
+  if(tutar > 0) list.push({ id: 'b-' + kat, kat, limit: Math.round(tutar), tarih: new Date().toISOString() });
+  manuelListeKaydet(BUTCE_KEY, list);
+}
+function butceEkle(){
+  const kat = document.getElementById('butceKatInput').value;
+  const inp = document.getElementById('butceTutarInput');
+  let t = parseFloat(String(inp.value).replace(',', '.'));
+  if(!(t > 0) && inp.value.trim() === '' && _butceOneri[kat]) t = _butceOneri[kat];   // boş bırakılırsa öneri kullanılır
+  if(!(t > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  butceYaz(kat, t);
+  inp.value = '';
+  renderButce();
+  butceFormOneri();
+}
+function butceLimitKaydet(kat){
+  const inp = document.getElementById('butce-edit-' + kat);
+  let t = parseFloat(String(inp && inp.value).replace(',', '.'));
+  if(!(t > 0) && inp && inp.value.trim() === '' && _butceOneri[kat]) t = _butceOneri[kat];   // boş Kaydet → öneri
+  if(!(t > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  butceYaz(kat, t);
+  renderButce();
+}
+function butceSil(kat){
+  showConfirmModal((HARCAMA_KAT_AD[kat] || kat) + ' bütçesini kaldırmak istediğine emin misin?', () => { butceYaz(kat, 0); renderButce(); });
+}
+function butceOnerileriUygula(){
+  const list = butceYukle();
+  Object.entries(_butceOneri).forEach(([kat, t]) => { if(!list.some(b => b.kat === kat)) list.push({ id: 'b-' + kat, kat, limit: t, tarih: new Date().toISOString() }); });
+  manuelListeKaydet(BUTCE_KEY, list);
+  renderButce();
+}
+// Bay Piyasa bağlamı için
+function butceOzetMetni(){
+  const limit = butceLimitleri();
+  const katlar = HARCAMA_KATEGORILER.filter(x => limit[x.k]);
+  if(!katlar.length) return null;
+  const onb = {}, toplam = katlar.reduce((t, x) => t + limit[x.k], 0);
+  let son = null;
+  for(let i = 0, k = buAyAnahtar(); i < 24; i++, k = ayKaydir(k, -1)){ const v = butceAyHarcama(onb, k); if(v.toplam > 0){ son = v; break; } }
+  return 'Aylık bütçe ₺' + fmtNumber(toplam, 0) + ': ' + katlar.map(x => x.ad + ' ₺' + fmtNumber(limit[x.k], 0)).join(', ')
+    + (son ? ' | ' + ayAdi(son.anahtar) + ' harcaması ₺' + fmtNumber(son.toplam, 0) + ' (bütçenin %' + fmtNumber(son.toplam / toplam * 100, 0) + '); aşan kategoriler: '
+      + (katlar.filter(x => (son.kat[x.k] || 0) > limit[x.k]).map(x => x.ad + ' ₺' + fmtNumber(son.kat[x.k], 0) + '/₺' + fmtNumber(limit[x.k], 0)).join(', ') || 'yok') : '');
+}
+
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
   gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
@@ -6854,12 +7237,17 @@ const TAB_BASLIKLARI = {
   istatistik: ['Portföy İstatistikleri', 'Portföyünü 100 üzerinden puanlayan göstergeler'],
   borclar:  ['Borçlarım', 'Krediler, kartlar, KMH ve elden borçlar — canlı toplam'],
   harcama:  ['Harcama İstatistikleri', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
+  butce:    ['Bütçe', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir'],
 };
 function switchTab(tabId){
   document.querySelectorAll('.tab-panel').forEach(el=> el.classList.remove('active'));
   document.getElementById('tab-'+tabId).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(el=> el.classList.toggle('active', el.dataset.tab === tabId));
+  const navOge = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+  const diger = document.querySelector('.nav-diger');
+  if(diger) diger.classList.toggle('active', !!navOge && !navOge.hasAttribute('data-alt'));   // telefonda alt çubukta olmayan sayfa → "Diğer" yanar
+  digerMenuKapat();
   const b = TAB_BASLIKLARI[tabId];
   if(b){
     document.getElementById('appBarTitle').textContent = b[0];
@@ -6867,6 +7255,7 @@ function switchTab(tabId){
   }
   if(tabId === 'ai' && typeof bpTabAcildi === 'function') bpTabAcildi();
   if(tabId === 'harcama'){ renderHarcama(); aylikKurlariGuncelle(); }   // grafik görünür genişlikle çizilsin; eksik aylık kurlar çekilsin
+  if(tabId === 'butce') renderButce();
   window.scrollTo(0, 0);
 }
 

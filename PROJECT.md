@@ -37,6 +37,8 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_bay_piyasa_v1` | Bay Piyasa sohbetleri, ayarları, harcama |
 | `ft_haber_ceviri_v1` | Haber başlığı çeviri önbelleği |
 | `ft_harcamalar_v1` | Harcamalar: tek harcama kayıtları ve elle yazılan aylık kategori toplamları |
+| `ft_butce_v1` | Bütçe: kategori başına aylık sınır `[{ id:'b-<kat>', kat, limit, tarih }]` |
+| `ft_gelirler_v1`, `ft_odemeler_v1`, `ft_borc_plan_v1`, `ft_hedefler_v1`, `ft_net_gecmis_v1`, `ft_raporlar_v1` | Sıradaki özellikler için ayrıldı (nakit akışı, ödeme takvimi, borç kapatma planı, birikim hedefleri, net varlık geçmişi, aylık rapor); Worker'da izinli |
 
 Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
@@ -135,10 +137,19 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Grafik (`harcamaGrafikCiz`, yükseklik `HARCAMA_GRAFIK_H` = 165 px; grafik + Kategoriler satırı ≈223 px): tek renk sütunlar (≤24 px, 4 px yuvarlak üst), ortalama çizgisi, bant genişliğinde isabet alanıyla fare/klavye ipucu; aylık tablo grafiğin tablo karşılığıdır. Kategori dağılımı tek renk yatay çubuk (kimliği etiket taşır; 9 kategori renkle ayırt edilmez); çubuklar en büyük kategoriye göre ölçeklenir, değer sütunu sabit (yıl toplamı + silik aylık ortalama).
 - Bay Piyasa: portföy paylaşımı açıkken harcama özeti bağlama eklenir; "💸 Harcama analizi" hazır raporu vardır.
 
+## 8b. Bütçe
+
+- Veri `ft_butce_v1`; harcamalar `ft_harcamalar_v1`'den okunur (`butceAyHarcama`: `harcamaTablosu` yıl başına bir kez).
+- **Öneri** (`butceOnerileri`): her kategori için son 6 tamamlanmış ve kategorili ayın **medyanı**, 500 TL'ye yukarı yuvarlanır. Ortalama kullanılmaz: Haziran 2026'daki ₺51.608'lik yeme-içme ortalamayı ~₺15 bine çıkarıyor, medyan ₺9.500 veriyor. Bütçe yokken sayfa öneriyi gösterir ve tek tıkla uygular (`butceOnerileriUygula`); ✎/+ satırında boş Kaydet de öneriyi kullanır.
+- Varsayılan ay: harcama girilmiş en son ay (harcamalar ay bitince girildiği için). Seçici son 24 ay; ısı tablosunda ay başlığına tıklamak da ayı seçer.
+- Durum (`butceDurum`): >%100 aşım (kırmızı), >%90 ya da süren ayda geçen gün oranının 15 puan önünde sınırda (sarı), değilse iyi (yeşil). Çubuk %150'ye kadar çizer, bütçe sınırı çubuğun üçte ikisinde çizgiyle işaretli (`BUTCE_OLCEK`) — aşımın büyüklüğü görünsün; süren ayda ikinci ince çizgi ayın geçen kısmıdır.
+- Toplam = ayın bütün harcaması (bütçesiz kategoriler ve 2025 `genel` dahil) ÷ kategori bütçelerinin toplamı. Geçmiş aylar bugünkü bütçeyle karşılaştırılır (bütçe geçmişi tutulmaz).
+- Bay Piyasa bağlamına `butceOzetMetni` eklenir.
+
 ## 9. Arayüz
 
-- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **İstatistikler** (Harcama İstatistikleri, Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
-- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur (grup başlıkları gizlenir, sıra aynı kalır; etiketler kısalır: Piyasa · Durum · Yatırım · Borç · Harcama · Portföy · Asistan — `data-kisa`), senkron durumu ve çıkış üstte ince bir satırda kalır.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama İstatistikleri, Bütçe) · **İstatistikler** (Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
 - **Ortak tasarım dili** (Finansal Durumum, Yatırımlarım, Borçlarım, Harcama İstatistikleri, Portföy İstatistikleri — Piyasa Özeti kartlarıyla aynı). Her sayfa üstte özet kartları, altında başlığında toplamı/puanı olan bölümler ve sonda tek Not ile kurulur; tablolar `.ist-tablo`, dağılım çubukları `istHbar`, başlıktaki seçiciler `.bolum-secim`:
@@ -163,6 +174,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Bütçe sayfası (kategori sınırları, medyan öneri, aşım, 12 aylık ısı tablosu); menüye "Harcama ve bütçe" grubu; telefonda alt çubuk 6 sayfa + Diğer menüsü; yeni senkron anahtarları Worker'a eklendi |
 | 2026-09-30 | KMH canlı faiz: aylık faiz + anapara ile borç her gün kendiliğinden artıyor (faiz + %15 KKDF + %15 BSMV, anaparaya işler); ⚙ ayar penceresi; formül bankanın gerçek rakamıyla doğrulandı |
 | 2026-09-30 | Elden nakit: dövizli borcun TL karşılığı güncel kurla hesaplanıyorsa satır ve özet ışığı yeşil yanar |
 | 2026-09-30 | E-posta + şifre ile giriş ekranı (yeni tasarım, şifre göster/gizle, Türkçe doğrulama mesajları, e-posta hatırlama); Worker'da `LOGIN_USER` kontrolü, birleşik hata mesajı; gerçek Worker kodu yerelde (wrangler dev) test edildi |
