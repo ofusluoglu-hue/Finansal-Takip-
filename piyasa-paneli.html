@@ -9051,7 +9051,7 @@ function hedefKaynakToplam(pfx){
   if(!k || !el) return;
   const sec = [...k.querySelectorAll('.hk-liste input:checked')];
   const tl = sec.reduce((t, i) => t + (+i.dataset.tl || 0), 0), u = _fxRates.USD;
-  el.innerHTML = sec.length ? `Seçilen ${sec.length} yatırım: <b>₺${fmtNumber(tl, 0)}</b>${u ? ' · $' + fmtNumber(tl / u, 0) : ''} — değeri canlı fiyatlarla kendiliğinden işler` : 'Birikime sayılacak yatırımları işaretle';
+  el.innerHTML = sec.length ? `Seçilen ${sec.length} yatırım: <b>₺${fmtNumber(tl, 0)}</b>${u ? ' · <span style="color:var(--up);">$' + fmtNumber(tl / u, 0) + '</span>' : ''} — değeri canlı fiyatlarla kendiliğinden işler` : 'Birikime sayılacak yatırımları işaretle';
 }
 function hedefKaynakOku(pfx){
   const k = document.getElementById(pfx + 'Kutu');
@@ -9097,7 +9097,8 @@ function renderHedef(){
   istYaz('hdToplam', list.length ? '₺' + fmtNumber(topHedef, 0) : '—');
   istYaz('hdToplamAlt', list.length ? list.length + ' hedef' : 'henüz hedef yok');
   // Güncel dolar ve gram 24 ayar altın karşılığı (canlı kur ve altın fiyatıyla; her fiyat turunda yenilenir)
-  const kurKarsilik = tl => { const u = _fxRates.USD, g = gramAltinTL(); return [u ? '$' + fmtNumber(tl / u, 0) : null, g ? fmtNumber(tl / g, 0) + ' gr' : null].filter(Boolean).join(' · ') || null; };
+  // Dolar yeşil, altın sarı
+  const kurKarsilik = tl => { const u = _fxRates.USD, g = gramAltinTL(); return [u ? '<span style="color:var(--up);">$' + fmtNumber(tl / u, 0) + '</span>' : null, g ? '<span style="color:var(--amber);">' + fmtNumber(tl / g, 0) + ' gr</span>' : null].filter(Boolean).join(' · ') || null; };
   const kk = tl => { const v = kurKarsilik(tl); return v ? ['Dolar / altın', v] : null; };
   ozetDetayYaz('hdToplamDetay', list.length ? [kk(topHedef), hes.filter(x => x.c.tamam).length ? ['Tamamlanan', hes.filter(x => x.c.tamam).length + ''] : null] : []);
   istYaz('hdBirikim', list.length ? '₺' + fmtNumber(topBirikim, 0) : '—');
@@ -9119,7 +9120,8 @@ function renderHedef(){
   const yakin = aktif.slice().sort((a, b) => a.h.ay.localeCompare(b.h.ay))[0];
   istYaz('hdYakin', yakin ? yakin.h.ad : '—');
   istYaz('hdYakinAlt', yakin ? ayAdi(yakin.h.ay) + (yakin.c.gecti ? ' · süresi geçti' : ' · ' + yakin.c.ay + ' ay') : '');
-  ozetDetayYaz('hdYakinDetay', yakin ? [['Kalan', hedefFmt(yakin.c.kalan, yakin.h.birim)], ['Ayda', hedefFmt(yakin.c.aylik, yakin.h.birim)]] : []);
+  const renkliFmt = (v, b) => b === 'USD' ? '<span style="color:var(--up);">' + hedefFmt(v, b) + '</span>' : hedefFmt(v, b);   // dolar yeşil
+  ozetDetayYaz('hdYakinDetay', yakin ? [['Kalan', renkliFmt(yakin.c.kalan, yakin.h.birim)], ['Ayda', renkliFmt(yakin.c.aylik, yakin.h.birim)]] : []);
 
   const el = document.getElementById('hdListe');
   if(el){

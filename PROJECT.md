@@ -170,7 +170,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 ## 8g. Birikim Hedefleri
 
 - `hedefHesap`: birikim (elle `birikmis`; bağlı ise `yatirimDegerHesapla` ile canlı TL, $ hedefte ÷ kur), kalan, kalan ay (bu ay hariç, hedef ayı dahil; en az 1), ayda gereken = kalan ÷ ay. Plan çizgisi: eklendiği gün `baslangicDeger`'den hedef ayının sonuna doğrusal; birikim çizginin önündeyse "planın önünde".
-- Kartlar: toplam hedef (TL; $ hedefler bugünkü kurla), biriken ve yüzde, ayda gereken toplam — üçünde de **güncel dolar ve gram 24 ayar altın karşılığı** (canlı `_fxRates.USD` ve `gramAltinTL()`; sekme açıkken `tlKarsiliklariniYenile` ile her kur/fiyat güncellemesinde yeniden çizilir, işlem kutusu açıkken dokunulmaz) (gelir girildiyse Nakit Akışı'nın son 6 ay ortalama kalanıyla kıyas), en yakın hedef.
+- Kartlar: toplam hedef (TL; $ hedefler bugünkü kurla), biriken ve yüzde, ayda gereken toplam — üçünde de **güncel dolar (yeşil) ve gram 24 ayar altın (sarı) karşılığı** (canlı `_fxRates.USD` ve `gramAltinTL()`; sekme açıkken `tlKarsiliklariniYenile` ile her kur/fiyat güncellemesinde yeniden çizilir, işlem kutusu açıkken dokunulmaz) (gelir girildiyse Nakit Akışı'nın son 6 ay ortalama kalanıyla kıyas), en yakın hedef.
 - Birikim kaynağı seçici (`hedefKaynakHtml`; formda `hkf`, satırda ⇄ ile `hks`): **Elle gireceğim** (şu an biriken tutar) ya da **Yatırımlarımdan (otomatik)** — türlere göre gruplu, güncel değerli onay kutuları (çoklu seçim) veya "Tüm yatırımlarım (sonradan eklenenler dahil)" (`kaynak:'tum'`); seçilen toplam anında gösterilir. Kaynak ⇄ ile değişince önceki elle `birikmis` saklanır (elle takibe dönülürse o gelir, yoksa o anki değer yazılır) ve plan çizgisi o günden, o anki birikimden yeniden başlar.
 - Satır: + birikime ekle/çıkar (yalnızca elle), ⇄ kaynak, ✎ hedef tutarı, ✕ sil; satır içi işlem kutusu `_hedefIslem`. Bağlı hedefler her fiyat turunda (sekme açık ve işlem kutusu kapalıyken) yeniden çizilir.
 
@@ -230,6 +230,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Birikim Hedefleri kartlarında dolar yeşil, altın sarı |
 | 2026-09-30 | Birikim Hedefleri: "şu an biriken" için Elle / Yatırımlarımdan (otomatik) seçimi — birden fazla yatırım ya da tüm yatırımlar; mevcut hedefte ⇄ ile kaynak değiştirme |
 | 2026-09-30 | Birikim Hedefleri: Hedefler, Biriken ve Ayda ayırman gereken kartlarına güncel dolar ve gram altın karşılığı (kur değişince anında güncellenir) |
 | 2026-09-30 | Düzenli ödemeler ve abonelikler Harcama Takibim'e bu ay ve gelecek ay için otomatik eklenir (harcama kategorisi seçilebilir; silinen ay geri gelmez, elle değiştirilen korunur) |
