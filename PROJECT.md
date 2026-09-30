@@ -142,7 +142,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Grafik (`harcamaGrafikCiz`, yükseklik `HARCAMA_GRAFIK_H` = 165 px; grafik + Kategoriler satırı ≈223 px): tek renk sütunlar (≤24 px, 4 px yuvarlak üst), ortalama çizgisi, bant genişliğinde isabet alanıyla fare/klavye ipucu; aylık tablo grafiğin tablo karşılığıdır. Kategori dağılımı tek renk yatay çubuk (kimliği etiket taşır; 9 kategori renkle ayırt edilmez); çubuklar en büyük kategoriye göre ölçeklenir, değer sütunu sabit (yıl toplamı + silik aylık ortalama).
 - Bay Piyasa: portföy paylaşımı açıkken harcama özeti bağlama eklenir; "💸 Harcama analizi" hazır raporu vardır.
 
-## 8b. Bütçe
+## 8b. Bütçe Planlaması
 
 - Veri `ft_butce_v1`; harcamalar `ft_harcamalar_v1`'den okunur (`butceAyHarcama`: `harcamaTablosu` yıl başına bir kez).
 - **Öneri** (`butceOnerileri`): her kategori için son 6 tamamlanmış ve kategorili ayın **medyanı**, 500 TL'ye yukarı yuvarlanır. Ortalama kullanılmaz: Haziran 2026'daki ₺51.608'lik yeme-içme ortalamayı ~₺15 bine çıkarıyor, medyan ₺9.500 veriyor. Bütçe yokken sayfa öneriyi gösterir ve tek tıkla uygular (`butceOnerileriUygula`); ✎/+ satırında boş Kaydet de öneriyi kullanır.
@@ -203,7 +203,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 ## 9. Arayüz
 
-- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama Takibim, Ödeme Takvimi, Nakit Akışı, Bütçe) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **Asistan** (Bay Piyasa, Aylık Rapor). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama Takibim, Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **Asistan** (Bay Piyasa, Aylık Rapor). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
 - Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
@@ -230,6 +230,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | "Bütçe" sayfasının adı "Bütçe Planlaması" oldu |
 | 2026-09-30 | Nakit Akışı her açılışta içinde bulunulan ayla açılır |
 | 2026-09-30 | Birikim Hedefleri kartlarında dolar yeşil, altın sarı |
 | 2026-09-30 | Birikim Hedefleri: "şu an biriken" için Elle / Yatırımlarımdan (otomatik) seçimi — birden fazla yatırım ya da tüm yatırımlar; mevcut hedefte ⇄ ile kaynak değiştirme |
