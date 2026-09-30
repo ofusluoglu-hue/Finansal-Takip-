@@ -1837,6 +1837,23 @@
   .harcama-tablo tfoot td:first-child{background:#161c25;}
   .harcama-tablo tfoot tr.karsilik td{font-weight:600;color:var(--muted);font-size:11.5px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
+  /* Birikim Hedefleri */
+  .hedef-satir{padding:10px 2px 12px;border-bottom:1px solid var(--border);}
+  .hedef-satir:last-child{border-bottom:none;}
+  .hedef-ust{display:flex;align-items:center;gap:12px;min-width:0;margin-bottom:8px;}
+  .hedef-ust .satir-tutar{font-size:14px;}
+  .hedef-cubuk{height:10px;}
+  .hedef-islem{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted);}
+  .hedef-islem input{width:150px;background:var(--panel-2);border:1px solid var(--amber);border-radius:7px;color:var(--text);font-family:inherit;font-size:12.5px;padding:6px 8px;}
+  .hedef-islem .loan-btn-save{padding:6px 10px;font-size:11.5px;}
+  @media (max-width:640px){
+    .hedef-ust{flex-wrap:wrap;row-gap:4px;}
+    .hedef-ust .satir-ana{flex:1 1 100%;order:1;}
+    .hedef-ust .satir-alt{white-space:normal;}
+    .hedef-ust .satir-tutar{order:2;flex:1 1 auto;text-align:left;}
+    .hedef-ust .butce-yuzde{order:3;}
+    .hedef-ust .satir-aksiyon{order:4;}
+  }
   /* Net Varlık Geçmişi */
   .ng-grafik svg{height:210px;}
   .ng-grafik{min-height:210px;}
@@ -2014,6 +2031,10 @@
       <div class="nav-item" data-tab="borcplan" onclick="switchTab('borcplan')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h11"/><path d="M3 12h7"/><path d="M3 19h4"/><path d="M15 13l3 3 5-6"/></svg>
         <span data-kisa="Plan">Borç Kapatma Planı</span>
+      </div>
+      <div class="nav-item" data-tab="hedef" onclick="switchTab('hedef')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>
+        <span data-kisa="Hedef">Birikim Hedefleri</span>
       </div>
       <div class="nav-grup">İstatistikler</div>
       <div class="nav-item" data-tab="netgecmis" onclick="switchTab('netgecmis')">
@@ -2837,6 +2858,60 @@
     <div class="footnote"><b>Not:</b> Kredi taksitleri ödeme planından tarih ve tutarıyla otomatik gelir. Kartın son ödeme gününü bir kez yazman yeter; sıradaki ödemede tutar olarak bugünkü kart borcu gösterilir, sonraki aylar ekstreye göre değişir. Düzenli ödemeler ve abonelikler her ay ya da her yıl aynı gün takvime düşer; ayın 31'i olmayan aylarda son güne kayar. Hafta sonuna denk gelen banka ödemeleri genellikle bir sonraki iş gününe kayar. Bu sayfa hatırlatma içindir: faturalar zaten harcamalarında olduğundan Nakit Akışı'na ayrıca eklenmez. Önümüzdeki 3 günde ödeme varsa Piyasa Özeti'nin üstünde uyarı çıkar.</div>
   </div>
   <!-- ================= /TAB: ÖDEME TAKVİMİ ================= -->
+
+  <!-- ================= TAB: BİRİKİM HEDEFLERİ ================= -->
+  <div class="tab-panel" id="tab-hedef">
+    <div class="page-head"><h1>Birikim Hedefleri</h1></div>
+
+    <div class="ozet-grid k4">
+      <div class="ozet-kart mavi">
+        <div class="ozet-etiket">Hedefler</div>
+        <div class="ozet-deger" id="hdToplam">—</div>
+        <div class="ozet-alt" id="hdToplamAlt"></div>
+        <div class="card-seanslar" id="hdToplamDetay"></div>
+      </div>
+      <div class="ozet-kart yesil">
+        <div class="ozet-etiket">Biriken</div>
+        <div class="ozet-deger" id="hdBirikim" style="color:var(--up);">—</div>
+        <div class="ozet-alt" id="hdBirikimAlt"></div>
+        <div class="card-seanslar" id="hdBirikimDetay"></div>
+      </div>
+      <div class="ozet-kart sari">
+        <div class="ozet-etiket">Ayda ayırman gereken</div>
+        <div class="ozet-deger" id="hdAylik">—</div>
+        <div class="ozet-alt" id="hdAylikAlt"></div>
+        <div class="card-seanslar" id="hdAylikDetay"></div>
+      </div>
+      <div class="ozet-kart mor">
+        <div class="ozet-etiket">En yakın hedef</div>
+        <div class="ozet-deger" id="hdYakin" style="font-size:17px;">—</div>
+        <div class="ozet-alt" id="hdYakinAlt"></div>
+        <div class="card-seanslar" id="hdYakinDetay"></div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Hedeflerim</span>
+        <button class="bolum-ekle" style="margin-left:auto;" onclick="bolumFormAc('hedefForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="hedefForm">
+        <div class="loan-add-row">
+          <input type="text" id="hedefAdInput" class="ai-input" style="max-width:190px;min-width:140px;" placeholder="Hedef (ör. Araba)" onkeydown="if(event.key==='Enter')hedefEkle()">
+          <input type="number" step="1000" min="0" id="hedefTutarInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Tutar" onkeydown="if(event.key==='Enter')hedefEkle()">
+          <select id="hedefBirimInput" class="ai-input" style="max-width:90px;min-width:80px;" title="Hedefin para birimi — enflasyona karşı dolar seçebilirsin"><option value="TL">₺ TL</option><option value="USD">$ USD</option></select>
+          <select id="hedefAyInput" class="ai-input" style="max-width:160px;min-width:130px;" title="Hedef ay"></select>
+          <select id="hedefKaynakInput" class="ai-input" style="max-width:220px;min-width:160px;" onchange="hedefFormKaynak()" title="Birikim nereden izlensin"></select>
+          <input type="number" step="any" min="0" id="hedefBirikmisInput" class="ai-input" style="max-width:150px;min-width:120px;" placeholder="Şu an biriken (ops.)" onkeydown="if(event.key==='Enter')hedefEkle()">
+          <button class="ai-btn" onclick="hedefEkle()">Hedef Ekle</button>
+        </div>
+      </div>
+      <div id="hdListe"></div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Her hedef için tutar ve tarih girersin; ayda ayırman gereken = kalan ÷ hedef ayına kadar kalan ay (içinde bulunulan ay hariç, hedef ayı dahil). Çubuktaki ince çizgi, hedefi eklediğin günden hedef ayının sonuna doğrusal plana göre bugün ulaşman gereken yerdir: birikim çizginin önündeyse "planın önünde". Birikimi elle takip edersen + ile ekler (eksi yazıp çıkarırsın); bir yatırımına ya da tüm yatırımlarına bağlarsan canlı değeri kendiliğinden işler. Enflasyona karşı hedefi dolar olarak koyabilirsin; TL karşılığı bugünkü kurla gösterilir. Gelirini Nakit Akışı'na girdiysen, gereken tutar ay sonunda kalan ortalamayla karşılaştırılır. Hedefler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+  </div>
+  <!-- ================= /TAB: BİRİKİM HEDEFLERİ ================= -->
 
   <!-- ================= TAB: BORÇ KAPATMA PLANI ================= -->
   <div class="tab-panel" id="tab-borcplan">
@@ -3941,6 +4016,8 @@ async function refreshAll(){
     _refreshInProgress = false;
   }
   netGecmisKaydet();   // fiyat turu bitti: günün net varlık kaydı
+  const hs = document.getElementById('tab-hedef');
+  if(hs && hs.classList.contains('active') && !_hedefIslem.id) renderHedef();   // yatırıma bağlı hedefler canlı değerle
 }
 
 function manualRefresh(){
@@ -4838,6 +4915,7 @@ function bpSnapshotOlustur(paylas, haber){
     try{ const b2 = borcPlanOzetMetni(); if(b2) s.push(b2); }catch(e){ /* plan özeti eklenemezse bağlam yine gider */ }
     try{ const o = odemeOzetMetni(); if(o) s.push(o); }catch(e){ /* ödeme özeti eklenemezse bağlam yine gider */ }
     try{ const g = netGecmisOzetMetni(); if(g) s.push(g); }catch(e){ /* geçmiş özeti eklenemezse bağlam yine gider */ }
+    try{ const h = hedefOzetMetni(); if(h) s.push(h); }catch(e){ /* hedef özeti eklenemezse bağlam yine gider */ }
     s.push('Net değer (Varlıklar + Yatırımlar − Borç): ₺' + fmtNumber(vToplam + yToplam - borc, 0)
       + (usdtry ? ' (≈ $' + fmtNumber((vToplam + yToplam - borc) / usdtry, 0) + ')' : ''));
     if(borc > 0) s.push('Yatırım / Borç oranı: %' + fmtNumber(yToplam / borc * 100, 1));
@@ -8499,6 +8577,176 @@ function netGecmisOzetMetni(){
     + (c7 ? ', son 7 gün ' + isaretliTL(c7.fark) : '') + (c30 ? ', son 30 gün ' + isaretliTL(c30.fark) : '');
 }
 
+// ---------- Birikim Hedefleri (ft_hedefler_v1) ----------
+// { id:'hd-…', ad, hedef, birim:'TL'|'USD', ay:'YYYY-MM' (hedef ay), kaynak:'elle'|'tum'|'y:<yatırımId>', birikmis (elle; hedefin biriminde), baslangic:'YYYY-MM-DD', baslangicDeger, tamam? }
+const HEDEF_KEY = 'ft_hedefler_v1';
+let _hedefIslem = { id: null, tur: null, deger: '' };   // açık satır içi işlem: 'katki' (elle birikime ekle) | 'hedef' (hedef tutarı değiştir)
+function hedefYukle(){ return manuelListeYukle(HEDEF_KEY); }
+function hedefKur(){ return _fxRates.USD || null; }
+// Hedefin bugünkü birikimi, hedefin biriminde (bağlı yatırım ise canlı değerden)
+function hedefBirikim(h){
+  if(h.kaynak === 'elle' || !h.kaynak) return Number(h.birikmis) || 0;
+  const yat = manuelListeYukle(YATIRIM_KEY);
+  const secili = h.kaynak === 'tum' ? yat : yat.filter(y => 'y:' + y.id === h.kaynak);
+  const tl = secili.reduce((t, y) => { const d = yatirimDegerHesapla(y); return t + (d ? d.tutarTL || 0 : 0); }, 0);
+  if(h.birim === 'USD'){ const k = hedefKur(); return k ? tl / k : 0; }
+  return tl;
+}
+function hedefTL(v, birim){ if(birim !== 'USD') return v; const k = hedefKur(); return k ? v * k : null; }
+function hedefFmt(v, birim){ return birim === 'USD' ? '$' + fmtNumber(v, 0) : '₺' + fmtNumber(v, 0); }
+function hedefKaynakAd(h){
+  if(h.kaynak === 'tum') return 'tüm yatırımlar';
+  if(h.kaynak && h.kaynak.startsWith('y:')){ const y = manuelListeYukle(YATIRIM_KEY).find(x => 'y:' + x.id === h.kaynak); return y ? yatirimEtiket(y) : 'silinmiş yatırım'; }
+  return 'elle';
+}
+function hedefAyFarki(ayK){
+  const s = new Date(), [yy, mm] = ayK.split('-').map(Number);
+  return (yy - s.getFullYear()) * 12 + (mm - 1 - s.getMonth());   // bu aydan sonra hedef ayına kadar kalan ay (hedef ayı dahil, bu ay hariç)
+}
+function hedefHesap(h){
+  const birikim = hedefBirikim(h), hedef = Number(h.hedef) || 0;
+  const oran = hedef ? birikim / hedef : 0, kalan = Math.max(0, hedef - birikim);
+  const ay = Math.max(1, hedefAyFarki(h.ay));
+  const gecti = hedefAyFarki(h.ay) < 0;
+  // Plan çizgisi: başlangıç değerinden hedefe doğrusal
+  const bas = new Date((h.baslangic || bugunISO()) + 'T00:00:00').getTime();
+  const [yy, mm] = h.ay.split('-').map(Number), bit = new Date(yy, mm, 0).getTime();
+  const gecen = Math.min(1, Math.max(0, (Date.now() - bas) / Math.max(1, bit - bas)));
+  const beklenen = (Number(h.baslangicDeger) || 0) + (hedef - (Number(h.baslangicDeger) || 0)) * gecen;
+  return { birikim, hedef, oran, kalan, ay, gecti, aylik: kalan / ay, beklenen, beklenenOran: hedef ? beklenen / hedef : 0, tamam: birikim >= hedef && hedef > 0 };
+}
+
+function renderHedef(){
+  const list = hedefYukle();
+  const hes = list.map(h => ({ h, c: hedefHesap(h) }));
+  const aktif = hes.filter(x => !x.c.tamam);
+  const tl = (v, b) => hedefTL(v, b) || 0;
+  const topHedef = hes.reduce((t, x) => t + tl(x.c.hedef, x.h.birim), 0);
+  const topBirikim = hes.reduce((t, x) => t + tl(Math.min(x.c.birikim, x.c.hedef), x.h.birim), 0);
+  const aylik = aktif.reduce((t, x) => t + tl(x.c.aylik, x.h.birim), 0);
+
+  istYaz('hdToplam', list.length ? '₺' + fmtNumber(topHedef, 0) : '—');
+  istYaz('hdToplamAlt', list.length ? list.length + ' hedef' : 'henüz hedef yok');
+  ozetDetayYaz('hdToplamDetay', [hes.filter(x => x.c.tamam).length ? ['Tamamlanan', hes.filter(x => x.c.tamam).length + ''] : null, hedefKur() && hes.some(x => x.h.birim === 'USD') ? ['$ hedefler', 'kur ₺' + fmtNumber(hedefKur(), 2)] : null]);
+  istYaz('hdBirikim', list.length ? '₺' + fmtNumber(topBirikim, 0) : '—');
+  const bAlt = document.getElementById('hdBirikimAlt');
+  if(bAlt) bAlt.innerHTML = topHedef ? `%${fmtNumber(topBirikim / topHedef * 100, 0)} tamam` : '';
+  ozetDetayYaz('hdBirikimDetay', topHedef ? [['Kalan', '₺' + fmtNumber(Math.max(0, topHedef - topBirikim), 0)]] : []);
+  istYaz('hdAylik', aktif.length ? '₺' + fmtNumber(aylik, 0) : '—');
+  // Nakit Akışı'ndaki son ayların ortalama "kalan"ı ile kıyas (gelir girildiyse)
+  let tasarruf = null;
+  try{
+    const onb = {}, gel = gelirYukle(), tah = harcamaTahmini(onb), g = [];
+    if(gel.length) for(let i = 0, k = ayKaydir(buAyAnahtar(), -1); i < 24 && g.length < 6; i++, k = ayKaydir(k, -1)){ const m = nakitAyi(onb, k, gel, tah); if(!m.harcamaYok && m.gelir.toplam > 0) g.push(m.net); }
+    if(g.length) tasarruf = g.reduce((t, v) => t + v, 0) / g.length;
+  }catch(e){ /* nakit akışı yoksa kıyas gösterilmez */ }
+  const aAlt = document.getElementById('hdAylikAlt');
+  if(aAlt) aAlt.innerHTML = !aktif.length ? '' : tasarruf == null ? 'hedeflere zamanında ulaşmak için' : tasarruf <= 0 ? '<span style="color:var(--down);">ay sonu kalan eksi</span>'
+    : `<span style="color:${aylik <= tasarruf ? 'var(--up)' : 'var(--down)'};">aylık kalanın %${fmtNumber(aylik / tasarruf * 100, 0)}'i</span>`;
+  ozetDetayYaz('hdAylikDetay', tasarruf != null ? [['Ort. kalan', (tasarruf < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(tasarruf), 0) + '/ay']] : []);
+  const yakin = aktif.slice().sort((a, b) => a.h.ay.localeCompare(b.h.ay))[0];
+  istYaz('hdYakin', yakin ? yakin.h.ad : '—');
+  istYaz('hdYakinAlt', yakin ? ayAdi(yakin.h.ay) + (yakin.c.gecti ? ' · süresi geçti' : ' · ' + yakin.c.ay + ' ay') : '');
+  ozetDetayYaz('hdYakinDetay', yakin ? [['Kalan', hedefFmt(yakin.c.kalan, yakin.h.birim)], ['Ayda', hedefFmt(yakin.c.aylik, yakin.h.birim)]] : []);
+
+  const el = document.getElementById('hdListe');
+  if(el){
+    el.innerHTML = list.length ? hes.sort((a, b) => a.c.tamam - b.c.tamam || a.h.ay.localeCompare(b.h.ay)).map(({ h, c }) => {
+      const onde = c.birikim >= c.beklenen - Math.max(1, c.hedef * 0.005);
+      const renk = c.tamam ? 'var(--up)' : c.gecti ? 'var(--down)' : onde ? 'var(--up)' : 'var(--amber)';
+      const durum = c.tamam ? '🎉 hedefe ulaşıldı' : c.gecti ? 'hedef tarihi geçti' : onde ? 'planın önünde' : 'plandan ' + hedefFmt(c.beklenen - c.birikim, h.birim) + ' geride';
+      const islem = _hedefIslem.id === h.id ? _hedefIslem.tur : null;
+      const tlNot = h.birim === 'USD' && hedefKur() && c.birikim > 0 ? ` <span class="ozet-soluk">≈ ₺${fmtNumber(c.birikim * hedefKur(), 0)}</span>` : '';
+      return `<div class="hedef-satir">
+        <div class="hedef-ust">
+          <div class="satir-ana"><div class="satir-ad">${escapeHtml(h.ad)}</div>
+            <div class="satir-alt">${ayAdi(h.ay)}${c.tamam || c.gecti ? '' : ' · ' + c.ay + ' ay kaldı · ayda ' + hedefFmt(c.aylik, h.birim) + (h.birim === 'USD' && hedefKur() ? ' (₺' + fmtNumber(c.aylik * hedefKur(), 0) + ')' : '')} · <span style="color:${renk};">${durum}</span> · <span class="ozet-soluk">${h.kaynak === 'elle' || !h.kaynak ? 'elle takip' : 'bağlı: ' + escapeHtml(hedefKaynakAd(h))}</span></div></div>
+          <div class="satir-tutar">${hedefFmt(c.birikim, h.birim)}${tlNot} <small style="font-weight:500;color:var(--muted-2);font-size:11.5px;">/ ${hedefFmt(c.hedef, h.birim)}</small></div>
+          <div class="butce-yuzde" style="color:${renk};min-width:46px;">%${fmtNumber(Math.min(999, c.oran * 100), 0)}</div>
+          <div class="satir-aksiyon">
+            ${h.kaynak === 'elle' || !h.kaynak ? `<button class="ikon-btn" title="Birikime ekle / çıkar" style="color:var(--up);" onclick="hedefIslemAc('${h.id}', 'katki')">+</button>` : ''}
+            <button class="ikon-btn" title="Hedef tutarı değiştir" onclick="hedefIslemAc('${h.id}', 'hedef')">✎</button>
+            <button class="ikon-btn sil" title="Sil" onclick="hedefSil('${h.id}')">✕</button>
+          </div>
+        </div>
+        <div class="butce-cubuk hedef-cubuk"><i style="width:${Math.min(100, c.oran * 100).toFixed(1)}%;background:${renk};"></i>${!c.tamam && !c.gecti && c.beklenenOran > 0 && c.beklenenOran < 1 ? `<b style="left:calc(${(c.beklenenOran * 100).toFixed(1)}% - 1px);" title="Plana göre bugün olması gereken: ${hedefFmt(c.beklenen, h.birim)}"></b>` : ''}</div>
+        ${islem ? `<div class="hedef-islem">
+          <span>${islem === 'katki' ? 'Birikime ekle (çıkarmak için eksi yaz)' : 'Yeni hedef tutarı'}</span>
+          <input type="number" step="any" id="hedefIslemInput" value="${escapeHtml(_hedefIslem.deger)}" placeholder="${islem === 'katki' ? (h.birim === 'USD' ? '$' : '₺') + ' tutar' : hedefFmt(c.hedef, h.birim)}" oninput="_hedefIslem.deger = this.value" onkeydown="if(event.key==='Enter') hedefIslemKaydet(); if(event.key==='Escape') hedefIslemAc(null);">
+          <button class="loan-btn-save" onclick="hedefIslemKaydet()">Kaydet</button>
+          <button class="ikon-btn" title="Vazgeç" onclick="hedefIslemAc(null)">✕</button>
+        </div>` : ''}
+      </div>`;
+    }).join('') : `<div class="butce-bos">Henüz hedefin yok. Araba, ev peşinatı, tatil ya da acil durum fonu gibi bir hedef ekle: tutarı ve tarihi yazman yeter; ayda ne kadar ayırman gerektiğini ve planın önünde mi geride mi olduğunu gösterir. Birikimi elle takip edebilir ya da bir yatırımına (ör. BTC) bağlayıp değerinin kendiliğinden işlemesini sağlayabilirsin.
+        <br><button class="ai-btn" style="margin-top:10px;" onclick="bolumFormAc('hedefForm')">+ Hedef ekle</button></div>`;
+  }
+  // Form seçenekleri
+  const ayIn = document.getElementById('hedefAyInput');
+  if(ayIn && !ayIn.options.length){
+    const k0 = buAyAnahtar();
+    ayIn.innerHTML = Array.from({ length: 120 }, (_, i) => ayKaydir(k0, i + 1)).map(k => `<option value="${k}"${k === ayKaydir(k0, 12) ? ' selected' : ''}>${ayAdi(k)}</option>`).join('');
+  }
+  const kyIn = document.getElementById('hedefKaynakInput');
+  if(kyIn){
+    const secili = kyIn.value;
+    const yat = manuelListeYukle(YATIRIM_KEY);
+    kyIn.innerHTML = `<option value="elle">Elle takip ederim</option>${yat.length ? `<option value="tum">Tüm yatırımlarım</option>` + yat.map(y => `<option value="y:${y.id}">${escapeHtml(yatirimEtiket(y))} (yatırım)</option>`).join('') : ''}`;
+    if(secili) kyIn.value = secili;
+    hedefFormKaynak();
+  }
+}
+function hedefFormKaynak(){
+  const k = document.getElementById('hedefKaynakInput'), b = document.getElementById('hedefBirikmisInput');
+  if(k && b) b.style.display = k.value === 'elle' ? '' : 'none';
+}
+function hedefEkle(){
+  const ad = document.getElementById('hedefAdInput').value.trim();
+  const hedef = parseFloat(String(document.getElementById('hedefTutarInput').value).replace(',', '.'));
+  const birim = document.getElementById('hedefBirimInput').value;
+  const ay = document.getElementById('hedefAyInput').value;
+  const kaynak = document.getElementById('hedefKaynakInput').value;
+  const birikmis = parseFloat(String(document.getElementById('hedefBirikmisInput').value).replace(',', '.')) || 0;
+  if(!ad){ showAlertModal('Hedefin adını yaz (ör. Araba, Ev peşinatı).'); return; }
+  if(!(hedef > 0)){ showAlertModal('Lütfen geçerli bir hedef tutarı gir.'); return; }
+  const h = { id: 'hd-' + Date.now(), ad, hedef, birim, ay, kaynak, birikmis: kaynak === 'elle' ? birikmis : null, baslangic: bugunISO() };
+  h.baslangicDeger = Math.round(hedefBirikim(h) * 100) / 100;   // plan çizgisi bugünkü birikimden başlar
+  const list = hedefYukle(); list.push(h);
+  manuelListeKaydet(HEDEF_KEY, list);
+  ['hedefAdInput', 'hedefTutarInput', 'hedefBirikmisInput'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('hedefForm').classList.remove('acik');
+  renderHedef();
+}
+function hedefIslemAc(id, tur){
+  _hedefIslem = { id, tur, deger: '' };
+  renderHedef();
+  const i = document.getElementById('hedefIslemInput'); if(i) i.focus();
+}
+function hedefIslemKaydet(){
+  const { id, tur } = _hedefIslem;
+  const v = parseFloat(String(document.getElementById('hedefIslemInput').value).replace(',', '.'));
+  const list = hedefYukle(), h = list.find(x => x.id === id);
+  if(!h) return;
+  if(tur === 'katki'){
+    if(!v){ showAlertModal('Lütfen bir tutar gir.'); return; }
+    h.birikmis = Math.max(0, Math.round(((Number(h.birikmis) || 0) + v) * 100) / 100);
+  } else {
+    if(!(v > 0)){ showAlertModal('Lütfen geçerli bir hedef tutarı gir.'); return; }
+    h.hedef = v;
+  }
+  manuelListeKaydet(HEDEF_KEY, list);
+  _hedefIslem = { id: null, tur: null, deger: '' };
+  renderHedef();
+}
+function hedefSil(id){
+  showConfirmModal('Bu hedefi silmek istediğine emin misin?', () => { manuelListeKaydet(HEDEF_KEY, hedefYukle().filter(x => x.id !== id)); renderHedef(); });
+}
+// Bay Piyasa bağlamı için
+function hedefOzetMetni(){
+  const list = hedefYukle();
+  if(!list.length) return null;
+  return 'Birikim hedefleri: ' + list.map(h => { const c = hedefHesap(h); return h.ad + ' ' + hedefFmt(c.birikim, h.birim) + '/' + hedefFmt(c.hedef, h.birim) + ' (%' + fmtNumber(c.oran * 100, 0) + '), hedef ' + ayAdi(h.ay) + (c.tamam ? ', tamamlandı' : ', ayda ' + hedefFmt(c.aylik, h.birim) + ' gerekli, ' + (c.birikim >= c.beklenen ? 'planın önünde' : 'plandan geride')) + ', ' + hedefKaynakAd(h); }).join('; ');
+}
+
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
   gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
@@ -8509,6 +8757,7 @@ const TAB_BASLIKLARI = {
   harcama:  ['Harcama İstatistikleri', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
+  hedef:    ['Birikim Hedefleri', 'Tutar ve tarih koy — ayda ne kadar ayırman gerektiğini ve planın önünde mi olduğunu gör'],
   netgecmis: ['Net Varlık Geçmişi', 'Net servetinin günden güne değişimi'],
   odeme:    ['Ödeme Takvimi', 'Taksitler, kart son ödeme günleri, faturalar ve abonelikler tek takvimde'],
   nakitakis: ['Nakit Akışı', 'Gelir − harcama − taksit: ay sonunda ne kalıyor, ileride ne kalacak'],
@@ -8534,6 +8783,7 @@ function switchTab(tabId){
   if(tabId === 'borcplan') renderBorcPlan();
   if(tabId === 'odeme') renderOdeme();
   if(tabId === 'netgecmis') renderNetGecmis();
+  if(tabId === 'hedef') renderHedef();
   window.scrollTo(0, 0);
 }
 
