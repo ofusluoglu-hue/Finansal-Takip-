@@ -119,6 +119,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Doğrulama: Enpara, anapara ₺4.000, %4,25 → 4.000 × 0,0425/30 × 1,30 = 7,3667 ₺/gün; bankanın 29→30 Eylül'de gösterdiği 4.261,44 → 4.268,81 ile birebir.
 - Satırda ⚙ (`kmhAyarAc`): güncel borç, aylık faiz, anapara, KKDF, BSMV; canlı önizleme; kaydedince bugünkü borç yeni başlangıç noktası olur (ekstre kesiminde faiz anaparaya eklendiğinde kullanılır). ✎ yalnızca bugünkü borcu günceller.
 - Borç toplamları, özet kartı ve Bay Piyasa bağlamı canlı değeri kullanır; her fiyat turunda yeniden hesaplanır.
+- Elden nakit borçlarda satır ışığı: dövizli (USD/EUR) kalemin TL karşılığı **güncel kurla** hesaplanıyorsa yeşil; TL kalemde veya kur alınamayıp son bilinen kur kullanılıyorsa son elle güncelleme bugünse yeşil, değilse kırmızı. Özet kartı da en az bir dövizli kalem canlıysa yeşil yanar ve "güncel kurla" yazar.
 
 ## 8. Harcama İstatistikleri
 
@@ -163,6 +164,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
 | 2026-09-30 | KMH canlı faiz: aylık faiz + anapara ile borç her gün kendiliğinden artıyor (faiz + %15 KKDF + %15 BSMV, anaparaya işler); ⚙ ayar penceresi; formül bankanın gerçek rakamıyla doğrulandı |
+| 2026-09-30 | Elden nakit: dövizli borcun TL karşılığı güncel kurla hesaplanıyorsa satır ve özet ışığı yeşil yanar |
 | 2026-09-30 | E-posta + şifre ile giriş ekranı (yeni tasarım, şifre göster/gizle, Türkçe doğrulama mesajları, e-posta hatırlama); Worker'da `LOGIN_USER` kontrolü, birleşik hata mesajı; gerçek Worker kodu yerelde (wrangler dev) test edildi |
 | 2026-09-29 | Harcama girişi ay bazında: tarih yerine ay seçimi (ayın ilk 10 gününde önceki ay varsayılan), kayıtlarda "Eylül 2026", en son eklenen üstte |
 | 2026-09-29 | BİST hisseleri kod + adetle eklenip arka planda takip ediliyor (Yahoo KOD.IS, 15 dk gecikmeli, günlük değişim, performansa dahil); geçersiz kod anında uyarı |

@@ -6074,6 +6074,7 @@ function renderNakit(){
 
   let toplam = 0;
   let enSonTarih = null;
+  let canliVar = false;   // en az bir dövizli kalem güncel kurla hesaplandı mı
 
   container.innerHTML = list.map(item => {
     try{
@@ -6092,8 +6093,11 @@ function renderNakit(){
       const doviz = item.paraBirimi !== 'TL'
         ? `${fmtNumber(girilenTutar, 2)} ${item.paraBirimi} · kur ${kur ? fmtNumber(kur, 4) : '—'} (${canliKur ? 'güncel' + kurZaman : 'son bilinen'}) · `
         : '';
+      // Dövizli kalem güncel kurla canlı hesaplanıyorsa yeşil; TL ya da son bilinen kurla hesaplanıyorsa son elle güncelleme tarihine göre
+      const canliDoviz = item.paraBirimi && item.paraBirimi !== 'TL' && canliKur;
+      if(canliDoviz) canliVar = true;
       return satirHtml({
-        led: ledRengi(item.tarih),
+        led: canliDoviz ? 'green' : ledRengi(item.tarih),
         ad: item.ad || '',
         alt: escapeHtml(doviz) + 'Güncelleme ' + tarihSaatStr(item.tarih),
         tutar: '₺' + fmtNumber(tutarTL, 2),
@@ -6109,7 +6113,7 @@ function renderNakit(){
 
   document.getElementById('nakitSummaryToplam').textContent = '₺' + fmtNumber(toplam, 0);
   document.getElementById('nakitSummaryTarih').innerHTML = enSonTarih
-    ? `<span class="led-dot ${isBugun(enSonTarih) ? 'green' : 'red'}"></span>${list.length} kalem · ${kisaTarihSaat(enSonTarih)}`
+    ? `<span class="led-dot ${canliVar || isBugun(enSonTarih) ? 'green' : 'red'}"></span>${list.length} kalem · ${canliVar ? 'güncel kurla' : kisaTarihSaat(enSonTarih)}`
     : '—';
   if(bolumToplamEl) bolumToplamEl.textContent = '₺' + fmtNumber(toplam, 0);
 
