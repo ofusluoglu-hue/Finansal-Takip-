@@ -1836,6 +1836,13 @@
   .ist-tablo.harcama-tablo tfoot td{font-weight:800;color:var(--text);background:#161c25;border-bottom:1px solid var(--border);}
   .harcama-tablo tfoot td:first-child{background:#161c25;}
   .harcama-tablo tfoot tr.karsilik td{font-weight:600;color:var(--muted);font-size:11.5px;}
+  /* Yatırım (yeşil) ve borç (kırmızı) çerçeveleri: kalın sol çizgi + hafif renk yansıması */
+  .bolum.cerceve-varlik{border-left:4px solid var(--up);background:linear-gradient(90deg, rgba(51,192,124,.045), var(--panel) 30%);}
+  .bolum.cerceve-borc{border-left:4px solid var(--down);background:linear-gradient(90deg, rgba(255,92,92,.045), var(--panel) 30%);}
+  .portfoy-kap{margin-bottom:14px;}
+  .portfoy-bas{padding:0 4px;margin-bottom:10px;}
+  .portfoy-kap .bolum-form{margin-bottom:12px;}
+  .portfoy-kap > #yatirimListContainer > .bos-not{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 18px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
   /* Aylık Rapor */
   .rapor-one{list-style:none;margin:2px 0 8px;padding:0;display:flex;flex-direction:column;gap:7px;}
@@ -2259,8 +2266,8 @@
       </div>
     </div>
 
-    <div class="bolum">
-      <div class="bolum-bas">
+    <div class="portfoy-kap">
+      <div class="bolum-bas portfoy-bas">
         <span class="bolum-baslik">Portföyüm</span>
         <span class="bolum-toplam" id="yatirimBolumToplam" style="color:var(--up);"></span>
         <button class="bolum-ekle" onclick="bolumFormAc('yatirimForm')">+ Ekle</button>
@@ -2410,7 +2417,7 @@
       </div>
     </div>
 
-    <div class="bolum">
+    <div class="bolum cerceve-borc">
       <div class="bolum-bas">
         <span class="bolum-baslik">Kredilerim</span>
         <span class="bolum-toplam" id="loansBolumToplam" style="color:var(--amber);"></span>
@@ -2445,7 +2452,7 @@
       <div id="loans-live-container"></div>
     </div>
 
-    <div class="bolum">
+    <div class="bolum cerceve-borc">
       <div class="bolum-bas">
         <span class="bolum-baslik">Kredi Kartlarım</span>
         <span class="bolum-toplam" id="kkBolumToplam" style="color:#C9A6FF;"></span>
@@ -2476,7 +2483,7 @@
       <div id="kkKartlarContainer"></div>
     </div>
 
-    <div class="bolum">
+    <div class="bolum cerceve-borc">
       <div class="bolum-bas">
         <span class="bolum-baslik">Kredili Mevduat Hesabı (KMH)</span>
         <span class="bolum-toplam" id="kmhBolumToplam" style="color:#6EC3FF;"></span>
@@ -2509,7 +2516,7 @@
       <div id="kmhKartlarContainer"></div>
     </div>
 
-    <div class="bolum">
+    <div class="bolum cerceve-borc">
       <div class="bolum-bas">
         <span class="bolum-baslik">Elden Nakit Borçlar</span>
         <span class="bolum-toplam" id="nakitBolumToplam" style="color:#5EEAD4;"></span>
@@ -6079,6 +6086,13 @@ const YATIRIM_KATEGORI_BASLIK = {
 };
 const YATIRIM_KATEGORI_SIRA = ['etf', 'kripto', 'bist', 'emtia'];
 
+// Grup çerçevesindeki +: formu o tür seçili açar
+function yatirimEkleAc(kat){
+  const f = document.getElementById('yatirimForm'), sec = document.getElementById('yatirimTurSelect');
+  if(sec){ sec.value = kat; yatirimTurDegisti(); }
+  if(f && !f.classList.contains('acik')) bolumFormAc('yatirimForm');
+  if(f) f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 function yatirimTurDegisti(){
   const tur = document.getElementById('yatirimTurSelect').value;
   const sembolSelect = document.getElementById('yatirimSembolSelect');
@@ -6439,11 +6453,19 @@ function renderYatirim(){
   if(!list.length){
     container.innerHTML = '<div class="bos-not">Henüz yatırım eklenmedi — sağ üstteki + Ekle ile ekleyebilirsin.</div>';
   } else {
+    // Her yatırım türü kendi çerçevesinde (Borçlarım'daki gibi): başlıkta tür, pay ve toplam; + o türü seçili açar
     container.innerHTML = YATIRIM_KATEGORI_SIRA.map(kat => {
       const katListe = list.filter(item => item.tur === kat);
       if(!katListe.length) return '';
-      return `<div class="bolum-alt-baslik" style="color:${YATIRIM_KATEGORI_RENK[kat]};"><span>${YATIRIM_KATEGORI_BASLIK[kat]}</span><span>₺${fmtNumber(kategoriToplam[kat], 0)}</span></div>`
-        + katListe.map(item => yatirimSatirHtml(item, toplamYatirim)).join('');
+      return `<div class="bolum cerceve-varlik">
+        <div class="bolum-bas">
+          <span class="bolum-baslik" style="color:${YATIRIM_KATEGORI_RENK[kat]};">${YATIRIM_KATEGORI_BASLIK[kat]}</span>
+          <span class="ozet-soluk" style="font-size:12px;">${katListe.length} kalem · %${fmtNumber(toplamYatirim > 0 ? kategoriToplam[kat] / toplamYatirim * 100 : 0, 1)}</span>
+          <span class="bolum-toplam" style="color:var(--up);">₺${fmtNumber(kategoriToplam[kat], 0)}</span>
+          <button class="bolum-ekle" title="${YATIRIM_KATEGORI_BASLIK[kat]} ekle" onclick="yatirimEkleAc('${kat}')">+</button>
+        </div>
+        ${katListe.map(item => yatirimSatirHtml(item, toplamYatirim)).join('')}
+      </div>`;
     }).join('');
   }
 
