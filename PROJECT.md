@@ -40,7 +40,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_butce_v1` | Bütçe: kategori başına aylık sınır `[{ id:'b-<kat>', kat, limit, tarih }]` |
 | `ft_gelirler_v1` | Gelirler: `{ id, tur:'duzenli', ad, tutar, baslangic, bitis }` ya da `{ id, tur:'tek', ad, tutar, ay }` (aylar `YYYY-MM`) |
 | `ft_borc_plan_v1` | Borç planı ayarları: `{ id:'ayar', ek, tek, strateji }` ve faiz işleyen kartlar `{ id:'kart-<kartId>', faizli, oran, asgari }` |
-| `ft_odemeler_v1` | Ödeme Takvimi (kart kaydında ayrıca `donem: { 'YYYY-MM': tutar }`): düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
+| `ft_odemeler_v1` | Ödeme Takvimi (kart kaydında ayrıca `donem`, `ekstre`, `asgari`, `plan`: `{ 'YYYY-MM': tutar }`): düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
 | `ft_net_gecmis_v1` | Günlük net varlık kaydı `{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, gram, t }` (`gram`: o anki gram 24 ayar altın TL fiyatı) |
 | `ft_hedefler_v1` | Birikim hedefleri `{ id:'hd-…', ad, hedef, birim:'TL'\|'USD', ay, kaynak:'elle'\|'tum'\|'y:<yatırımId>', birikmis, baslangic, baslangicDeger }` |
 | `ft_raporlar_v1` | Aylık Rapor'un Bay Piyasa yorumları `{ id:'YYYY-MM', metin, model, maliyet, ts }` (son 36 ay) |
@@ -186,6 +186,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 - Olaylar (`odemeOlaylari(bas, bit)`): kredi taksitleri (`krediTaksitleri`, "Taksit n/N"), kart son ödeme günleri (tutar yalnızca sıradaki ödemede = bugünkü kart borcu; sonrakiler "ekstreye göre"), düzenli ödemeler (aylık ya da yıllık ayında). Gün ayda yoksa son güne kayar (31 → 28 Şubat).
 - Kartlar (seçili ay; liste ve takvimle aynı): **1) "Ekim ödemeleri"** — ayın bütün ödemelerinin toplamı, ödenenler dahil, gün geçtikçe değişmez (altında Taksit / Kart / Düzenli dağılımı); **2) "Ekim kalan"** — bugünden önceki ödemeler ödendi sayılır; altında Ödendi ✓ ve Sıradaki; kenar: ödeme 2 gün içindeyse kırmızı, hepsi ödendiyse yeşil; 3) aylık sabit ödemeler; 4) abonelikler (yıllık). Listede geçmiş ödemeler "✓ ödendi" soluk ve üstü çizili, takvimde ✓.
+- Kart satırında sıradaki dönem için **dönem borcu** (`ekstre`), **asgari** (`asgari`) ve **ödeyeceğim** (`plan`) girilir (`odemeKartDonemYaz`; kart kaydında `{ 'YYYY-MM': tutar }`, son 24 dönem). Takvime yazılan tutar (`kartDonemTutari`): ödeyeceğim > dönem borcu > toplam kart borcu. Satırda "ödeme sonrası kalan borç ≈ toplam − ödenecek", ödenecek dönem borcundan azsa "₺… sonraki döneme kalır (faiz işler)", asgariden azsa "asgarinin altında" uyarısı. Ödeme günü geçtiği halde kart borcu (Borçlarım, `tarih`) o günden beri güncellenmediyse 20 gün boyunca "kalan borcu Borçlarım'dan güncelle" hatırlatması (`kartGuncelleHatirlat`). Kalan bakiye otomatik düşülmez; kullanıcı Borçlarım'dan girer.
 - Kart dönem tutarı (`odemeKartDonemKaydet`, `renderOdeme` ve saatlik şerit tazelemesinde): kartın sıradaki son ödeme ayına bugünkü kart borcu `donem['YYYY-MM']` olarak yazılır; tarih geçince donar ve geçmiş/ödenmiş satırda o tutar kullanılır (kart borcu ödeme sonrası düşse de ay toplamı sabit kalır). Gün değiştirilince dönemler korunur.
 - Takvim ızgarası (Pzt başlangıç), güne tıklayınca o günün ödemeleri. "Yaklaşan ödemeler" listesi takvimle **aynı ayı** gösterir (iki seçici birlikte değişir; liste bir sonraki aya taşmaz): bu aydaysa bugünden sonrası, gelecek ayda tamamı, geçmiş ayda soluk. Varsayılan ay: bu ayda bugünden sonra ödeme kalmışsa bu ay, yoksa sonraki ay.
 - Kart tutarı yalnızca **sıradaki** son ödeme gününde (bugünden itibaren hesaplanır) bugünkü kart borcudur; hangi ay görüntülenirse görüntülensin sonrakiler "ekstreye göre" (toplama girmez).
@@ -228,6 +229,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Ödeme Takvimi: kartın sıradaki dönemi için dönem borcu, asgari ve ödeyeceğim tutarı; takvim ödeyeceğin tutarı kullanır; kalan borç ve asgari uyarıları, ödeme sonrası güncelleme hatırlatması |
 | 2026-09-30 | Ödeme Takvimi kartları: 1. "Ekim ödemeleri" ayın sabit toplamı, 2. "Ekim kalan" (Önümüzdeki 7 gün kaldırıldı); kart dönem tutarı kaydedilir, ödeme günü geçince toplam değişmez |
 | 2026-09-30 | Harcama ve bütçe grubunda sıra: Harcama Takibim, Ödeme Takvimi, Nakit Akışı, Bütçe |
 | 2026-09-30 | Ödeme Takvimi: "Bu ay · kalan" kartı seçili ayın ödemeleri oldu (ör. Ekim ödemeleri); bugünden önceki ödemeler ödendi sayılır, kalan tutar ona göre |
