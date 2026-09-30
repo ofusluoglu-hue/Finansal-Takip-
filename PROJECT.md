@@ -133,7 +133,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Veri `ft_harcamalar_v1` dizisinde (senkronda id'ye göre birleşir):
   - `{ id:'h-…', tur:'kayit', tarih:'YYYY-MM-01', kat, tutar, not }` — harcama kalemi. Harcamalar **ay bazında tek kalem** girilir (ör. Eylül · Market · ₺32.000): formda gün yerine ay seçilir (son 18 ay; ayın ilk 10 gününde varsayılan önceki ay), listede "Eylül 2026" görünür, aynı ay ve kategorideki kalemler toplanır, aynı ayda en son eklenen üstte
   - `{ id:'ay-YYYY-MM-kat', tur:'aylik', ay:'YYYY-MM', kat, tutar }` — o ayın kategori toplamı; varsa o ay ve kategori için **kayıtların toplamı yerine** geçer (tabloda ✎ ile işaretli)
-- Kategoriler (`HARCAMA_KATEGORILER`): market, akaryakıt, kişisel, fatura ve aidat, ev giderleri, yeme-içme ve eğlence, sağlık, eğitim, diğer; ayrıca formda seçilmeyen **Kategorisiz** (`genel`) — kategori ayrımı olmayan eski aylık toplamlar (2025 Mart–Aralık) için.
+- Kategoriler (`HARCAMA_KATEGORILER`): market, akaryakıt, araç bakım (`aracbakim`), kişisel, fatura ve aidat, ev giderleri, yeme-içme ve eğlence, sağlık, eğitim, sigorta (`sigorta`), vergi (`vergi`), diğer; ayrıca formda seçilmeyen **Kategorisiz** (`genel`) — kategori ayrımı olmayan eski aylık toplamlar (2025 Mart–Aralık) için.
 - **Dolar ve gram altın karşılığı:** her ayın harcaması o ayın ortalama kuruyla çevrilir (`aylikKurlariGuncelle`: Yahoo günlük USDTRY=X ve GC=F kapanışlarının ay ortalaması; gram = ons × kur ÷ 31,1035). Tablo altında $ ve gr satırları, kartlarda ve grafik ipucunda gösterilir; yıl toplamı $/gr her ayın kendi kuruyla toplanır.
 - **Tüm dönem ortalaması** (`harcamaTumDonem`): bütün yılların tamamlanmış aylarının TL/$/gr ortalaması.
 - Aylık ortalama = seçili yılda harcama girilmiş **tamamlanmış** ayların ortalaması (süren ay yarım olduğu için katılmaz; kategori ortalamaları da aynı); yıl sonu tahmini = ortalama × 12. Süren ay kartında önceki ayla kıyas yerine "ortalamanın %X kadarı · ayın G/N günü" gösterilir.
@@ -227,6 +227,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Harcama kategorilerine Araç bakım, Sigorta ve Vergi eklendi (12 kategori) |
 | 2026-09-30 | Ödeme Takvimi: yaklaşan ödemeler 45 gün yerine takvimle aynı ay (ay taşması yok); kart tutarı yalnızca sıradaki son ödeme gününde |
 | 2026-09-30 | Menüde İstatistikler grubu Planlama'nın üstüne alındı |
 | 2026-09-30 | Net Varlık Geçmişi: grafik TL / dolar / gram 24 ayar altın bazında; kayda gram altın fiyatı eklendi; aylık özete Altın (gr) sütunu; kuru olmayan eski kayıtlara günlük kapanış |
