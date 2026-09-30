@@ -158,7 +158,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Düzenli gelirde ✎: başlangıcı geçmişteyse eski kayıt geçen ay biter, bu aydan yeni kayıt açılır (geçmiş aylar eski tutarla kalır); 0 = bu aydan itibaren biter. ✕ tamamen siler.
 - Süren ve gelecek aylarda harcama tahmini (`harcamaTahmini`): bütçe toplamı, yoksa son 6 dolu ayın medyanı; girilen tutar tahminden büyükse o kullanılır.
 - Grafik (`nakitGrafikCiz`): 6 geçmiş ay + bu ay + 11 gelecek ay; her ayda gelir çubuğu ve üst üste harcama + taksit; tahmin aylar soluk, tahmini harcama kesik çerçeveli. Bant 34 px'ten darsa etiketler 3 ayda bir. Bir aya tıklamak kartları o aya getirir.
-- Kartlar: seçili ayın geliri, gideri, kalanı (`.ton`, tasarruf oranına göre: <0 kırmızı, %0–20 sarı, ≥%20 yeşil) ve önümüzdeki 12 ayın taksit toplamı + kredilerin bittiği ay ve ardından açılan aylık pay.
+- Sayfa her açıldığında içinde bulunulan ay seçilir (süren ayda harcama tahminle tamamlanır). Kartlar: seçili ayın geliri, gideri, kalanı (`.ton`, tasarruf oranına göre: <0 kırmızı, %0–20 sarı, ≥%20 yeşil) ve önümüzdeki 12 ayın taksit toplamı + kredilerin bittiği ay ve ardından açılan aylık pay.
 
 ## 8h. Aylık Rapor
 
@@ -230,6 +230,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Nakit Akışı her açılışta içinde bulunulan ayla açılır |
 | 2026-09-30 | Birikim Hedefleri kartlarında dolar yeşil, altın sarı |
 | 2026-09-30 | Birikim Hedefleri: "şu an biriken" için Elle / Yatırımlarımdan (otomatik) seçimi — birden fazla yatırım ya da tüm yatırımlar; mevcut hedefte ⇄ ile kaynak değiştirme |
 | 2026-09-30 | Birikim Hedefleri: Hedefler, Biriken ve Ayda ayırman gereken kartlarına güncel dolar ve gram altın karşılığı (kur değişince anında güncellenir) |

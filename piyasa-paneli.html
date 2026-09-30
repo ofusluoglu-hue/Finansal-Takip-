@@ -7860,7 +7860,7 @@ function ayTaksitleri(anahtar){
 // ---------- Nakit Akışı: gelir − harcama − kredi taksitleri ----------
 // ft_gelirler_v1: [{ id, tur:'duzenli', ad, tutar, baslangic:'YYYY-MM', bitis:'YYYY-MM'|null } | { id, tur:'tek', ad, tutar, ay:'YYYY-MM' }]
 const GELIR_KEY = 'ft_gelirler_v1';
-let _nakitAy = null;   // kartların gösterdiği ay (null: harcama girilmiş son tamamlanmış ay)
+let _nakitAy = null;   // kartların gösterdiği ay (null: bu ay; sayfa her açıldığında bu aya döner)
 function gelirYukle(){ return manuelListeYukle(GELIR_KEY); }
 function ayGeliri(anahtar, liste){
   const l = liste || gelirYukle();
@@ -7902,10 +7902,7 @@ function tasarrufRenk(oran){ return oran == null ? 'var(--muted)' : oran < 0 ? '
 function renderNakitAkis(){
   const onb = {}, gelirler = gelirYukle(), tahmin = harcamaTahmini(onb);
   const simdiK = buAyAnahtar();
-  if(!_nakitAy){
-    _nakitAy = simdiK;
-    for(let i = 1, k = ayKaydir(simdiK, -1); i < 24; i++, k = ayKaydir(k, -1)) if(butceAyHarcama(onb, k).toplam > 0){ _nakitAy = k; break; }
-  }
+  if(!_nakitAy) _nakitAy = simdiK;
   const aySec = document.getElementById('nakitAkisAy');
   if(aySec) aySec.innerHTML = Array.from({ length: 36 }, (_, i) => ayKaydir(simdiK, 11 - i))
     .map(k => `<option value="${k}"${k === _nakitAy ? ' selected' : ''}>${ayAdi(k)}${k === simdiK ? ' (bu ay)' : k > simdiK ? ' (tahmin)' : ''}</option>`).join('');
@@ -9433,7 +9430,7 @@ function switchTab(tabId){
   if(tabId === 'ai' && typeof bpTabAcildi === 'function') bpTabAcildi();
   if(tabId === 'harcama'){ renderHarcama(); aylikKurlariGuncelle(); }   // grafik görünür genişlikle çizilsin; eksik aylık kurlar çekilsin
   if(tabId === 'butce') renderButce();
-  if(tabId === 'nakitakis') renderNakitAkis();
+  if(tabId === 'nakitakis'){ _nakitAy = null; renderNakitAkis(); }   // her açılışta içinde bulunulan ay
   if(tabId === 'borcplan') renderBorcPlan();
   if(tabId === 'odeme') renderOdeme();
   if(tabId === 'netgecmis') renderNetGecmis();
