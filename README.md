@@ -21,6 +21,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 | **Birikim Hedefleri** | Tutar (TL ya da $) ve tarihli hedefler; ayda ayrılması gereken tutar, plana göre önde/geride, Nakit Akışı'ndaki ay sonu kalanla kıyas; birikim elle ya da bir yatırıma bağlı (canlı değer) |
 | **Net Varlık Geçmişi** | Her gün otomatik net varlık kaydı; 7 gün / 30 gün / başlangıçtan beri değişim (TL ve dolar), 30 gün–1 yıl–tümü grafiği, aylık özet tablosu |
 | **Portföy İstatistikleri** | Genel puan: portföy yaşı, çeşitlendirme, borç karşılama, döviz koruması |
+| **Aylık Rapor** | Seçilen ayın özeti: harcama (önceki ay ve 6 ay ortalamasına göre), bütçe uyumu, ay sonu kalan, kredi anaparasındaki azalış, net varlık değişimi; kurallı "öne çıkanlar"; isteğe bağlı Bay Piyasa yorumu (ay başına kaydedilir); yazdır / PDF |
 | **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması) |
 
 Telefonda da kullanılabilir: menü alta sabit sekme çubuğuna dönüşür; çubukta yer almayan sayfalar **Diğer** menüsündedir.

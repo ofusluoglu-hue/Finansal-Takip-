@@ -1837,6 +1837,27 @@
   .harcama-tablo tfoot td:first-child{background:#161c25;}
   .harcama-tablo tfoot tr.karsilik td{font-weight:600;color:var(--muted);font-size:11.5px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
+  /* Aylık Rapor */
+  .rapor-one{list-style:none;margin:2px 0 8px;padding:0;display:flex;flex-direction:column;gap:7px;}
+  .rapor-one li{position:relative;padding:8px 12px 8px 30px;border:1px solid var(--border);border-radius:9px;background:var(--panel-2);font-size:13px;line-height:1.5;color:var(--text);}
+  .rapor-one li::before{position:absolute;left:11px;top:8px;font-weight:800;}
+  .rapor-one li.iyi::before{content:'▲';color:var(--up);font-size:10px;top:11px;}
+  .rapor-one li.kotu::before{content:'●';color:var(--down);font-size:11px;top:9px;}
+  .rapor-one li.notr::before{content:'●';color:var(--muted-2);font-size:11px;top:9px;}
+  .rapor-one li.iyi{border-left:3px solid var(--up);}
+  .rapor-one li.kotu{border-left:3px solid var(--down);}
+  .rapor-yorum{font-size:13.5px;line-height:1.6;}
+  .rapor-yorum h2{font-size:14px;color:var(--amber);margin:12px 0 6px;}
+  #raporKat td, #raporKat th{white-space:nowrap;font-variant-numeric:tabular-nums;}
+  #raporYorumBtn:disabled{opacity:.55;cursor:default;}
+  @media print{
+    body{background:#fff !important;}
+    .sidebar, .app-bar, .nav-panel, .odeme-serit, #raporYorumBtn, #raporAy, .no-print{display:none !important;}
+    .tab-panel{display:none !important;}
+    #tab-rapor{display:block !important;}
+    .layout{display:block !important;}
+    .bolum, .ozet-kart{break-inside:avoid;}
+  }
   /* Birikim Hedefleri */
   .hedef-satir{padding:10px 2px 12px;border-bottom:1px solid var(--border);}
   .hedef-satir:last-child{border-bottom:none;}
@@ -2049,6 +2070,10 @@
       <div class="nav-item" data-tab="ai" data-alt="1" onclick="switchTab('ai')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg>
         <span data-kisa="Asistan">Bay Piyasa <small style="font-size:11px;font-weight:500;opacity:.75;">(AI Asistan)</small></span>
+      </div>
+      <div class="nav-item" data-tab="rapor" onclick="switchTab('rapor')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+        <span data-kisa="Rapor">Aylık Rapor</span>
       </div>
       <div class="nav-item nav-diger" onclick="digerMenuAc()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -2858,6 +2883,66 @@
     <div class="footnote"><b>Not:</b> Kredi taksitleri ödeme planından tarih ve tutarıyla otomatik gelir. Kartın son ödeme gününü bir kez yazman yeter; sıradaki ödemede tutar olarak bugünkü kart borcu gösterilir, sonraki aylar ekstreye göre değişir. Düzenli ödemeler ve abonelikler her ay ya da her yıl aynı gün takvime düşer; ayın 31'i olmayan aylarda son güne kayar. Hafta sonuna denk gelen banka ödemeleri genellikle bir sonraki iş gününe kayar. Bu sayfa hatırlatma içindir: faturalar zaten harcamalarında olduğundan Nakit Akışı'na ayrıca eklenmez. Önümüzdeki 3 günde ödeme varsa Piyasa Özeti'nin üstünde uyarı çıkar.</div>
   </div>
   <!-- ================= /TAB: ÖDEME TAKVİMİ ================= -->
+
+  <!-- ================= TAB: AYLIK RAPOR ================= -->
+  <div class="tab-panel" id="tab-rapor">
+    <div class="page-head"><h1>Aylık Rapor</h1></div>
+
+    <div class="bolum-bas sarmal" style="margin:0 0 12px;">
+      <span class="bolum-baslik" id="raporBaslik" style="font-size:17px;">Rapor</span>
+      <select id="raporAy" class="bolum-secim" title="Ay" onchange="_raporAy = this.value; renderRapor();"></select>
+      <button class="bolum-ekle no-print" style="margin-left:auto;" onclick="window.print()" title="Raporu yazdır ya da PDF olarak kaydet">⎙ Yazdır / PDF</button>
+    </div>
+
+    <div class="ozet-grid k4">
+      <div class="ozet-kart sari">
+        <div class="ozet-etiket">Harcama</div>
+        <div class="ozet-deger" id="rpHarcama">—</div>
+        <div class="ozet-alt" id="rpHarcamaAlt"></div>
+        <div class="card-seanslar" id="rpHarcamaDetay"></div>
+      </div>
+      <div class="ozet-kart mavi">
+        <div class="ozet-etiket">Bütçe</div>
+        <div class="ozet-deger" id="rpButce">—</div>
+        <div class="ozet-alt" id="rpButceAlt"></div>
+        <div class="card-seanslar" id="rpButceDetay"></div>
+      </div>
+      <div class="ozet-kart yesil">
+        <div class="ozet-etiket">Ay sonu kalan</div>
+        <div class="ozet-deger" id="rpKalan">—</div>
+        <div class="ozet-alt" id="rpKalanAlt"></div>
+        <div class="card-seanslar" id="rpKalanDetay"></div>
+      </div>
+      <div class="ozet-kart mor">
+        <div class="ozet-etiket">Borç</div>
+        <div class="ozet-deger" id="rpBorc" style="color:var(--up);">—</div>
+        <div class="ozet-alt" id="rpBorcAlt"></div>
+        <div class="card-seanslar" id="rpBorcDetay"></div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Öne çıkanlar</span></div>
+      <ul class="rapor-one" id="raporOne"></ul>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Bay Piyasa'nın yorumu</span>
+        <button class="bolum-ekle" id="raporYorumBtn" style="margin-left:auto;" onclick="raporYorumla()">✨ Bay Piyasa yorumlasın</button>
+      </div>
+      <div id="raporYorum" style="padding-bottom:8px;"></div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Kategoriler</span></div>
+      <div class="ist-tablo-kap"><table class="ist-tablo" id="raporKat"></table></div>
+      <div style="height:8px;"></div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Rapor seçilen ayın verisinden otomatik hazırlanır: harcamalar Harcama İstatistikleri'nden, bütçe Bütçe'den, gelir ve taksitler Nakit Akışı'ndan, kredi anaparasındaki azalış ödeme planlarından, net varlık değişimi (kayıt varsa) Net Varlık Geçmişi'nden. "Öne çıkanlar" kurallarla yazılır (önceki aya ve son 6 ayın ortalamasına göre belirgin değişimler) ve ücretsizdir. Bay Piyasa yorumu isteğe bağlıdır: yalnızca rakamlar Anthropic API'sine gönderilir, Bay Piyasa'nın günlük limiti ve maliyet sayacı geçerlidir; yorum o ay için kaydedilir ve tüm cihazlarında görünür. Varsayılan ay, harcaması girilmiş son tamamlanmış aydır.</div>
+  </div>
+  <!-- ================= /TAB: AYLIK RAPOR ================= -->
 
   <!-- ================= TAB: BİRİKİM HEDEFLERİ ================= -->
   <div class="tab-panel" id="tab-hedef">
@@ -8747,6 +8832,178 @@ function hedefOzetMetni(){
   return 'Birikim hedefleri: ' + list.map(h => { const c = hedefHesap(h); return h.ad + ' ' + hedefFmt(c.birikim, h.birim) + '/' + hedefFmt(c.hedef, h.birim) + ' (%' + fmtNumber(c.oran * 100, 0) + '), hedef ' + ayAdi(h.ay) + (c.tamam ? ', tamamlandı' : ', ayda ' + hedefFmt(c.aylik, h.birim) + ' gerekli, ' + (c.birikim >= c.beklenen ? 'planın önünde' : 'plandan geride')) + ', ' + hedefKaynakAd(h); }).join('; ');
 }
 
+// ---------- Aylık Rapor: seçilen ayın özeti (kurallı) + isteğe bağlı Bay Piyasa yorumu (ft_raporlar_v1: [{ id:'YYYY-MM', metin, model, maliyet, ts }]) ----------
+const RAPOR_KEY = 'ft_raporlar_v1';
+let _raporAy = null;
+let _raporMesgul = false;
+function raporYukle(){ return manuelListeYukle(RAPOR_KEY); }
+// Bir kredinin belirli tarihteki kalan anaparası (ödeme planından; o tarihe kadar ödenmiş son taksitten sonra)
+function krediKalanTarihte(loan, tarihS){
+  if(!loan || loan.mode !== 'schedule' || !loan.schedule || !loan.schedule.length) return null;
+  const t = krediTaksitleri(loan);
+  let kalan = null;
+  loan.schedule.forEach(s => { if(s.tarih <= tarihS) kalan = s.kalanAnapara; });
+  if(kalan == null){ const ilk = t[0]; kalan = ilk ? loan.schedule[0].kalanAnapara + ilk.anapara : null; }
+  return kalan;
+}
+
+function raporVerisi(ayK){
+  const onb = {};
+  const A = butceAyHarcama(onb, ayK), onceki = butceAyHarcama(onb, ayKaydir(ayK, -1));
+  // 6 ay ortalaması: seçili aydan önceki, harcaması girilmiş 6 ay
+  const gecmis = [];
+  for(let i = 0, k = ayKaydir(ayK, -1); i < 24 && gecmis.length < 6; i++, k = ayKaydir(k, -1)){ const v = butceAyHarcama(onb, k); if(v.toplam > 0) gecmis.push(v); }
+  const ort = gecmis.length ? gecmis.reduce((t, v) => t + v.toplam, 0) / gecmis.length : null;
+  const katOrt = k => gecmis.length ? gecmis.reduce((t, v) => t + (v.kat[k] || 0), 0) / gecmis.length : null;
+  const katlar = HARCAMA_KATEGORILER.filter(x => (A.kat[x.k] || 0) > 0 || (onceki.kat[x.k] || 0) > 0)
+    .map(x => ({ k: x.k, ad: x.ad, t: A.kat[x.k] || 0, onceki: onceki.kat[x.k] || 0, ort: katOrt(x.k) }))
+    .sort((a, b) => b.t - a.t);
+  const kategorili = HARCAMA_KATEGORILER.some(x => !x.gizli && (A.kat[x.k] || 0) > 0);
+  // Bütçe
+  const limit = butceLimitleri(), limitli = HARCAMA_KATEGORILER.filter(x => limit[x.k]);
+  const butceToplam = limitli.reduce((t, x) => t + limit[x.k], 0);
+  const asanlar = limitli.filter(x => (A.kat[x.k] || 0) > limit[x.k]).map(x => ({ ad: x.ad, t: A.kat[x.k], l: limit[x.k] }));
+  // Nakit akışı
+  const gel = gelirYukle(), N = nakitAyi(onb, ayK, gel, harcamaTahmini(onb));
+  // Borç: ay içinde ödenen taksitler ve kredilerin anapara azalışı
+  const ayBas = ayK + '-01', aySon = isoGun(new Date(+ayK.slice(0, 4), +ayK.slice(5, 7), 0)), oncekiSon = isoGun(new Date(+ayK.slice(0, 4), +ayK.slice(5, 7) - 1, 0));
+  let anaparaAzalis = 0;
+  getAllLoans().forEach(l => { const a = krediKalanTarihte(l, oncekiSon), b = krediKalanTarihte(l, aySon); if(a != null && b != null) anaparaAzalis += a - b; });
+  // Net varlık (kayıt varsa): ay içindeki ilk ve son kayıt
+  const ng = netGecmisYukle().filter(x => x.id >= ayBas && x.id <= aySon);
+  const kur = _aylikKur[ayK];
+  return { ayK, A, onceki, ort, gecmisSay: gecmis.length, katlar, kategorili, butceToplam, asanlar, limitVar: limitli.length > 0, N, gelirVar: gel.length > 0,
+           taksitler: N.taksitler, anaparaAzalis, ngIlk: ng[0], ngSon: ng[ng.length - 1], kur };
+}
+// Kurallı "öne çıkanlar": rakamlı kısa cümleler
+function raporOneCikanlar(R){
+  const m = [], yuz = (a, b) => b ? (a / b - 1) * 100 : null;
+  if(R.A.toplam && R.onceki.toplam){ const d = yuz(R.A.toplam, R.onceki.toplam); m.push({ ton: d > 5 ? 'kotu' : d < -5 ? 'iyi' : 'notr', t: `Toplam harcama bir önceki aya göre <b>${d >= 0 ? '+' : '−'}%${fmtNumber(Math.abs(d), 1)}</b> (${isaretliTL(R.A.toplam - R.onceki.toplam)}).` }); }
+  if(R.A.toplam && R.ort){ const d = yuz(R.A.toplam, R.ort); m.push({ ton: d > 5 ? 'kotu' : d < -5 ? 'iyi' : 'notr', t: `Son ${R.gecmisSay} ayın ortalamasının <b>${d >= 0 ? '%' + fmtNumber(d, 0) + ' üstünde' : '%' + fmtNumber(-d, 0) + ' altında'}</b> (ort. ₺${fmtNumber(R.ort, 0)}).` }); }
+  if(R.kategorili){
+    // En büyük artış ve azalış (önceki aya göre, en az ₺500 ve %10)
+    const hareket = R.katlar.filter(k => k.onceki > 0 && Math.abs(k.t - k.onceki) >= 500 && Math.abs(yuz(k.t, k.onceki)) >= 10).sort((a, b) => (b.t - b.onceki) - (a.t - a.onceki));
+    const art = hareket[0], az = hareket[hareket.length - 1];
+    if(art && art.t > art.onceki) m.push({ ton: 'kotu', t: `En çok artan: <b>${escapeHtml(art.ad)}</b> ${isaretliTL(art.t - art.onceki)} (%${fmtNumber(yuz(art.t, art.onceki), 0)}).` });
+    if(az && az.t < az.onceki && az !== art) m.push({ ton: 'iyi', t: `En çok azalan: <b>${escapeHtml(az.ad)}</b> ${isaretliTL(az.t - az.onceki)} (%${fmtNumber(-yuz(az.t, az.onceki), 0)}).` });
+    // Ortalamanın çok üstünde bir kategori (tek seferlik büyük harcama)
+    const sivri = R.katlar.filter(k => k.ort && k.t > k.ort * 1.8 && k.t - k.ort > 3000).sort((a, b) => (b.t - b.ort) - (a.t - a.ort))[0];
+    if(sivri) m.push({ ton: 'kotu', t: `<b>${escapeHtml(sivri.ad)}</b> ortalamasının ${fmtNumber(sivri.t / sivri.ort, 1)} katı (₺${fmtNumber(sivri.t, 0)}; ort. ₺${fmtNumber(sivri.ort, 0)}).` });
+  }
+  if(R.limitVar && R.A.toplam){
+    m.push({ ton: R.A.toplam <= R.butceToplam ? 'iyi' : 'kotu', t: R.A.toplam <= R.butceToplam ? `Toplam bütçe içinde kaldın: <b>₺${fmtNumber(R.butceToplam - R.A.toplam, 0)}</b> arttı.` : `Toplam bütçe <b>₺${fmtNumber(R.A.toplam - R.butceToplam, 0)}</b> aşıldı.` });
+    if(R.asanlar.length) m.push({ ton: 'kotu', t: 'Bütçeyi aşan: ' + R.asanlar.map(x => `${escapeHtml(x.ad)} <b>+₺${fmtNumber(x.t - x.l, 0)}</b>`).join(', ') + '.' });
+  }
+  if(R.gelirVar && R.N.gelir.toplam && !R.N.harcamaYok){ const o = R.N.net / R.N.gelir.toplam; m.push({ ton: o >= 0.2 ? 'iyi' : o < 0 ? 'kotu' : 'notr', t: `Ay sonunda <b>${R.N.net < 0 ? '−₺' : '₺'}${fmtNumber(Math.abs(R.N.net), 0)}</b> ${R.N.net < 0 ? 'açık' : 'kaldı'} (tasarruf oranı ${o < 0 ? '−' : ''}%${fmtNumber(Math.abs(o) * 100, 0)}).` }); }
+  if(R.anaparaAzalis > 1) m.push({ ton: 'iyi', t: `Kredilerin anaparası <b>₺${fmtNumber(R.anaparaAzalis, 0)}</b> azaldı (${R.taksitler.length} taksit, toplam ₺${fmtNumber(R.taksitler.reduce((t, x) => t + x.tutar, 0), 0)}; farkı faiz ve vergi).` });
+  if(R.ngIlk && R.ngSon && R.ngIlk !== R.ngSon){ const f = R.ngSon.net - R.ngIlk.net; m.push({ ton: f >= 0 ? 'iyi' : 'kotu', t: `Net varlık ay içinde <b>${isaretliTL(f)}</b> değişti (${+R.ngIlk.id.slice(8)}–${+R.ngSon.id.slice(8)}. günler).` }); }
+  return m;
+}
+
+function renderRapor(){
+  const simdiK = buAyAnahtar(), onb = {};
+  if(!_raporAy){
+    _raporAy = ayKaydir(simdiK, -1);
+    for(let i = 1, k = ayKaydir(simdiK, -1); i < 24; i++, k = ayKaydir(k, -1)) if(butceAyHarcama(onb, k).toplam > 0){ _raporAy = k; break; }
+  }
+  const sec = document.getElementById('raporAy');
+  if(sec) sec.innerHTML = Array.from({ length: 24 }, (_, i) => ayKaydir(simdiK, -i)).map(k => `<option value="${k}"${k === _raporAy ? ' selected' : ''}>${ayAdi(k)}${k === simdiK ? ' (sürüyor)' : ''}</option>`).join('');
+  const R = raporVerisi(_raporAy);
+  istYaz('raporBaslik', ayAdi(_raporAy) + ' raporu');
+
+  // ---- Kartlar
+  istYaz('rpHarcama', R.A.toplam ? '₺' + fmtNumber(R.A.toplam, 0) : '—');
+  const hAlt = document.getElementById('rpHarcamaAlt');
+  if(hAlt) hAlt.innerHTML = !R.A.toplam ? 'harcama girilmedi' : R.onceki.toplam ? `<span style="color:${R.A.toplam > R.onceki.toplam ? 'var(--down)' : 'var(--up)'};">${R.A.toplam > R.onceki.toplam ? '▲' : '▼'} %${fmtNumber(Math.abs(R.A.toplam / R.onceki.toplam - 1) * 100, 1)}</span> <span class="ozet-soluk">önceki aya göre</span>` : '';
+  ozetDetayYaz('rpHarcamaDetay', [R.kur && R.kur.usd && R.A.toplam ? ['Dolar / altın', '$' + fmtNumber(R.A.toplam / R.kur.usd, 0) + (R.kur.gramAltin ? ' · ' + fmtGr(R.A.toplam / R.kur.gramAltin) : '')] : null, R.ort ? ['6 ay ort.', '₺' + fmtNumber(R.ort, 0)] : null]);
+  const bEl = document.getElementById('rpButce');
+  if(bEl){ bEl.textContent = R.limitVar && R.A.toplam ? '%' + fmtNumber(R.A.toplam / R.butceToplam * 100, 0) : '—'; bEl.style.color = !R.limitVar || !R.A.toplam ? '' : R.A.toplam <= R.butceToplam ? 'var(--up)' : 'var(--down)'; }
+  istYaz('rpButceAlt', !R.limitVar ? 'bütçe koymadın' : R.A.toplam ? 'bütçenin kullanılan kısmı' : '');
+  ozetDetayYaz('rpButceDetay', R.limitVar ? [['Bütçe', '₺' + fmtNumber(R.butceToplam, 0)], ['Aşan', R.asanlar.length ? R.asanlar.length + ' kategori' : 'yok']] : []);
+  const nEl = document.getElementById('rpKalan');
+  if(nEl){ const ok = R.gelirVar && R.N.gelir.toplam && !R.N.harcamaYok; nEl.textContent = ok ? (R.N.net < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(R.N.net), 0) : '—'; nEl.style.color = ok ? (R.N.net < 0 ? 'var(--down)' : 'var(--up)') : ''; }
+  istYaz('rpKalanAlt', !R.gelirVar ? 'gelir girilmedi (Nakit Akışı)' : R.N.gelir.toplam ? 'gelir ₺' + fmtNumber(R.N.gelir.toplam, 0) : 'bu ay gelir yok');
+  ozetDetayYaz('rpKalanDetay', [R.taksitler.length ? ['Taksit', '₺' + fmtNumber(R.taksitler.reduce((t, x) => t + x.tutar, 0), 0)] : null]);
+  istYaz('rpBorc', R.anaparaAzalis > 1 ? '−₺' + fmtNumber(R.anaparaAzalis, 0) : '—');
+  istYaz('rpBorcAlt', R.anaparaAzalis > 1 ? 'kredi anaparası azaldı' : 'bu ay kredi taksidi yok');
+  ozetDetayYaz('rpBorcDetay', [R.ngIlk && R.ngSon && R.ngIlk !== R.ngSon ? ['Net varlık', isaretliTL(R.ngSon.net - R.ngIlk.net)] : null]);
+
+  // ---- Öne çıkanlar
+  const oc = document.getElementById('raporOne');
+  if(oc){
+    const m = raporOneCikanlar(R);
+    oc.innerHTML = m.length ? m.map(x => `<li class="${x.ton}">${x.t}</li>`).join('') : '<li class="notr">Bu ay için yeterli veri yok — harcamalarını girince rapor dolar.</li>';
+  }
+  // ---- Kategori tablosu
+  const kt = document.getElementById('raporKat');
+  if(kt){
+    const top = R.A.toplam || 1;
+    kt.innerHTML = R.katlar.length ? `<thead><tr><th>Kategori</th><th class="sag">${AY_KISA[+_raporAy.slice(5, 7) - 1]}</th><th class="sag">Pay</th><th class="sag">Önceki ay</th><th class="sag">Fark</th><th class="sag">6 ay ort.</th></tr></thead><tbody>${R.katlar.map(k => {
+      const f = k.t - k.onceki;
+      return `<tr><td>${escapeHtml(k.ad)}</td><td class="sag"><b>₺${fmtNumber(k.t, 0)}</b></td><td class="sag" style="color:var(--muted);">%${fmtNumber(k.t / top * 100, 0)}</td><td class="sag" style="color:var(--muted);">₺${fmtNumber(k.onceki, 0)}</td>
+        <td class="sag" style="color:${Math.abs(f) < 1 ? 'var(--muted)' : f > 0 ? 'var(--down)' : 'var(--up)'};">${Math.abs(f) < 1 ? '—' : isaretliTL(f)}</td><td class="sag" style="color:var(--muted);">${k.ort ? '₺' + fmtNumber(k.ort, 0) : '—'}</td></tr>`;
+    }).join('')}</tbody><tfoot><tr><td>Toplam</td><td class="sag">₺${fmtNumber(R.A.toplam, 0)}</td><td></td><td class="sag">₺${fmtNumber(R.onceki.toplam, 0)}</td><td class="sag">${isaretliTL(R.A.toplam - R.onceki.toplam)}</td><td class="sag">${R.ort ? '₺' + fmtNumber(R.ort, 0) : '—'}</td></tr></tfoot>` : '<tbody><tr><td style="color:var(--muted-2);">Bu ay harcama yok.</td></tr></tbody>';
+  }
+  // ---- Bay Piyasa yorumu
+  const kayit = raporYukle().find(x => x.id === _raporAy);
+  const yEl = document.getElementById('raporYorum'), btn = document.getElementById('raporYorumBtn');
+  if(yEl) yEl.innerHTML = _raporMesgul ? '<div class="bos-not">Bay Piyasa raporu okuyor…</div>'
+    : kayit ? `<div class="bp-md rapor-yorum">${bpMd(kayit.metin)}</div><div class="ozet-not" style="margin-top:6px;">${escapeHtml((BP_FIYAT[kayit.model] || {}).ad || kayit.model)} · ${new Date(kayit.ts).toLocaleString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} · ${bpPara(kayit.maliyet || 0)}</div>`
+    : '<div class="bos-not">Bay Piyasa bu raporu okuyup rakamlarla 3 somut öneri yazabilir. Yorum bu ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</div>';
+  if(btn){ btn.disabled = _raporMesgul || !R.A.toplam; btn.textContent = _raporMesgul ? 'Yazıyor…' : kayit ? '↻ Yeniden yorumla' : '✨ Bay Piyasa yorumlasın'; }
+}
+
+// Yapay zekâya giden rapor metni (yalnızca rakamlar; kişisel bilgi yok)
+function raporMetni(R){
+  const s = [ayAdi(R.ayK) + ' aylık finans raporu'];
+  s.push('Harcama ₺' + fmtNumber(R.A.toplam, 0) + (R.onceki.toplam ? ', önceki ay ₺' + fmtNumber(R.onceki.toplam, 0) : '') + (R.ort ? ', son ' + R.gecmisSay + ' ay ortalaması ₺' + fmtNumber(R.ort, 0) : ''));
+  if(R.katlar.length) s.push('Kategoriler (bu ay / önceki ay / 6 ay ort.): ' + R.katlar.map(k => k.ad + ' ₺' + fmtNumber(k.t, 0) + ' / ₺' + fmtNumber(k.onceki, 0) + (k.ort ? ' / ₺' + fmtNumber(k.ort, 0) : '')).join('; '));
+  if(R.limitVar) s.push('Aylık bütçe ₺' + fmtNumber(R.butceToplam, 0) + '; aşan kategoriler: ' + (R.asanlar.map(x => x.ad + ' ₺' + fmtNumber(x.t, 0) + '/₺' + fmtNumber(x.l, 0)).join(', ') || 'yok'));
+  if(R.gelirVar) s.push('Gelir ₺' + fmtNumber(R.N.gelir.toplam, 0) + ', kredi taksitleri ₺' + fmtNumber(R.N.taksit, 0) + ', ay sonu kalan ₺' + fmtNumber(R.N.net, 0));
+  else if(R.N.taksit) s.push('Kredi taksitleri ₺' + fmtNumber(R.N.taksit, 0) + ' (gelir girilmemiş)');
+  if(R.anaparaAzalis > 1) s.push('Kredi anaparası ₺' + fmtNumber(R.anaparaAzalis, 0) + ' azaldı');
+  try{ const b = borcPlanOzetMetni(); if(b) s.push(b); }catch(e){ /* yok */ }
+  try{ const h = hedefOzetMetni(); if(h) s.push(h); }catch(e){ /* yok */ }
+  return s.join('\n');
+}
+function raporYorumla(){
+  if(_raporMesgul) return;
+  const calistir = async () => {
+    if(bpBugunHarcama() >= bp.ayar.limit){ showAlertModal('Bay Piyasa\'nın bugünkü limiti (' + bpPara(bp.ayar.limit) + ') doldu. Limiti Bay Piyasa sayfasından artırabilirsin.'); return; }
+    const ayK = _raporAy, R = raporVerisi(ayK);
+    _raporMesgul = true; renderRapor();
+    try{
+      const model = bp.ayar.model;
+      const res = await fetch(AI_ENDPOINT, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model, max_tokens: 1200,
+          system: [{ type: 'text', text: BP_SISTEM, cache_control: { type: 'ephemeral' } }],
+          messages: [{ role: 'user', content: '<aylik_rapor>\n' + raporMetni(R) + '\n</aylik_rapor>\n\nBu aylık raporu yorumla. Yapı: (1) "Ay nasıl geçti": 2-3 cümle, rakamlarla; (2) "Öneriler": gelecek ay için rakamlı, uygulanabilir 3 madde (hangi kategoride ne kadar azaltma, borç/hedef için ne kadar ayırma gibi). Kısa tut; başlıkları "## " ile yaz.' }],
+        }),
+      });
+      let data = null; try{ data = await res.json(); }catch(e){ /* JSON değil */ }
+      if(!res.ok || !data) throw new Error('İstek başarısız (' + res.status + ')' + (data && data.error ? ': ' + (data.error.message || data.error) : ''));
+      const metin = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+      if(!metin) throw new Error('Boş yanıt döndü');
+      const maliyet = bpMaliyet(model, data.usage);
+      bpHarcamaEkle(maliyet); bpKaydet(); bpRenderMeter();
+      const list = raporYukle().filter(x => x.id !== ayK);
+      list.push({ id: ayK, metin, model, maliyet: Math.round(maliyet * 10000) / 10000, ts: Date.now() });
+      manuelListeKaydet(RAPOR_KEY, list.sort((a, b) => a.id.localeCompare(b.id)).slice(-36));
+    }catch(e){
+      showAlertModal('Yorum alınamadı: ' + (e.message || e));
+    }finally{
+      _raporMesgul = false; renderRapor();
+    }
+  };
+  if(!bp.ayar.paylas){
+    showConfirmModal('Rapor yorumu harcama, bütçe, borç ve hedef rakamlarını kullanır; bu rakamlar Anthropic API\'sine gönderilir (isim/e-posta gibi bilgi gönderilmez). Devam edelim mi?', () => { bp.ayar.paylas = true; bpKaydet(); bpRenderAyar(); calistir(); });
+    return;
+  }
+  calistir();
+}
+
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
   gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
@@ -8757,6 +9014,7 @@ const TAB_BASLIKLARI = {
   harcama:  ['Harcama İstatistikleri', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
+  rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],
   hedef:    ['Birikim Hedefleri', 'Tutar ve tarih koy — ayda ne kadar ayırman gerektiğini ve planın önünde mi olduğunu gör'],
   netgecmis: ['Net Varlık Geçmişi', 'Net servetinin günden güne değişimi'],
   odeme:    ['Ödeme Takvimi', 'Taksitler, kart son ödeme günleri, faturalar ve abonelikler tek takvimde'],
@@ -8784,6 +9042,7 @@ function switchTab(tabId){
   if(tabId === 'odeme') renderOdeme();
   if(tabId === 'netgecmis') renderNetGecmis();
   if(tabId === 'hedef') renderHedef();
+  if(tabId === 'rapor') renderRapor();
   window.scrollTo(0, 0);
 }
 

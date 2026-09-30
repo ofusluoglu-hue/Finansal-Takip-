@@ -43,7 +43,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_odemeler_v1` | Ödeme Takvimi: düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
 | `ft_net_gecmis_v1` | Günlük net varlık kaydı `{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, t }` |
 | `ft_hedefler_v1` | Birikim hedefleri `{ id:'hd-…', ad, hedef, birim:'TL'\|'USD', ay, kaynak:'elle'\|'tum'\|'y:<yatırımId>', birikmis, baslangic, baslangicDeger }` |
-| `ft_raporlar_v1` | Sıradaki özellikler için ayrıldı (birikim hedefleri, net varlık geçmişi, aylık rapor); Worker'da izinli |
+| `ft_raporlar_v1` | Aylık Rapor'un Bay Piyasa yorumları `{ id:'YYYY-MM', metin, model, maliyet, ts }` (son 36 ay) |
 
 Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
@@ -160,6 +160,13 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Grafik (`nakitGrafikCiz`): 6 geçmiş ay + bu ay + 11 gelecek ay; her ayda gelir çubuğu ve üst üste harcama + taksit; tahmin aylar soluk, tahmini harcama kesik çerçeveli. Bant 34 px'ten darsa etiketler 3 ayda bir. Bir aya tıklamak kartları o aya getirir.
 - Kartlar: seçili ayın geliri, gideri, kalanı (`.ton`, tasarruf oranına göre: <0 kırmızı, %0–20 sarı, ≥%20 yeşil) ve önümüzdeki 12 ayın taksit toplamı + kredilerin bittiği ay ve ardından açılan aylık pay.
 
+## 8h. Aylık Rapor
+
+- `raporVerisi(ay)`: harcama (önceki ay, önceki 6 dolu ayın ortalaması, kategori bazında), bütçe (toplam ve aşanlar), Nakit Akışı (`nakitAyi`), kredi anaparası azalışı (`krediKalanTarihte`: önceki ayın son günü ile bu ayın son günü arasında ödeme planındaki kalan anapara farkı), ay içindeki ilk ve son net varlık kaydı.
+- "Öne çıkanlar" (`raporOneCikanlar`) kurallıdır, API'ye gitmez: toplam değişim (±%5 eşiği), ortalamaya göre, en çok artan/azalan kategori (en az ₺500 ve %10), ortalamasının 1,8 katını aşan kategori, bütçe, tasarruf oranı, borç ve net varlık.
+- Bay Piyasa yorumu (`raporYorumla`): yalnızca rakamlardan oluşan `raporMetni` + borç planı ve hedef özetleri; `BP_SISTEM`, seçili model, günlük limit ve maliyet sayacı (`bpHarcamaEkle`); paylaşım izni yoksa önce onay. Sonuç `ft_raporlar_v1`'e ay kimliğiyle yazılır (tekrar açınca ücret yok; "Yeniden yorumla" üzerine yazar).
+- Yazdır / PDF: `@media print` yalnızca rapor sekmesini basar.
+
 ## 8g. Birikim Hedefleri
 
 - `hedefHesap`: birikim (elle `birikmis`; bağlı ise `yatirimDegerHesapla` ile canlı TL, $ hedefte ÷ kur), kalan, kalan ay (bu ay hariç, hedef ayı dahil; en az 1), ayda gereken = kalan ÷ ay. Plan çizgisi: eklendiği gün `baslangicDeger`'den hedef ayının sonuna doğrusal; birikim çizginin önündeyse "planın önünde".
@@ -191,7 +198,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 ## 9. Arayüz
 
-- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama İstatistikleri, Bütçe, Nakit Akışı, Ödeme Takvimi) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama İstatistikleri, Bütçe, Nakit Akışı, Ödeme Takvimi) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Asistan** (Bay Piyasa, Aylık Rapor). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
 - Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
@@ -217,6 +224,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Aylık Rapor: ayın harcama/bütçe/nakit/borç/net varlık özeti, kurallı öne çıkanlar, kategori tablosu, kaydedilen Bay Piyasa yorumu, yazdır/PDF |
 | 2026-09-30 | Birikim Hedefleri: TL/$ hedefler, ayda gereken, plan çizgisi, elle ya da yatırıma bağlı birikim, Nakit Akışı kıyası |
 | 2026-09-30 | Net Varlık Geçmişi: günlük otomatik kayıt, 7/30 gün ve başlangıçtan beri değişim, aralık seçmeli grafik, aylık özet |
 | 2026-09-30 | Ödeme Takvimi: taksitler, kart son ödeme günleri, düzenli ödemeler ve abonelikler; 45 günlük liste, aylık takvim, Piyasa Özeti'nde 3 günlük uyarı şeridi |
