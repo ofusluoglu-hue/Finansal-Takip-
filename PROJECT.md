@@ -170,7 +170,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 ## 8g. Birikim Hedefleri
 
 - `hedefHesap`: birikim (elle `birikmis`; bağlı ise `yatirimDegerHesapla` ile canlı TL, $ hedefte ÷ kur), kalan, kalan ay (bu ay hariç, hedef ayı dahil; en az 1), ayda gereken = kalan ÷ ay. Plan çizgisi: eklendiği gün `baslangicDeger`'den hedef ayının sonuna doğrusal; birikim çizginin önündeyse "planın önünde".
-- Kartlar: toplam hedef (TL; $ hedefler bugünkü kurla), biriken ve yüzde, ayda gereken toplam (gelir girildiyse Nakit Akışı'nın son 6 ay ortalama kalanıyla kıyas), en yakın hedef.
+- Kartlar: toplam hedef (TL; $ hedefler bugünkü kurla), biriken ve yüzde, ayda gereken toplam — üçünde de **güncel dolar ve gram 24 ayar altın karşılığı** (canlı `_fxRates.USD` ve `gramAltinTL()`; sekme açıkken `tlKarsiliklariniYenile` ile her kur/fiyat güncellemesinde yeniden çizilir, işlem kutusu açıkken dokunulmaz) (gelir girildiyse Nakit Akışı'nın son 6 ay ortalama kalanıyla kıyas), en yakın hedef.
 - Satır: + birikime ekle/çıkar (yalnızca elle), ✎ hedef tutarı, ✕ sil; satır içi işlem kutusu `_hedefIslem`. Bağlı hedefler her fiyat turunda (sekme açık ve işlem kutusu kapalıyken) yeniden çizilir.
 
 ## 8f. Net Varlık Geçmişi
@@ -229,6 +229,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Birikim Hedefleri: Hedefler, Biriken ve Ayda ayırman gereken kartlarına güncel dolar ve gram altın karşılığı (kur değişince anında güncellenir) |
 | 2026-09-30 | Düzenli ödemeler ve abonelikler Harcama Takibim'e bu ay ve gelecek ay için otomatik eklenir (harcama kategorisi seçilebilir; silinen ay geri gelmez, elle değiştirilen korunur) |
 | 2026-09-30 | Ödeme Takvimi: kartın sıradaki dönemi için dönem borcu, asgari ve ödeyeceğim tutarı; takvim ödeyeceğin tutarı kullanır; kalan borç ve asgari uyarıları, ödeme sonrası güncelleme hatırlatması |
 | 2026-09-30 | Ödeme Takvimi kartları: 1. "Ekim ödemeleri" ayın sabit toplamı, 2. "Ekim kalan" (Önümüzdeki 7 gün kaldırıldı); kart dönem tutarı kaydedilir, ödeme günü geçince toplam değişmez |

@@ -3020,7 +3020,7 @@
       <div id="hdListe"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Her hedef için tutar ve tarih girersin; ayda ayırman gereken = kalan ÷ hedef ayına kadar kalan ay (içinde bulunulan ay hariç, hedef ayı dahil). Çubuktaki ince çizgi, hedefi eklediğin günden hedef ayının sonuna doğrusal plana göre bugün ulaşman gereken yerdir: birikim çizginin önündeyse "planın önünde". Birikimi elle takip edersen + ile ekler (eksi yazıp çıkarırsın); bir yatırımına ya da tüm yatırımlarına bağlarsan canlı değeri kendiliğinden işler. Enflasyona karşı hedefi dolar olarak koyabilirsin; TL karşılığı bugünkü kurla gösterilir. Gelirini Nakit Akışı'na girdiysen, gereken tutar ay sonunda kalan ortalamayla karşılaştırılır. Hedefler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Her hedef için tutar ve tarih girersin; ayda ayırman gereken = kalan ÷ hedef ayına kadar kalan ay (içinde bulunulan ay hariç, hedef ayı dahil). Çubuktaki ince çizgi, hedefi eklediğin günden hedef ayının sonuna doğrusal plana göre bugün ulaşman gereken yerdir: birikim çizginin önündeyse "planın önünde". Birikimi elle takip edersen + ile ekler (eksi yazıp çıkarırsın); bir yatırımına ya da tüm yatırımlarına bağlarsan canlı değeri kendiliğinden işler. Enflasyona karşı hedefi dolar olarak koyabilirsin; TL karşılığı bugünkü kurla gösterilir. Kartlardaki dolar ve altın karşılıkları güncel kur ve gram 24 ayar altın fiyatıyladır (ons ÷ 31,1035 × kur) ve fiyatlar her yenilendiğinde güncellenir. Gelirini Nakit Akışı'na girdiysen, gereken tutar ay sonunda kalan ortalamayla karşılaştırılır. Hedefler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: BİRİKİM HEDEFLERİ ================= -->
 
@@ -4114,6 +4114,9 @@ function tlKarsiliklariniYenile(){
   if(typeof renderKMH === 'function') renderKMH();           // KMH faizi günlük işler
   if(typeof renderYatirim === 'function') renderYatirim();   // → renderVarlik, renderIstatistik
   if(typeof bpRenderMeter === 'function') bpRenderMeter();
+  // Birikim Hedefleri açıksa: güncel dolar/altın karşılıkları ve yatırıma bağlı hedefler (işlem kutusu açıkken dokunma)
+  const hs = document.getElementById('tab-hedef');
+  if(hs && hs.classList.contains('active') && typeof _hedefIslem !== 'undefined' && !_hedefIslem.id) renderHedef();
 }
 
 let _refreshInProgress = false;
@@ -9009,11 +9012,14 @@ function renderHedef(){
 
   istYaz('hdToplam', list.length ? '₺' + fmtNumber(topHedef, 0) : '—');
   istYaz('hdToplamAlt', list.length ? list.length + ' hedef' : 'henüz hedef yok');
-  ozetDetayYaz('hdToplamDetay', [hes.filter(x => x.c.tamam).length ? ['Tamamlanan', hes.filter(x => x.c.tamam).length + ''] : null, hedefKur() && hes.some(x => x.h.birim === 'USD') ? ['$ hedefler', 'kur ₺' + fmtNumber(hedefKur(), 2)] : null]);
+  // Güncel dolar ve gram 24 ayar altın karşılığı (canlı kur ve altın fiyatıyla; her fiyat turunda yenilenir)
+  const kurKarsilik = tl => { const u = _fxRates.USD, g = gramAltinTL(); return [u ? '$' + fmtNumber(tl / u, 0) : null, g ? fmtNumber(tl / g, 0) + ' gr' : null].filter(Boolean).join(' · ') || null; };
+  const kk = tl => { const v = kurKarsilik(tl); return v ? ['Dolar / altın', v] : null; };
+  ozetDetayYaz('hdToplamDetay', list.length ? [kk(topHedef), hes.filter(x => x.c.tamam).length ? ['Tamamlanan', hes.filter(x => x.c.tamam).length + ''] : null] : []);
   istYaz('hdBirikim', list.length ? '₺' + fmtNumber(topBirikim, 0) : '—');
   const bAlt = document.getElementById('hdBirikimAlt');
   if(bAlt) bAlt.innerHTML = topHedef ? `%${fmtNumber(topBirikim / topHedef * 100, 0)} tamam` : '';
-  ozetDetayYaz('hdBirikimDetay', topHedef ? [['Kalan', '₺' + fmtNumber(Math.max(0, topHedef - topBirikim), 0)]] : []);
+  ozetDetayYaz('hdBirikimDetay', topHedef ? [kk(topBirikim), ['Kalan', '₺' + fmtNumber(Math.max(0, topHedef - topBirikim), 0)]] : []);
   istYaz('hdAylik', aktif.length ? '₺' + fmtNumber(aylik, 0) : '—');
   // Nakit Akışı'ndaki son ayların ortalama "kalan"ı ile kıyas (gelir girildiyse)
   let tasarruf = null;
@@ -9025,7 +9031,7 @@ function renderHedef(){
   const aAlt = document.getElementById('hdAylikAlt');
   if(aAlt) aAlt.innerHTML = !aktif.length ? '' : tasarruf == null ? 'hedeflere zamanında ulaşmak için' : tasarruf <= 0 ? '<span style="color:var(--down);">ay sonu kalan eksi</span>'
     : `<span style="color:${aylik <= tasarruf ? 'var(--up)' : 'var(--down)'};">aylık kalanın %${fmtNumber(aylik / tasarruf * 100, 0)}'i</span>`;
-  ozetDetayYaz('hdAylikDetay', tasarruf != null ? [['Ort. kalan', (tasarruf < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(tasarruf), 0) + '/ay']] : []);
+  ozetDetayYaz('hdAylikDetay', aktif.length ? [kk(aylik), tasarruf != null ? ['Ort. kalan', (tasarruf < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(tasarruf), 0) + '/ay'] : null] : []);
   const yakin = aktif.slice().sort((a, b) => a.h.ay.localeCompare(b.h.ay))[0];
   istYaz('hdYakin', yakin ? yakin.h.ad : '—');
   istYaz('hdYakinAlt', yakin ? ayAdi(yakin.h.ay) + (yakin.c.gecti ? ' · süresi geçti' : ' · ' + yakin.c.ay + ' ay') : '');
