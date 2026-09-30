@@ -1898,6 +1898,9 @@
   .odeme-tarih span{font-size:9.5px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
   .odeme-nokta{flex:0 0 8px;height:8px;border-radius:50%;}
   .odeme-satir.yakin .odeme-tarih b{color:var(--amber);}
+  .odeme-satir.odendi{opacity:.5;}
+  .odeme-satir.odendi .satir-tutar{text-decoration:line-through;text-decoration-color:var(--muted-2);}
+  .tk-odendi{color:var(--up);font-weight:800;}
   #odemeYaklasan{max-height:470px;overflow-y:auto;}
   .odeme-takvim{display:grid;grid-template-columns:repeat(7, minmax(0,1fr));gap:4px;margin:4px 0 8px;}
   .tk-bas{font-size:10px;font-weight:700;color:var(--muted-2);text-align:center;padding:2px 0;text-transform:uppercase;}
@@ -2821,7 +2824,7 @@
         <div class="card-seanslar" id="odeme7Detay"></div>
       </div>
       <div class="ozet-kart kirmizi">
-        <div class="ozet-etiket" id="odemeAyEtiket">Bu ay · kalan</div>
+        <div class="ozet-etiket" id="odemeAyEtiket">Bu ayın ödemeleri</div>
         <div class="ozet-deger" id="odemeAy">—</div>
         <div class="ozet-alt" id="odemeAyAlt"></div>
         <div class="card-seanslar" id="odemeAyDetay"></div>
@@ -2892,7 +2895,7 @@
       <div id="odemeKartlar"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Kredi taksitleri ödeme planından tarih ve tutarıyla otomatik gelir. Kartın son ödeme gününü bir kez yazman yeter; sıradaki ödemede tutar olarak bugünkü kart borcu gösterilir, sonraki aylar ekstreye göre değişir. Düzenli ödemeler ve abonelikler her ay ya da her yıl aynı gün takvime düşer; ayın 31'i olmayan aylarda son güne kayar. Hafta sonuna denk gelen banka ödemeleri genellikle bir sonraki iş gününe kayar. Yaklaşan ödemeler ve takvim aynı ayı gösterir (ay bazında; bir sonraki aya taşmaz): varsayılan ay bu aydır, bu ayda ödeme kalmadıysa sonraki ay. Bu sayfa hatırlatma içindir: faturalar zaten harcamalarında olduğundan Nakit Akışı'na ayrıca eklenmez. Önümüzdeki 3 günde ödeme varsa Piyasa Özeti'nin üstünde uyarı çıkar.</div>
+    <div class="footnote"><b>Not:</b> Kredi taksitleri ödeme planından tarih ve tutarıyla otomatik gelir. Kartın son ödeme gününü bir kez yazman yeter; sıradaki ödemede tutar olarak bugünkü kart borcu gösterilir, sonraki aylar ekstreye göre değişir. Düzenli ödemeler ve abonelikler her ay ya da her yıl aynı gün takvime düşer; ayın 31'i olmayan aylarda son güne kayar. Hafta sonuna denk gelen banka ödemeleri genellikle bir sonraki iş gününe kayar. Bugünden önceki ödemeler ödenmiş sayılır: listede ✓ ödendi olarak soluk görünür, kalan tutara girmez. Yaklaşan ödemeler, takvim ve ay kartı aynı ayı gösterir (ay bazında; bir sonraki aya taşmaz): varsayılan ay bu aydır, bu ayda ödeme kalmadıysa sonraki ay. Bu sayfa hatırlatma içindir: faturalar zaten harcamalarında olduğundan Nakit Akışı'na ayrıca eklenmez. Önümüzdeki 3 günde ödeme varsa Piyasa Özeti'nin üstünde uyarı çıkar.</div>
   </div>
   <!-- ================= /TAB: ÖDEME TAKVİMİ ================= -->
 
@@ -8376,11 +8379,17 @@ function renderOdeme(){
   ozetDetayYaz('odeme7Detay', yedi.slice(0, 2).map(x => [goreceliGun(x.tarih), escapeHtml(x.ad.replace(/ (kartı|kredisi)$/, '')) + (x.tutar != null ? ' ' + kisaTL(x.tutar) : '')]));
   const yediKart = document.getElementById('odeme7Kart');
   if(yediKart) yediKart.className = 'ozet-kart ' + (yedi.some(x => gunFarkiS(bugunS, x.tarih) <= 2) ? 'kirmizi' : yedi.length ? 'sari' : 'yesil');
-  istYaz('odemeAyEtiket', AY_UZUN[simdi.getMonth()] + ' · kalan');
-  istYaz('odemeAy', '₺' + fmtNumber(top(ayKalan), 0));
-  istYaz('odemeAyAlt', ayKalan.length ? ayKalan.length + ' ödeme · ' + ((g => g ? 'ay sonuna ' + g + ' gün' : 'bugün ayın son günü')(new Date(simdi.getFullYear(), simdi.getMonth() + 1, 0).getDate() - simdi.getDate())) : 'bu ay başka ödeme yok');
-  const sonrakiAy = odemeOlaylari(new Date(simdi.getFullYear(), simdi.getMonth() + 1, 1), new Date(simdi.getFullYear(), simdi.getMonth() + 2, 0));
-  ozetDetayYaz('odemeAyDetay', [[AY_UZUN[(simdi.getMonth() + 1) % 12], '₺' + fmtNumber(top(sonrakiAy), 0) + (sonrakiAy.some(x => x.tutar == null) ? ' + kart' : '')]]);
+  // Seçili ay (liste ve takvimle aynı): varsayılan bu ay; bu ayda bugünden sonra ödeme kalmadıysa sonraki ay (ör. 30 Eylül'de Ekim)
+  const buAyK = bugunS.slice(0, 7);
+  if(!_odemeAy) _odemeAy = ayKalan.length ? buAyK : ayKaydir(buAyK, 1);
+  const sY = +_odemeAy.slice(0, 4), sA = +_odemeAy.slice(5, 7) - 1;
+  const secAyOlay = odemeOlaylari(new Date(sY, sA, 1), new Date(sY, sA + 1, 0));
+  const odendi = secAyOlay.filter(x => x.tarih < bugunS), kalanOlay = secAyOlay.filter(x => x.tarih >= bugunS);   // bugünden önceki ödemeler ödendi sayılır
+  istYaz('odemeAyEtiket', AY_UZUN[sA] + (sY !== simdi.getFullYear() ? ' ' + sY : '') + ' ödemeleri');
+  istYaz('odemeAy', '₺' + fmtNumber(top(kalanOlay), 0));
+  const kartBelirsiz = kalanOlay.filter(x => x.tutar == null).length;
+  istYaz('odemeAyAlt', !secAyOlay.length ? 'bu ay ödeme yok' : !kalanOlay.length ? 'hepsi ödendi' : (odendi.length ? 'kalan · ' : '') + kalanOlay.length + ' ödeme' + (kartBelirsiz ? ' (' + kartBelirsiz + ' kart ekstreye göre)' : ''));
+  ozetDetayYaz('odemeAyDetay', secAyOlay.length ? [['Toplam', '₺' + fmtNumber(top(secAyOlay), 0)], odendi.length ? ['Ödendi ✓', '₺' + fmtNumber(top(odendi), 0) + ' · ' + odendi.length + ' ödeme'] : (kalanOlay[0] ? ['Sıradaki', escapeHtml(kalanOlay[0].ad.replace(/ (kartı|kredisi)$/, '')) + ' · ' + goreceliGun(kalanOlay[0].tarih)] : null)] : []);
   const liste = odemeYukle(), duzenli = liste.filter(o => o.tur === 'duzenli');
   const aylikSabit = duzenli.reduce((t, o) => t + yillikTutar(o) / 12, 0);
   const taksitAy = odemeOlaylari(new Date(simdi.getFullYear(), simdi.getMonth(), 1), new Date(simdi.getFullYear(), simdi.getMonth() + 1, 0)).filter(x => x.tur === 'kredi');
@@ -8393,8 +8402,6 @@ function renderOdeme(){
   ozetDetayYaz('odemeAbonDetay', abon.length ? [['Aylık', '₺' + fmtNumber(abon.reduce((t, o) => t + yillikTutar(o) / 12, 0), 0)], ['En pahalı', escapeHtml(abon.slice().sort((a, b) => yillikTutar(b) - yillikTutar(a))[0].ad)]] : []);
 
   // ---- Seçili ay: varsayılan bu ay; bu ayda bugünden sonra ödeme kalmadıysa sonraki ay (ör. 30 Eylül'de Ekim)
-  const buAyK = bugunS.slice(0, 7);
-  if(!_odemeAy) _odemeAy = ayKalan.length ? buAyK : ayKaydir(buAyK, 1);
   const ayOpsiyon = Array.from({ length: 15 }, (_, i) => ayKaydir(buAyK, i - 2))
     .map(k => `<option value="${k}"${k === _odemeAy ? ' selected' : ''}>${ayAdi(k)}</option>`).join('');
   ['odemeListeAy', 'odemeAySec'].forEach(id => { const e = document.getElementById(id); if(e) e.innerHTML = ayOpsiyon; });
@@ -8403,25 +8410,31 @@ function renderOdeme(){
   const yak = document.getElementById('odemeYaklasan');
   if(yak){
     const yY = +_odemeAy.slice(0, 4), yA = +_odemeAy.slice(5, 7) - 1;
-    const listeOlay = odemeOlaylari(new Date(yY, yA, 1), new Date(yY, yA + 1, 0)).filter(x => _odemeAy !== buAyK || x.tarih >= bugunS);
-    const gecmisAy = _odemeAy < buAyK;
-    istYaz('odemeYaklasanToplam', listeOlay.length ? '₺' + fmtNumber(top(listeOlay), 0) : '');
+    const listeOlay = odemeOlaylari(new Date(yY, yA, 1), new Date(yY, yA + 1, 0));
+    const kalanL = listeOlay.filter(x => x.tarih >= bugunS);
+    istYaz('odemeYaklasanToplam', kalanL.length ? '₺' + fmtNumber(top(kalanL), 0) : (listeOlay.length ? 'ödendi ✓' : ''));
     yak.innerHTML = listeOlay.length ? listeOlay.map(x => {
       const n = gunFarkiS(bugunS, x.tarih), d = new Date(x.tarih + 'T00:00:00');
+      if(n < 0) return `<div class="satir odeme-satir odendi">
+        <div class="odeme-tarih"><b>${d.getDate()}</b><span>${AY_KISA[d.getMonth()]} · ${GUN_KISA[d.getDay()]}</span></div>
+        <span class="odeme-nokta" style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></span>
+        <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt"><span style="color:var(--up);">✓ ödendi</span> · ${escapeHtml(x.alt.replace(' · bugünkü borç', ''))}</div></div>
+        <div class="satir-tutar">${x.tutar != null ? '₺' + fmtNumber(x.tutar, 0) : '—'}</div>
+      </div>`;
       return `<div class="satir odeme-satir${n <= 2 ? ' yakin' : ''}">
         <div class="odeme-tarih"><b>${d.getDate()}</b><span>${AY_KISA[d.getMonth()]} · ${GUN_KISA[d.getDay()]}</span></div>
         <span class="odeme-nokta" style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></span>
         <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt"><span style="color:${n <= 2 ? 'var(--amber)' : 'inherit'};">${goreceliGun(x.tarih)}</span> · ${escapeHtml(x.alt)}</div></div>
         <div class="satir-tutar">${x.tutar != null ? '₺' + fmtNumber(x.tutar, 0) : '<span class="ozet-soluk" style="font-size:12px;">ekstreye göre</span>'}</div>
       </div>`;
-    }).join('') : `<div class="bos-not">${ayAdi(_odemeAy)} için ${_odemeAy === buAyK ? 'bugünden sonra ' : ''}ödeme yok. Kart son ödeme günlerini ve faturalarını aşağıdan ekleyebilirsin.</div>`;
-    if(gecmisAy) yak.querySelectorAll('.odeme-satir').forEach(e => { e.style.opacity = '.55'; });
+    }).join('') : `<div class="bos-not">${ayAdi(_odemeAy)} için ödeme yok. Kart son ödeme günlerini ve faturalarını aşağıdan ekleyebilirsin.</div>`;
   }
 
   // ---- Ay takvimi
   const yil = +_odemeAy.slice(0, 4), ay = +_odemeAy.slice(5, 7) - 1;
   const ayOlay = odemeOlaylari(new Date(yil, ay, 1), new Date(yil, ay + 1, 0));
-  istYaz('odemeTakvimToplam', '₺' + fmtNumber(top(ayOlay), 0));
+  const takvimKalan = ayOlay.filter(x => x.tarih >= bugunS);
+  istYaz('odemeTakvimToplam', takvimKalan.length ? '₺' + fmtNumber(top(takvimKalan), 0) + (takvimKalan.length < ayOlay.length ? ' kalan' : '') : (ayOlay.length ? 'ödendi ✓' : ''));
   const takvim = document.getElementById('odemeTakvim');
   if(takvim){
     const ilkGun = (new Date(yil, ay, 1).getDay() + 6) % 7, gunSay = new Date(yil, ay + 1, 0).getDate();
@@ -8430,7 +8443,7 @@ function renderOdeme(){
     for(let g = 1; g <= gunSay; g++){
       const s = isoGun(new Date(yil, ay, g)), o = ayOlay.filter(x => x.tarih === s), t = top(o);
       h += `<div class="tk-gun${s === bugunS ? ' bugun' : ''}${s < bugunS ? ' gecmis' : ''}${o.length ? ' dolu' : ''}${s === _odemeGun ? ' secili' : ''}" ${o.length ? `onclick="_odemeGun='${s}'; renderOdeme();" title="${escapeHtml(o.map(x => x.ad + (x.tutar != null ? ' ₺' + fmtNumber(x.tutar, 0) : '')).join(' · '))}"` : ''}>
-        <span class="tk-no">${g}</span>${o.length ? `<span class="tk-noktalar">${o.slice(0, 4).map(x => `<i style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></i>`).join('')}</span><span class="tk-tutar">${t ? kisaTL(t) : '·'}</span>` : ''}</div>`;
+        <span class="tk-no">${g}${o.length && s < bugunS ? ' <span class="tk-odendi">✓</span>' : ''}</span>${o.length ? `<span class="tk-noktalar">${o.slice(0, 4).map(x => `<i style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></i>`).join('')}</span><span class="tk-tutar">${t ? kisaTL(t) : '·'}</span>` : ''}</div>`;
     }
     takvim.innerHTML = h;
   }
