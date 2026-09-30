@@ -38,7 +38,8 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_haber_ceviri_v1` | Haber başlığı çeviri önbelleği |
 | `ft_harcamalar_v1` | Harcamalar: tek harcama kayıtları ve elle yazılan aylık kategori toplamları |
 | `ft_butce_v1` | Bütçe: kategori başına aylık sınır `[{ id:'b-<kat>', kat, limit, tarih }]` |
-| `ft_gelirler_v1`, `ft_odemeler_v1`, `ft_borc_plan_v1`, `ft_hedefler_v1`, `ft_net_gecmis_v1`, `ft_raporlar_v1` | Sıradaki özellikler için ayrıldı (nakit akışı, ödeme takvimi, borç kapatma planı, birikim hedefleri, net varlık geçmişi, aylık rapor); Worker'da izinli |
+| `ft_gelirler_v1` | Gelirler: `{ id, tur:'duzenli', ad, tutar, baslangic, bitis }` ya da `{ id, tur:'tek', ad, tutar, ay }` (aylar `YYYY-MM`) |
+| `ft_odemeler_v1`, `ft_borc_plan_v1`, `ft_hedefler_v1`, `ft_net_gecmis_v1`, `ft_raporlar_v1` | Sıradaki özellikler için ayrıldı (ödeme takvimi, borç kapatma planı, birikim hedefleri, net varlık geçmişi, aylık rapor); Worker'da izinli |
 
 Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
@@ -146,9 +147,18 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Toplam = ayın bütün harcaması (bütçesiz kategoriler ve 2025 `genel` dahil) ÷ kategori bütçelerinin toplamı. Geçmiş aylar bugünkü bütçeyle karşılaştırılır (bütçe geçmişi tutulmaz).
 - Bay Piyasa bağlamına `butceOzetMetni` eklenir.
 
+## 8c. Nakit Akışı
+
+- Kalan = gelir − harcama − kredi taksitleri (`nakitAyi`). Kart ödemeleri gider sayılmaz (kartla yapılan harcama zaten harcamalarda); KMH faizi nakit çıkışı değil, borca eklenir.
+- Taksit tutarı ödeme planından (`krediTaksitleri`): önceki kalan anapara − bu kalan anapara + önceki anapara × aylık faiz/30 × gün × (1 + KKDF + BSMV). İlk taksitte önceki anapara `orijinalAnapara` (yoksa ilk iki satırın farkından tahmin), önceki tarih `kullandirimTarihi` (yoksa bir ay önce). Gerçek veriyle: On Bank Eylül ₺10.706, Garanti ₺2.141.
+- Düzenli gelirde ✎: başlangıcı geçmişteyse eski kayıt geçen ay biter, bu aydan yeni kayıt açılır (geçmiş aylar eski tutarla kalır); 0 = bu aydan itibaren biter. ✕ tamamen siler.
+- Süren ve gelecek aylarda harcama tahmini (`harcamaTahmini`): bütçe toplamı, yoksa son 6 dolu ayın medyanı; girilen tutar tahminden büyükse o kullanılır.
+- Grafik (`nakitGrafikCiz`): 6 geçmiş ay + bu ay + 11 gelecek ay; her ayda gelir çubuğu ve üst üste harcama + taksit; tahmin aylar soluk, tahmini harcama kesik çerçeveli. Bant 34 px'ten darsa etiketler 3 ayda bir. Bir aya tıklamak kartları o aya getirir.
+- Kartlar: seçili ayın geliri, gideri, kalanı (`.ton`, tasarruf oranına göre: <0 kırmızı, %0–20 sarı, ≥%20 yeşil) ve önümüzdeki 12 ayın taksit toplamı + kredilerin bittiği ay ve ardından açılan aylık pay.
+
 ## 9. Arayüz
 
-- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama İstatistikleri, Bütçe) · **İstatistikler** (Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama İstatistikleri, Bütçe, Nakit Akışı) · **İstatistikler** (Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
 - Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
@@ -174,6 +184,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Nakit Akışı sayfası: gelirler (düzenli/tek seferlik, zam geçmişi korunur), kredi taksitleri ödeme planından, ay sonu kalan ve tasarruf oranı, 18 aylık gerçekleşen + tahmin grafiği, kredilerin bitişi |
 | 2026-09-30 | Bütçe sayfası (kategori sınırları, medyan öneri, aşım, 12 aylık ısı tablosu); menüye "Harcama ve bütçe" grubu; telefonda alt çubuk 6 sayfa + Diğer menüsü; yeni senkron anahtarları Worker'a eklendi |
 | 2026-09-30 | KMH canlı faiz: aylık faiz + anapara ile borç her gün kendiliğinden artıyor (faiz + %15 KKDF + %15 BSMV, anaparaya işler); ⚙ ayar penceresi; formül bankanın gerçek rakamıyla doğrulandı |
 | 2026-09-30 | Elden nakit: dövizli borcun TL karşılığı güncel kurla hesaplanıyorsa satır ve özet ışığı yeşil yanar |
