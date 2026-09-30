@@ -42,7 +42,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_borc_plan_v1` | Borç planı ayarları: `{ id:'ayar', ek, tek, strateji }` ve faiz işleyen kartlar `{ id:'kart-<kartId>', faizli, oran, asgari }` |
 | `ft_odemeler_v1` | Ödeme Takvimi (kart kaydında ayrıca `donem`, `ekstre`, `asgari`, `plan`: `{ 'YYYY-MM': tutar }`; düzenli ödemede `harcamaKat`, `atla`): düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
 | `ft_net_gecmis_v1` | Günlük net varlık kaydı `{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, gram, t }` (`gram`: o anki gram 24 ayar altın TL fiyatı) |
-| `ft_hedefler_v1` | Birikim hedefleri `{ id:'hd-…', ad, hedef, birim:'TL'\|'USD', ay, kaynak:'elle'\|'tum'\|'y:<yatırımId>', birikmis, baslangic, baslangicDeger }` |
+| `ft_hedefler_v1` | Birikim hedefleri `{ id:'hd-…', ad, hedef, birim:'TL'\|'USD', ay, kaynak:'elle'\|'tum'\|'yatirim', yatirimlar:[id], birikmis, baslangic, baslangicDeger }` (eski `kaynak:'y:<id>'` de okunur) |
 | `ft_raporlar_v1` | Aylık Rapor'un Bay Piyasa yorumları `{ id:'YYYY-MM', metin, model, maliyet, ts }` (son 36 ay) |
 
 Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_gunluk_kur_v1` (günlük USD/TRY ve gram altın kapanışları; kuru olmayan eski net varlık kayıtları için), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
@@ -171,7 +171,8 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 - `hedefHesap`: birikim (elle `birikmis`; bağlı ise `yatirimDegerHesapla` ile canlı TL, $ hedefte ÷ kur), kalan, kalan ay (bu ay hariç, hedef ayı dahil; en az 1), ayda gereken = kalan ÷ ay. Plan çizgisi: eklendiği gün `baslangicDeger`'den hedef ayının sonuna doğrusal; birikim çizginin önündeyse "planın önünde".
 - Kartlar: toplam hedef (TL; $ hedefler bugünkü kurla), biriken ve yüzde, ayda gereken toplam — üçünde de **güncel dolar ve gram 24 ayar altın karşılığı** (canlı `_fxRates.USD` ve `gramAltinTL()`; sekme açıkken `tlKarsiliklariniYenile` ile her kur/fiyat güncellemesinde yeniden çizilir, işlem kutusu açıkken dokunulmaz) (gelir girildiyse Nakit Akışı'nın son 6 ay ortalama kalanıyla kıyas), en yakın hedef.
-- Satır: + birikime ekle/çıkar (yalnızca elle), ✎ hedef tutarı, ✕ sil; satır içi işlem kutusu `_hedefIslem`. Bağlı hedefler her fiyat turunda (sekme açık ve işlem kutusu kapalıyken) yeniden çizilir.
+- Birikim kaynağı seçici (`hedefKaynakHtml`; formda `hkf`, satırda ⇄ ile `hks`): **Elle gireceğim** (şu an biriken tutar) ya da **Yatırımlarımdan (otomatik)** — türlere göre gruplu, güncel değerli onay kutuları (çoklu seçim) veya "Tüm yatırımlarım (sonradan eklenenler dahil)" (`kaynak:'tum'`); seçilen toplam anında gösterilir. Kaynak ⇄ ile değişince önceki elle `birikmis` saklanır (elle takibe dönülürse o gelir, yoksa o anki değer yazılır) ve plan çizgisi o günden, o anki birikimden yeniden başlar.
+- Satır: + birikime ekle/çıkar (yalnızca elle), ⇄ kaynak, ✎ hedef tutarı, ✕ sil; satır içi işlem kutusu `_hedefIslem`. Bağlı hedefler her fiyat turunda (sekme açık ve işlem kutusu kapalıyken) yeniden çizilir.
 
 ## 8f. Net Varlık Geçmişi
 
@@ -229,6 +230,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Birikim Hedefleri: "şu an biriken" için Elle / Yatırımlarımdan (otomatik) seçimi — birden fazla yatırım ya da tüm yatırımlar; mevcut hedefte ⇄ ile kaynak değiştirme |
 | 2026-09-30 | Birikim Hedefleri: Hedefler, Biriken ve Ayda ayırman gereken kartlarına güncel dolar ve gram altın karşılığı (kur değişince anında güncellenir) |
 | 2026-09-30 | Düzenli ödemeler ve abonelikler Harcama Takibim'e bu ay ve gelecek ay için otomatik eklenir (harcama kategorisi seçilebilir; silinen ay geri gelmez, elle değiştirilen korunur) |
 | 2026-09-30 | Ödeme Takvimi: kartın sıradaki dönemi için dönem borcu, asgari ve ödeyeceğim tutarı; takvim ödeyeceğin tutarı kullanır; kalan borç ve asgari uyarıları, ödeme sonrası güncelleme hatırlatması |
