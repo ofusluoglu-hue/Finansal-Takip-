@@ -31,6 +31,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 1. Yeni bir senkron anahtarı eklenirse **hem** ön yüzdeki `SENKRON_ANAHTARLARI` **hem** Worker'daki `IZINLI_ANAHTARLAR` güncellenir.
 2. Veri anahtarları `ft_<ad>_v<sürüm>` biçimindedir (istisna: yalnızca yerelde tutulan `ft_erisim` ve `ft_senkron_meta`). Veri yapısı geriye uyumsuz değişirse sürüm artırılır (`_v2`) ve eski veriden taşıma yazılır.
 3. Tek kayıt 1,5 MB'ı geçemez (D1 sınırı).
+3b. Nakit Akışı'nın enflasyon verisi (`ENFLASYON_VERI`: TÜİK aylık TÜFE ve TCMB Piyasa Katılımcıları Anketi) her yeni açıklamada kaynağıyla birlikte güncellenir; değerler uydurulmaz, derleme ayı ve kaynak yorumda yazılır.
 4. Kullanıcı verisi (kredi, borç, portföy) koddan sabit değer olarak üretilmez veya uydurulmaz.
 5. Senkronlanan listelere türetilmiş veya önbellek bilgisi (son fiyat, hesaplanan tutar vb.) yazılmaz; bunlar yalnızca yerel anahtarlarda tutulur. Senkron listeleri yalnızca kullanıcı bir şeyi eklediğinde, değiştirdiğinde veya sildiğinde yazılır. **İstisnalar** (sonradan yeniden hesaplanamayan kayıtlar): kart kayıtlarındaki dönem tutarları `ft_odemeler_v1 › donem` (sıradaki son ödemeye kadar kart borcuyla güncellenir, tarih geçince donar; son 24 dönem) ve `ft_net_gecmis_v1`: günlük net varlık kaydı sonradan yeniden hesaplanamayan bir geçmiştir; günde bir kayıt, gün içinde en fazla yarım saatte bir ve yalnızca anlamlı değişimde güncellenir, senkron bitmeden ve yatırım değeri hesaplanmadan yazılmaz. Geçmiş geriye dönük tahmin edilip doldurulmaz.
 

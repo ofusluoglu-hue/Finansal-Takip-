@@ -39,7 +39,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_harcamalar_v1` | Harcamalar: tek harcama kayıtları ve elle yazılan aylık kategori toplamları |
 | `ft_butce_v1` | Bütçe: kategori başına aylık sınır `[{ id:'b-<kat>', kat, limit, tarih }]`; aya özel `{ id:'b-<kat>-YYYY-MM', kat, ay, limit }` |
 | `ft_gelirler_v1` | Gelirler: `{ id, tur:'duzenli', ad, tutar, baslangic, bitis }` ya da `{ id, tur:'tek', ad, tutar, ay }` (aylar `YYYY-MM`) |
-| `ft_borc_plan_v1` | Borç planı ayarları: `{ id:'ayar', ek, tek, strateji }` ve faiz işleyen kartlar `{ id:'kart-<kartId>', faizli, oran, asgari }` |
+| `ft_borc_plan_v1` | Borç planı ayarları: `{ id:'ayar', ek, tek, strateji }`, faiz işleyen kartlar `{ id:'kart-<kartId>', faizli, oran, asgari }` ve Nakit Akışı varsayımları `{ id:'nakit-ayar', enf, elle, artis }` |
 | `ft_odemeler_v1` | Ödeme Takvimi (kart kaydında ayrıca `donem`, `ekstre`, `asgari`, `plan`: `{ 'YYYY-MM': tutar }`; düzenli ödemede `harcamaKat`, `atla`): düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
 | `ft_net_gecmis_v1` | Günlük net varlık kaydı `{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, gram, t }` (`gram`: o anki gram 24 ayar altın TL fiyatı) |
 | `ft_hedefler_v1` | Birikim hedefleri `{ id:'hd-…', ad, hedef, birim:'TL'\|'USD', ay, kaynak:'elle'\|'tum'\|'yatirim', yatirimlar:[id], birikmis, baslangic, baslangicDeger }` (eski `kaynak:'y:<id>'` de okunur) |
@@ -157,7 +157,13 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Kalan = gelir − harcama − kredi taksitleri (`nakitAyi`). Kart ödemeleri gider sayılmaz (kartla yapılan harcama zaten harcamalarda); KMH faizi nakit çıkışı değil, borca eklenir.
 - Taksit tutarı ödeme planından (`krediTaksitleri`): önceki kalan anapara − bu kalan anapara + önceki anapara × aylık faiz/30 × gün × (1 + KKDF + BSMV). İlk taksitte önceki anapara `orijinalAnapara` (yoksa ilk iki satırın farkından tahmin), önceki tarih `kullandirimTarihi` (yoksa bir ay önce). Gerçek veriyle: On Bank Eylül ₺10.706, Garanti ₺2.141.
 - Düzenli gelirde ✎: başlangıcı geçmişteyse eski kayıt geçen ay biter, bu aydan yeni kayıt açılır (geçmiş aylar eski tutarla kalır); 0 = bu aydan itibaren biter. ✕ tamamen siler.
-- Süren ve gelecek aylarda harcama tahmini (`harcamaTahmini`): bütçe toplamı, yoksa son 6 dolu ayın medyanı; girilen tutar tahminden büyükse o kullanılır.
+- **Enflasyon ve satın alma gücüyle tahmin** (`nakitTahminModeli`; `harcamaTahmini` aynı modeli döndürür):
+  - Veri (`ENFLASYON_VERI`, 30.09.2026'da derlendi): TÜİK Ağustos 2026 TÜFE aylık %1,84, yıllık %31,51; TCMB Eylül 2026 Piyasa Katılımcıları Anketi 2026 yıl sonu %29,61, 12 ay sonrası %23,70, 24 ay sonrası %18,32 (hanehalkı 12 ay %45,60 bilgi amaçlı). Derleme ayı 2 aydan eskiyse sayfada turuncu uyarı.
+  - Enflasyon yolu (ayar): **TCMB beklentisi** (varsayılan; ilk 12 ay yıllık %23,70 → aylık ≈%1,79, sonrası %18,32 → ≈%1,41), **son resmi TÜFE**, **kişisel** (`kisiselEnflasyon`: son 12 ayın, bir yıl önceki aynı ayı da girilmiş en az 3 ayında harcama toplamının yıllık değişimi — gerçek veriyle Mar–Ağu 2026/2025: %28,72) ya da **elle**. Geçmiş ayları bugüne taşımak için resmi yıllık TÜFE'nin aylık karşılığı (≈%2,31) kullanılır (kişisel/elle seçiliyse o oran).
+  - Harcama: taban = bütçe toplamı (bugünün fiyatlarıyla) ya da son 6 dolu ayın **bugünün fiyatlarına taşınmış** medyanı (gerçek veri: ₺94.947); k ay sonrası = taban × Π(1 + aylık enflasyon). Aya özel bütçe olan ayda o ayın toplamı (nominal). Süren ay / girilen tutar büyükse girilen.
+  - Maaş (ayar): **her Ocak son 12 ayın enflasyonu kadar** (varsayılan; Ocak 2027 = %30,2), **Ocak ve Temmuz son 6 ayın**, ya da **artış yok**. Yalnız düzenli gelire ve gelecek aylara uygulanır.
+  - Taksitler nominal (ödeme planı); reel yükleri azalır. Görünüm: **Nominal ₺** ya da **Bugünün parasıyla** (gelecek tutarlar fiyat çarpanına bölünür; ipucunda diğeri de yazar). Başlıkta 12 ay tahmini birikim hem nominal hem bugünün parasıyla.
+  - Ayar `ft_borc_plan_v1` içinde `{ id:'nakit-ayar', enf, elle, artis }` (gelir listesine konmaz: gelir kaydederken liste yeniden yazıldığı için ayar kaybolurdu). Doğrulama: model çıktıları elle hesapla birebir (kişisel %28,72, taşınmış medyan ₺94.947, 12 ay çarpanı 1,2370, Ocak zammı %30,2).
 - Grafik (`nakitGrafikCiz`): 6 geçmiş ay + bu ay + 11 gelecek ay; her ayda gelir çubuğu ve üst üste harcama + taksit; tahmin aylar soluk, tahmini harcama kesik çerçeveli. Bant 34 px'ten darsa etiketler 3 ayda bir. Bir aya tıklamak kartları o aya getirir.
 - Sayfa her açıldığında içinde bulunulan ay seçilir (süren ayda harcama tahminle tamamlanır). Kartlar: seçili ayın geliri, gideri, kalanı (`.ton`, tasarruf oranına göre: <0 kırmızı, %0–20 sarı, ≥%20 yeşil) ve önümüzdeki 12 ayın taksit toplamı + kredilerin bittiği ay ve ardından açılan aylık pay.
 
@@ -231,6 +237,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | Nakit Akışı tahminleri enflasyon ve satın alma gücüyle: TCMB beklentisi / resmi TÜFE / kişisel / elle enflasyon yolu, harcama bugünün fiyatına taşınıp enflasyonla büyütülür, maaş artışı varsayımı (Ocak / Ocak-Temmuz / yok), "bugünün parasıyla" görünümü |
 | 2026-09-30 | Bütçe Planlaması: gelecek 12 ay seçilebilir; tutar "her ay" ya da "yalnız o ay" için kaydedilir (aya özel bütçe), ısı tablosunda gelecek aylar "plan" |
 | 2026-09-30 | "Bütçe" sayfasının adı "Bütçe Planlaması" oldu |
 | 2026-09-30 | Nakit Akışı her açılışta içinde bulunulan ayla açılır |

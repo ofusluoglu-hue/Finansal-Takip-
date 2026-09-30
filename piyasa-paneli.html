@@ -1977,6 +1977,16 @@
   .nakit-grafik .hc-hedef{fill:transparent;cursor:pointer;outline:none;}
   .nakit-grafik .hc-eksen{fill:var(--muted-2);font-size:10.5px;font-family:inherit;}
   .nakit-grafik .hc-eksen.bu-ay{fill:var(--text);font-weight:700;}
+  .nakit-varsayim{border-top:1px solid var(--border);margin-top:8px;padding:10px 0 8px;}
+  .nv-satir{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;font-size:12px;color:var(--muted);}
+  .nv-satir label{display:flex;align-items:center;gap:6px;}
+  .nv-satir .bolum-secim{max-width:330px;}
+  .nv-giris{width:70px;background:var(--panel-2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:inherit;font-size:12px;padding:4px 6px;}
+  .nv-not{margin-top:8px;font-size:11.5px;line-height:1.6;color:var(--muted-2);}
+  .nv-not b{color:var(--text);}
+  .nv-kaynak{display:block;margin-top:4px;font-size:10.5px;}
+  .nv-kaynak.eski{color:var(--amber);}
+  @media (max-width:640px){ .nv-satir .bolum-secim{flex:1 1 auto;min-width:0;max-width:none;width:0;} .nv-satir label{flex:1 1 100%;min-width:0;} .nv-satir .period-toggle{margin-left:0 !important;} }
   .nakit-lejant{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--muted);margin:2px 0 8px;}
   .nakit-lejant i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;}
   /* Bütçe: kategori satırı = ad | ilerleme çubuğu | harcanan / bütçe | yüzde | aksiyon */
@@ -2752,6 +2762,7 @@
       </div>
       <div class="nakit-lejant"><span><i style="background:var(--up);"></i>Gelir</span><span><i style="background:var(--down);"></i>Harcama</span><span><i style="background:#C9A6FF;"></i>Kredi taksidi</span><span><i style="background:rgba(255,92,92,.28);border:1px dashed var(--down);box-sizing:border-box;"></i>Harcama tahmini</span></div>
       <div class="harcama-grafik nakit-grafik" id="nakitGrafik"></div>
+      <div class="nakit-varsayim" id="nakitVarsayim"></div>
     </div>
 
     <div class="bolum">
@@ -2776,7 +2787,7 @@
       <div id="gelirListe"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Kalan = gelir − harcama − kredi taksitleri. Harcamalar Harcama Takibim'den gelir; kartla yapılan harcamalar zaten orada olduğu için kart ödemeleri ayrıca gider sayılmaz. Taksitler kredilerin ödeme planından hesaplanır (anapara farkı + iki taksit arasında işleyen faiz + KKDF + BSMV). Süren ve gelecek aylarda harcama, girilen tutar tahminden küçükse tahminle tamamlanır: bütçe koyduysan bütçe toplamı, yoksa son 6 ayın medyanı. Düzenli gelirde ✎ ile girilen yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır; 0 yazarsan gelir bu aydan itibaren biter. Tasarruf oranı: <span style="color:var(--up);">%20 ve üstü</span> · <span style="color:var(--amber);">%0–20</span> · <span style="color:var(--down);">eksi</span>. KMH faizi nakit çıkışı değil borca eklendiği için burada sayılmaz (Borçlarım'da görünür).</div>
+    <div class="footnote"><b>Not:</b> Kalan = gelir − harcama − kredi taksitleri. Harcamalar Harcama Takibim'den gelir; kartla yapılan harcamalar zaten orada olduğu için kart ödemeleri ayrıca gider sayılmaz. Taksitler kredilerin ödeme planından hesaplanır (anapara farkı + iki taksit arasında işleyen faiz + KKDF + BSMV). Gelecek aylar enflasyon ve satın alma gücüyle tahmin edilir: harcama tabanı (bütçe koyduysan bütçe toplamı, yoksa son 6 ayın bugünün fiyatına getirilmiş medyanı) seçtiğin enflasyon yoluyla her ay büyütülür (varsayılan TCMB Piyasa Katılımcıları Anketi: ilk 12 ay yıllık %23,70, sonra %18,32; ya da son resmi TÜFE, kendi harcamalarından hesaplanan kişisel enflasyon veya elle); aya özel bütçe koyduğun ay o tutar kullanılır; süren ay ve girilen tutar tahminden büyükse girilen kullanılır. Maaş varsayılan olarak her Ocak son 12 ayın enflasyonu kadar artar (Ocak ve Temmuz ya da artış yok seçilebilir). "Bugünün parasıyla" görünümü gelecek tutarları fiyat artışına bölerek bugünkü alım gücüne çevirir. Resmi veri ve beklentiler sayfanın içinde yazılı tarihlerdendir; bunlar tahmindir, gerçekleşme farklı olabilir. Düzenli gelirde ✎ ile girilen yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır; 0 yazarsan gelir bu aydan itibaren biter. Tasarruf oranı: <span style="color:var(--up);">%20 ve üstü</span> · <span style="color:var(--amber);">%0–20</span> · <span style="color:var(--down);">eksi</span>. KMH faizi nakit çıkışı değil borca eklendiği için burada sayılmaz (Borçlarım'da görünür).</div>
   </div>
   <!-- ================= /TAB: NAKİT AKIŞI ================= -->
 
@@ -7896,30 +7907,106 @@ function ayGeliri(anahtar, liste){
   });
   return { duzenli, tek, toplam: duzenli + tek };
 }
-// Gelecek aylar için harcama tahmini: bütçe varsa bütçe toplamı, yoksa son 6 dolu ayın medyanı
-function harcamaTahmini(onb){
-  const limit = typeof butceLimitleri === 'function' ? butceLimitleri() : {};
-  const b = Object.values(limit).reduce((t, v) => t + v, 0);
-  if(b > 0) return { tutar: b, kaynak: 'bütçe' };
-  const d = [];
-  for(let i = 0, k = ayKaydir(buAyAnahtar(), -1); i < 24 && d.length < 6; i++, k = ayKaydir(k, -1)){ const v = butceAyHarcama(onb, k); if(v.toplam > 0) d.push(v.toplam); }
-  if(!d.length) return { tutar: 0, kaynak: null };
-  d.sort((a, b2) => a - b2);
-  const n = d.length;
-  return { tutar: n % 2 ? d[(n - 1) / 2] : (d[n / 2 - 1] + d[n / 2]) / 2, kaynak: 'son ' + n + ' ayın medyanı' };
+// ---------- Enflasyon ve satın alma gücü: Nakit Akışı tahminleri ----------
+// Resmi veri ve beklentiler (30.09.2026'da derlendi; yeni veri açıklandıkça güncellenmeli):
+//   TÜİK Ağustos 2026 TÜFE: aylık %1,84, yıllık %31,51
+//   TCMB Eylül 2026 Piyasa Katılımcıları Anketi: 2026 yıl sonu %29,61 · 12 ay sonrası %23,70 · 24 ay sonrası %18,32
+//   (Aynı ay hanehalkı 12 ay sonrası beklentisi %45,60 — bilgi amaçlı)
+const ENFLASYON_VERI = {
+  derleme: '2026-09',
+  tufe: { ay: '2026-08', yillik: 31.51, aylik: 1.84 },
+  pka: { anket: '2026-09', yilSonu: 29.61, ay12: 23.70, ay24: 18.32 },
+  hanehalki12: 45.60,
+};
+let _nakitGorunum = 'nominal';   // grafik: 'nominal' | 'reel' (bugünün parasıyla); yalnızca ekran tercihi
+// Ayarlar ft_borc_plan_v1 içinde { id:'nakit-ayar', enf:'tcmb'|'resmi'|'kisisel'|'elle', elle, artis:'ocak'|'ocak-temmuz'|'yok' }
+function nakitAyar(){
+  const a = (typeof borcPlanYukle === 'function' ? borcPlanYukle() : []).find(x => x.id === 'nakit-ayar') || {};
+  return { enf: ['tcmb', 'resmi', 'kisisel', 'elle'].includes(a.enf) ? a.enf : 'tcmb', elle: Number(a.elle) > 0 ? Number(a.elle) : 30, artis: ['ocak', 'ocak-temmuz', 'yok'].includes(a.artis) ? a.artis : 'ocak' };
 }
+function nakitAyarYaz(degisim){
+  borcPlanYaz(Object.assign({ id: 'nakit-ayar' }, nakitAyar(), degisim));
+  renderNakitAkis();
+}
+const yillikToAylik = y => Math.pow(1 + y / 100, 1 / 12) - 1;
+// Kişisel enflasyon: son 12 ayın, bir yıl önceki aynı ayı da girilmiş olanlarında harcama toplamlarının yıllık değişimi (en az 3 ay)
+function kisiselEnflasyon(onb){
+  let bu = 0, once = 0, n = 0;
+  for(let i = 1, k = ayKaydir(buAyAnahtar(), -1); i <= 12; i++, k = ayKaydir(k, -1)){
+    const a = butceAyHarcama(onb, k).toplam, b = butceAyHarcama(onb, ayKaydir(k, -12)).toplam;
+    if(a > 0 && b > 0){ bu += a; once += b; n++; }
+  }
+  return n >= 3 ? { oran: (bu / once - 1) * 100, ay: n } : null;
+}
+// Tahmin modeli: aylık enflasyon yolu, fiyat çarpanı, maaş artış çarpanı, harcama tahmini
+function nakitTahminModeli(onb){
+  const ayar = nakitAyar(), simdiK = buAyAnahtar(), V = ENFLASYON_VERI;
+  const kis = kisiselEnflasyon(onb);
+  const gecmisAylik = yillikToAylik(ayar.enf === 'kisisel' && kis ? kis.oran : ayar.enf === 'elle' ? ayar.elle : V.tufe.yillik);   // geçmiş ayları bugüne taşımak için
+  // k: bu aydan kaç ay sonrası (1 = gelecek ay). k ≤ 0 geçmiş.
+  const aylik = k => {
+    if(k <= 0) return gecmisAylik;
+    if(ayar.enf === 'tcmb') return yillikToAylik(k <= 12 ? V.pka.ay12 : V.pka.ay24);
+    if(ayar.enf === 'resmi') return yillikToAylik(V.tufe.yillik);
+    if(ayar.enf === 'kisisel') return yillikToAylik(kis ? kis.oran : V.tufe.yillik);
+    return yillikToAylik(ayar.elle);
+  };
+  const ayFarki = (a, b) => (+b.slice(0, 4) - +a.slice(0, 4)) * 12 + (+b.slice(5, 7) - +a.slice(5, 7));
+  const carpan = {};   // bu ayın fiyatlarından k ay sonrasına
+  const fiyatCarpani = k => { if(k <= 0) return 1; if(carpan[k]) return carpan[k]; return carpan[k] = fiyatCarpani(k - 1) * (1 + aylik(k)); };
+  // Maaş artışı: her Ocak son 12 ayın, Ocak/Temmuz'da son 6 ayın enflasyonu kadar (bu aydan sonraki artışlar)
+  const artisOrani = zam => { const P = ayar.artis === 'ocak' ? 12 : 6; let f = 1; for(let i = P; i >= 1; i--) f *= 1 + aylik(ayFarki(simdiK, ayKaydir(zam, -i))); return f; };
+  const gelirCarpani = anahtar => {
+    if(ayar.artis === 'yok' || anahtar <= simdiK) return 1;
+    let f = 1;
+    for(let k = ayKaydir(simdiK, 1); k <= anahtar; k = ayKaydir(k, 1)){
+      const ay = +k.slice(5, 7);
+      if(ay === 1 || (ayar.artis === 'ocak-temmuz' && ay === 7)) f *= artisOrani(k);
+    }
+    return f;
+  };
+  // Harcama tabanı (bu ayın fiyatlarıyla): bütçe varsa bütçe toplamı, yoksa son 6 dolu ayın bugüne taşınmış medyanı
+  const limit = typeof butceLimitleri === 'function' ? butceLimitleri() : {};
+  const butceTop = Object.values(limit).reduce((t, v) => t + v, 0);
+  const d = [];
+  for(let i = 0, k = ayKaydir(simdiK, -1); i < 24 && d.length < 6; i++, k = ayKaydir(k, -1)){
+    const v = butceAyHarcama(onb, k).toplam;
+    if(v > 0) d.push(v * Math.pow(1 + gecmisAylik, ayFarki(k, simdiK)));   // o ayın harcaması bugünün fiyatlarıyla
+  }
+  d.sort((a, b2) => a - b2);
+  const n = d.length, medyan = n ? (n % 2 ? d[(n - 1) / 2] : (d[n / 2 - 1] + d[n / 2]) / 2) : 0;
+  const taban = butceTop > 0 ? butceTop : medyan;
+  const kaynak = butceTop > 0 ? 'bütçe' : n ? 'son ' + n + ' ayın medyanı' : null;
+  const ayTutar = anahtar => {
+    const k = ayFarki(simdiK, anahtar);
+    if(k > 0 && typeof butceAyaOzel === 'function' && HARCAMA_KATEGORILER.some(x => butceAyaOzel(x.k, anahtar))){
+      const L = butceLimitleri(anahtar); return Object.values(L).reduce((t, v) => t + v, 0);   // aya özel bütçe: o ayın kendi (nominal) tutarı
+    }
+    return taban * fiyatCarpani(k);
+  };
+  const enfEtiket = ayar.enf === 'tcmb' ? 'TCMB beklentisi' : ayar.enf === 'resmi' ? 'son resmi TÜFE' : ayar.enf === 'kisisel' ? 'kişisel enflasyon' : 'elle';
+  const yillikGoster = ayar.enf === 'tcmb' ? V.pka.ay12 : ayar.enf === 'resmi' ? V.tufe.yillik : ayar.enf === 'kisisel' ? (kis ? kis.oran : V.tufe.yillik) : ayar.elle;
+  return { tutar: taban, kaynak, ayTutar, gelirCarpani, fiyatCarpani, reel: anahtar => 1 / fiyatCarpani(ayFarki(simdiK, anahtar)),
+           ayar, kis, enfEtiket, yillikGoster, medyan, butceTop, n };
+}
+// Eski adı: diğer sayfalar (Hedefler, Rapor) geçmiş aylar için çağırır
+function harcamaTahmini(onb){ return nakitTahminModeli(onb); }
 // Bir ayın akışı; gelecek ve süren ay için harcama tahminle tamamlanır
 function nakitAyi(onb, anahtar, gelirler, tahmin){
   const simdiK = buAyAnahtar();
   const gercek = butceAyHarcama(onb, anahtar).toplam;
   const gelecek = anahtar > simdiK, suren = anahtar === simdiK;
-  const tahminli = (gelecek || suren) && tahmin.tutar > gercek;
-  const harcama = tahminli ? tahmin.tutar : gercek;
+  const tahminTutar = tahmin.ayTutar ? tahmin.ayTutar(anahtar) : tahmin.tutar;   // enflasyonla büyüyen tahmin
+  const tahminli = (gelecek || suren) && tahminTutar > gercek;
+  const harcama = tahminli ? tahminTutar : gercek;
   const taksitler = ayTaksitleri(anahtar);
   const taksit = taksitler.reduce((t, x) => t + x.tutar, 0);
   const gelir = ayGeliri(anahtar, gelirler);
+  const gc = gelecek && tahmin.gelirCarpani ? tahmin.gelirCarpani(anahtar) : 1;   // gelecek aylarda maaş artışı varsayımı (yalnız düzenli gelir)
+  if(gc !== 1){ gelir.duzenliNominal = gelir.duzenli; gelir.duzenli *= gc; gelir.toplam = gelir.duzenli + gelir.tek; gelir.artis = gc - 1; }
+  const reelCarpan = tahmin.reel ? tahmin.reel(anahtar) : 1;   // bugünün parasına çevirmek için
   return { anahtar, gelir, harcama, gercekHarcama: gercek, tahminli, taksit, taksitler, gider: harcama + taksit,
-           net: gelir.toplam - harcama - taksit, gelecek, suren, harcamaYok: !gelecek && !suren && gercek === 0 };
+           net: gelir.toplam - harcama - taksit, gelecek, suren, harcamaYok: !gelecek && !suren && gercek === 0, reelCarpan };
 }
 function tasarrufRenk(oran){ return oran == null ? 'var(--muted)' : oran < 0 ? 'var(--down)' : oran < 0.2 ? 'var(--amber)' : 'var(--up)'; }
 
@@ -7943,7 +8030,7 @@ function renderNakitAkis(){
   // ---- 2) Gider
   istYaz('nakitGiderEtiket', ayEt + ' gideri');
   istYaz('nakitGider', '₺' + fmtNumber(A.gider, 0));
-  istYaz('nakitGiderAlt', A.harcamaYok ? 'harcama girilmedi' : A.tahminli ? 'harcama tahmini: ' + tahmin.kaynak : '');
+  istYaz('nakitGiderAlt', A.harcamaYok ? 'harcama girilmedi' : A.tahminli ? 'tahmin: ' + tahmin.kaynak + (A.gelecek ? ' + enflasyon' : '') : '');
   ozetDetayYaz('nakitGiderDetay', [['Harcama', '₺' + fmtNumber(A.harcama, 0) + (A.tahminli ? ' (tah.)' : '')], A.taksit ? ['Taksit', '₺' + fmtNumber(A.taksit, 0) + ' · ' + A.taksitler.length + ' kredi'] : null]);
 
   // ---- 3) Kalan
@@ -7974,7 +8061,12 @@ function renderNakitAkis(){
   const gelirVar = gelirler.length > 0;
   const ileriNet = ileri.reduce((t, m) => t + m.net, 0);
   const altEl = document.getElementById('nakitGrafikAlt');
-  if(altEl){ altEl.textContent = gelirVar ? '12 ay tahmini birikim ' + (ileriNet < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(ileriNet), 0) : ''; altEl.style.color = ileriNet < 0 ? 'var(--down)' : 'var(--up)'; }
+  const ileriReel = ileri.reduce((t, m) => t + m.net * m.reelCarpan, 0);
+  if(altEl){
+    altEl.innerHTML = gelirVar ? `12 ay tahmini birikim ${ileriNet < 0 ? '−₺' : '₺'}${fmtNumber(Math.abs(ileriNet), 0)} <span class="ozet-soluk" style="font-size:12px;font-weight:600;" title="Enflasyondan arındırılmış: bugünkü fiyatlarla ne kadar alım gücüne denk geldiği">· bugünün parasıyla ${ileriReel < 0 ? '−₺' : '₺'}${fmtNumber(Math.abs(ileriReel), 0)}</span>` : '';
+    altEl.style.color = ileriNet < 0 ? 'var(--down)' : 'var(--up)';
+  }
+  nakitVarsayimYaz(tahmin, ileri);
   const sekme = document.getElementById('tab-nakitakis');
   if(sekme && sekme.classList.contains('active')) nakitGrafikCiz(onb, gelirler, tahmin);
 
@@ -8008,11 +8100,52 @@ function renderNakitAkis(){
   gelirTurDegisti();
 }
 
+// Varsayımlar paneli: enflasyon kaynağı, maaş artışı, görünüm ve modelin kısa açıklaması
+function nakitVarsayimYaz(t, ileri){
+  const el = document.getElementById('nakitVarsayim');
+  if(!el) return;
+  const V = ENFLASYON_VERI, a = t.ayar, simdiK = buAyAnahtar();
+  const yuzde = v => '%' + fmtNumber(v, 2);
+  const eski = ((+simdiK.slice(0, 4) - +V.derleme.slice(0, 4)) * 12 + (+simdiK.slice(5, 7) - +V.derleme.slice(5, 7))) >= 2;
+  const k12 = ayKaydir(simdiK, 12), h12 = t.ayTutar(k12);
+  const ilkZam = ileri.find(m => m.gelir.artis);
+  el.innerHTML = `<div class="nv-satir">
+      <label>Enflasyon <select class="bolum-secim" onchange="nakitAyarYaz({ enf: this.value })">
+        <option value="tcmb"${a.enf === 'tcmb' ? ' selected' : ''}>TCMB beklentisi (12 ay ${yuzde(V.pka.ay12)} · sonra ${yuzde(V.pka.ay24)})</option>
+        <option value="resmi"${a.enf === 'resmi' ? ' selected' : ''}>Son resmi TÜFE (yıllık ${yuzde(V.tufe.yillik)})</option>
+        <option value="kisisel"${a.enf === 'kisisel' ? ' selected' : ''}${t.kis ? '' : ' disabled'}>Kişisel — harcamalarından${t.kis ? ' (yıllık ' + yuzde(t.kis.oran) + ')' : ' (yeterli veri yok)'}</option>
+        <option value="elle"${a.enf === 'elle' ? ' selected' : ''}>Elle: yıllık %${fmtNumber(a.elle, 1)}</option>
+      </select></label>
+      ${a.enf === 'elle' ? `<label>yıllık % <input type="number" min="0" max="300" step="0.5" value="${a.elle}" class="nv-giris" onchange="nakitAyarYaz({ elle: parseFloat(this.value) || 0 })"></label>` : ''}
+      <label>Maaş artışı <select class="bolum-secim" onchange="nakitAyarYaz({ artis: this.value })">
+        <option value="ocak"${a.artis === 'ocak' ? ' selected' : ''}>Her Ocak, son 12 ayın enflasyonu kadar</option>
+        <option value="ocak-temmuz"${a.artis === 'ocak-temmuz' ? ' selected' : ''}>Ocak ve Temmuz, son 6 ayın enflasyonu kadar</option>
+        <option value="yok"${a.artis === 'yok' ? ' selected' : ''}>Artış yok (sabit maaş)</option>
+      </select></label>
+      <div class="period-toggle" style="margin-left:auto;">
+        <button class="period-btn${_nakitGorunum === 'nominal' ? ' active' : ''}" onclick="_nakitGorunum='nominal'; renderNakitAkis();" title="O ayın fiyatlarıyla (nominal) tutarlar">Nominal ₺</button>
+        <button class="period-btn${_nakitGorunum === 'reel' ? ' active' : ''}" onclick="_nakitGorunum='reel'; renderNakitAkis();" title="Enflasyondan arındırılmış: bugünün fiyatlarıyla satın alma gücü">Bugünün parasıyla</button>
+      </div>
+    </div>
+    <div class="nv-not">Harcama tahmini: ${t.butceTop > 0 ? 'bütçen ₺' + fmtNumber(t.butceTop, 0) + ' (bugünün fiyatlarıyla)' : t.n ? 'son ' + t.n + ' ayın harcamaları bugünün fiyatlarına getirilip medyanı alındı: ₺' + fmtNumber(t.medyan, 0) : 'harcama verisi yok'}${t.tutar ? ' → 12 ay sonra ' + ayAdi(k12) + ' <b>₺' + fmtNumber(h12, 0) + '</b> (12 ayda fiyat artışı %' + fmtNumber((t.fiyatCarpani(12) - 1) * 100, 1) + ' — ' + t.enfEtiket + ')' : ''}.
+      ${ilkZam ? ' Maaş: ' + ayAdi(ilkZam.anahtar) + ' itibarıyla %' + fmtNumber(ilkZam.gelir.artis * 100, 1) + ' artış varsayıldı.' : a.artis === 'yok' ? ' Maaş sabit: gerçek alım gücü her ay erir.' : ''}
+      Taksitler sabit tutarlıdır; enflasyonla gerçek yükleri azalır.
+      ${t.kis ? '<span title="Son 12 ayın, bir yıl önceki aynı ayı da girilmiş ' + t.kis.ay + ' ayında toplam harcamanın yıllık değişimi">Senin harcamaların yıllık <b>' + yuzde(t.kis.oran) + '</b> arttı (resmi TÜFE ' + yuzde(V.tufe.yillik) + ').</span>' : ''}
+      <span class="nv-kaynak${eski ? ' eski' : ''}">Veri: TÜİK ${ayAdi(V.tufe.ay)} TÜFE (aylık ${yuzde(V.tufe.aylik)}, yıllık ${yuzde(V.tufe.yillik)}) · TCMB ${ayAdi(V.pka.anket)} Piyasa Katılımcıları Anketi (2026 sonu ${yuzde(V.pka.yilSonu)}, 12 ay ${yuzde(V.pka.ay12)}, 24 ay ${yuzde(V.pka.ay24)}; hanehalkı 12 ay ${yuzde(V.hanehalki12)})${eski ? ' — bu veriler 2 aydan eski, güncellenmesi gerekir' : ''}.</span></div>`;
+}
 function nakitGrafikCiz(onb, gelirler, tahmin){
   const kap = document.getElementById('nakitGrafik');
   if(!kap) return;
   const simdiK = buAyAnahtar();
-  const aylar = Array.from({ length: 18 }, (_, i) => nakitAyi(onb, ayKaydir(simdiK, i - 6), gelirler, tahmin));
+  const reelMi = _nakitGorunum === 'reel';
+  // Bugünün parasıyla görünümde gelecek ayların bütün tutarları fiyat çarpanına bölünür (geçmiş aylar olduğu gibi)
+  const aylar = Array.from({ length: 18 }, (_, i) => {
+    const m = nakitAyi(onb, ayKaydir(simdiK, i - 6), gelirler, tahmin);
+    if(!reelMi || m.reelCarpan === 1) return m;
+    const c = m.reelCarpan;
+    return Object.assign({}, m, { gelir: Object.assign({}, m.gelir, { toplam: m.gelir.toplam * c }), harcama: m.harcama * c, gider: m.gider * c, net: m.net * c,
+      taksit: m.taksit * c, taksitler: m.taksitler.map(t => Object.assign({}, t, { tutar: t.tutar * c })), nominal: m });
+  });
   const W = Math.max(kap.clientWidth || 0, 300), H = 200, PL = 52, PR = 10, PT = 14, PB = 24;
   const tepeHam = Math.max(1, ...aylar.map(m => Math.max(m.gelir.toplam, m.gider)));
   const adim = guzelAdim(tepeHam / 4), tepe = Math.ceil(tepeHam / adim) * adim || adim;
@@ -8051,10 +8184,14 @@ function nakitGrafikCiz(onb, gelirler, tahmin){
     b.textContent = m.gelir.toplam ? (m.net < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(m.net), 0) + ' kalan' : '₺' + fmtNumber(m.gider, 0) + ' gider';
     b.style.color = m.gelir.toplam ? (m.net < 0 ? 'var(--down)' : 'var(--up)') : 'var(--text)';
     ipucu.appendChild(b);
-    const bas = document.createElement('div'); bas.textContent = ayAdi(m.anahtar) + (m.gelecek ? ' · tahmin' : m.suren ? ' · sürüyor' : ''); ipucu.appendChild(bas);
-    if(m.gelir.toplam) satir('Gelir', '₺' + fmtNumber(m.gelir.toplam, 0), 'var(--up)');
+    const bas = document.createElement('div'); bas.textContent = ayAdi(m.anahtar) + (m.gelecek ? ' · tahmin' + (reelMi ? ' · bugünün parasıyla' : '') : m.suren ? ' · sürüyor' : ''); ipucu.appendChild(bas);
+    if(m.gelir.toplam) satir('Gelir' + (m.gelir.artis ? ' (+%' + fmtNumber(m.gelir.artis * 100, 0) + ' zamlı)' : ''), '₺' + fmtNumber(m.gelir.toplam, 0), 'var(--up)');
     satir('Harcama' + (m.tahminli ? ' (tahmin)' : ''), m.harcamaYok ? 'girilmedi' : '₺' + fmtNumber(m.harcama, 0));
     m.taksitler.forEach(t => satir(t.kredi + (t.sonMu ? ' (son)' : ''), '₺' + fmtNumber(t.tutar, 0), '#C9A6FF'));
+    if(m.gelecek && m.gelir.toplam){
+      const nom = m.nominal || m, reelNet = nom.net * nom.reelCarpan;
+      satir(reelMi ? 'Nominal kalan' : 'Bugünün parasıyla', (reelMi ? nom.net : reelNet) < 0 ? '−₺' + fmtNumber(Math.abs(reelMi ? nom.net : reelNet), 0) : '₺' + fmtNumber(reelMi ? nom.net : reelNet, 0), 'var(--muted)');
+    }
     ipucu.style.display = 'block';
     const kr = kap.getBoundingClientRect(), hr = h.getBoundingClientRect();
     ipucu.style.left = Math.max(0, Math.min(hr.left - kr.left + hr.width / 2 - ipucu.offsetWidth / 2, kr.width - ipucu.offsetWidth)) + 'px';
