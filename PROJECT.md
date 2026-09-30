@@ -186,7 +186,8 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 - Olaylar (`odemeOlaylari(bas, bit)`): kredi taksitleri (`krediTaksitleri`, "Taksit n/N"), kart son ödeme günleri (tutar yalnızca sıradaki ödemede = bugünkü kart borcu; sonrakiler "ekstreye göre"), düzenli ödemeler (aylık ya da yıllık ayında). Gün ayda yoksa son güne kayar (31 → 28 Şubat).
 - Kartlar: önümüzdeki 7 gün (2 gün içinde ödeme varsa kırmızı), bu ay kalan (+ gelecek ay), aylık sabit ödemeler (taksit + düzenli, yıllıklar ÷ 12), abonelikler (yıllık toplam).
-- Takvim ızgarası (Pzt başlangıç), güne tıklayınca o günün ödemeleri; yaklaşan 45 gün listesi.
+- Takvim ızgarası (Pzt başlangıç), güne tıklayınca o günün ödemeleri. "Yaklaşan ödemeler" listesi takvimle **aynı ayı** gösterir (iki seçici birlikte değişir; liste bir sonraki aya taşmaz): bu aydaysa bugünden sonrası, gelecek ayda tamamı, geçmiş ayda soluk. Varsayılan ay: bu ayda bugünden sonra ödeme kalmışsa bu ay, yoksa sonraki ay.
+- Kart tutarı yalnızca **sıradaki** son ödeme gününde (bugünden itibaren hesaplanır) bugünkü kart borcudur; hangi ay görüntülenirse görüntülensin sonrakiler "ekstreye göre" (toplama girmez).
 - Piyasa Özeti'nin üstünde `#odemeSerit`: 3 gün içindeki ödemeler (tıklayınca Ödeme Takvimi). Açılışta ve saatte bir tazelenir.
 - Nakit Akışı'na eklenmez (faturalar harcamalarda zaten var); yalnızca hatırlatma.
 
@@ -226,6 +227,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Ödeme Takvimi: yaklaşan ödemeler 45 gün yerine takvimle aynı ay (ay taşması yok); kart tutarı yalnızca sıradaki son ödeme gününde |
 | 2026-09-30 | Menüde İstatistikler grubu Planlama'nın üstüne alındı |
 | 2026-09-30 | Net Varlık Geçmişi: grafik TL / dolar / gram 24 ayar altın bazında; kayda gram altın fiyatı eklendi; aylık özete Altın (gr) sütunu; kuru olmayan eski kayıtlara günlük kapanış |
 | 2026-09-30 | Yatırımlarım'da her tür (ABD ETF, Kripto, BİST, Emtia) ayrı çerçevede (tür, kalem sayısı, pay, toplam, o türü seçili açan +); yatırım çerçeveleri yeşil, borç çerçeveleri kırmızı 4 px sol çizgi + hafif yansıma |
