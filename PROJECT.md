@@ -37,7 +37,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_bay_piyasa_v1` | Bay Piyasa sohbetleri, ayarları, harcama |
 | `ft_haber_ceviri_v1` | Haber başlığı çeviri önbelleği |
 | `ft_harcamalar_v1` | Harcamalar: tek harcama kayıtları ve elle yazılan aylık kategori toplamları |
-| `ft_butce_v1` | Bütçe: kategori başına aylık sınır `[{ id:'b-<kat>', kat, limit, tarih }]` |
+| `ft_butce_v1` | Bütçe: kategori başına aylık sınır `[{ id:'b-<kat>', kat, limit, tarih }]`; aya özel `{ id:'b-<kat>-YYYY-MM', kat, ay, limit }` |
 | `ft_gelirler_v1` | Gelirler: `{ id, tur:'duzenli', ad, tutar, baslangic, bitis }` ya da `{ id, tur:'tek', ad, tutar, ay }` (aylar `YYYY-MM`) |
 | `ft_borc_plan_v1` | Borç planı ayarları: `{ id:'ayar', ek, tek, strateji }` ve faiz işleyen kartlar `{ id:'kart-<kartId>', faizli, oran, asgari }` |
 | `ft_odemeler_v1` | Ödeme Takvimi (kart kaydında ayrıca `donem`, `ekstre`, `asgari`, `plan`: `{ 'YYYY-MM': tutar }`; düzenli ödemede `harcamaKat`, `atla`): düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
@@ -146,7 +146,8 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 - Veri `ft_butce_v1`; harcamalar `ft_harcamalar_v1`'den okunur (`butceAyHarcama`: `harcamaTablosu` yıl başına bir kez).
 - **Öneri** (`butceOnerileri`): her kategori için son 6 tamamlanmış ve kategorili ayın **medyanı**, 500 TL'ye yukarı yuvarlanır. Ortalama kullanılmaz: Haziran 2026'daki ₺51.608'lik yeme-içme ortalamayı ~₺15 bine çıkarıyor, medyan ₺9.500 veriyor. Bütçe yokken sayfa öneriyi gösterir ve tek tıkla uygular (`butceOnerileriUygula`); ✎/+ satırında boş Kaydet de öneriyi kullanır.
-- Varsayılan ay: harcama girilmiş en son ay (harcamalar ay bitince girildiği için). Seçici son 24 ay; ısı tablosunda ay başlığına tıklamak da ayı seçer.
+- **İleri plan:** seçici gelecek 12 ayı da içerir ("(plan)"). Tutar "her ay" (`{ id:'b-<kat>', kat, limit }`) ya da "yalnız o ay" (`{ id:'b-<kat>-YYYY-MM', kat, ay, limit }`) kaydedilir; `butceLimitleri(ay)` aya özel tutarı her aykinin yerine koyar. Gelecek ay seçiliyken form ve ✎ varsayılanı "yalnız o ay"; satırda "yalnız Kasım 2026" etiketi; ✕ aya özeli kaldırır (her ayki geri gelir), her aykini kaldırırken aya özeller kalır. Gelecek ayın harcaması, düzenli ödemelerden şimdiden eklenenlerdir ("şimdiden bütçenin %…'i"). Isı tablosunda her ay kendi sınırıyla karşılaştırılır, gelecek aylar "plan" olarak soluk.
+- Varsayılan ay: harcama girilmiş en son ay (harcamalar ay bitince girildiği için). Seçici 12 ileri + bu ay + 24 geri; ısı tablosunda ay başlığına tıklamak da ayı seçer.
 - Durum (`butceDurum`): >%100 aşım (kırmızı), >%90 ya da süren ayda geçen gün oranının 15 puan önünde sınırda (sarı), değilse iyi (yeşil). Çubuk %150'ye kadar çizer, bütçe sınırı çubuğun üçte ikisinde çizgiyle işaretli (`BUTCE_OLCEK`) — aşımın büyüklüğü görünsün; süren ayda ikinci ince çizgi ayın geçen kısmıdır.
 - Toplam = ayın bütün harcaması (bütçesiz kategoriler ve 2025 `genel` dahil) ÷ kategori bütçelerinin toplamı. Geçmiş aylar bugünkü bütçeyle karşılaştırılır (bütçe geçmişi tutulmaz).
 - Bay Piyasa bağlamına `butceOzetMetni` eklenir.
@@ -230,6 +231,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Bütçe Planlaması: gelecek 12 ay seçilebilir; tutar "her ay" ya da "yalnız o ay" için kaydedilir (aya özel bütçe), ısı tablosunda gelecek aylar "plan" |
 | 2026-09-30 | "Bütçe" sayfasının adı "Bütçe Planlaması" oldu |
 | 2026-09-30 | Nakit Akışı her açılışta içinde bulunulan ayla açılır |
 | 2026-09-30 | Birikim Hedefleri kartlarında dolar yeşil, altın sarı |

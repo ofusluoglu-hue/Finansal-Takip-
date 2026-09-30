@@ -2657,7 +2657,7 @@
 
     <div class="ozet-grid k4">
       <div class="ozet-kart mavi">
-        <div class="ozet-etiket">Aylık bütçe</div>
+        <div class="ozet-etiket" id="butceToplamEtiket">Aylık bütçe</div>
         <div class="ozet-deger" id="butceToplam">—</div>
         <div class="ozet-alt" id="butceToplamAlt"></div>
         <div class="card-seanslar" id="butceToplamDetay"></div>
@@ -2693,6 +2693,7 @@
         <div class="loan-add-row">
           <select id="butceKatInput" class="ai-input" style="max-width:220px;min-width:170px;" onchange="butceFormOneri()"></select>
           <input type="number" step="100" min="0" id="butceTutarInput" class="ai-input" style="max-width:170px;min-width:130px;" placeholder="Aylık bütçe (TL)" onkeydown="if(event.key==='Enter')butceEkle()">
+          <select id="butceKapsamInput" class="ai-input" style="max-width:190px;min-width:140px;" title="Bu tutar hangi aylarda geçerli"></select>
           <button class="ai-btn" onclick="butceEkle()">Bütçeyi Kaydet</button>
         </div>
       </div>
@@ -2708,7 +2709,7 @@
       <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Her hücre o ayın harcamasının bugünkü bütçeye oranıdır: <span style="color:var(--up);">%90'a kadar</span> · <span style="color:var(--amber);">%90–100</span> · <span style="color:var(--down);">bütçe aşıldı</span>. Ay başlığına tıklarsan üstte o ay gösterilir.</div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Her harcama kategorisine aylık bir üst sınır koyarsın; harcamalar Harcama Takibim'de girdiğin aylık tutarlardan otomatik gelir. Önerilen bütçe, kategorinin son 6 tamamlanmış aydaki <b>medyanıdır</b> (ortadaki değer; tek seferlik büyük bir ay öneriyi şişirmesin diye ortalama kullanılmaz), 500 TL'ye yukarı yuvarlanır. Süren ayda çubuktaki ince çizgi ayın ne kadarının geçtiğini gösterir; harcama bu çizginin belirgin önündeyse kategori sarı yanar. Toplam, bütçesi olmayan kategoriler ve kategorisiz (2025) tutarlar dahil ayın bütün harcamasıdır. Geçmiş aylar da bugünkü bütçeyle karşılaştırılır. Bütçeler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Her harcama kategorisine aylık bir üst sınır koyarsın; harcamalar Harcama Takibim'de girdiğin aylık tutarlardan otomatik gelir. Önerilen bütçe, kategorinin son 6 tamamlanmış aydaki <b>medyanıdır</b> (ortadaki değer; tek seferlik büyük bir ay öneriyi şişirmesin diye ortalama kullanılmaz), 500 TL'ye yukarı yuvarlanır. Süren ayda çubuktaki ince çizgi ayın ne kadarının geçtiğini gösterir; harcama bu çizginin belirgin önündeyse kategori sarı yanar. Toplam, bütçesi olmayan kategoriler ve kategorisiz (2025) tutarlar dahil ayın bütün harcamasıdır. Seçiciden gelecek 12 ayı da seçip plan yapabilirsin: bir tutarı "her ay" ya da "yalnız o ay" için kaydedersin (ör. Kasım'da kasko için Sigorta'yı yükselt); aya özel tutar o ay her ayki sınırın yerine geçer ve ✕ ile kaldırılınca her ayki geri gelir. Gelecek ayda görünen harcama, Ödeme Takvimi'nden şimdiden eklenen düzenli ödemelerdir. Geçmiş aylar da her ayki bütçeyle (varsa o aya özelle) karşılaştırılır. Bütçeler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: BÜTÇE ================= -->
 
@@ -7599,11 +7600,14 @@ const BUTCE_KEY = 'ft_butce_v1';
 let _butceAy = null;   // gösterilen ay 'YYYY-MM' (null: veri girilmiş son ay)
 let _butceOneri = {};
 function butceYukle(){ return manuelListeYukle(BUTCE_KEY); }
-function butceLimitleri(){
-  const m = {};
-  butceYukle().forEach(b => { if(b && b.kat && Number(b.limit) > 0) m[b.kat] = Number(b.limit); });
+// ay verilirse o aya özel sınırlar her ayki sınırın yerine geçer
+function butceLimitleri(ay){
+  const m = {}, l = butceYukle();
+  l.forEach(b => { if(b && b.kat && !b.ay && Number(b.limit) > 0) m[b.kat] = Number(b.limit); });
+  if(ay) l.forEach(b => { if(b && b.kat && b.ay === ay && Number(b.limit) > 0) m[b.kat] = Number(b.limit); });
   return m;
 }
+function butceAyaOzel(kat, ay){ return butceYukle().some(b => b.kat === kat && b.ay === ay && Number(b.limit) > 0); }
 function ayKaydir(anahtar, n){ const d = new Date(+anahtar.slice(0, 4), +anahtar.slice(5, 7) - 1 + n, 1); return ayAnahtar(d.getFullYear(), d.getMonth()); }
 function ayAdi(anahtar){ return AY_UZUN[+anahtar.slice(5, 7) - 1] + ' ' + anahtar.slice(0, 4); }
 function buAyAnahtar(){ const d = new Date(); return ayAnahtar(d.getFullYear(), d.getMonth()); }
@@ -7643,7 +7647,6 @@ const BUTCE_OLCEK = 1.5;   // çubuk %150'ye kadar çizer; bütçe sınırı çu
 
 function renderButce(){
   const onb = {};
-  const limit = butceLimitleri();
   const { oneri, aySayisi } = butceOnerileri(onb);
   _butceOneri = oneri;
   const simdiK = buAyAnahtar(), simdi = new Date();
@@ -7653,9 +7656,13 @@ function renderButce(){
     _butceAy = simdiK;
     for(let i = 0, k = simdiK; i < 24; i++, k = ayKaydir(k, -1)) if(butceAyHarcama(onb, k).toplam > 0){ _butceAy = k; break; }
   }
+  const limit = butceLimitleri(_butceAy);
+  const ileri = _butceAy > simdiK;
+  // Seçici: gelecek 12 ay (plan) + bu ay + geçmiş 24 ay
   const aySec = document.getElementById('butceAy');
-  if(aySec) aySec.innerHTML = Array.from({ length: 24 }, (_, i) => ayKaydir(simdiK, -i))
-    .map(k => `<option value="${k}"${k === _butceAy ? ' selected' : ''}>${ayAdi(k)}${k === simdiK ? ' (bu ay)' : ''}</option>`).join('');
+  if(aySec) aySec.innerHTML = Array.from({ length: 37 }, (_, i) => ayKaydir(simdiK, 12 - i))
+    .map(k => `<option value="${k}"${k === _butceAy ? ' selected' : ''}>${ayAdi(k)}${k === simdiK ? ' (bu ay)' : k > simdiK ? ' (plan)' : ''}</option>`).join('');
+  const ozelSay = HARCAMA_KATEGORILER.filter(x => butceAyaOzel(x.k, _butceAy)).length;
 
   const A = butceAyHarcama(onb, _butceAy);
   const katlar = HARCAMA_KATEGORILER.filter(x => !x.gizli && limit[x.k]).sort((a, b) => limit[b.k] - limit[a.k]);
@@ -7667,17 +7674,19 @@ function renderButce(){
 
   // ---- 1) Aylık bütçe
   const oneriToplam = Object.values(oneri).reduce((t, v) => t + v, 0);
+  istYaz('butceToplamEtiket', ayAdi(_butceAy) + ' bütçesi');
   istYaz('butceToplam', toplamLimit ? '₺' + fmtNumber(toplamLimit, 0) : '—');
   istYaz('butceToplamAlt', toplamLimit ? katlar.length + ' kategori' : 'henüz bütçe yok');
-  ozetDetayYaz('butceToplamDetay', [oneriToplam ? ['Önerilen', '₺' + fmtNumber(oneriToplam, 0) + ' (' + aySayisi + ' ay)'] : null]);
+  ozetDetayYaz('butceToplamDetay', [ozelSay ? ['Bu aya özel', ozelSay + ' kategori'] : null, oneriToplam ? ['Önerilen', '₺' + fmtNumber(oneriToplam, 0) + ' (' + aySayisi + ' ay)'] : null]);
 
   // ---- 2) Ayın harcaması
   const oranT = toplamLimit ? A.toplam / toplamLimit : null;
   const durumT = oranT != null && A.toplam > 0 ? butceDurum(oranT, tempo) : null;
-  istYaz('butceHarcEtiket', ayAdi(_butceAy) + (suren ? ' · sürüyor' : ''));
+  istYaz('butceHarcEtiket', ayAdi(_butceAy) + (suren ? ' · sürüyor' : ileri ? ' · plan' : '') + ' harcaması');
   istYaz('butceHarc', '₺' + fmtNumber(A.toplam, 0));
   const harcAlt = document.getElementById('butceHarcAlt');
-  if(harcAlt) harcAlt.innerHTML = !A.toplam ? (suren ? 'henüz harcama girilmedi' : 'bu ay için harcama yok')
+  if(harcAlt) harcAlt.innerHTML = !A.toplam ? (suren ? 'henüz harcama girilmedi' : ileri ? 'henüz plan / harcama yok' : 'bu ay için harcama yok')
+    : ileri && oranT != null ? `<span style="color:${BUTCE_RENK[durumT]};">şimdiden bütçenin %${fmtNumber(oranT * 100, 0)}'i</span> <span class="ozet-soluk">(düzenli ödemeler)</span>`
     : oranT != null ? `<span style="color:${BUTCE_RENK[durumT]};">bütçenin %${fmtNumber(oranT * 100, 0)}'i</span>` : '';
   const harcKart = document.getElementById('butceHarcKart');
   if(harcKart) harcKart.className = 'ozet-kart ' + (durumT === 'asim' ? 'kirmizi' : durumT === 'iyi' ? 'yesil' : 'sari');
@@ -7722,7 +7731,8 @@ function renderButce(){
         const h = A.kat[x.k] || 0, oran = lim ? h / lim : 0, d = butceDurum(oran, tempo), renk = lim ? BUTCE_RENK[d] : 'var(--muted-2)';
         const id = 'butce-edit-' + x.k, duzenAcik = _duzen.id === id;
         const oneriMetni = oneri[x.k] && oneri[x.k] !== lim ? 'öneri ₺' + fmtNumber(oneri[x.k], 0) : '';
-        const alt = lim ? (h > lim ? '₺' + fmtNumber(h - lim, 0) + ' aştı' : A.toplam ? '₺' + fmtNumber(lim - h, 0) + ' kaldı' : '') : 'bütçe yok';
+        const ozel = lim && butceAyaOzel(x.k, _butceAy);
+        const alt = (ozel ? '<span style="color:var(--amber);">yalnız ' + escapeHtml(ayAdi(_butceAy)) + '</span> · ' : '') + (lim ? (h > lim ? '₺' + fmtNumber(h - lim, 0) + ' aştı' : A.toplam ? '₺' + fmtNumber(lim - h, 0) + ' kaldı' : '') : 'bütçe yok');
         return `<div class="satir butce-satir${lim ? '' : ' bossuz'}${duzenAcik ? ' duzenleniyor' : ''}">
           <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt">${[alt, oneriMetni].filter(Boolean).join(' · ')}</div></div>
           <div class="butce-cubuk" title="${lim ? '%' + fmtNumber(oran * 100, 0) : ''}">${lim ? `<i style="width:${(Math.min(oran, BUTCE_OLCEK) / BUTCE_OLCEK * 100).toFixed(1)}%;background:${renk};"></i><em style="left:${(100 / BUTCE_OLCEK).toFixed(1)}%;" title="Bütçe sınırı"></em>` : ''}${lim && tempo != null ? `<b style="left:calc(${(tempo / BUTCE_OLCEK * 100).toFixed(1)}% - 1px);" title="Ayın %${fmtNumber(tempo * 100, 0)}'i geçti"></b>` : ''}</div>
@@ -7731,11 +7741,12 @@ function renderButce(){
           <div class="satir-duzen">
             <input type="number" step="100" min="0" id="${id}" placeholder="${oneri[x.k] ? 'öneri ' + oneri[x.k] : 'aylık bütçe (₺)'}" value="${duzenAcik ? escapeHtml(_duzen.deger) : ''}"
               oninput="_duzen.deger = this.value" onkeydown="if(event.key==='Enter') this.nextElementSibling.click(); if(event.key==='Escape') satirDuzenIptal(this);">
+            <select id="butce-kapsam-${x.k}" class="mini-secim" style="font-size:11.5px;padding:4px;max-width:130px;" title="Bu tutar hangi aylarda geçerli"><option value="hep"${ozel || ileri ? '' : ' selected'}>her ay</option><option value="ay"${ozel || ileri ? ' selected' : ''}>yalnız ${escapeHtml(ayAdi(_butceAy))}</option></select>
             <button class="loan-btn-save" onclick="_duzen.id = null; butceLimitKaydet('${x.k}')">Kaydet</button>
             <button class="ikon-btn" title="Vazgeç" onclick="satirDuzenIptal(this)">✕</button>
           </div>
           <div class="satir-aksiyon">
-            ${lim ? `<button class="ikon-btn" title="Bütçeyi değiştir" onclick="satirDuzenle(this, '${id}')">✎</button><button class="ikon-btn sil" title="Bütçeyi kaldır" onclick="butceSil('${x.k}')">✕</button>`
+            ${lim ? `<button class="ikon-btn" title="Bütçeyi değiştir" onclick="satirDuzenle(this, '${id}')">✎</button><button class="ikon-btn sil" title="${ozel ? 'Bu aya özel bütçeyi kaldır (her ayki geçerli olur)' : 'Bütçeyi kaldır'}" onclick="butceSil('${x.k}')">✕</button>`
                   : `<button class="ikon-btn" title="Bütçe koy" style="color:var(--amber);" onclick="satirDuzenle(this, '${id}')">+</button>`}
           </div>
         </div>`;
@@ -7756,21 +7767,25 @@ function renderButce(){
       istYaz('butceIsiAlt', '');
     } else {
       const aylar = Array.from({ length: 12 }, (_, i) => butceAyHarcama(onb, ayKaydir(_butceAy, i - 11)));
-      const hucre = (h, lim, veriVar, baslik) => {
+      const hucre = (h, lim, veriVar, baslik, ay) => {
+        if(ay && ay > simdiK) return `<td class="yok" title="${escapeHtml(baslik)}: plan — ₺${fmtNumber(lim, 0)} bütçe${h ? ', şimdiden ₺' + fmtNumber(h, 0) + ' (düzenli ödemeler)' : ''}">plan</td>`;
         if(!veriVar) return `<td class="yok" title="${escapeHtml(baslik)}: veri yok">—</td>`;
         const o = h / lim, d = butceDurum(o, null);
         return `<td class="${d}" title="${escapeHtml(baslik)}: ₺${fmtNumber(h, 0)} / ₺${fmtNumber(lim, 0)}">%${fmtNumber(o * 100, 0)}</td>`;
       };
       const kategorili = a => HARCAMA_KATEGORILER.some(x => !x.gizli && a.kat[x.k] > 0);
       isi.innerHTML = `<thead><tr><th>Kategori</th>${aylar.map(a => `<th class="${a.anahtar === _butceAy ? 'secili' : ''}" style="cursor:pointer;" title="${ayAdi(a.anahtar)} ayını göster" onclick="_butceAy='${a.anahtar}'; renderButce();">${AY_KISA[+a.anahtar.slice(5, 7) - 1]} ${a.anahtar.slice(2, 4)}</th>`).join('')}</tr></thead>
-        <tbody>${katlar.map(x => `<tr><td>${escapeHtml(x.ad)}</td>${aylar.map(a => hucre(a.kat[x.k] || 0, limit[x.k], kategorili(a), x.ad + ' · ' + ayAdi(a.anahtar))).join('')}</tr>`).join('')}
-        <tr class="toplam"><td>Toplam</td>${aylar.map(a => hucre(a.toplam, toplamLimit, a.toplam > 0, 'Toplam · ' + ayAdi(a.anahtar))).join('')}</tr></tbody>`;
+        <tbody>${katlar.map(x => `<tr><td>${escapeHtml(x.ad)}</td>${aylar.map(a => { const L = butceLimitleri(a.anahtar)[x.k]; return L ? hucre(a.kat[x.k] || 0, L, kategorili(a), x.ad + ' · ' + ayAdi(a.anahtar), a.anahtar) : '<td class="yok">—</td>'; }).join('')}</tr>`).join('')}
+        <tr class="toplam"><td>Toplam</td>${aylar.map(a => { const L = butceLimitleri(a.anahtar), T = HARCAMA_KATEGORILER.reduce((t, x) => t + (L[x.k] || 0), 0); return T ? hucre(a.toplam, T, a.toplam > 0, 'Toplam · ' + ayAdi(a.anahtar), a.anahtar) : '<td class="yok">—</td>'; }).join('')}</tr></tbody>`;
       const kap = isi.parentElement; if(kap) kap.scrollLeft = kap.scrollWidth;   // dar ekranda en yeni aylar görünsün
-      const dolu = aylar.filter(a => a.toplam > 0);
-      istYaz('butceIsiAlt', dolu.length ? dolu.filter(a => a.toplam <= toplamLimit).length + ' / ' + dolu.length + ' ay toplam bütçe içinde' : '');
+      const dolu = aylar.filter(a => a.toplam > 0 && a.anahtar <= simdiK);
+      const ayToplamLimit = a => { const L = butceLimitleri(a.anahtar); return HARCAMA_KATEGORILER.reduce((t, x) => t + (L[x.k] || 0), 0); };
+      istYaz('butceIsiAlt', dolu.length ? dolu.filter(a => a.toplam <= ayToplamLimit(a)).length + ' / ' + dolu.length + ' ay toplam bütçe içinde' : '');
     }
   }
 
+  const kapIn = document.getElementById('butceKapsamInput');
+  if(kapIn) kapIn.innerHTML = `<option value="hep"${ileri ? '' : ' selected'}>Her ay</option><option value="ay"${ileri ? ' selected' : ''}>Yalnız ${escapeHtml(ayAdi(_butceAy))}</option>`;
   // Form: bütçesi olmayan kategoriler önce
   const katInput = document.getElementById('butceKatInput');
   if(katInput){
@@ -7785,9 +7800,10 @@ function butceFormOneri(){
   const k = document.getElementById('butceKatInput').value, i = document.getElementById('butceTutarInput');
   if(i) i.placeholder = _butceOneri[k] ? 'öneri ₺' + fmtNumber(_butceOneri[k], 0) : 'Aylık bütçe (TL)';
 }
-function butceYaz(kat, tutar){
-  const list = butceYukle().filter(b => b.kat !== kat);
-  if(tutar > 0) list.push({ id: 'b-' + kat, kat, limit: Math.round(tutar), tarih: new Date().toISOString() });
+// ay verilirse yalnız o ay için (her ayki sınır dokunulmaz); verilmezse her ay geçerli sınır
+function butceYaz(kat, tutar, ay){
+  const list = butceYukle().filter(b => !(b.kat === kat && (ay ? b.ay === ay : !b.ay)));
+  if(tutar > 0) list.push(Object.assign({ id: 'b-' + kat + (ay ? '-' + ay : ''), kat, limit: Math.round(tutar), tarih: new Date().toISOString() }, ay ? { ay } : {}));
   manuelListeKaydet(BUTCE_KEY, list);
 }
 function butceEkle(){
@@ -7796,7 +7812,8 @@ function butceEkle(){
   let t = parseFloat(String(inp.value).replace(',', '.'));
   if(!(t > 0) && inp.value.trim() === '' && _butceOneri[kat]) t = _butceOneri[kat];   // boş bırakılırsa öneri kullanılır
   if(!(t > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
-  butceYaz(kat, t);
+  const kap = document.getElementById('butceKapsamInput');
+  butceYaz(kat, t, kap && kap.value === 'ay' ? _butceAy : null);
   inp.value = '';
   renderButce();
   butceFormOneri();
@@ -7806,15 +7823,22 @@ function butceLimitKaydet(kat){
   let t = parseFloat(String(inp && inp.value).replace(',', '.'));
   if(!(t > 0) && inp && inp.value.trim() === '' && _butceOneri[kat]) t = _butceOneri[kat];   // boş Kaydet → öneri
   if(!(t > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
-  butceYaz(kat, t);
+  const kap = document.getElementById('butce-kapsam-' + kat);
+  butceYaz(kat, t, kap && kap.value === 'ay' ? _butceAy : null);
   renderButce();
 }
 function butceSil(kat){
-  showConfirmModal((HARCAMA_KAT_AD[kat] || kat) + ' bütçesini kaldırmak istediğine emin misin?', () => { butceYaz(kat, 0); renderButce(); });
+  const ad = HARCAMA_KAT_AD[kat] || kat;
+  if(butceAyaOzel(kat, _butceAy)){
+    const hep = butceLimitleri()[kat];
+    showConfirmModal(ad + ' için ' + ayAdi(_butceAy) + '’a özel bütçe kaldırılsın mı? ' + (hep ? 'Her ayki ₺' + fmtNumber(hep, 0) + ' geçerli olur.' : 'Bu ay için bütçe kalmaz.'), () => { butceYaz(kat, 0, _butceAy); renderButce(); });
+    return;
+  }
+  showConfirmModal(ad + ' bütçesini (her ay) kaldırmak istediğine emin misin? Aylara özel koyduğun tutarlar kalır.', () => { butceYaz(kat, 0); renderButce(); });
 }
 function butceOnerileriUygula(){
   const list = butceYukle();
-  Object.entries(_butceOneri).forEach(([kat, t]) => { if(!list.some(b => b.kat === kat)) list.push({ id: 'b-' + kat, kat, limit: t, tarih: new Date().toISOString() }); });
+  Object.entries(_butceOneri).forEach(([kat, t]) => { if(!list.some(b => b.kat === kat && !b.ay)) list.push({ id: 'b-' + kat, kat, limit: t, tarih: new Date().toISOString() }); });
   manuelListeKaydet(BUTCE_KEY, list);
   renderButce();
 }
@@ -9253,7 +9277,7 @@ function raporVerisi(ayK){
     .sort((a, b) => b.t - a.t);
   const kategorili = HARCAMA_KATEGORILER.some(x => !x.gizli && (A.kat[x.k] || 0) > 0);
   // Bütçe
-  const limit = butceLimitleri(), limitli = HARCAMA_KATEGORILER.filter(x => limit[x.k]);
+  const limit = butceLimitleri(ayK), limitli = HARCAMA_KATEGORILER.filter(x => limit[x.k]);
   const butceToplam = limitli.reduce((t, x) => t + limit[x.k], 0);
   const asanlar = limitli.filter(x => (A.kat[x.k] || 0) > limit[x.k]).map(x => ({ ad: x.ad, t: A.kat[x.k], l: limit[x.k] }));
   // Nakit akışı
