@@ -1837,6 +1837,33 @@
   .harcama-tablo tfoot td:first-child{background:#161c25;}
   .harcama-tablo tfoot tr.karsilik td{font-weight:600;color:var(--muted);font-size:11.5px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
+  /* Ödeme Takvimi */
+  .odeme-serit{display:none;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(231,168,59,.08);border:1px solid rgba(231,168,59,.35);border-radius:10px;padding:9px 14px;margin-bottom:12px;font-size:12.5px;color:var(--text);cursor:pointer;}
+  .odeme-serit:hover{border-color:var(--amber);}
+  .odeme-serit b:first-child{color:var(--amber);}
+  .odeme-ikili{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;}
+  .odeme-ikili > .bolum{margin-bottom:14px;min-width:0;}
+  .odeme-tarih{flex:0 0 46px;display:flex;flex-direction:column;align-items:center;line-height:1.1;}
+  .odeme-tarih b{font-size:17px;font-variant-numeric:tabular-nums;}
+  .odeme-tarih span{font-size:9.5px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
+  .odeme-nokta{flex:0 0 8px;height:8px;border-radius:50%;}
+  .odeme-satir.yakin .odeme-tarih b{color:var(--amber);}
+  #odemeYaklasan{max-height:470px;overflow-y:auto;}
+  .odeme-takvim{display:grid;grid-template-columns:repeat(7, minmax(0,1fr));gap:4px;margin:4px 0 8px;}
+  .tk-bas{font-size:10px;font-weight:700;color:var(--muted-2);text-align:center;padding:2px 0;text-transform:uppercase;}
+  .tk-gun{position:relative;min-height:54px;border:1px solid var(--border);border-radius:8px;padding:4px 5px;display:flex;flex-direction:column;gap:2px;background:var(--panel);min-width:0;}
+  .tk-gun.bos{border-color:transparent;background:transparent;}
+  .tk-gun.gecmis{opacity:.45;}
+  .tk-gun.dolu{cursor:pointer;background:var(--panel-2);}
+  .tk-gun.dolu:hover, .tk-gun.secili{border-color:var(--amber);}
+  .tk-gun.bugun{border-color:var(--up);}
+  .tk-gun.bugun .tk-no{color:var(--up);font-weight:800;}
+  .tk-no{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .tk-noktalar{display:flex;gap:2px;}
+  .tk-noktalar i{width:6px;height:6px;border-radius:50%;}
+  .tk-tutar{font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  @media (max-width:900px){ .odeme-ikili{grid-template-columns:1fr;gap:0;} #odemeYaklasan{max-height:none;} }
+  @media (max-width:640px){ .tk-gun{min-height:46px;padding:3px;} .tk-tutar{font-size:9.5px;} .odeme-tarih{flex-basis:40px;} }
   /* Borç Kapatma Planı */
   .bp-kontrol{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 14px;margin:4px 0 10px;}
   .bp-alan{display:flex;flex-direction:column;gap:5px;}
@@ -1974,6 +2001,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h11l-3-3"/><path d="M17 17H6l3 3"/></svg>
         <span data-kisa="Akış">Nakit Akışı</span>
       </div>
+      <div class="nav-item" data-tab="odeme" onclick="switchTab('odeme')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14h2"/><path d="M14 14h2"/><path d="M8 17h2"/></svg>
+        <span data-kisa="Takvim">Ödeme Takvimi</span>
+      </div>
       <div class="nav-grup">Planlama</div>
       <div class="nav-item" data-tab="borcplan" onclick="switchTab('borcplan')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h11"/><path d="M3 12h7"/><path d="M3 19h4"/><path d="M15 13l3 3 5-6"/></svg>
@@ -2032,6 +2063,8 @@
   <div class="file-warning" id="fileWarning">
     <b>⚠ Bu dosyayı doğrudan bilgisayarından açtın (file://).</b> Tarayıcılar bu şekilde açılan sayfalarda internetten veri çekmeyi güvenlik gereği engeller, bu yüzden hiçbir kart/grafik/haber gelmez. Çözüm: dosyayı basit bir yerel sunucu üzerinden aç — örneğin klasörde terminalde <code>python3 -m http.server 8000</code> yazıp tarayıcıda <code>http://localhost:8000/piyasa-paneli.html</code> adresini aç, ya da dosyayı bir hosting'e (GitHub Pages, Netlify Drop vb.) yükle.
   </div>
+
+  <div class="odeme-serit" id="odemeSerit" onclick="switchTab('odeme')" title="Ödeme Takvimi'ni aç"></div>
 
   <div class="grid" id="grid"></div>
 
@@ -2654,6 +2687,93 @@
     <div class="footnote"><b>Not:</b> Kalan = gelir − harcama − kredi taksitleri. Harcamalar Harcama İstatistikleri'nden gelir; kartla yapılan harcamalar zaten orada olduğu için kart ödemeleri ayrıca gider sayılmaz. Taksitler kredilerin ödeme planından hesaplanır (anapara farkı + iki taksit arasında işleyen faiz + KKDF + BSMV). Süren ve gelecek aylarda harcama, girilen tutar tahminden küçükse tahminle tamamlanır: bütçe koyduysan bütçe toplamı, yoksa son 6 ayın medyanı. Düzenli gelirde ✎ ile girilen yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır; 0 yazarsan gelir bu aydan itibaren biter. Tasarruf oranı: <span style="color:var(--up);">%20 ve üstü</span> · <span style="color:var(--amber);">%0–20</span> · <span style="color:var(--down);">eksi</span>. KMH faizi nakit çıkışı değil borca eklendiği için burada sayılmaz (Borçlarım'da görünür).</div>
   </div>
   <!-- ================= /TAB: NAKİT AKIŞI ================= -->
+
+  <!-- ================= TAB: ÖDEME TAKVİMİ ================= -->
+  <div class="tab-panel" id="tab-odeme">
+    <div class="page-head"><h1>Ödeme Takvimi</h1></div>
+
+    <div class="ozet-grid k4">
+      <div class="ozet-kart sari" id="odeme7Kart">
+        <div class="ozet-etiket">Önümüzdeki 7 gün</div>
+        <div class="ozet-deger" id="odeme7">—</div>
+        <div class="ozet-alt" id="odeme7Alt"></div>
+        <div class="card-seanslar" id="odeme7Detay"></div>
+      </div>
+      <div class="ozet-kart kirmizi">
+        <div class="ozet-etiket" id="odemeAyEtiket">Bu ay · kalan</div>
+        <div class="ozet-deger" id="odemeAy">—</div>
+        <div class="ozet-alt" id="odemeAyAlt"></div>
+        <div class="card-seanslar" id="odemeAyDetay"></div>
+      </div>
+      <div class="ozet-kart mor">
+        <div class="ozet-etiket">Aylık sabit ödemeler</div>
+        <div class="ozet-deger" id="odemeSabit">—</div>
+        <div class="ozet-alt" id="odemeSabitAlt"></div>
+        <div class="card-seanslar" id="odemeSabitDetay"></div>
+      </div>
+      <div class="ozet-kart mavi">
+        <div class="ozet-etiket">Abonelikler</div>
+        <div class="ozet-deger" id="odemeAbon">—</div>
+        <div class="ozet-alt" id="odemeAbonAlt"></div>
+        <div class="card-seanslar" id="odemeAbonDetay"></div>
+      </div>
+    </div>
+
+    <div class="odeme-ikili">
+      <div class="bolum">
+        <div class="bolum-bas">
+          <span class="bolum-baslik">Yaklaşan ödemeler</span>
+          <span class="ozet-soluk" style="font-size:12px;">45 gün</span>
+          <span class="bolum-toplam" id="odemeYaklasanToplam"></span>
+        </div>
+        <div id="odemeYaklasan"></div>
+      </div>
+      <div class="bolum">
+        <div class="bolum-bas">
+          <span class="bolum-baslik">Takvim</span>
+          <select id="odemeAySec" class="bolum-secim" title="Ay" onchange="_odemeAy = this.value; _odemeGun = null; renderOdeme();"></select>
+          <span class="bolum-toplam" id="odemeTakvimToplam"></span>
+        </div>
+        <div class="odeme-takvim" id="odemeTakvim"></div>
+        <div id="odemeGunDetay"></div>
+        <div class="nakit-lejant" style="margin-top:6px;"><span><i style="background:#C9A6FF;border-radius:50%;"></i>Kredi</span><span><i style="background:#FF8A8A;border-radius:50%;"></i>Kart</span><span><i style="background:var(--amber);border-radius:50%;"></i>Fatura</span><span><i style="background:#5EEAD4;border-radius:50%;"></i>Kira</span><span><i style="background:#6EC3FF;border-radius:50%;"></i>Abonelik</span></div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Düzenli ödemeler ve abonelikler</span>
+        <span class="bolum-toplam" id="odemeDuzenliToplam"></span>
+        <button class="bolum-ekle" onclick="bolumFormAc('odemeForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="odemeForm">
+        <div class="loan-add-row">
+          <input type="text" id="odemeAdInput" class="ai-input" style="max-width:190px;min-width:130px;" placeholder="Ad (ör. Netflix, Elektrik)" onkeydown="if(event.key==='Enter')odemeEkle()">
+          <input type="number" step="0.01" min="0" id="odemeTutarInput" class="ai-input" style="max-width:130px;min-width:100px;" placeholder="Tutar (TL)" onkeydown="if(event.key==='Enter')odemeEkle()">
+          <select id="odemeKatInput" class="ai-input" style="max-width:160px;min-width:120px;">
+            <option value="abonelik">Abonelik</option><option value="fatura">Fatura</option><option value="kira">Kira / aidat</option><option value="sigorta">Sigorta / vergi</option><option value="diger">Diğer</option>
+          </select>
+          <select id="odemePeriyotInput" class="ai-input" style="max-width:120px;min-width:100px;" onchange="odemeFormTurDegisti()">
+            <option value="aylik">Her ay</option><option value="yillik">Her yıl</option>
+          </select>
+          <input type="number" min="1" max="31" step="1" id="odemeGunInput" class="ai-input" style="max-width:90px;min-width:80px;" placeholder="Gün" title="Ayın kaçında ödeniyor" onkeydown="if(event.key==='Enter')odemeEkle()">
+          <select id="odemeAyInput" class="ai-input" style="max-width:130px;min-width:110px;display:none;" title="Hangi ay">
+            <option value="1">Ocak</option><option value="2">Şubat</option><option value="3">Mart</option><option value="4">Nisan</option><option value="5">Mayıs</option><option value="6">Haziran</option><option value="7">Temmuz</option><option value="8">Ağustos</option><option value="9">Eylül</option><option value="10">Ekim</option><option value="11">Kasım</option><option value="12">Aralık</option>
+          </select>
+          <button class="ai-btn" onclick="odemeEkle()">Ekle</button>
+        </div>
+      </div>
+      <div id="odemeDuzenli"></div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Kredi kartı son ödeme günleri</span></div>
+      <div id="odemeKartlar"></div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Kredi taksitleri ödeme planından tarih ve tutarıyla otomatik gelir. Kartın son ödeme gününü bir kez yazman yeter; sıradaki ödemede tutar olarak bugünkü kart borcu gösterilir, sonraki aylar ekstreye göre değişir. Düzenli ödemeler ve abonelikler her ay ya da her yıl aynı gün takvime düşer; ayın 31'i olmayan aylarda son güne kayar. Hafta sonuna denk gelen banka ödemeleri genellikle bir sonraki iş gününe kayar. Bu sayfa hatırlatma içindir: faturalar zaten harcamalarında olduğundan Nakit Akışı'na ayrıca eklenmez. Önümüzdeki 3 günde ödeme varsa Piyasa Özeti'nin üstünde uyarı çıkar.</div>
+  </div>
+  <!-- ================= /TAB: ÖDEME TAKVİMİ ================= -->
 
   <!-- ================= TAB: BORÇ KAPATMA PLANI ================= -->
   <div class="tab-panel" id="tab-borcplan">
@@ -4652,6 +4772,7 @@ function bpSnapshotOlustur(paylas, haber){
     try{ const b = butceOzetMetni(); if(b) s.push(b); }catch(e){ /* bütçe özeti eklenemezse bağlam yine gider */ }
     try{ const n = nakitAkisOzetMetni(); if(n) s.push(n); }catch(e){ /* nakit akışı özeti eklenemezse bağlam yine gider */ }
     try{ const b2 = borcPlanOzetMetni(); if(b2) s.push(b2); }catch(e){ /* plan özeti eklenemezse bağlam yine gider */ }
+    try{ const o = odemeOzetMetni(); if(o) s.push(o); }catch(e){ /* ödeme özeti eklenemezse bağlam yine gider */ }
     s.push('Net değer (Varlıklar + Yatırımlar − Borç): ₺' + fmtNumber(vToplam + yToplam - borc, 0)
       + (usdtry ? ' (≈ $' + fmtNumber((vToplam + yToplam - borc) / usdtry, 0) + ')' : ''));
     if(borc > 0) s.push('Yatırım / Borç oranı: %' + fmtNumber(yToplam / borc * 100, 1));
@@ -7931,6 +8052,223 @@ function borcPlanOzetMetni(){
     + ' | Borçlar (aylık etkin faiz vergiler dahil): ' + P.borclar.map(d => d.ad + ' ₺' + fmtNumber(d.bakiye, 0) + (d.oran ? ' %' + fmtNumber(d.oran * 100, 2) : ' faizsiz') + ', plana göre ' + ayEt(d.bitis) + ', ek ödemesiz ' + ayEt((Y.borclar.find(x => x.id === d.id) || {}).bitis)).join('; ');
 }
 
+// ---------- Ödeme Takvimi: kredi taksitleri + kart son ödeme günleri + düzenli ödemeler ve abonelikler ----------
+// ft_odemeler_v1: [{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'|'yillik', ay (yıllıkta 1–12), kat:'abonelik'|'fatura'|'kira'|'diger' },
+//                  { id:'kart-<kartId>', tur:'kart', kartId, gun }]
+const ODEME_KEY = 'ft_odemeler_v1';
+const ODEME_KAT = { abonelik: 'Abonelik', fatura: 'Fatura', kira: 'Kira / aidat', sigorta: 'Sigorta / vergi', diger: 'Diğer' };
+const ODEME_RENK = { kredi: '#C9A6FF', kart: '#FF8A8A', abonelik: '#6EC3FF', fatura: 'var(--amber)', kira: '#5EEAD4', sigorta: '#E7C27A', diger: 'var(--muted)' };
+const GUN_KISA = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+let _odemeAy = null;   // takvimde gösterilen ay
+let _odemeGun = null;  // takvimde seçilen gün 'YYYY-MM-DD'
+function odemeYukle(){ return manuelListeYukle(ODEME_KEY); }
+function isoGun(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function ayinGunu(yil, ay, gun){ return new Date(yil, ay, Math.min(gun, new Date(yil, ay + 1, 0).getDate())); }   // 31'i olmayan ayda son gün
+function yillikTutar(o){ return o.periyot === 'yillik' ? Number(o.tutar) || 0 : (Number(o.tutar) || 0) * 12; }
+
+// [bas, bit] arasındaki bütün ödemeler (tarih sırasıyla)
+function odemeOlaylari(bas, bit){
+  const basS = isoGun(bas), bitS = isoGun(bit), out = [];
+  getAllLoans().forEach(l => {
+    const t = krediTaksitleri(l);
+    t.forEach((x, i) => { if(x.tarih >= basS && x.tarih <= bitS) out.push({ tarih: x.tarih, ad: l.ad + ' kredisi', alt: 'Taksit ' + (i + 1) + '/' + t.length + (x.sonMu ? ' · son taksit' : ''), tutar: x.tutar, tur: 'kredi' }); });
+  });
+  const liste = odemeYukle(), kartlar = manuelListeYukle(KK_KARTLARI_KEY), bugunS = bugunISO();
+  let ilkKart = {};
+  for(let d = new Date(bas.getFullYear(), bas.getMonth(), 1); d <= bit; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)){
+    liste.forEach(o => {
+      if(o.tur === 'kart'){
+        const k = kartlar.find(x => x.id === o.kartId);
+        if(!k || !(o.gun >= 1)) return;
+        const g = isoGun(ayinGunu(d.getFullYear(), d.getMonth(), o.gun));
+        if(g < basS || g > bitS) return;
+        // Tutar yalnızca sıradaki son ödemede bilinir (bugünkü kart borcu); sonrakiler ekstreye göre
+        const ilk = g >= bugunS && !ilkKart[o.kartId];
+        if(ilk) ilkKart[o.kartId] = true;
+        out.push({ tarih: g, ad: (k.ad || 'Kart') + ' kartı', alt: 'Son ödeme günü' + (ilk ? ' · bugünkü borç' : ''), tutar: ilk ? Number(k.tutar) || 0 : null, tur: 'kart' });
+      } else if(o.tur === 'duzenli'){
+        if(o.periyot === 'yillik' && +o.ay !== d.getMonth() + 1) return;
+        const g = isoGun(ayinGunu(d.getFullYear(), d.getMonth(), +o.gun || 1));
+        if(g < basS || g > bitS) return;
+        out.push({ tarih: g, ad: o.ad, alt: (ODEME_KAT[o.kat] || 'Düzenli') + (o.periyot === 'yillik' ? ' · yıllık' : ''), tutar: Number(o.tutar) || 0, tur: o.kat || 'diger', id: o.id });
+      }
+    });
+  }
+  return out.sort((a, b) => a.tarih.localeCompare(b.tarih) || (b.tutar || 0) - (a.tutar || 0));
+}
+function gunFarkiS(a, b){ return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000); }
+function goreceliGun(tarih){
+  const n = gunFarkiS(bugunISO(), tarih);
+  return n === 0 ? 'bugün' : n === 1 ? 'yarın' : n < 0 ? (-n) + ' gün önce' : n + ' gün sonra';
+}
+
+function renderOdeme(){
+  const simdi = new Date(), bugun = new Date(simdi.getFullYear(), simdi.getMonth(), simdi.getDate()), bugunS = isoGun(bugun);
+  const ileri = odemeOlaylari(bugun, new Date(bugun.getFullYear(), bugun.getMonth(), bugun.getDate() + 45));
+  const top = l => l.reduce((t, x) => t + (x.tutar || 0), 0);
+  const yedi = ileri.filter(x => gunFarkiS(bugunS, x.tarih) <= 7);
+  const ayKalan = ileri.filter(x => x.tarih.slice(0, 7) === bugunS.slice(0, 7));
+
+  // ---- Kartlar
+  istYaz('odeme7', yedi.length ? '₺' + fmtNumber(top(yedi), 0) : '₺0');
+  istYaz('odeme7Alt', yedi.length ? yedi.length + ' ödeme' + (yedi.some(x => x.tutar == null) ? ' (+ tutarı belli olmayan)' : '') : 'önümüzdeki 7 gün boş');
+  ozetDetayYaz('odeme7Detay', yedi.slice(0, 2).map(x => [goreceliGun(x.tarih), escapeHtml(x.ad.replace(/ (kartı|kredisi)$/, '')) + (x.tutar != null ? ' ' + kisaTL(x.tutar) : '')]));
+  const yediKart = document.getElementById('odeme7Kart');
+  if(yediKart) yediKart.className = 'ozet-kart ' + (yedi.some(x => gunFarkiS(bugunS, x.tarih) <= 2) ? 'kirmizi' : yedi.length ? 'sari' : 'yesil');
+  istYaz('odemeAyEtiket', AY_UZUN[simdi.getMonth()] + ' · kalan');
+  istYaz('odemeAy', '₺' + fmtNumber(top(ayKalan), 0));
+  istYaz('odemeAyAlt', ayKalan.length ? ayKalan.length + ' ödeme · ' + ((g => g ? 'ay sonuna ' + g + ' gün' : 'bugün ayın son günü')(new Date(simdi.getFullYear(), simdi.getMonth() + 1, 0).getDate() - simdi.getDate())) : 'bu ay başka ödeme yok');
+  const sonrakiAy = odemeOlaylari(new Date(simdi.getFullYear(), simdi.getMonth() + 1, 1), new Date(simdi.getFullYear(), simdi.getMonth() + 2, 0));
+  ozetDetayYaz('odemeAyDetay', [[AY_UZUN[(simdi.getMonth() + 1) % 12], '₺' + fmtNumber(top(sonrakiAy), 0) + (sonrakiAy.some(x => x.tutar == null) ? ' + kart' : '')]]);
+  const liste = odemeYukle(), duzenli = liste.filter(o => o.tur === 'duzenli');
+  const aylikSabit = duzenli.reduce((t, o) => t + yillikTutar(o) / 12, 0);
+  const taksitAy = odemeOlaylari(new Date(simdi.getFullYear(), simdi.getMonth(), 1), new Date(simdi.getFullYear(), simdi.getMonth() + 1, 0)).filter(x => x.tur === 'kredi');
+  istYaz('odemeSabit', '₺' + fmtNumber(aylikSabit + top(taksitAy), 0));
+  istYaz('odemeSabitAlt', 'her ay tekrarlayan');
+  ozetDetayYaz('odemeSabitDetay', [taksitAy.length ? ['Taksitler', '₺' + fmtNumber(top(taksitAy), 0)] : null, duzenli.length ? ['Düzenli', '₺' + fmtNumber(aylikSabit, 0) + (duzenli.some(o => o.periyot === 'yillik') ? ' (yıllıklar ÷ 12)' : '')] : null]);
+  const abon = duzenli.filter(o => o.kat === 'abonelik');
+  istYaz('odemeAbon', abon.length ? '₺' + fmtNumber(abon.reduce((t, o) => t + yillikTutar(o), 0), 0) : '—');
+  istYaz('odemeAbonAlt', abon.length ? abon.length + ' abonelik · yıllık' : 'abonelik girilmedi');
+  ozetDetayYaz('odemeAbonDetay', abon.length ? [['Aylık', '₺' + fmtNumber(abon.reduce((t, o) => t + yillikTutar(o) / 12, 0), 0)], ['En pahalı', escapeHtml(abon.slice().sort((a, b) => yillikTutar(b) - yillikTutar(a))[0].ad)]] : []);
+
+  // ---- Yaklaşan ödemeler (45 gün)
+  const yak = document.getElementById('odemeYaklasan');
+  if(yak){
+    istYaz('odemeYaklasanToplam', ileri.length ? '₺' + fmtNumber(top(ileri), 0) : '');
+    yak.innerHTML = ileri.length ? ileri.map(x => {
+      const n = gunFarkiS(bugunS, x.tarih), d = new Date(x.tarih + 'T00:00:00');
+      return `<div class="satir odeme-satir${n <= 2 ? ' yakin' : ''}">
+        <div class="odeme-tarih"><b>${d.getDate()}</b><span>${AY_KISA[d.getMonth()]} · ${GUN_KISA[d.getDay()]}</span></div>
+        <span class="odeme-nokta" style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></span>
+        <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt"><span style="color:${n <= 2 ? 'var(--amber)' : 'inherit'};">${goreceliGun(x.tarih)}</span> · ${escapeHtml(x.alt)}</div></div>
+        <div class="satir-tutar">${x.tutar != null ? '₺' + fmtNumber(x.tutar, 0) : '<span class="ozet-soluk" style="font-size:12px;">ekstreye göre</span>'}</div>
+      </div>`;
+    }).join('') : '<div class="bos-not">Önümüzdeki 45 günde ödeme yok. Kart son ödeme günlerini ve faturalarını aşağıdan ekleyebilirsin.</div>';
+  }
+
+  // ---- Ay takvimi
+  if(!_odemeAy) _odemeAy = bugunS.slice(0, 7);
+  const aySec = document.getElementById('odemeAySec');
+  if(aySec) aySec.innerHTML = Array.from({ length: 15 }, (_, i) => ayKaydir(bugunS.slice(0, 7), i - 2))
+    .map(k => `<option value="${k}"${k === _odemeAy ? ' selected' : ''}>${ayAdi(k)}</option>`).join('');
+  const yil = +_odemeAy.slice(0, 4), ay = +_odemeAy.slice(5, 7) - 1;
+  const ayOlay = odemeOlaylari(new Date(yil, ay, 1), new Date(yil, ay + 1, 0));
+  istYaz('odemeTakvimToplam', '₺' + fmtNumber(top(ayOlay), 0));
+  const takvim = document.getElementById('odemeTakvim');
+  if(takvim){
+    const ilkGun = (new Date(yil, ay, 1).getDay() + 6) % 7, gunSay = new Date(yil, ay + 1, 0).getDate();
+    let h = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map(g => `<div class="tk-bas">${g}</div>`).join('');
+    for(let i = 0; i < ilkGun; i++) h += '<div class="tk-gun bos"></div>';
+    for(let g = 1; g <= gunSay; g++){
+      const s = isoGun(new Date(yil, ay, g)), o = ayOlay.filter(x => x.tarih === s), t = top(o);
+      h += `<div class="tk-gun${s === bugunS ? ' bugun' : ''}${s < bugunS ? ' gecmis' : ''}${o.length ? ' dolu' : ''}${s === _odemeGun ? ' secili' : ''}" ${o.length ? `onclick="_odemeGun='${s}'; renderOdeme();" title="${escapeHtml(o.map(x => x.ad + (x.tutar != null ? ' ₺' + fmtNumber(x.tutar, 0) : '')).join(' · '))}"` : ''}>
+        <span class="tk-no">${g}</span>${o.length ? `<span class="tk-noktalar">${o.slice(0, 4).map(x => `<i style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></i>`).join('')}</span><span class="tk-tutar">${t ? kisaTL(t) : '·'}</span>` : ''}</div>`;
+    }
+    takvim.innerHTML = h;
+  }
+  const secEl = document.getElementById('odemeGunDetay');
+  if(secEl){
+    const o = _odemeGun && _odemeGun.slice(0, 7) === _odemeAy ? ayOlay.filter(x => x.tarih === _odemeGun) : [];
+    secEl.innerHTML = o.length ? `<div class="bolum-alt-baslik"><span>${new Date(_odemeGun + 'T00:00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</span><span>₺${fmtNumber(top(o), 0)}</span></div>`
+      + o.map(x => satirHtml({ ad: x.ad, alt: escapeHtml(x.alt), tutar: x.tutar != null ? '₺' + fmtNumber(x.tutar, 0) : 'ekstreye göre' })).join('') : '';
+  }
+
+  // ---- Düzenli ödemeler ve abonelikler
+  const dz = document.getElementById('odemeDuzenli');
+  if(dz){
+    istYaz('odemeDuzenliToplam', duzenli.length ? '₺' + fmtNumber(aylikSabit, 0) + '/ay' : '');
+    const sira = duzenli.slice().sort((a, b) => (a.kat === 'abonelik') - (b.kat === 'abonelik') || yillikTutar(b) - yillikTutar(a));
+    dz.innerHTML = sira.length ? sira.map(o => satirHtml({
+      ad: o.ad,
+      alt: escapeHtml((ODEME_KAT[o.kat] || 'Düzenli') + ' · ' + (o.periyot === 'yillik' ? 'her yıl ' + (+o.gun || 1) + ' ' + AY_UZUN[(+o.ay || 1) - 1] : 'her ayın ' + (+o.gun || 1) + '’i') + (o.periyot === 'yillik' ? ' · ayda ₺' + fmtNumber(yillikTutar(o) / 12, 0) : ' · yılda ₺' + fmtNumber(yillikTutar(o), 0))),
+      tutar: '₺' + fmtNumber(o.tutar, 0), renk: ODEME_RENK[o.kat] || 'var(--text)',
+      duzen: { id: 'odeme-edit-' + o.id, ph: 'yeni tutar (₺)', kaydet: `odemeGuncelle('${o.id}')` },
+      sil: { onclick: `odemeSil('${o.id}')`, baslik: 'Sil', ikon: '✕' },
+    })).join('') : '<div class="bos-not">Kira, aidat, fatura, sigorta ve abonelikleri (Netflix, Spotify, internet…) bir kez ekle; her ay ya da her yıl takvime kendiliğinden düşer.</div>';
+  }
+
+  // ---- Kart son ödeme günleri
+  const kk = document.getElementById('odemeKartlar');
+  if(kk){
+    const kartlar = manuelListeYukle(KK_KARTLARI_KEY);
+    kk.innerHTML = kartlar.length ? kartlar.map(k => {
+      const o = liste.find(x => x.id === 'kart-' + k.id);
+      const sonraki = o && o.gun ? ileri.find(x => x.tur === 'kart' && x.ad === (k.ad || 'Kart') + ' kartı') : null;
+      return `<div class="satir">
+        <div class="satir-ana"><div class="satir-ad">${escapeHtml(k.ad || 'Kart')}</div><div class="satir-alt">${o && o.gun ? 'her ayın ' + o.gun + '’i' + (sonraki ? ' · sıradaki ' + goreceliGun(sonraki.tarih) : '') : 'son ödeme günü girilmedi'}</div></div>
+        <div class="satir-tutar" style="color:#FF8A8A;">₺${fmtNumber(Number(k.tutar) || 0, 0)}</div>
+        <label class="bp-oran">gün <input type="number" min="1" max="31" step="1" value="${o && o.gun ? o.gun : ''}" placeholder="1–31" onchange="odemeKartGun('${k.id}', this.value)"></label>
+      </div>`;
+    }).join('') : '<div class="bos-not">Kredi kartı yok (Borçlarım\'dan eklenir).</div>';
+  }
+  odemeSeritGuncelle(ileri);
+}
+
+// Piyasa Özeti'nin üstünde: önümüzdeki 3 günün ödemeleri
+function odemeSeritGuncelle(ileri){
+  const el = document.getElementById('odemeSerit');
+  if(!el) return;
+  try{
+    if(!ileri){ const b = new Date(); b.setHours(0, 0, 0, 0); ileri = odemeOlaylari(b, new Date(b.getFullYear(), b.getMonth(), b.getDate() + 3)); }
+    const bugunS = bugunISO(), yakin = ileri.filter(x => gunFarkiS(bugunS, x.tarih) <= 3);
+    if(!yakin.length){ el.style.display = 'none'; return; }
+    const t = yakin.reduce((s, x) => s + (x.tutar || 0), 0);
+    el.innerHTML = `<b>📅 Yaklaşan ödeme:</b> ${yakin.slice(0, 3).map(x => `${escapeHtml(x.ad)} <span class="ozet-soluk">${goreceliGun(x.tarih)}</span>${x.tutar != null ? ' ₺' + fmtNumber(x.tutar, 0) : ''}`).join(' · ')}${yakin.length > 3 ? ' · +' + (yakin.length - 3) : ''}${yakin.length > 1 && t ? ` <b style="margin-left:auto;">₺${fmtNumber(t, 0)}</b>` : ''}`;
+    el.style.display = 'flex';
+  }catch(e){ el.style.display = 'none'; }
+}
+
+function odemeFormTurDegisti(){
+  const yillik = document.getElementById('odemePeriyotInput').value === 'yillik';
+  document.getElementById('odemeAyInput').style.display = yillik ? '' : 'none';
+}
+function odemeEkle(){
+  const ad = document.getElementById('odemeAdInput').value.trim();
+  const tutar = parseFloat(String(document.getElementById('odemeTutarInput').value).replace(',', '.'));
+  const gun = parseInt(document.getElementById('odemeGunInput').value, 10);
+  const periyot = document.getElementById('odemePeriyotInput').value;
+  const ay = parseInt(document.getElementById('odemeAyInput').value, 10);
+  const kat = document.getElementById('odemeKatInput').value;
+  if(!ad){ showAlertModal('Ödemenin adını yaz (ör. Netflix, Elektrik).'); return; }
+  if(!(tutar > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  if(!(gun >= 1 && gun <= 31)){ showAlertModal('Ödeme günü 1 ile 31 arasında olmalı.'); return; }
+  const list = odemeYukle();
+  list.push({ id: 'o-' + Date.now(), tur: 'duzenli', ad, tutar, gun, periyot, ay: periyot === 'yillik' ? ay : null, kat });
+  manuelListeKaydet(ODEME_KEY, list);
+  ['odemeAdInput', 'odemeTutarInput', 'odemeGunInput'].forEach(id => { document.getElementById(id).value = ''; });
+  renderOdeme();
+  document.getElementById('odemeAdInput').focus();
+}
+function odemeGuncelle(id){
+  const inp = document.getElementById('odeme-edit-' + id);
+  const t = parseFloat(String(inp && inp.value).replace(',', '.'));
+  if(!(t > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  const list = odemeYukle(), o = list.find(x => x.id === id);
+  if(!o) return;
+  o.tutar = t;
+  manuelListeKaydet(ODEME_KEY, list);
+  renderOdeme();
+}
+function odemeSil(id){
+  showConfirmModal('Bu düzenli ödemeyi silmek istediğine emin misin?', () => { manuelListeKaydet(ODEME_KEY, odemeYukle().filter(x => x.id !== id)); renderOdeme(); });
+}
+function odemeKartGun(kartId, deger){
+  const g = parseInt(deger, 10);
+  const list = odemeYukle().filter(x => x.id !== 'kart-' + kartId);
+  if(g >= 1 && g <= 31) list.push({ id: 'kart-' + kartId, tur: 'kart', kartId, gun: g });
+  manuelListeKaydet(ODEME_KEY, list);
+  renderOdeme();
+}
+// Bay Piyasa bağlamı için
+function odemeOzetMetni(){
+  const b = new Date(); b.setHours(0, 0, 0, 0);
+  const l = odemeOlaylari(b, new Date(b.getFullYear(), b.getMonth(), b.getDate() + 30));
+  const abon = odemeYukle().filter(o => o.tur === 'duzenli' && o.kat === 'abonelik');
+  if(!l.length && !abon.length) return null;
+  return 'Önümüzdeki 30 günün ödemeleri: ' + (l.map(x => x.tarih.split('-').reverse().slice(0, 2).join('.') + ' ' + x.ad + (x.tutar != null ? ' ₺' + fmtNumber(x.tutar, 0) : ' (ekstreye göre)')).join(', ') || 'yok')
+    + (abon.length ? ' | Abonelikler (yıllık ₺' + fmtNumber(abon.reduce((t, o) => t + yillikTutar(o), 0), 0) + '): ' + abon.map(o => o.ad + ' ₺' + fmtNumber(o.tutar, 0) + (o.periyot === 'yillik' ? '/yıl' : '/ay')).join(', ') : '');
+}
+
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
   gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
@@ -7941,6 +8279,7 @@ const TAB_BASLIKLARI = {
   harcama:  ['Harcama İstatistikleri', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
+  odeme:    ['Ödeme Takvimi', 'Taksitler, kart son ödeme günleri, faturalar ve abonelikler tek takvimde'],
   nakitakis: ['Nakit Akışı', 'Gelir − harcama − taksit: ay sonunda ne kalıyor, ileride ne kalacak'],
   ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir'],
 };
@@ -7962,6 +8301,7 @@ function switchTab(tabId){
   if(tabId === 'butce') renderButce();
   if(tabId === 'nakitakis') renderNakitAkis();
   if(tabId === 'borcplan') renderBorcPlan();
+  if(tabId === 'odeme') renderOdeme();
   window.scrollTo(0, 0);
 }
 
@@ -7974,6 +8314,8 @@ renderVarlik();
 yatirimTurDegisti();
 renderYatirim();
 renderHarcama();
+odemeSeritGuncelle();
+setInterval(odemeSeritGuncelle, 3600000);   // gün dönünce şerit tazelensin
 setTimeout(aylikKurlariGuncelle, 8000);   // açılıştaki fiyat turunu beklemeden, ama onunla yarışmadan
 if(location.protocol === 'file:'){
   document.getElementById('fileWarning').style.display = 'block';

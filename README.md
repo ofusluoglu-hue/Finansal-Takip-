@@ -16,6 +16,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 | **Harcama İstatistikleri** | Tek tek harcama kaydı ya da aylık kategori toplamı; 9 kategori (market, akaryakıt, kişisel, fatura ve aidat, ev giderleri, yeme-içme ve eğlence, sağlık, eğitim, diğer); aylık grafik, kategori dağılımı, aylık tablo, yıllık ve aylık ortalamalar |
 | **Bütçe** | Kategori başına aylık sınır; son 6 ayın medyanından tek tıkla önerilen bütçe; ayın harcaması, kalan/aşım, bütçeyi aşan kategoriler; son 12 ayın bütçeye uyum ısı tablosu |
 | **Nakit Akışı** | Düzenli (maaş, kira) ve tek seferlik gelirler; gelir − harcama − kredi taksidi = ay sonu kalan ve tasarruf oranı; son 6 ay ve önümüzdeki 11 ayın tahmini grafiği; kredilerin bittiği ay ve sonrasında açılan pay |
+| **Ödeme Takvimi** | Kredi taksitleri (ödeme planından), kart son ödeme günleri, fatura/kira/sigorta ve abonelikler tek takvimde; 45 günlük yaklaşan ödemeler, aylık takvim, abonelik maliyetleri; 3 gün içinde ödeme varsa Piyasa Özeti'nde uyarı şeridi |
 | **Borç Kapatma Planı** | Ayda ek ödeme ve bugün tek seferlik ödemeyle borçların hangi sırayla ve ne zaman biteceği; Çığ (önce en yüksek faiz) ile Kartopu (önce en küçük borç) karşılaştırması, ödenecek faiz, borç azalış grafiği; faiz işleyen kartlar isteğe bağlı plana dahil |
 | **Portföy İstatistikleri** | Genel puan: portföy yaşı, çeşitlendirme, borç karşılama, döviz koruması |
 | **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması) |
