@@ -1837,6 +1837,11 @@
   .harcama-tablo tfoot td:first-child{background:#161c25;}
   .harcama-tablo tfoot tr.karsilik td{font-weight:600;color:var(--muted);font-size:11.5px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
+  /* Net Varlık Geçmişi */
+  .ng-grafik svg{height:210px;}
+  .ng-grafik{min-height:210px;}
+  .ng-grafik .hc-eksen{fill:var(--muted-2);font-size:10.5px;font-family:inherit;}
+  #ngAylik td, #ngAylik th{white-space:nowrap;font-variant-numeric:tabular-nums;}
   /* Ödeme Takvimi */
   .odeme-serit{display:none;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(231,168,59,.08);border:1px solid rgba(231,168,59,.35);border-radius:10px;padding:9px 14px;margin-bottom:12px;font-size:12.5px;color:var(--text);cursor:pointer;}
   .odeme-serit:hover{border-color:var(--amber);}
@@ -2011,6 +2016,10 @@
         <span data-kisa="Plan">Borç Kapatma Planı</span>
       </div>
       <div class="nav-grup">İstatistikler</div>
+      <div class="nav-item" data-tab="netgecmis" onclick="switchTab('netgecmis')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 3 8-8"/><path d="M3 21h18"/><circle cx="20" cy="7" r="1.5"/></svg>
+        <span data-kisa="Geçmiş">Net Varlık Geçmişi</span>
+      </div>
       <div class="nav-item" data-tab="istatistik" onclick="switchTab('istatistik')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
         <span data-kisa="Portföy">Portföy İstatistikleri</span>
@@ -2687,6 +2696,60 @@
     <div class="footnote"><b>Not:</b> Kalan = gelir − harcama − kredi taksitleri. Harcamalar Harcama İstatistikleri'nden gelir; kartla yapılan harcamalar zaten orada olduğu için kart ödemeleri ayrıca gider sayılmaz. Taksitler kredilerin ödeme planından hesaplanır (anapara farkı + iki taksit arasında işleyen faiz + KKDF + BSMV). Süren ve gelecek aylarda harcama, girilen tutar tahminden küçükse tahminle tamamlanır: bütçe koyduysan bütçe toplamı, yoksa son 6 ayın medyanı. Düzenli gelirde ✎ ile girilen yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır; 0 yazarsan gelir bu aydan itibaren biter. Tasarruf oranı: <span style="color:var(--up);">%20 ve üstü</span> · <span style="color:var(--amber);">%0–20</span> · <span style="color:var(--down);">eksi</span>. KMH faizi nakit çıkışı değil borca eklendiği için burada sayılmaz (Borçlarım'da görünür).</div>
   </div>
   <!-- ================= /TAB: NAKİT AKIŞI ================= -->
+
+  <!-- ================= TAB: NET VARLIK GEÇMİŞİ ================= -->
+  <div class="tab-panel" id="tab-netgecmis">
+    <div class="page-head"><h1>Net Varlık Geçmişi</h1></div>
+
+    <div class="ozet-grid k4">
+      <div class="ozet-kart ton yesil">
+        <div class="ozet-etiket">Net varlık · bugün</div>
+        <div class="ozet-deger" id="ngNet">—</div>
+        <div class="ozet-alt" id="ngNetAlt"></div>
+        <div class="card-seanslar" id="ngNetDetay"></div>
+      </div>
+      <div class="ozet-kart mavi" id="ng7Kart">
+        <div class="ozet-etiket">7 gün</div>
+        <div class="ozet-deger" id="ng7">—</div>
+        <div class="ozet-alt" id="ng7Alt"></div>
+        <div class="card-seanslar" id="ng7Detay"></div>
+      </div>
+      <div class="ozet-kart mavi" id="ng30Kart">
+        <div class="ozet-etiket">30 gün</div>
+        <div class="ozet-deger" id="ng30">—</div>
+        <div class="ozet-alt" id="ng30Alt"></div>
+        <div class="card-seanslar" id="ng30Detay"></div>
+      </div>
+      <div class="ozet-kart mor">
+        <div class="ozet-etiket">Başlangıçtan beri</div>
+        <div class="ozet-deger" id="ngBas">—</div>
+        <div class="ozet-alt" id="ngBasAlt"></div>
+        <div class="card-seanslar" id="ngBasDetay"></div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas sarmal">
+        <span class="bolum-baslik">Net varlık</span>
+        <div class="period-toggle" id="ngAraliklar" style="margin-left:auto;">
+          <button class="period-btn" data-gun="30" onclick="netAralikSec(30)">30 gün</button>
+          <button class="period-btn" data-gun="90" onclick="netAralikSec(90)">90 gün</button>
+          <button class="period-btn" data-gun="365" onclick="netAralikSec(365)">1 yıl</button>
+          <button class="period-btn" data-gun="0" onclick="netAralikSec(0)">Tümü</button>
+        </div>
+      </div>
+      <div class="harcama-grafik ng-grafik" id="ngGrafik"></div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Aylık özet</span><span class="bolum-toplam ozet-soluk" style="font-size:12px;">her ayın son kaydı</span></div>
+      <div class="ist-tablo-kap"><table class="ist-tablo" id="ngAylik"></table></div>
+      <div style="height:8px;"></div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Net varlık = varlıklar + yatırımlar − borçlar (Finansal Durumum'daki hesabın aynısı). Panel açık olduğu her gün, fiyatlar yenilendikten sonra bir kayıt alınır; gün içinde değer anlamlı değişirse en fazla yarım saatte bir güncellenir. Panelin açılmadığı günler için kayıt yoktur, çizgi komşu günleri birleştirir. Geçmiş geriye dönük tahmin edilmez; kayıt ilk açılış gününden başlar. Dolar karşılığı her günün kendi kuruyla hesaplanır. Kayıtlar hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+  </div>
+  <!-- ================= /TAB: NET VARLIK GEÇMİŞİ ================= -->
 
   <!-- ================= TAB: ÖDEME TAKVİMİ ================= -->
   <div class="tab-panel" id="tab-odeme">
@@ -3877,6 +3940,7 @@ async function refreshAll(){
   }finally{
     _refreshInProgress = false;
   }
+  netGecmisKaydet();   // fiyat turu bitti: günün net varlık kaydı
 }
 
 function manualRefresh(){
@@ -4773,6 +4837,7 @@ function bpSnapshotOlustur(paylas, haber){
     try{ const n = nakitAkisOzetMetni(); if(n) s.push(n); }catch(e){ /* nakit akışı özeti eklenemezse bağlam yine gider */ }
     try{ const b2 = borcPlanOzetMetni(); if(b2) s.push(b2); }catch(e){ /* plan özeti eklenemezse bağlam yine gider */ }
     try{ const o = odemeOzetMetni(); if(o) s.push(o); }catch(e){ /* ödeme özeti eklenemezse bağlam yine gider */ }
+    try{ const g = netGecmisOzetMetni(); if(g) s.push(g); }catch(e){ /* geçmiş özeti eklenemezse bağlam yine gider */ }
     s.push('Net değer (Varlıklar + Yatırımlar − Borç): ₺' + fmtNumber(vToplam + yToplam - borc, 0)
       + (usdtry ? ' (≈ $' + fmtNumber((vToplam + yToplam - borc) / usdtry, 0) + ')' : ''));
     if(borc > 0) s.push('Yatırım / Borç oranı: %' + fmtNumber(yToplam / borc * 100, 1));
@@ -7272,6 +7337,7 @@ window.addEventListener('resize', () => {
     const s = document.getElementById('tab-harcama'); if(s && s.classList.contains('active')) harcamaGrafikCiz(harcamaTablosu(_harcamaYil));
     const n = document.getElementById('tab-nakitakis'); if(n && n.classList.contains('active')) renderNakitAkis();
     const bp = document.getElementById('tab-borcplan'); if(bp && bp.classList.contains('active')) renderBorcPlan();
+    const ng = document.getElementById('tab-netgecmis'); if(ng && ng.classList.contains('active')) renderNetGecmis();
   }, 200);
 });
 
@@ -8269,6 +8335,170 @@ function odemeOzetMetni(){
     + (abon.length ? ' | Abonelikler (yıllık ₺' + fmtNumber(abon.reduce((t, o) => t + yillikTutar(o), 0), 0) + '): ' + abon.map(o => o.ad + ' ₺' + fmtNumber(o.tutar, 0) + (o.periyot === 'yillik' ? '/yıl' : '/ay')).join(', ') : '');
 }
 
+// ---------- Net Varlık Geçmişi: her gün bir kayıt (ft_net_gecmis_v1: [{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, t }]) ----------
+// Geçmiş geriye dönük uydurulmaz; kayıt panelin açık olduğu günlerde, fiyat turu bittikten sonra alınır.
+const NET_GECMIS_KEY = 'ft_net_gecmis_v1';
+let _netAralik = 90;   // grafikte gösterilen gün (0: tümü)
+function netGecmisYukle(){ return manuelListeYukle(NET_GECMIS_KEY).filter(x => x && /^\d{4}-\d\d-\d\d$/.test(x.id)).sort((a, b) => a.id.localeCompare(b.id)); }
+// Finansal Durumum'daki hesabın aynısı
+function netDurum(){
+  const varlik = manuelListeYukle(VARLIK_KEY).reduce((s, x) => s + (Number(x.deger) || 0), 0);
+  const yatirim = _toplamYatirimTL || 0;
+  const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
+  return { varlik, yatirim, borc, net: varlik + yatirim - borc };
+}
+function netGecmisKaydet(){
+  try{
+    if(!_senkronHazir) return;                                                          // sunucudaki geçmiş gelmeden yazma
+    if(manuelListeYukle('ft_yatirimlar_v1').length && !(_toplamYatirimTL > 0)) return;   // yatırım değeri henüz hesaplanmadı
+    const d = netDurum();
+    if(!(d.varlik || d.yatirim || d.borc)) return;
+    const id = bugunISO(), list = manuelListeYukle(NET_GECMIS_KEY);
+    const kayit = { id, net: Math.round(d.net), varlik: Math.round(d.varlik), yatirim: Math.round(d.yatirim), borc: Math.round(d.borc), usd: _fxRates.USD ? Math.round(_fxRates.USD * 10000) / 10000 : null, t: Date.now() };
+    const i = list.findIndex(x => x.id === id);
+    if(i >= 0){
+      const e = list[i];
+      // Gün içinde en fazla yarım saatte bir ve yalnızca anlamlı değişimde güncellenir (her fiyat turunda senkron yazılmasın)
+      if(Date.now() - (e.t || 0) < 30 * 60000 || Math.abs(kayit.net - e.net) < Math.max(100, Math.abs(e.net) * 0.001)) return;
+      list[i] = kayit;
+    } else list.push(kayit);
+    manuelListeKaydet(NET_GECMIS_KEY, list.sort((a, b) => a.id.localeCompare(b.id)).slice(-3650));
+    const s = document.getElementById('tab-netgecmis');
+    if(s && s.classList.contains('active')) renderNetGecmis();
+  }catch(e){ /* geçmiş kaydı başarısız olursa bir sonraki turda tekrar denenir */ }
+}
+function netDegisim(list, gun){
+  if(!list.length) return null;
+  const son = list[list.length - 1];
+  const hedef = new Date(son.id + 'T00:00:00'); hedef.setDate(hedef.getDate() - gun);
+  const hS = isoGun(hedef);
+  // hedef güne eşit ya da ondan önceki en yakın kayıt
+  let ref = null;
+  for(const x of list){ if(x.id <= hS) ref = x; else break; }
+  if(!ref) return null;
+  return { fark: son.net - ref.net, oran: ref.net ? (son.net - ref.net) / Math.abs(ref.net) : null, ref };
+}
+function isaretliTL(v){ return (v > 0 ? '+' : v < 0 ? '−' : '') + '₺' + fmtNumber(Math.abs(v), 0); }
+
+function renderNetGecmis(){
+  const list = netGecmisYukle(), d = netDurum();
+  const son = list[list.length - 1];
+
+  // ---- 1) Bugün
+  const netEl = document.getElementById('ngNet');
+  if(netEl){ netEl.textContent = (d.net < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(d.net), 0); netEl.style.color = d.net < 0 ? 'var(--down)' : 'var(--up)'; }
+  istYaz('ngNetAlt', _fxRates.USD ? '$' + fmtNumber(d.net / _fxRates.USD, 0) : '');
+  ozetDetayYaz('ngNetDetay', [['Varlık + yatırım', '₺' + fmtNumber(d.varlik + d.yatirim, 0)], ['Borç', '₺' + fmtNumber(d.borc, 0)]]);
+  // ---- 2–4) Değişimler
+  const yaz = (id, gun, etiket) => {
+    const c = netDegisim(list, gun), el = document.getElementById(id);
+    const kart = document.getElementById(id + 'Kart');
+    if(!el) return;
+    if(!c){ el.textContent = '—'; el.style.color = ''; istYaz(id + 'Alt', list.length ? 'kayıt ' + gun + ' günden kısa' : 'henüz kayıt yok'); ozetDetayYaz(id + 'Detay', []); if(kart) kart.className = 'ozet-kart mavi'; return; }
+    el.textContent = isaretliTL(c.fark); el.style.color = c.fark >= 0 ? 'var(--up)' : 'var(--down)';
+    istYaz(id + 'Alt', (c.oran != null ? (c.fark >= 0 ? '+' : '−') + '%' + fmtNumber(Math.abs(c.oran) * 100, 1) + ' · ' : '') + etiket);
+    const s2 = list[list.length - 1];
+    ozetDetayYaz(id + 'Detay', [['Yatırım', isaretliTL(s2.yatirim - c.ref.yatirim)], ['Borç', isaretliTL(s2.borc - c.ref.borc)]]);
+    if(kart) kart.className = 'ozet-kart ' + (c.fark >= 0 ? 'yesil' : 'kirmizi');
+  };
+  yaz('ng7', 7, 'son 7 gün');
+  yaz('ng30', 30, 'son 30 gün');
+  const ilk = list[0];
+  const basEl = document.getElementById('ngBas');
+  if(basEl){
+    if(list.length >= 2){
+      const f = son.net - ilk.net;
+      basEl.textContent = isaretliTL(f); basEl.style.color = f >= 0 ? 'var(--up)' : 'var(--down)';
+      istYaz('ngBasAlt', 'başlangıç: ' + new Date(ilk.id + 'T00:00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }));
+      ozetDetayYaz('ngBasDetay', [['Kayıtlı gün', list.length + ''], ilk.usd && son.usd ? ['Dolar bazında', (son.net / son.usd - ilk.net / ilk.usd >= 0 ? '+$' : '−$') + fmtNumber(Math.abs(son.net / son.usd - ilk.net / ilk.usd), 0)] : null]);
+    } else {
+      basEl.textContent = '—'; basEl.style.color = '';
+      istYaz('ngBasAlt', list.length ? 'kayıt bugün başladı' : 'kayıt fiyatlar gelince başlar');
+      ozetDetayYaz('ngBasDetay', []);
+    }
+  }
+
+  // ---- Grafik
+  const sekme = document.getElementById('tab-netgecmis');
+  if(sekme && sekme.classList.contains('active')) netGrafikCiz(list);
+
+  // ---- Aylık özet: her ayın son kaydı
+  const ayl = document.getElementById('ngAylik');
+  if(ayl){
+    const aySon = {};
+    list.forEach(x => { aySon[x.id.slice(0, 7)] = x; });
+    const aylar = Object.keys(aySon).sort().reverse();
+    ayl.innerHTML = aylar.length ? `<thead><tr><th>Ay</th><th class="sag">Net varlık</th><th class="sag">Değişim</th><th class="sag">Varlık</th><th class="sag">Yatırım</th><th class="sag">Borç</th><th class="sag">Dolar</th></tr></thead><tbody>${aylar.map((k, i) => {
+      const x = aySon[k], onceki = aySon[aylar[i + 1]];
+      const f = onceki ? x.net - onceki.net : null;
+      return `<tr><td>${ayAdi(k)}<span class="ozet-soluk" style="font-size:11px;"> · ${+x.id.slice(8)}. gün</span></td><td class="sag"><b>₺${fmtNumber(x.net, 0)}</b></td>
+        <td class="sag" style="color:${f == null ? 'var(--muted)' : f >= 0 ? 'var(--up)' : 'var(--down)'};">${f == null ? '—' : isaretliTL(f)}</td>
+        <td class="sag">₺${fmtNumber(x.varlik, 0)}</td><td class="sag">₺${fmtNumber(x.yatirim, 0)}</td><td class="sag" style="color:#FF8A8A;">₺${fmtNumber(x.borc, 0)}</td>
+        <td class="sag" style="color:var(--muted);">${x.usd ? '$' + fmtNumber(x.net / x.usd, 0) : '—'}</td></tr>`;
+    }).join('')}</tbody>` : '<tbody><tr><td style="color:var(--muted-2);white-space:normal;">Henüz kayıt yok.</td></tr></tbody>';
+  }
+}
+
+function netGrafikCiz(list){
+  const kap = document.getElementById('ngGrafik');
+  if(!kap) return;
+  document.querySelectorAll('#ngAraliklar button').forEach(b => b.classList.toggle('active', +b.dataset.gun === _netAralik));
+  let l = list;
+  if(_netAralik && list.length){ const s = new Date(); s.setDate(s.getDate() - _netAralik); const sS = isoGun(s); l = list.filter(x => x.id >= sS); }
+  if(l.length < 2){
+    kap.innerHTML = `<div class="harcama-bos" style="min-height:200px;flex-direction:column;gap:6px;"><b style="color:var(--text);font-size:13px;">${list.length ? 'Kayıt başladı — ilk nokta ' + new Date(list[0].id + 'T00:00:00').toLocaleDateString('tr-TR') : 'Kayıt, fiyatlar gelince başlar'}</b><span>Panel açık olduğu her gün net varlığın bir kez kaydedilir; grafik ikinci günden itibaren çizilir. Geçmiş geriye dönük tahmin edilmez.</span></div>`;
+    return;
+  }
+  const W = Math.max(kap.clientWidth || 0, 300), H = 210, PL = 60, PR = 12, PT = 12, PB = 24;
+  const t0 = new Date(l[0].id + 'T00:00:00').getTime(), t1 = new Date(l[l.length - 1].id + 'T00:00:00').getTime();
+  const dgr = l.map(x => x.net), mn = Math.min(...dgr), mx = Math.max(...dgr);
+  const pay = (mx - mn) * 0.15 || Math.abs(mx) * 0.02 || 1;
+  const adim = guzelAdim((mx - mn + 2 * pay) / 4);
+  const alt = Math.floor((mn - pay) / adim) * adim, ust = Math.ceil((mx + pay) / adim) * adim;
+  const x = id => PL + ((new Date(id + 'T00:00:00').getTime() - t0) / Math.max(1, t1 - t0)) * (W - PL - PR);
+  const y = v => PT + (1 - (v - alt) / (ust - alt)) * (H - PT - PB);
+  let svg = '';
+  for(let v = alt; v <= ust + 1e-9; v += adim){
+    svg += `<line x1="${PL}" x2="${W - PR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="#222a35"/>`;
+    svg += `<text class="hc-eksen" x="${PL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end">${kisaTL(Math.abs(v)).replace('₺', v < 0 ? '−₺' : '₺')}</text>`;
+  }
+  // Tarih etiketleri: en fazla 6
+  const n = Math.min(6, l.length), secilen = new Set(Array.from({ length: n }, (_, i) => Math.round(i * (l.length - 1) / Math.max(1, n - 1))));
+  [...secilen].forEach(i => { const dd = new Date(l[i].id + 'T00:00:00'); svg += `<text class="hc-eksen" x="${x(l[i].id).toFixed(1)}" y="${H - 7}" text-anchor="${i === 0 ? 'start' : i === l.length - 1 ? 'end' : 'middle'}">${dd.getDate()} ${AY_KISA[dd.getMonth()]}</text>`; });
+  const yol = l.map((p, i) => (i ? 'L' : 'M') + x(p.id).toFixed(1) + ',' + y(p.net).toFixed(1)).join(' ');
+  const artis = l[l.length - 1].net >= l[0].net, renk = artis ? 'var(--up)' : 'var(--down)';
+  svg += `<path d="${yol} L${x(l[l.length - 1].id).toFixed(1)},${H - PB} L${x(l[0].id).toFixed(1)},${H - PB} Z" fill="${artis ? 'rgba(51,192,124,.10)' : 'rgba(255,92,92,.10)'}"/>`;
+  svg += `<path d="${yol}" fill="none" stroke="${renk}" stroke-width="2" stroke-linejoin="round"/>`;
+  svg += `<circle cx="${x(l[l.length - 1].id).toFixed(1)}" cy="${y(l[l.length - 1].net).toFixed(1)}" r="3.5" fill="${renk}"/>`;
+  svg += `<line id="ngImlec" x1="0" x2="0" y1="${PT}" y2="${H - PB}" stroke="var(--muted-2)" stroke-dasharray="3 3" style="display:none;"/>`;
+  kap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Net varlık geçmişi">${svg}<rect x="${PL}" y="${PT}" width="${W - PL - PR}" height="${H - PT - PB}" fill="transparent" id="ngHedef"/></svg><div class="harcama-ipucu" id="ngIpucu"></div>`;
+  const hedef = document.getElementById('ngHedef'), ipucu = document.getElementById('ngIpucu'), imlec = document.getElementById('ngImlec');
+  const goster = e => {
+    const r = kap.querySelector('svg').getBoundingClientRect(), fx = (e.clientX - r.left) / r.width * W;
+    let en = l[0];
+    l.forEach(p => { if(Math.abs(x(p.id) - fx) < Math.abs(x(en.id) - fx)) en = p; });
+    imlec.setAttribute('x1', x(en.id)); imlec.setAttribute('x2', x(en.id)); imlec.style.display = '';
+    ipucu.textContent = '';
+    const b = document.createElement('b'); b.textContent = '₺' + fmtNumber(en.net, 0); ipucu.appendChild(b);
+    const t = document.createElement('div'); t.textContent = new Date(en.id + 'T00:00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }); ipucu.appendChild(t);
+    [['Varlık', en.varlik], ['Yatırım', en.yatirim], ['Borç', -en.borc]].forEach(([ad, v]) => { const s = document.createElement('div'); const a = document.createElement('span'); a.textContent = ad; const c = document.createElement('span'); c.textContent = (v < 0 ? '−₺' : '₺') + fmtNumber(Math.abs(v), 0); c.style.color = 'var(--text)'; s.append(a, c); ipucu.appendChild(s); });
+    ipucu.style.display = 'block';
+    const px = x(en.id) / W * r.width;
+    ipucu.style.left = Math.max(0, Math.min(px - ipucu.offsetWidth / 2, r.width - ipucu.offsetWidth)) + 'px'; ipucu.style.top = '0px';
+  };
+  hedef.addEventListener('pointermove', goster);
+  hedef.addEventListener('pointerleave', () => { ipucu.style.display = 'none'; imlec.style.display = 'none'; });
+}
+function netAralikSec(gun){ _netAralik = gun; renderNetGecmis(); }
+// Bay Piyasa bağlamı için
+function netGecmisOzetMetni(){
+  const list = netGecmisYukle();
+  if(list.length < 2) return null;
+  const c7 = netDegisim(list, 7), c30 = netDegisim(list, 30), ilk = list[0], son = list[list.length - 1];
+  return 'Net varlık geçmişi (' + list.length + ' kayıtlı gün, ' + ilk.id + ' başlangıç): başlangıçtan beri ' + isaretliTL(son.net - ilk.net)
+    + (c7 ? ', son 7 gün ' + isaretliTL(c7.fark) : '') + (c30 ? ', son 30 gün ' + isaretliTL(c30.fark) : '');
+}
+
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
   gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
@@ -8279,6 +8509,7 @@ const TAB_BASLIKLARI = {
   harcama:  ['Harcama İstatistikleri', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
+  netgecmis: ['Net Varlık Geçmişi', 'Net servetinin günden güne değişimi'],
   odeme:    ['Ödeme Takvimi', 'Taksitler, kart son ödeme günleri, faturalar ve abonelikler tek takvimde'],
   nakitakis: ['Nakit Akışı', 'Gelir − harcama − taksit: ay sonunda ne kalıyor, ileride ne kalacak'],
   ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir'],
@@ -8302,6 +8533,7 @@ function switchTab(tabId){
   if(tabId === 'nakitakis') renderNakitAkis();
   if(tabId === 'borcplan') renderBorcPlan();
   if(tabId === 'odeme') renderOdeme();
+  if(tabId === 'netgecmis') renderNetGecmis();
   window.scrollTo(0, 0);
 }
 

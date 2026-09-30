@@ -41,7 +41,8 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_gelirler_v1` | Gelirler: `{ id, tur:'duzenli', ad, tutar, baslangic, bitis }` ya da `{ id, tur:'tek', ad, tutar, ay }` (aylar `YYYY-MM`) |
 | `ft_borc_plan_v1` | Borç planı ayarları: `{ id:'ayar', ek, tek, strateji }` ve faiz işleyen kartlar `{ id:'kart-<kartId>', faizli, oran, asgari }` |
 | `ft_odemeler_v1` | Ödeme Takvimi: düzenli ödemeler `{ id:'o-…', tur:'duzenli', ad, tutar, gun, periyot:'aylik'\|'yillik', ay, kat }` ve kart son ödeme günleri `{ id:'kart-<kartId>', tur:'kart', kartId, gun }` |
-| `ft_hedefler_v1`, `ft_net_gecmis_v1`, `ft_raporlar_v1` | Sıradaki özellikler için ayrıldı (birikim hedefleri, net varlık geçmişi, aylık rapor); Worker'da izinli |
+| `ft_net_gecmis_v1` | Günlük net varlık kaydı `{ id:'YYYY-MM-DD', net, varlik, yatirim, borc, usd, t }` |
+| `ft_hedefler_v1`, `ft_raporlar_v1` | Sıradaki özellikler için ayrıldı (birikim hedefleri, net varlık geçmişi, aylık rapor); Worker'da izinli |
 
 Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
@@ -158,6 +159,14 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Grafik (`nakitGrafikCiz`): 6 geçmiş ay + bu ay + 11 gelecek ay; her ayda gelir çubuğu ve üst üste harcama + taksit; tahmin aylar soluk, tahmini harcama kesik çerçeveli. Bant 34 px'ten darsa etiketler 3 ayda bir. Bir aya tıklamak kartları o aya getirir.
 - Kartlar: seçili ayın geliri, gideri, kalanı (`.ton`, tasarruf oranına göre: <0 kırmızı, %0–20 sarı, ≥%20 yeşil) ve önümüzdeki 12 ayın taksit toplamı + kredilerin bittiği ay ve ardından açılan aylık pay.
 
+## 8f. Net Varlık Geçmişi
+
+- Kayıt (`netGecmisKaydet`): `refreshAll` fiyat turu bitince; `_senkronHazir` değilse ya da yatırım varken `_toplamYatirimTL` 0 ise yazmaz. Günde bir kayıt (id = tarih); aynı gün yalnızca 30 dakika geçmiş ve net en az ₺100 / %0,1 değişmişse güncellenir. En fazla 3650 gün tutulur.
+- `netDurum()` Finansal Durumum'un hesabıyla aynı: varlıklar + yatırımlar − (kredi + kart + KMH + elden).
+- Kartlar: bugünkü net (canlı) ve $ karşılığı; 7 ve 30 gün değişimi (hedef güne eşit ya da önceki en yakın kayda göre; yatırım ve borç katkısıyla); başlangıçtan beri (TL ve günün kuruyla $).
+- Grafik 30/90/365 gün/tümü; fareyle en yakın günün varlık/yatırım/borç dökümü. Aylık özet: her ayın son kaydı ve önceki aya göre değişim.
+- Geriye dönük doldurma yok: kayıt ilk açılış gününden başlar (RULES › Veri 5 istisnası).
+
 ## 8e. Ödeme Takvimi
 
 - Olaylar (`odemeOlaylari(bas, bit)`): kredi taksitleri (`krediTaksitleri`, "Taksit n/N"), kart son ödeme günleri (tutar yalnızca sıradaki ödemede = bugünkü kart borcu; sonrakiler "ekstreye göre"), düzenli ödemeler (aylık ya da yıllık ayında). Gün ayda yoksa son güne kayar (31 → 28 Şubat).
@@ -175,7 +184,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 ## 9. Arayüz
 
-- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama İstatistikleri, Bütçe, Nakit Akışı, Ödeme Takvimi) · **Planlama** (Borç Kapatma Planı) · **İstatistikler** (Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama İstatistikleri, Bütçe, Nakit Akışı, Ödeme Takvimi) · **Planlama** (Borç Kapatma Planı) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Asistan** (Bay Piyasa). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
 - Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
@@ -201,6 +210,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | Net Varlık Geçmişi: günlük otomatik kayıt, 7/30 gün ve başlangıçtan beri değişim, aralık seçmeli grafik, aylık özet |
 | 2026-09-30 | Ödeme Takvimi: taksitler, kart son ödeme günleri, düzenli ödemeler ve abonelikler; 45 günlük liste, aylık takvim, Piyasa Özeti'nde 3 günlük uyarı şeridi |
 | 2026-09-30 | Borç Kapatma Planı: ek/tek seferlik ödeme, Çığ ve Kartopu karşılaştırması, yalnız asgari senaryosu, borç azalış grafiği, kapatma sırası, faiz işleyen kart seçimi; menüye Planlama grubu |
 | 2026-09-30 | Nakit Akışı sayfası: gelirler (düzenli/tek seferlik, zam geçmişi korunur), kredi taksitleri ödeme planından, ay sonu kalan ve tasarruf oranı, 18 aylık gerçekleşen + tahmin grafiği, kredilerin bitişi |
