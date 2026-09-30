@@ -1795,7 +1795,7 @@
   .ist-etiket{font-size:10.5px;font-weight:600;letter-spacing:.03em;color:var(--muted);}
   .ist-deger{font-size:20px;font-weight:700;margin-top:4px;}
   .section-title{font-size:15px;}
-  /* ---- Harcama İstatistikleri ---- */
+  /* ---- Harcama Takibim ---- */
   .harcama-ikili{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;}
   .harcama-ikili > .bolum{margin-bottom:14px;}
   .harcama-grafik{position:relative;min-height:165px;}
@@ -2034,7 +2034,7 @@
       <div class="nav-grup">Harcama ve bütçe</div>
       <div class="nav-item" data-tab="harcama" data-alt="1" onclick="switchTab('harcama')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>
-        <span data-kisa="Harcama">Harcama İstatistikleri</span>
+        <span data-kisa="Harcama">Harcama Takibim</span>
       </div>
       <div class="nav-item" data-tab="butce" onclick="switchTab('butce')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6.4 6.4"/></svg>
@@ -2536,7 +2536,7 @@
 
   <!-- ================= TAB: HARCAMA İSTATİSTİKLERİ ================= -->
   <div class="tab-panel" id="tab-harcama">
-    <div class="page-head"><h1>Harcama İstatistikleri</h1></div>
+    <div class="page-head"><h1>Harcama Takibim</h1></div>
 
     <div class="ozet-grid k4">
       <div class="ozet-kart sari" id="harcamaBuAyKart">
@@ -2672,7 +2672,7 @@
       <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Her hücre o ayın harcamasının bugünkü bütçeye oranıdır: <span style="color:var(--up);">%90'a kadar</span> · <span style="color:var(--amber);">%90–100</span> · <span style="color:var(--down);">bütçe aşıldı</span>. Ay başlığına tıklarsan üstte o ay gösterilir.</div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Her harcama kategorisine aylık bir üst sınır koyarsın; harcamalar Harcama İstatistikleri'nde girdiğin aylık tutarlardan otomatik gelir. Önerilen bütçe, kategorinin son 6 tamamlanmış aydaki <b>medyanıdır</b> (ortadaki değer; tek seferlik büyük bir ay öneriyi şişirmesin diye ortalama kullanılmaz), 500 TL'ye yukarı yuvarlanır. Süren ayda çubuktaki ince çizgi ayın ne kadarının geçtiğini gösterir; harcama bu çizginin belirgin önündeyse kategori sarı yanar. Toplam, bütçesi olmayan kategoriler ve kategorisiz (2025) tutarlar dahil ayın bütün harcamasıdır. Geçmiş aylar da bugünkü bütçeyle karşılaştırılır. Bütçeler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Her harcama kategorisine aylık bir üst sınır koyarsın; harcamalar Harcama Takibim'de girdiğin aylık tutarlardan otomatik gelir. Önerilen bütçe, kategorinin son 6 tamamlanmış aydaki <b>medyanıdır</b> (ortadaki değer; tek seferlik büyük bir ay öneriyi şişirmesin diye ortalama kullanılmaz), 500 TL'ye yukarı yuvarlanır. Süren ayda çubuktaki ince çizgi ayın ne kadarının geçtiğini gösterir; harcama bu çizginin belirgin önündeyse kategori sarı yanar. Toplam, bütçesi olmayan kategoriler ve kategorisiz (2025) tutarlar dahil ayın bütün harcamasıdır. Geçmiş aylar da bugünkü bütçeyle karşılaştırılır. Bütçeler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: BÜTÇE ================= -->
 
@@ -2739,7 +2739,7 @@
       <div id="gelirListe"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Kalan = gelir − harcama − kredi taksitleri. Harcamalar Harcama İstatistikleri'nden gelir; kartla yapılan harcamalar zaten orada olduğu için kart ödemeleri ayrıca gider sayılmaz. Taksitler kredilerin ödeme planından hesaplanır (anapara farkı + iki taksit arasında işleyen faiz + KKDF + BSMV). Süren ve gelecek aylarda harcama, girilen tutar tahminden küçükse tahminle tamamlanır: bütçe koyduysan bütçe toplamı, yoksa son 6 ayın medyanı. Düzenli gelirde ✎ ile girilen yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır; 0 yazarsan gelir bu aydan itibaren biter. Tasarruf oranı: <span style="color:var(--up);">%20 ve üstü</span> · <span style="color:var(--amber);">%0–20</span> · <span style="color:var(--down);">eksi</span>. KMH faizi nakit çıkışı değil borca eklendiği için burada sayılmaz (Borçlarım'da görünür).</div>
+    <div class="footnote"><b>Not:</b> Kalan = gelir − harcama − kredi taksitleri. Harcamalar Harcama Takibim'den gelir; kartla yapılan harcamalar zaten orada olduğu için kart ödemeleri ayrıca gider sayılmaz. Taksitler kredilerin ödeme planından hesaplanır (anapara farkı + iki taksit arasında işleyen faiz + KKDF + BSMV). Süren ve gelecek aylarda harcama, girilen tutar tahminden küçükse tahminle tamamlanır: bütçe koyduysan bütçe toplamı, yoksa son 6 ayın medyanı. Düzenli gelirde ✎ ile girilen yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır; 0 yazarsan gelir bu aydan itibaren biter. Tasarruf oranı: <span style="color:var(--up);">%20 ve üstü</span> · <span style="color:var(--amber);">%0–20</span> · <span style="color:var(--down);">eksi</span>. KMH faizi nakit çıkışı değil borca eklendiği için burada sayılmaz (Borçlarım'da görünür).</div>
   </div>
   <!-- ================= /TAB: NAKİT AKIŞI ================= -->
 
@@ -2940,7 +2940,7 @@
       <div style="height:8px;"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Rapor seçilen ayın verisinden otomatik hazırlanır: harcamalar Harcama İstatistikleri'nden, bütçe Bütçe'den, gelir ve taksitler Nakit Akışı'ndan, kredi anaparasındaki azalış ödeme planlarından, net varlık değişimi (kayıt varsa) Net Varlık Geçmişi'nden. "Öne çıkanlar" kurallarla yazılır (önceki aya ve son 6 ayın ortalamasına göre belirgin değişimler) ve ücretsizdir. Bay Piyasa yorumu isteğe bağlıdır: yalnızca rakamlar Anthropic API'sine gönderilir, Bay Piyasa'nın günlük limiti ve maliyet sayacı geçerlidir; yorum o ay için kaydedilir ve tüm cihazlarında görünür. Varsayılan ay, harcaması girilmiş son tamamlanmış aydır.</div>
+    <div class="footnote"><b>Not:</b> Rapor seçilen ayın verisinden otomatik hazırlanır: harcamalar Harcama Takibim'den, bütçe Bütçe'den, gelir ve taksitler Nakit Akışı'ndan, kredi anaparasındaki azalış ödeme planlarından, net varlık değişimi (kayıt varsa) Net Varlık Geçmişi'nden. "Öne çıkanlar" kurallarla yazılır (önceki aya ve son 6 ayın ortalamasına göre belirgin değişimler) ve ücretsizdir. Bay Piyasa yorumu isteğe bağlıdır: yalnızca rakamlar Anthropic API'sine gönderilir, Bay Piyasa'nın günlük limiti ve maliyet sayacı geçerlidir; yorum o ay için kaydedilir ve tüm cihazlarında görünür. Varsayılan ay, harcaması girilmiş son tamamlanmış aydır.</div>
   </div>
   <!-- ================= /TAB: AYLIK RAPOR ================= -->
 
@@ -7069,7 +7069,7 @@ async function onLoanExcelSelected(event){
   }
 }
 
-// ---------- Harcama İstatistikleri ----------
+// ---------- Harcama Takibim ----------
 // Kayıtlar tek bir dizide tutulur (cihazlar arası senkronda id'ye göre birleşebilsin):
 //   { id:'h-…', tur:'kayit', tarih:'YYYY-MM-DD', kat, tutar, not }  — tek harcama
 //   { id:'ay-YYYY-MM-kat', tur:'aylik', ay:'YYYY-MM', kat, tutar }  — o ayın kategori toplamı (elle; kayıtların yerine geçer)
@@ -9011,7 +9011,7 @@ const TAB_BASLIKLARI = {
   yatirim:  ['Yatırımlarım', 'Canlı fiyatlarla portföy değeri ve dağılımı'],
   istatistik: ['Portföy İstatistikleri', 'Portföyünü 100 üzerinden puanlayan göstergeler'],
   borclar:  ['Borçlarım', 'Krediler, kartlar, KMH ve elden borçlar — canlı toplam'],
-  harcama:  ['Harcama İstatistikleri', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
+  harcama:  ['Harcama Takibim', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
   rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],

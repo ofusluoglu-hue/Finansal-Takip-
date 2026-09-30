@@ -128,7 +128,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Borç toplamları, özet kartı ve Bay Piyasa bağlamı canlı değeri kullanır; her fiyat turunda yeniden hesaplanır.
 - Elden nakit borçlarda satır ışığı: dövizli (USD/EUR) kalemin TL karşılığı **güncel kurla** hesaplanıyorsa yeşil; TL kalemde veya kur alınamayıp son bilinen kur kullanılıyorsa son elle güncelleme bugünse yeşil, değilse kırmızı. Özet kartı da en az bir dövizli kalem canlıysa yeşil yanar ve "güncel kurla" yazar.
 
-## 8. Harcama İstatistikleri
+## 8. Harcama Takibim
 
 - Veri `ft_harcamalar_v1` dizisinde (senkronda id'ye göre birleşir):
   - `{ id:'h-…', tur:'kayit', tarih:'YYYY-MM-01', kat, tutar, not }` — harcama kalemi. Harcamalar **ay bazında tek kalem** girilir (ör. Eylül · Market · ₺32.000): formda gün yerine ay seçilir (son 18 ay; ayın ilk 10 gününde varsayılan önceki ay), listede "Eylül 2026" görünür, aynı ay ve kategorideki kalemler toplanır, aynı ayda en son eklenen üstte
@@ -198,11 +198,11 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 ## 9. Arayüz
 
-- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama İstatistikleri, Bütçe, Nakit Akışı, Ödeme Takvimi) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Asistan** (Bay Piyasa, Aylık Rapor). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama Takibim, Bütçe, Nakit Akışı, Ödeme Takvimi) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Asistan** (Bay Piyasa, Aylık Rapor). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
 - Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
-- **Ortak tasarım dili** (Finansal Durumum, Yatırımlarım, Borçlarım, Harcama İstatistikleri, Portföy İstatistikleri — Piyasa Özeti kartlarıyla aynı). Her sayfa üstte özet kartları, altında başlığında toplamı/puanı olan bölümler ve sonda tek Not ile kurulur; tablolar `.ist-tablo`, dağılım çubukları `istHbar`, başlıktaki seçiciler `.bolum-secim`:
+- **Ortak tasarım dili** (Finansal Durumum, Yatırımlarım, Borçlarım, Harcama Takibim, Portföy İstatistikleri — Piyasa Özeti kartlarıyla aynı). Her sayfa üstte özet kartları, altında başlığında toplamı/puanı olan bölümler ve sonda tek Not ile kurulur; tablolar `.ist-tablo`, dağılım çubukları `istHbar`, başlıktaki seçiciler `.bolum-secim`:
   - Özet kartı `.ozet-kart` (renkli sol kenar: yeşil varlık, kırmızı borç, sarı oran; `.ozet-etiket`, `.ozet-deger`, `.ozet-alt`, çizgili detay satırları `.card-seanslar`), ızgara `.ozet-grid`.
   - Bölüm `.bolum`: başlık + bölüm toplamı + **+ Ekle** (`bolumFormAc`) ile açılan `.bolum-form`.
   - Liste satırı `satirHtml()`: LED, ad (`dil` ile büyük harf kuralı: ETF/kripto adları `en` → BITCOIN; Türkçe adlar sayfa dili `tr` → ALTIN, GÜMÜŞ), alt bilgi, tutar, ✎ (satır içi düzenleme) ve ✕ sil / ✓ kapattım. Düzenleme durumu `_duzen` ile saklanır; dakikalık yeniden çizimde açık kutu ve yazılan değer korunur.
@@ -224,6 +224,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | "Harcama İstatistikleri" sayfasının adı "Harcama Takibim" oldu (menü, başlık, notlar) |
 | 2026-09-30 | Aylık Rapor: ayın harcama/bütçe/nakit/borç/net varlık özeti, kurallı öne çıkanlar, kategori tablosu, kaydedilen Bay Piyasa yorumu, yazdır/PDF |
 | 2026-09-30 | Birikim Hedefleri: TL/$ hedefler, ayda gereken, plan çizgisi, elle ya da yatırıma bağlı birikim, Nakit Akışı kıyası |
 | 2026-09-30 | Net Varlık Geçmişi: günlük otomatik kayıt, 7/30 gün ve başlangıçtan beri değişim, aralık seçmeli grafik, aylık özet |
