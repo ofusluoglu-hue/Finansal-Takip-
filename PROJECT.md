@@ -112,6 +112,14 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - **İlk taksit henüz gelmediyse** borç, kullandırılan anaparadır (`orijinalAnapara`; yoksa ilk iki satırın farkından tahmin edilir). Faiz `kullandirimTarihi` biliniyorsa oradan işler. Kartta "İlk taksit GG.AA.YYYY" yazar.
 - İçe aktarma: PDF (Claude, `/extract-loan`) veya Excel ([kredi-odeme-plani-sablon.xlsx](kredi-odeme-plani-sablon.xlsx) şablonu). Excel tarihleri saat dilimi kaymasını önlemek için ham gün numarasından okunur; "Kalan Ana Para" sütunu ödenen anapara sanılmaz.
 
+## 7b. KMH (canlı faiz)
+
+- KMH kaydı: `{ id, ad, tutar, tarih, faizAylik?, anapara?, kkdf?, bsmv? }` (`ft_kmh_v1`). `tutar` + `tarih` son girilen borçtur (başlangıç noktası).
+- Faiz girilmişse güncel borç her gün kendiliğinden artar (`kmhCanli`): **günlük artış = anapara × (aylık faiz ÷ 30) × (1 + KKDF + BSMV)**, KKDF ve BSMV varsayılan %15. Faiz birikmiş faize değil **kullanılan anaparaya** işler; anapara girilmezse borcun tamamı kullanılır. Güncel borç = tutar + günlük artış × geçen takvim günü.
+- Doğrulama: Enpara, anapara ₺4.000, %4,25 → 4.000 × 0,0425/30 × 1,30 = 7,3667 ₺/gün; bankanın 29→30 Eylül'de gösterdiği 4.261,44 → 4.268,81 ile birebir.
+- Satırda ⚙ (`kmhAyarAc`): güncel borç, aylık faiz, anapara, KKDF, BSMV; canlı önizleme; kaydedince bugünkü borç yeni başlangıç noktası olur (ekstre kesiminde faiz anaparaya eklendiğinde kullanılır). ✎ yalnızca bugünkü borcu günceller.
+- Borç toplamları, özet kartı ve Bay Piyasa bağlamı canlı değeri kullanır; her fiyat turunda yeniden hesaplanır.
+
 ## 8. Harcama İstatistikleri
 
 - Veri `ft_harcamalar_v1` dizisinde (senkronda id'ye göre birleşir):
@@ -154,6 +162,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | KMH canlı faiz: aylık faiz + anapara ile borç her gün kendiliğinden artıyor (faiz + %15 KKDF + %15 BSMV, anaparaya işler); ⚙ ayar penceresi; formül bankanın gerçek rakamıyla doğrulandı |
 | 2026-09-30 | E-posta + şifre ile giriş ekranı (yeni tasarım, şifre göster/gizle, Türkçe doğrulama mesajları, e-posta hatırlama); Worker'da `LOGIN_USER` kontrolü, birleşik hata mesajı; gerçek Worker kodu yerelde (wrangler dev) test edildi |
 | 2026-09-29 | Harcama girişi ay bazında: tarih yerine ay seçimi (ayın ilk 10 gününde önceki ay varsayılan), kayıtlarda "Eylül 2026", en son eklenen üstte |
 | 2026-09-29 | BİST hisseleri kod + adetle eklenip arka planda takip ediliyor (Yahoo KOD.IS, 15 dk gecikmeli, günlük değişim, performansa dahil); geçersiz kod anında uyarı |

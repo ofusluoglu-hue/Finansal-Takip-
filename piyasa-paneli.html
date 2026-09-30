@@ -1722,6 +1722,15 @@
   }
   #finansalNetDeger{color:var(--up);}          /* Finansal Durumum › Net Varlık: yeşil (eksi ise .neg → kırmızı) */
   #finansalNetDeger.neg{color:var(--down);}   /* Yatırımlarım › Toplam Yatırım: yeşil, biraz büyük (nabız efekti yukarıda) */
+  .kmh-ayar{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px 22px;max-width:380px;width:100%;box-sizing:border-box;}
+  .kmh-ayar-bas{font-size:15px;font-weight:700;margin-bottom:14px;}
+  .kmh-ayar label{display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .kmh-ayar label small{text-transform:none;letter-spacing:0;font-weight:500;color:var(--muted-2);}
+  .kmh-ayar input{display:block;width:100%;box-sizing:border-box;margin-top:5px;background:var(--panel-2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px 10px;font-size:14px;font-family:inherit;outline:none;}
+  .kmh-ayar input:focus{border-color:#6EC3FF;}
+  .kmh-ayar-iki{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .kmh-ayar-onizleme{font-size:12px;color:var(--muted);background:var(--panel-2);border-radius:8px;padding:9px 10px;margin:4px 0 12px;line-height:1.5;}
+  .kmh-ayar-onizleme b{color:#6EC3FF;}
   .puan-rozet{display:inline-block;padding:1px 9px;border-radius:10px;font-size:11.5px;font-weight:700;background:color-mix(in srgb, currentColor 16%, transparent);border:1px solid color-mix(in srgb, currentColor 45%, transparent);margin-right:4px;}
   .puan-rozet:empty{display:none;}
   @media (max-width:980px){
@@ -2296,7 +2305,9 @@
           <option>Yapı Kredi</option>
           <option>Ziraat Bankası</option>
           </select>
-          <input type="number" step="0.01" id="kmhTutarInput" class="ai-input" style="max-width:180px;min-width:140px;" placeholder="Borç tutarı" onkeydown="if(event.key==='Enter')addKMH()">
+          <input type="number" step="0.01" id="kmhTutarInput" class="ai-input" style="max-width:160px;min-width:130px;" placeholder="Bugünkü borç" onkeydown="if(event.key==='Enter')addKMH()">
+          <input type="number" step="0.01" id="kmhFaizInput" class="ai-input" style="max-width:130px;min-width:110px;" placeholder="Aylık faiz %" onkeydown="if(event.key==='Enter')addKMH()">
+          <input type="number" step="0.01" id="kmhAnaparaInput" class="ai-input" style="max-width:150px;min-width:120px;" placeholder="Anapara (ops.)" title="Faizin işlediği kullanılan tutar; boşsa borcun tamamı" onkeydown="if(event.key==='Enter')addKMH()">
           <button class="ai-btn" onclick="addKMH()">KMH Ekle</button>
         </div>
       </div>
@@ -2324,7 +2335,7 @@
       <div id="nakitKartlarContainer"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Kredi borcu canlı hesaplanır: kalan anapara × (aylık faiz ÷ 30) × geçen gün + KKDF + BSMV; ilk taksidi gelmemiş kredilerde kullandırılan anapara esas alınır. Kredi kartı ve KMH tutarları otomatik hesaplanmaz, ekstre/hesap özetindeki güncel borcu ✎ ile güncellersin. USD/EUR elden borçların TL karşılığı güncel kurdan hesaplanır. Bir borcu kapattığında ✓ ile listeden kaldırırsın. LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Kredi borcu canlı hesaplanır: kalan anapara × (aylık faiz ÷ 30) × geçen gün + KKDF + BSMV; ilk taksidi gelmemiş kredilerde kullandırılan anapara esas alınır. Kredi kartı tutarı otomatik hesaplanmaz, ekstredeki güncel borcu ✎ ile güncellersin. KMH'de aylık faiz girilirse borç her gün kendiliğinden artar: günlük artış = anapara × (aylık faiz ÷ 30) × (1 + %15 KKDF + %15 BSMV); ekstre kesiminde faiz anaparaya eklenince ⚙ ile anapara ve borcu güncellersin. USD/EUR elden borçların TL karşılığı güncel kurdan hesaplanır. Bir borcu kapattığında ✓ ile listeden kaldırırsın. LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: BORÇLARIM ================= -->
 
@@ -3429,6 +3440,7 @@ async function gumusFiyatYenile(){
 // (ABD ETF, kripto, altın), net değer, borç toplamı, portföy puanları ve Bay Piyasa harcama göstergesi.
 function tlKarsiliklariniYenile(){
   if(typeof renderNakit === 'function') renderNakit();       // → refreshGrandTotal → renderVarlik
+  if(typeof renderKMH === 'function') renderKMH();           // KMH faizi günlük işler
   if(typeof renderYatirim === 'function') renderYatirim();   // → renderVarlik, renderIstatistik
   if(typeof bpRenderMeter === 'function') bpRenderMeter();
 }
@@ -4331,7 +4343,7 @@ function bpSnapshotOlustur(paylas, haber){
       s.push('- Kredi | ' + l.ad + ' | güncel borç ₺' + fmtNumber(r.toplam, 0) + ' | aylık faiz %' + String(l.faizOraniAylik).replace('.', ',') + ' | kalan taksit ' + r.kalanTaksit);
     });
     manuelListeYukle(KK_KARTLARI_KEY).forEach(k => s.push('- Kredi kartı | ' + k.ad + ' | ₺' + fmtNumber(k.tutar, 0)));
-    manuelListeYukle(KMH_KEY).forEach(k => s.push('- KMH | ' + k.ad + ' | ₺' + fmtNumber(k.tutar, 0)));
+    manuelListeYukle(KMH_KEY).forEach(k => { const c = kmhCanli(k); s.push('- KMH | ' + k.ad + ' | ₺' + fmtNumber(c ? c.tutar : k.tutar, 0) + (c ? ' | aylık faiz %' + fmtNumber(c.faiz, 2) + ', günlük +₺' + fmtNumber(c.gunluk, 2) + ' (faiz+KKDF+BSMV), anapara ₺' + fmtNumber(c.ana, 0) : '')); });
     s.push('- Elden nakit borçlar (toplam) | ₺' + fmtNumber(_bTotals.nakit || 0, 0));
     const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
     s.push('Toplam borç: ₺' + fmtNumber(borc, 0));
@@ -5098,7 +5110,7 @@ function satirDuzenle(btn, id){
 }
 function satirDuzenIptal(el){ _duzen = { id: null, deger: '' }; const s = el.closest('.satir'); if(s) s.classList.remove('duzenleniyor'); }
 
-// o: { led, ad, alt, tutar, renk, dil, duzen:{ id, ph, kaydet }, sil:{ onclick, baslik, ikon } }
+// o: { led, ad, alt, tutar, renk, dil, ekstra:{ onclick, baslik, ikon }, duzen:{ id, ph, kaydet }, sil:{ onclick, baslik, ikon } }
 // dil: adın dili (büyük harfe çevirmede i/İ doğru olsun; ör. 'en' → BITCOIN, varsayılan sayfa dili tr → ALTIN, GÜMÜŞ)
 function satirHtml(o){
   const duzenAcik = o.duzen && _duzen.id === o.duzen.id;
@@ -5119,6 +5131,7 @@ function satirHtml(o){
         <button class="ikon-btn" title="Vazgeç" onclick="satirDuzenIptal(this)">✕</button>
       </div>` : ''}
       <div class="satir-aksiyon">
+        ${o.ekstra ? `<button class="ikon-btn" title="${escapeHtml(o.ekstra.baslik)}" onclick="${o.ekstra.onclick}">${o.ekstra.ikon}</button>` : ''}
         ${o.duzen ? `<button class="ikon-btn" title="Güncelle" onclick="satirDuzenle(this, '${o.duzen.id}')">✎</button>` : ''}
         ${o.sil ? `<button class="ikon-btn ${o.sil.ikon === '✓' ? 'onay' : 'sil'}" title="${escapeHtml(o.sil.baslik)}" onclick="${o.sil.onclick}">${o.sil.ikon || '✕'}</button>` : ''}
       </div>
@@ -5159,17 +5172,20 @@ function manuelListeRender(opts){
     return;
   }
 
-  container.innerHTML = list.map(item => satirHtml({
-    led: ledRengi(item.tarih),
+  // canli(item) → { tutar, alt, led } : satırın canlı değeri (ör. KMH'de günlük işleyen faiz); yoksa girilen tutar
+  const deger = item => (opts.canli ? opts.canli(item) : null) || { tutar: item.tutar, alt: 'Güncelleme ' + tarihSaatStr(item.tarih), led: ledRengi(item.tarih) };
+  container.innerHTML = list.map(item => { const d = deger(item); return satirHtml({
+    led: d.led,
     ad: item.ad,
-    alt: 'Güncelleme ' + tarihSaatStr(item.tarih),
-    tutar: '₺' + fmtNumber(item.tutar, 2),
+    alt: d.alt,
+    tutar: '₺' + fmtNumber(d.tutar, 2),
     renk,
-    duzen: { id: `${prefix}-edit-${item.id}`, ph: 'yeni tutar (₺)', kaydet: `manuelListeGuncelle('${key}','${prefix}','${item.id}')` },
+    ekstra: opts.ayar ? { onclick: `${opts.ayar}('${item.id}')`, baslik: 'Faiz ve anapara ayarı', ikon: '⚙' } : null,
+    duzen: { id: `${prefix}-edit-${item.id}`, ph: opts.duzenPh || 'yeni tutar (₺)', kaydet: `manuelListeGuncelle('${key}','${prefix}','${item.id}')` },
     sil: { onclick: `manuelListeSil('${key}','${prefix}','${item.id}')`, baslik: 'Borcu kapattım', ikon: '✓' },
-  })).join('');
+  }); }).join('');
 
-  const toplam = list.reduce((sum, k) => sum + k.tutar, 0);
+  const toplam = list.reduce((sum, k) => sum + deger(k).tutar, 0);
   const enSonTarih = list.reduce((latest, k) => {
     const t = new Date(k.tarih);
     return (!latest || t > latest) ? t : latest;
@@ -5255,8 +5271,108 @@ function renderKKKartlari(){
 // ---------- KMH Borçlarım ----------
 const KMH_KEY = 'ft_kmh_v1';
 
+// KMH faizi günlük işler: günlük artış = anapara × (aylık faiz ÷ 30) × (1 + KKDF + BSMV).
+// Faiz, birikmiş faize değil kullanılan ANAPARAYA işler (Enpara: 4.000 × %4,25/30 × 1,30 = 7,37 ₺/gün — bankanın
+// 29→30 Eylül'de gösterdiği 4.261,44 → 4.268,81 artışıyla birebir). Güncel borç = son girilen borç + günlük × geçen gün.
+// Ekstre kesiminde birikmiş faiz anaparaya eklenirse ⚙ ile anapara ve borç güncellenir.
+const KMH_KKDF = 15, KMH_BSMV = 15;
+function kmhCanli(item, simdi){
+  simdi = simdi || new Date();
+  const faiz = Number(item.faizAylik) || 0;
+  const tutar = Number(item.tutar) || 0;
+  if(!(faiz > 0)) return null;
+  const ana = Number(item.anapara) > 0 ? Number(item.anapara) : tutar;
+  const gunlukFaiz = ana * faiz / 100 / 30;
+  const kkdf = gunlukFaiz * (item.kkdf != null ? Number(item.kkdf) : KMH_KKDF) / 100;
+  const bsmv = gunlukFaiz * (item.bsmv != null ? Number(item.bsmv) : KMH_BSMV) / 100;
+  const gunluk = gunlukFaiz + kkdf + bsmv;
+  const t0 = new Date(item.tarih);
+  const gun = Math.max(0, Math.round((new Date(simdi.getFullYear(), simdi.getMonth(), simdi.getDate()) - new Date(t0.getFullYear(), t0.getMonth(), t0.getDate())) / 86400000));
+  return { tutar: Math.round((tutar + gunluk * gun) * 100) / 100, gunluk, gunlukFaiz, kkdf, bsmv, gun, ana, faiz };
+}
+function kmhSatirDegeri(item){
+  const c = kmhCanli(item);
+  if(!c) return null;
+  const f = x => fmtNumber(x, 2);
+  return {
+    tutar: c.tutar,
+    led: 'green',   // canlı hesaplanıyor
+    alt: `%${fmtNumber(c.faiz, 2)} aylık · günlük +₺${f(c.gunluk)} <span class="ozet-soluk">(faiz ${f(c.gunlukFaiz)} + KKDF ${f(c.kkdf)} + BSMV ${f(c.bsmv)})</span> · anapara ₺${fmtNumber(c.ana, 0)} · ${c.gun ? c.gun + ' gündür işliyor' : 'bugün girildi'}`,
+  };
+}
+
 function addKMH(){
-  manuelListeEkle({ key: KMH_KEY, adInputId: 'kmhAdInput', tutarInputId: 'kmhTutarInput', renderFn: renderKMH });
+  const faiz = parseFloat(String(document.getElementById('kmhFaizInput').value).replace(',', '.'));
+  const ana = parseFloat(String(document.getElementById('kmhAnaparaInput').value).replace(',', '.'));
+  const onceki = manuelListeYukle(KMH_KEY).length;
+  manuelListeEkle({ key: KMH_KEY, adInputId: 'kmhAdInput', tutarInputId: 'kmhTutarInput', renderFn: () => {} });
+  const list = manuelListeYukle(KMH_KEY);
+  if(list.length > onceki){
+    const yeni = list[list.length - 1];
+    if(faiz > 0) yeni.faizAylik = faiz;
+    if(ana > 0) yeni.anapara = ana;
+    manuelListeKaydet(KMH_KEY, list);
+  }
+  document.getElementById('kmhFaizInput').value = '';
+  document.getElementById('kmhAnaparaInput').value = '';
+  renderKMH();
+}
+
+// ⚙ KMH ayarı: güncel borç, aylık faiz, anapara (faizin işlediği tutar), KKDF, BSMV
+function kmhAyarAc(id){
+  const item = manuelListeYukle(KMH_KEY).find(k => k.id === id);
+  if(!item) return;
+  const c = kmhCanli(item);
+  const deger = (v, yedek) => v != null && v !== '' ? v : yedek;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.62);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;';
+  overlay.innerHTML = `
+    <form class="kmh-ayar" onsubmit="event.preventDefault();">
+      <div class="kmh-ayar-bas">${escapeHtml(item.ad)} KMH — faiz ayarı</div>
+      <label>Güncel borç (₺)<input type="number" step="0.01" id="kmhAyarBorc" value="${c ? c.tutar : item.tutar}"></label>
+      <label>Aylık faiz (%)<input type="number" step="0.01" id="kmhAyarFaiz" value="${deger(item.faizAylik, '')}" placeholder="ör. 4,25"></label>
+      <label>Anapara (₺) <small>faizin işlediği kullanılan tutar; boşsa borcun tamamı</small><input type="number" step="0.01" id="kmhAyarAna" value="${deger(item.anapara, '')}"></label>
+      <div class="kmh-ayar-iki">
+        <label>KKDF (%)<input type="number" step="0.01" id="kmhAyarKkdf" value="${deger(item.kkdf, KMH_KKDF)}"></label>
+        <label>BSMV (%)<input type="number" step="0.01" id="kmhAyarBsmv" value="${deger(item.bsmv, KMH_BSMV)}"></label>
+      </div>
+      <div class="kmh-ayar-onizleme" id="kmhAyarOnizleme"></div>
+      <div class="loan-preview-actions" style="justify-content:flex-end;">
+        <button type="button" class="loan-btn-cancel" id="kmhAyarVazgec">Vazgeç</button>
+        <button type="submit" class="loan-btn-save" id="kmhAyarKaydet">Kaydet</button>
+      </div>
+    </form>`;
+  document.body.appendChild(overlay);
+  const oku = id2 => { const v = String(overlay.querySelector('#' + id2).value).replace(',', '.').trim(); return v === '' ? null : parseFloat(v); };
+  const onizle = () => {
+    const tmp = { tutar: oku('kmhAyarBorc') || 0, faizAylik: oku('kmhAyarFaiz'), anapara: oku('kmhAyarAna'), kkdf: oku('kmhAyarKkdf'), bsmv: oku('kmhAyarBsmv'), tarih: new Date().toISOString() };
+    const cc = kmhCanli(tmp);
+    overlay.querySelector('#kmhAyarOnizleme').innerHTML = cc
+      ? `Günlük artış: <b>+₺${fmtNumber(cc.gunluk, 2)}</b> (faiz ${fmtNumber(cc.gunlukFaiz, 2)} + KKDF ${fmtNumber(cc.kkdf, 2)} + BSMV ${fmtNumber(cc.bsmv, 2)}) · 30 günde ≈ ₺${fmtNumber(cc.gunluk * 30, 0)}`
+      : 'Faiz oranı girilmezse borç sabit kalır.';
+  };
+  overlay.querySelectorAll('input').forEach(i => i.addEventListener('input', onizle));
+  onizle();
+  const kapat = () => overlay.remove();
+  overlay.querySelector('#kmhAyarVazgec').onclick = kapat;
+  overlay.addEventListener('click', e => { if(e.target === overlay) kapat(); });
+  overlay.querySelector('form').addEventListener('submit', () => {
+    const borc = oku('kmhAyarBorc'), faiz = oku('kmhAyarFaiz'), ana = oku('kmhAyarAna'), kkdf = oku('kmhAyarKkdf'), bsmv = oku('kmhAyarBsmv');
+    if(!(borc >= 0)){ showAlertModal('Lütfen geçerli bir borç tutarı gir.'); return; }
+    if(faiz != null && !(faiz >= 0 && faiz <= 20)){ showAlertModal('Aylık faiz 0 ile 20 arasında olmalı (%).'); return; }
+    const list = manuelListeYukle(KMH_KEY);
+    const it = list.find(k => k.id === id);
+    if(!it){ kapat(); return; }
+    it.tutar = borc; it.tarih = new Date().toISOString();   // yeni başlangıç noktası: bugünkü borç
+    if(faiz > 0) it.faizAylik = faiz; else delete it.faizAylik;
+    if(ana > 0) it.anapara = ana; else delete it.anapara;
+    if(kkdf != null && kkdf !== KMH_KKDF) it.kkdf = kkdf; else delete it.kkdf;
+    if(bsmv != null && bsmv !== KMH_BSMV) it.bsmv = bsmv; else delete it.bsmv;
+    manuelListeKaydet(KMH_KEY, list);
+    kapat();
+    renderKMH();
+  });
+  setTimeout(() => overlay.querySelector('#kmhAyarFaiz').focus(), 50);
 }
 
 function renderKMH(){
@@ -5267,6 +5383,9 @@ function renderKMH(){
     summaryTarihId: 'kmhSummaryTarih',
     prefix: 'kmh',
     renk: '#6EC3FF',
+    canli: kmhSatirDegeri,          // faiz girilmişse borç her gün kendiliğinden artar
+    ayar: 'kmhAyarAc',
+    duzenPh: 'bugünkü borç (₺)',
     bTotalKey: 'kmh',
   });
 }
