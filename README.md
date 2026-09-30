@@ -3,7 +3,7 @@
 Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım portföyü, varlıklar, krediler ve borçlar tek ekranda. Yapay zekâ destekli sohbet asistanı **Bay Piyasa** ve cihazlar arası veri senkronu içerir.
 
 **Canlı adres:** https://ofusluoglu-hue.github.io/Finansal-Takip-/piyasa-paneli.html
-(Erişim kodu gerekir.)
+(E-posta ve şifre ile giriş yapılır.)
 
 ## Özellikler
 
@@ -57,10 +57,10 @@ npx.cmd wrangler deploy
 > Windows PowerShell'de `npx` yerine `npx.cmd` kullanın (script çalıştırma kısıtlaması).
 
 ### Gerekli secret'lar (Cloudflare)
-`ACCESS_TOKEN`, `ANTHROPIC_API_KEY`, `TWELVEDATA_API_KEY`, `FINNHUB_API_KEY`: hepsi **Secret** türünde. İsteğe bağlı: `ALLOWED_ORIGIN`.
+`ACCESS_TOKEN` (giriş şifresi), `LOGIN_USER` (giriş e-postası; virgülle birden fazla), `ANTHROPIC_API_KEY`, `TWELVEDATA_API_KEY`, `FINNHUB_API_KEY`: hepsi **Secret** türünde. İsteğe bağlı: `ALLOWED_ORIGIN`.
 
 ## Güvenlik
 
-- Worker'a yapılan her istek erişim koduyla doğrulanır; 15 dakikada 8 hatalı denemede IP 15 dakika kilitlenir.
+- Giriş e-posta + şifre ile yapılır; Worker'a yapılan her istek şifreyle doğrulanır. Hatalı girişte hangi bilginin yanlış olduğu söylenmez; 15 dakikada 8 hatalı denemede (yanlış e-posta dahil) IP 15 dakika kilitlenir.
 - CORS yalnızca GitHub Pages adresine izin verir.
 - API anahtarları yalnızca Cloudflare secret'larında durur; repoda hiçbir anahtar bulunmaz.

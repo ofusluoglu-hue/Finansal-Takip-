@@ -10,7 +10,9 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 4. Proxy'ye yeni bir alan adı eklemek bilinçli bir karardır; `allowed` listesine yalnızca gerçekten gereken adresler girer.
 5. Dış servislere giden URL'lerdeki kullanıcı kaynaklı parametreler `encodeURIComponent` ile kodlanır.
 6. Üçüncü taraf yedek proxy'lerden (`allorigins`, `corsproxy`, `codetabs`) yalnızca herkese açık piyasa/haber verisi geçer; kullanıcı verisi, erişim kodu veya yapay zekâ istekleri asla bu proxy'lere gönderilmez.
-7. Bir anahtar herhangi bir yerde (log, ekran görüntüsü, sohbet) açığa çıkarsa hemen yenilenir ve eskisi iptal edilir.
+7. Giriş hatalarında hangi bilginin (e-posta mı şifre mi) yanlış olduğu söylenmez; yanlış e-posta da kilit sayacına işlenir.
+8. Kimlik doğrulama değişiklikleri önce yerelde `wrangler dev` (geçici `.dev.vars`, commit edilmez) ile test edilir; canlı sunucuya yanlış giriş denemesi gönderilmez (IP kilidi).
+9. Bir anahtar herhangi bir yerde (log, ekran görüntüsü, sohbet) açığa çıkarsa hemen yenilenir ve eskisi iptal edilir.
 
 ## Kod
 

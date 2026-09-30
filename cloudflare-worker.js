@@ -17,7 +17,9 @@
 //   A) Storage & Databases > D1 SQL Database > Create  →  adı: finansal-takip
 //   B) Bu Worker > Settings > Bindings > Add > D1 database  →  Variable name: DB  →  finansal-takip'i seç
 //   C) Bu Worker > Settings > Variables and Secrets > Add (Type: Secret):
-//        ACCESS_TOKEN       = kendi belirlediğin UZUN bir parola (en az 16 karakter) — giriş ekranında yazacağın kod
+//        ACCESS_TOKEN       = kendi belirlediğin UZUN bir parola (en az 16 karakter) — giriş ekranındaki "Şifre"
+//        LOGIN_USER         = giriş ekranındaki "E-posta veya kullanıcı adı"; virgülle birden fazla yazılabilir
+//                             (ör. "ad@ornek.com,kullaniciadi"). Tanımlı değilse yalnızca şifre kontrol edilir.
 //        ANTHROPIC_API_KEY  (console.anthropic.com)
 //        TWELVEDATA_API_KEY (twelvedata.com)
 //        FINNHUB_API_KEY    (finnhub.io)
@@ -43,7 +45,7 @@ function corsBasliklari(request, env) {
   const origin = request.headers.get('Origin');
   const h = {
     'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Kullanici',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
   };
@@ -147,7 +149,7 @@ async function yetkiKontrol(request, env, json) {
     await env.DB.prepare('INSERT INTO auth_fail (ip, ts) VALUES (?, ?)').bind(ip, Date.now()).run();
     await env.DB.prepare('DELETE FROM auth_fail WHERE ts < ?').bind(Date.now() - 24 * 3600 * 1000).run();
   }
-  return json({ error: 'erişim kodu geçersiz' }, 401);
+  return json({ error: 'kullanıcı adı veya şifre hatalı' }, 401);   // hangisinin yanlış olduğu söylenmez
 }
 
 const LOAN_EXTRACT_SYSTEM_PROMPT = `Sen bir banka kredi ödeme planı belgesini yapılandırılmış veriye çeviren bir araçsın.
@@ -200,8 +202,20 @@ export default {
     const red = await yetkiKontrol(request, env, json);
     if (red) return red;
 
-    // ---------- 0) KOD DOĞRULAMA ----------
+    // ---------- 0) GİRİŞ DOĞRULAMA (şifre yukarıda doğrulandı; burada e-posta / kullanıcı adı) ----------
     if (url.pathname === '/auth/check') {
+      if (env.LOGIN_USER) {
+        const izinli = env.LOGIN_USER.split(',').map(x => x.trim().toLocaleLowerCase('tr-TR')).filter(Boolean);
+        const girilen = (request.headers.get('X-Kullanici') || '').trim().toLocaleLowerCase('tr-TR');
+        let eslesti = false;
+        for (const k of izinli) { if (await esitMi(girilen, k)) eslesti = true; }   // sabit zamanlı
+        if (!eslesti) {
+          // Hatalı kullanıcı adı da kilit sayacına işlenir; hangisinin yanlış olduğu söylenmez
+          const ip = request.headers.get('CF-Connecting-IP') || 'bilinmiyor';
+          if (env.DB) { await semaHazirla(env); await env.DB.prepare('INSERT INTO auth_fail (ip, ts) VALUES (?, ?)').bind(ip, Date.now()).run(); }
+          return json({ error: 'kullanıcı adı veya şifre hatalı' }, 401);
+        }
+      }
       return json({ ok: true, d1: !!env.DB });
     }
 

@@ -13,10 +13,10 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 
 ## 2. Kimlik doğrulama
 
-1. Açılışta erişim kodu yoksa giriş ekranı gösterilir. Kod `/auth/check` ile doğrulanır ve `localStorage`'da `ft_erisim` anahtarında saklanır.
+1. Açılışta oturum yoksa giriş ekranı gösterilir: **E-posta** + **Şifre** (göster/gizle düğmeli; tarayıcı şifre yöneticisiyle uyumlu `autocomplete=username/current-password`). `/auth/check` isteğinde şifre `Authorization: Bearer`, e-posta `X-Kullanici` başlığıyla gider. Worker şifreyi `ACCESS_TOKEN`, e-postayı `LOGIN_USER` (virgülle birden fazla, büyük/küçük harf duyarsız, sabit zamanlı karşılaştırma) ile doğrular; hata mesajı hangi bilginin yanlış olduğunu söylemez. Başarılıysa şifre `ft_erisim`, e-posta (yalnızca kolaylık için) `ft_giris_eposta` anahtarında saklanır. E-posta yalnızca girişte kontrol edilir; sonraki istekler yalnızca şifreyle doğrulanır (açık oturumlar etkilenmez).
 2. `window.fetch` sarmalanmıştır: **yalnızca** `MY_WORKER` adresine giden isteklere `Authorization: Bearer <kod>` başlığı eklenir. Üçüncü taraf proxy'lere kod asla gönderilmez.
 3. Worker 401 dönerse giriş ekranı yeniden açılır.
-4. Worker tarafında karşılaştırma SHA-256 üzerinden sabit zamanlıdır. Hatalı denemeler D1'deki `auth_fail` tablosuna yazılır; 15 dakikada 8 hata → IP kilidi (429).
+4. Worker tarafında karşılaştırma SHA-256 üzerinden sabit zamanlıdır. Hatalı denemeler (yanlış şifre ve yanlış e-posta) D1'deki `auth_fail` tablosuna yazılır; 15 dakikada 8 hata → IP kilidi (429).
 5. Çıkış yapıldığında bekleyen değişiklikler gönderilir, ardından yerel veriler silinir.
 
 ## 3. Veri saklama ve senkron
@@ -38,7 +38,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_haber_ceviri_v1` | Haber başlığı çeviri önbelleği |
 | `ft_harcamalar_v1` | Harcamalar: tek harcama kayıtları ve elle yazılan aylık kategori toplamları |
 
-Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
+Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
 **Senkron akışı:**
 - `localStorage.setItem` sarmalanmıştır; senkron anahtarlarına yazılan her **değişiklik** "bekleyen" olarak işaretlenir (değer aynıysa gönderilmez) ve Worker'a `PUT /data/:anahtar` ile gönderilir.
@@ -53,7 +53,7 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (erişim kodu), `ft_senkron_meta` (sen
 | Yol | Metot | Görev |
 |---|---|---|
 | `/` | GET | Sağlık kontrolü (`{ok:true}`) |
-| `/auth/check` | GET | Kodu doğrular, D1 bağlı mı bildirir |
+| `/auth/check` | GET | Giriş: şifre (`Authorization`) + e-posta (`X-Kullanici`, `LOGIN_USER` tanımlıysa) doğrular, D1 bağlı mı bildirir |
 | `/data` | GET | `since` sonrası değişen kayıtlar |
 | `/data/:anahtar` | PUT | Kayıt yazar (`{value, expected}`), en fazla 1,5 MB |
 | `/proxy?url=` | GET | CORS proxy; yalnızca Yahoo, FRED, Google News, Stooq |
@@ -154,6 +154,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-09-30 | E-posta + şifre ile giriş ekranı (yeni tasarım, şifre göster/gizle, Türkçe doğrulama mesajları, e-posta hatırlama); Worker'da `LOGIN_USER` kontrolü, birleşik hata mesajı; gerçek Worker kodu yerelde (wrangler dev) test edildi |
 | 2026-09-29 | Harcama girişi ay bazında: tarih yerine ay seçimi (ayın ilk 10 gününde önceki ay varsayılan), kayıtlarda "Eylül 2026", en son eklenen üstte |
 | 2026-09-29 | BİST hisseleri kod + adetle eklenip arka planda takip ediliyor (Yahoo KOD.IS, 15 dk gecikmeli, günlük değişim, performansa dahil); geçersiz kod anında uyarı |
 | 2026-09-29 | Yatırımlarım: Toplam Yatırım kartında günlük / haftalık / aylık performans (mevcut adetlerin geçmiş fiyatlarla değeri) |

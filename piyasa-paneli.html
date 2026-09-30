@@ -1626,15 +1626,26 @@
 
   /* ===== Giriş ekranı + senkron durumu ===== */
   .giris-ekrani{position:fixed;inset:0;z-index:100000;background:var(--bg);align-items:center;justify-content:center;padding:20px;}
-  .giris-kutu{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:26px 24px;text-align:center;}
-  .giris-kilit{font-size:30px;margin-bottom:6px;}
-  .giris-kutu h2{margin:0 0 6px;font-size:20px;}
-  .giris-kutu p{margin:0 0 16px;color:var(--muted);font-size:13px;}
-  .giris-kutu input{width:100%;box-sizing:border-box;background:var(--panel-2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:11px 12px;font-size:15px;font-family:inherit;outline:none;margin-bottom:10px;}
-  .giris-kutu input:focus{border-color:var(--amber);}
-  .giris-kutu button{width:100%;background:var(--amber);color:#1a1200;border:none;border-radius:8px;padding:11px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;}
-  .giris-kutu button:disabled{opacity:.6;cursor:default;}
-  .giris-mesaj{margin-top:10px;min-height:16px;font-size:12.5px;color:var(--down);}
+  .giris-kutu{width:100%;max-width:420px;box-sizing:border-box;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px 28px 22px;text-align:left;box-shadow:0 18px 50px rgba(0,0,0,.45);}
+  .giris-bas{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:22px;}
+  .giris-kutu h2{margin:0 0 4px;font-size:22px;font-weight:800;}
+  .giris-kutu p{margin:0;color:var(--muted);font-size:13px;}
+  .giris-rozet{flex-shrink:0;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:9px;background:var(--panel-2);font-size:14px;}
+  .giris-etiket{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+  .giris-kutu input{width:100%;box-sizing:border-box;background:var(--panel-2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:13px 14px;font-size:15px;font-family:inherit;outline:none;margin-bottom:18px;transition:border-color .15s;}
+  .giris-kutu input::placeholder{color:var(--muted-2);}
+  .giris-kutu input:focus{border-color:var(--up);}
+  .giris-sifre{position:relative;}
+  .giris-sifre input{padding-right:46px;}
+  .giris-goz{position:absolute;right:6px;top:6px;width:36px;height:36px;border:none;background:transparent;color:var(--muted);border-radius:8px;cursor:pointer;font-size:15px;opacity:.75;}
+  .giris-goz:hover{opacity:1;background:var(--panel);}
+  .giris-goz.acik{opacity:1;color:var(--up);}
+  .giris-btn{width:100%;background:var(--up);color:#062012;border:none;border-radius:10px;padding:13px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;margin-top:4px;transition:filter .15s;}
+  .giris-btn:hover{filter:brightness(1.08);}
+  .giris-btn:disabled{opacity:.6;cursor:default;filter:none;}
+  .giris-mesaj{margin-top:12px;min-height:18px;font-size:13px;color:var(--down);}
+  .giris-alt{margin-top:6px;padding-top:14px;border-top:1px solid var(--border);font-size:11.5px;line-height:1.55;color:var(--muted-2);}
+  @media (max-width:640px){ .giris-kutu{padding:22px 18px 18px;} }
   .nav-alt{margin-top:8px;padding:10px 8px 4px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
   #senkronDurum{font-size:11px;color:var(--muted-2);}
   #senkronDurum[data-durum="ok"]{color:#82CBA4;}
@@ -1809,14 +1820,25 @@
 </head>
 <body>
 <div id="girisEkrani" class="giris-ekrani" style="display:none;">
-  <div class="giris-kutu">
-    <div class="giris-kilit">🔒</div>
-    <h2>Finansal Takip</h2>
-    <p>Devam etmek için erişim kodunu gir.</p>
-    <input type="password" id="girisKod" autocomplete="current-password" placeholder="Erişim kodu" onkeydown="if(event.key==='Enter')girisYap()">
-    <button id="girisBtn" onclick="girisYap()">Giriş</button>
-    <div class="giris-mesaj" id="girisMesaj"></div>
-  </div>
+  <form class="giris-kutu" onsubmit="event.preventDefault(); girisYap();" autocomplete="on" novalidate>
+    <div class="giris-bas">
+      <div>
+        <h2>Giriş yap</h2>
+        <p>Finansal Takip paneline devam et</p>
+      </div>
+      <span class="giris-rozet" title="Oturum bu cihazda açık kalır">🔒</span>
+    </div>
+    <label class="giris-etiket" for="girisEposta">E-posta</label>
+    <input type="email" id="girisEposta" name="username" autocomplete="username" inputmode="email" placeholder="E-posta adresin" required>
+    <label class="giris-etiket" for="girisKod">Şifre</label>
+    <div class="giris-sifre">
+      <input type="password" id="girisKod" name="password" autocomplete="current-password" placeholder="Şifren" required>
+      <button type="button" class="giris-goz" id="girisGoz" title="Şifreyi göster" aria-label="Şifreyi göster" onclick="girisSifreGoster()">👁</button>
+    </div>
+    <button type="submit" id="girisBtn" class="giris-btn">Giriş</button>
+    <div class="giris-mesaj" id="girisMesaj" role="alert"></div>
+    <div class="giris-alt">8 hatalı denemede giriş 15 dakika kilitlenir. Giriş yaptıktan sonra oturumun bu cihazda açık kalır; verilerin tüm cihazlarında senkronlanır.</div>
+  </form>
 </div>
 <div class="wrap">
 <div class="layout">
@@ -2499,23 +2521,38 @@ function girisGoster(mesaj){
   if(!el) return;
   el.style.display = 'flex';
   const m = document.getElementById('girisMesaj'); if(m) m.textContent = mesaj || '';
-  const k = document.getElementById('girisKod'); if(k){ k.value = ''; setTimeout(() => k.focus(), 50); }
+  const k = document.getElementById('girisKod'), ep = document.getElementById('girisEposta');
+  if(ep && !ep.value) ep.value = localStorage.getItem(GIRIS_EPOSTA_KEY) || '';
+  if(k){ k.value = ''; setTimeout(() => (ep && !ep.value ? ep : k).focus(), 50); }
+}
+const GIRIS_EPOSTA_KEY = 'ft_giris_eposta';   // yalnızca bu cihazda: son girilen e-posta (kolaylık için)
+function girisSifreGoster(){
+  const inp = document.getElementById('girisKod'), goz = document.getElementById('girisGoz');
+  const goster = inp.type === 'password';
+  inp.type = goster ? 'text' : 'password';
+  goz.classList.toggle('acik', goster);
+  goz.title = goz.ariaLabel = goster ? 'Şifreyi gizle' : 'Şifreyi göster';
+  inp.focus();
 }
 async function girisYap(){
+  const epostaEl = document.getElementById('girisEposta');
   const kodEl = document.getElementById('girisKod');
   const btn = document.getElementById('girisBtn');
   const msj = document.getElementById('girisMesaj');
+  const eposta = (epostaEl.value || '').trim();
   const kod = (kodEl.value || '').trim();
-  if(!kod) return;
-  btn.disabled = true; msj.textContent = 'Kontrol ediliyor…';
+  if(!eposta){ msj.textContent = 'E-posta adresini yaz.'; epostaEl.focus(); return; }
+  if(!kod){ msj.textContent = 'Şifreni yaz.'; kodEl.focus(); return; }
+  btn.disabled = true; btn.textContent = 'Kontrol ediliyor…'; msj.textContent = '';
   try{
-    const res = await _orijinalFetch(MY_WORKER + '/auth/check', { headers: { Authorization: 'Bearer ' + kod } });
-    if(res.ok){ _snYaz(ERISIM_KEY, kod); location.reload(); return; }
+    const res = await _orijinalFetch(MY_WORKER + '/auth/check', { headers: { Authorization: 'Bearer ' + kod, 'X-Kullanici': eposta } });
+    if(res.ok){ _snYaz(ERISIM_KEY, kod); _snYaz(GIRIS_EPOSTA_KEY, eposta.toLocaleLowerCase('tr-TR')); location.reload(); return; }
     msj.textContent = res.status === 429 ? 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.'
                     : res.status === 503 ? 'Sunucu kurulumu eksik (Cloudflare\'da ACCESS_TOKEN tanımlı değil).'
-                    : 'Kod yanlış.';
+                    : 'E-posta veya şifre hatalı.';
+    kodEl.select();
   }catch(e){ msj.textContent = 'Sunucuya ulaşılamadı. İnternetini kontrol et.'; }
-  btn.disabled = false;
+  btn.disabled = false; btn.textContent = 'Giriş';
 }
 async function cikisYap(){
   showConfirmModal('Çıkış yapılırsa bu cihazdaki veriler silinir (veriler sunucuda güvende, tekrar giriş yapınca gelir). Emin misin?', async () => {
