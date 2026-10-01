@@ -835,6 +835,11 @@
     height:200px;
   }
   .chart-body svg{width:100%;height:100%;display:block;}
+  .chart-body{touch-action:pan-y;cursor:crosshair;-webkit-user-select:none;user-select:none;}   /* yatay sürükleme çizgiyi gezdirir, dikey kaydırma sayfayı */
+  .grafik-ipucu{position:absolute;top:4px;z-index:3;pointer-events:none;background:#0f141b;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;line-height:1.45;color:var(--muted);white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.45);}
+  .grafik-ipucu b{display:block;font-size:14px;color:var(--text);font-variant-numeric:tabular-nums;}
+  .grafik-ipucu .gi-up{color:var(--up);} .grafik-ipucu .gi-down{color:var(--down);}
+  .grafik-ipucu[hidden]{display:none;}
   .chart-loading{
     position:absolute;inset:0;
     display:flex;align-items:center;justify-content:center;
@@ -2400,6 +2405,7 @@
       <div class="chart-loading" id="chartLoading" style="display:none;">Grafik yükleniyor…</div>
       <div class="chart-empty" id="chartEmpty" style="display:none;">Bu veri için geçmiş grafik alınamadı.</div>
       <svg id="chartSvg" viewBox="0 0 600 200" preserveAspectRatio="none"></svg>
+      <div class="grafik-ipucu" id="grafikIpucu" hidden></div>
     </div>
   </div>
 
@@ -3198,7 +3204,7 @@
       <p><b>Kartları seçme:</b> En üstte saatin yanındaki <b>Kartları düzenle</b> düğmesine bas (yalnız Piyasa Özeti'nde görünür; telefonda saatin sağında). <b>Gösterilenler</b> listesinde ↑ ↓ ile sırayı değiştirir, ✕ ile gizlersin. <b>Hazır kartlardan ekle</b> bölümünden gizlediğin ya da hiç açmadığın kartları geri getirirsin. Seçimin hesabına kaydedilir; telefonda ve bilgisayarda aynı görünür. <b>Varsayılana dön</b> başlangıçtaki seti geri getirir.</p>
       <p><b>Herhangi bir ABD hissesi, ETF ya da kripto:</b> Aynı penceredeki <b>Hisse, ETF ya da kripto ekle</b> kutusuna şirket adını ya da kodunu yaz (ör. “tesla”, “coca cola”, “nvidia”, “xrp”) — kod bilmene gerek yok, ilk birkaç harf ve küçük yazım hataları yeter. Kutuya tıklayınca yazmadan önce popüler hisseler (Apple, Tesla, Nvidia, TSMC, ASML…) listelenir. Çıkan listeden tıklarsın; kart hemen eklenir ve fiyatı gelir. ABD borsasındaki bütün hisse ve ETF'ler ile Borsa İstanbul hisseleri (ör. “aselsan”, “türk hava yolları”; fiyat ₺, 15 dk gecikmeli) aranabilir; kriptoda en büyük 30 kripto hazırdır, listede olmayan bir coinin kodunu yazarsan panel Binance'te dener. Eklediğin hisse <b>Yatırımlarım</b>'da da seçilebilir.</p>
       <p><b>Örnek:</b> Tesla hissen var → Kartları düzenle › kutuya “tesla” yaz › <b>TSLA — Tesla Inc</b>'e tıkla → “TSLA (Tesla Inc)” kartı çıkar. Yatırımlarım'a eklemek için de aynı aramayı orada yaparsın.</p>
-      <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; <b>1 Ay / 1 Yıl / 5 Yıl</b> ile aralığı seçersin (1 Ay ve 1 Yıl günlük, 5 Yıl haftalık veri). Başlıkta o dönemdeki toplam değişim yazar (ör. “+%14,4”); varlık seçtiğin aralıktan yeniyse (yeni listelenen coin, birkaç aylık fon) “veri … tarihinden beri” notu çıkar. Uranyum grafiği MetalCharts'tan gerçek U3O8 $/lb fiyatıdır; o kaynağa ulaşılamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu gösterilir ve başlıkta yazar. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
+      <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; <b>1 Ay / 1 Yıl / 5 Yıl</b> ile aralığı seçersin (1 Ay ve 1 Yıl günlük, 5 Yıl haftalık veri). Grafiğin üzerinde fareyle gezersen (telefonda parmağını yatay kaydır) dikey bir çizgi çıkar; o günün <b>tarihini, fiyatını</b> ve dönem başına göre değişimi gösterir. Başlıkta o dönemdeki toplam değişim yazar (ör. “+%14,4”); varlık seçtiğin aralıktan yeniyse (yeni listelenen coin, birkaç aylık fon) “veri … tarihinden beri” notu çıkar. Uranyum grafiği MetalCharts'tan gerçek U3O8 $/lb fiyatıdır; o kaynağa ulaşılamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu gösterilir ve başlıkta yazar. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
       <p><b>Fiyat kutusunun köşesindeki ışık:</b> yeşil = fiyat şu an canlı, kırmızı = kaynağa ulaşılamadı, son bilinen fiyat gösteriliyor.</p>
       <p class="kv-ipucu">💡 Önümüzdeki 3 gün içinde bir ödemen varsa sayfanın en üstünde turuncu bir uyarı şeridi çıkar; tıklarsan Ödeme Takvimi açılır. Gizlediğin bir kart yatırımlarında varsa fiyatı arka planda yine takip edilir; portföyün doğru kalır.</p>
       <button class="bolum-ekle" onclick="switchTab('gunluk')">Piyasa Özeti'ne git →</button>
@@ -5706,6 +5712,7 @@ async function loadChart(cfg, period){
   const subEl = document.getElementById('chartSub');
 
   svgEl.innerHTML = '';
+  _grafikGeo = null; grafikImlecGizle();
   emptyEl.style.display = 'none';
   loadingEl.style.display = 'flex';
   subEl.textContent = (GRAFIK_ARALIK[period] || GRAFIK_ARALIK.ay).etiket;
@@ -5879,13 +5886,68 @@ function drawChart(svgEl, points){
     <text class="axis-label" x="${W-PAD_R}" y="${H-6}" text-anchor="end">${fmtDate(points[points.length-1].t)}</text>
     <text class="axis-label" x="${PAD_L-8}" y="${PAD_T+4}" text-anchor="end">${max.toLocaleString('tr-TR',{maximumFractionDigits:2})}</text>
     <text class="axis-label" x="${PAD_L-8}" y="${H-PAD_B}" text-anchor="end">${min.toLocaleString('tr-TR',{maximumFractionDigits:2})}</text>
+    <g id="grafikImlec" style="display:none;pointer-events:none;">
+      <line id="grafikImlecCizgi" x1="0" y1="${PAD_T}" x2="0" y2="${H-PAD_B}" stroke="#8a94a6" stroke-width="1" stroke-dasharray="3 3"/>
+      <circle id="grafikImlecNokta" cx="0" cy="0" r="4" fill="${lineColor}" stroke="#0f141b" stroke-width="2"/>
+    </g>
   `;
+  _grafikGeo = { points, W, H, PAD_L, PAD_R, x, y };
+  _grafikSonGenislik = svgEl.parentElement.clientWidth;
+  grafikImlecGizle();
 }
 
+// ---------- Grafikte gezinme: dikey çizgi + o noktanın tarihi, fiyatı ve dönem başına göre değişimi ----------
+let _grafikGeo = null;
+function grafikFiyatYaz(v){
+  const cfg = CARDS.find(c => c.key === currentKey) || {};
+  if(cfg.fmt === 'try2') return '₺' + fmtNumber(v, 2);
+  if(cfg.fmt === 'try4') return fmtNumber(v, 4);
+  if(cfg.fmt === 'oto' || Math.abs(v) < 1) return fmtNumber(v, v >= 1 ? 2 : v >= 0.01 ? 4 : 8);
+  return fmtNumber(v, 2);
+}
+function grafikImlecGizle(){
+  const g = document.getElementById('grafikImlec'); if(g) g.style.display = 'none';
+  const ip = document.getElementById('grafikIpucu'); if(ip) ip.hidden = true;
+}
+function grafikImlecGoster(clientX){
+  const geo = _grafikGeo, svg = document.getElementById('chartSvg');
+  if(!geo || !svg || geo.points.length < 2) return;
+  const kutu = svg.getBoundingClientRect();
+  const sx = (clientX - kutu.left) * (geo.W / kutu.width);   // ekran → grafik koordinatı
+  const n = geo.points.length;
+  const i = Math.max(0, Math.min(n - 1, Math.round((sx - geo.PAD_L) / (geo.W - geo.PAD_L - geo.PAD_R) * (n - 1))));
+  const nokta = geo.points[i], px = geo.x(i), py = geo.y(nokta.v);
+  document.getElementById('grafikImlec').style.display = '';
+  const cizgi = document.getElementById('grafikImlecCizgi'); cizgi.setAttribute('x1', px); cizgi.setAttribute('x2', px);
+  const daire = document.getElementById('grafikImlecNokta'); daire.setAttribute('cx', px); daire.setAttribute('cy', py);
+  const ilk = geo.points[0].v, degisim = ilk ? (nokta.v / ilk - 1) * 100 : 0;
+  const tarih = new Date(nokta.t).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) + (currentPeriod === 'yil5' ? ' haftası' : '');
+  const ip = document.getElementById('grafikIpucu');
+  ip.innerHTML = `${tarih}<b>${grafikFiyatYaz(nokta.v)}</b><span class="${degisim >= 0 ? 'gi-up' : 'gi-down'}">${degisim >= 0 ? '+' : '−'}%${fmtNumber(Math.abs(degisim), 2)}</span> <span>dönem başına göre</span>`;
+  ip.hidden = false;
+  // kutu imlecin yanında; sağ kenara yaklaşınca sola geçer
+  const ekranX = px * (kutu.width / geo.W), gen = ip.offsetWidth, govde = ip.parentElement.clientWidth;
+  ip.style.left = Math.max(0, Math.min(govde - gen, ekranX + 12 + gen > govde ? ekranX - gen - 12 : ekranX + 12)) + 'px';
+}
+(function grafikImlecKur(){
+  const govde = document.getElementById('chartBody');
+  if(!govde) return;
+  govde.addEventListener('pointermove', e => grafikImlecGoster(e.clientX));
+  govde.addEventListener('pointerdown', e => grafikImlecGoster(e.clientX));
+  govde.addEventListener('pointerleave', e => { if(e.pointerType === 'mouse') grafikImlecGizle(); });
+  govde.addEventListener('pointercancel', grafikImlecGizle);   // telefonda dikey kaydırmaya geçilince
+  govde.addEventListener('pointerup', e => { if(e.pointerType !== 'mouse') setTimeout(grafikImlecGizle, 2500); });
+})();
+
 let lastChartPoints = null;
+let _grafikSonGenislik = 0;
 window.addEventListener('resize', ()=>{
   clearTimeout(window._chartResizeTimer);
   window._chartResizeTimer = setTimeout(()=>{
+    // telefonda kaydırırken adres çubuğu açılıp kapanınca yalnız yükseklik değişir: grafiği (ve gezinme çizgisini) bozma
+    const gen = document.getElementById('chartBody').clientWidth;
+    if(gen === _grafikSonGenislik) return;
+    _grafikSonGenislik = gen;
     if(lastChartPoints){
       drawChart(document.getElementById('chartSvg'), lastChartPoints);
     }
