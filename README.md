@@ -69,7 +69,7 @@ npx.cmd wrangler deploy
 > Windows PowerShell'de `npx` yerine `npx.cmd` kullanın (script çalıştırma kısıtlaması).
 
 ### Gerekli secret'lar (Cloudflare)
-`ANTHROPIC_API_KEY`, `TWELVEDATA_API_KEY`, `FINNHUB_API_KEY`: hepsi **Secret** türünde. İlk yönetici hesabı için `LOGIN_USER` (e-posta) ve `ACCESS_TOKEN` (ilk şifre): kullanıcı tablosu boşsa ilk istekte bu bilgilerle yönetici hesabı açılır ve eski tek kullanıcılı veriler bu hesaba kopyalanır; sonrasında `ACCESS_TOKEN` yalnızca eski sürüm panellerin geçişi için kullanılır. İsteğe bağlı: `ALLOWED_ORIGIN` (virgülle birden fazla site adresi).
+`ANTHROPIC_API_KEY`, `TWELVEDATA_API_KEY`, `FINNHUB_API_KEY`, `metalcharts` (MetalCharts API anahtarı; uranyum grafiği için): hepsi **Secret** türünde. İlk yönetici hesabı için `LOGIN_USER` (e-posta) ve `ACCESS_TOKEN` (ilk şifre): kullanıcı tablosu boşsa ilk istekte bu bilgilerle yönetici hesabı açılır ve eski tek kullanıcılı veriler bu hesaba kopyalanır; sonrasında `ACCESS_TOKEN` yalnızca eski sürüm panellerin geçişi için kullanılır. İsteğe bağlı: `ALLOWED_ORIGIN` (virgülle birden fazla site adresi).
 
 ## Güvenlik
 

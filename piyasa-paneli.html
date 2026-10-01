@@ -788,6 +788,9 @@
     font-size:12px;
     color:var(--muted);
   }
+  .chart-kaynak{font-size:11px;color:var(--muted-2);text-decoration:none;border-bottom:1px dotted var(--muted-2);}
+  .chart-kaynak:hover{color:var(--amber);border-color:var(--amber);}
+  .chart-kaynak[hidden]{display:none;}
   .chart-controls{
     display:flex;
     align-items:center;
@@ -2360,6 +2363,7 @@
       <div class="chart-title-row">
         <span class="chart-title" id="chartTitle">—</span>
         <span class="chart-sub" id="chartSub"></span>
+        <a class="chart-kaynak" id="chartKaynak" href="https://metalcharts.org" target="_blank" rel="noopener" hidden>Metal prices by MetalCharts</a>
       </div>
       <div class="chart-controls">
         <div class="period-toggle">
@@ -2397,7 +2401,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Hangi kartların hangi sırayla görüneceğini ⚙ Kartları düzenle ile seçersin; listede olmayan ABD hisse/ETF ya da kripto sembolünü de ekleyebilirsin (seçim hesabına kaydedilir). Gizli kartların fiyatı, yatırımlarında kullanılmıyorsa çekilmez. Karta tıklayınca açılan grafik: ABD hisse/ETF'lerde Yahoo (yedek Twelve Data) günlük ve haftalık kapanışları; uranyumda vadeli kontratın geçmişi olmadığı için eğilim olarak Sprott Fiziksel Uranyum Fonu (SRUUF) gösterilir ve grafik başlığında yazar. Haberler yalnızca köklü kurumlardan alınır (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı, Reuters, Bloomberg, BBC, CNBC, MarketWatch; basın bültenleri hariç) ve 10 dakikada bir yenilenir. İngilizce başlıklar Türkçeye çevrilir; BBC ve CNBC haberleri Google Çeviri ile Türkçe açılır. Reuters, Bloomberg ve MarketWatch otomatik çevrilemediği için "İngilizce" işaretlidir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Hangi kartların hangi sırayla görüneceğini ⚙ Kartları düzenle ile seçersin; listede olmayan ABD hisse/ETF ya da kripto sembolünü de ekleyebilirsin (seçim hesabına kaydedilir). Gizli kartların fiyatı, yatırımlarında kullanılmıyorsa çekilmez. Karta tıklayınca açılan grafik: ABD hisse/ETF'lerde Yahoo (yedek Twelve Data) günlük ve haftalık kapanışları; uranyumda gerçek U3O8 $/lb geçmişi MetalCharts'tan (12 saatte bir yenilenir; alınamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu (SRUUF) gösterilir ve grafik başlığında yazar). Haberler yalnızca köklü kurumlardan alınır (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı, Reuters, Bloomberg, BBC, CNBC, MarketWatch; basın bültenleri hariç) ve 10 dakikada bir yenilenir. İngilizce başlıklar Türkçeye çevrilir; BBC ve CNBC haberleri Google Çeviri ile Türkçe açılır. Reuters, Bloomberg ve MarketWatch otomatik çevrilemediği için "İngilizce" işaretlidir.
   </div>
 
   </div>
@@ -3168,7 +3172,7 @@
       <p><b>Kartları seçme:</b> En üstte saatin yanındaki <b>Kartları düzenle</b> düğmesine bas (yalnız Piyasa Özeti'nde görünür; telefonda saatin sağında). <b>Gösterilenler</b> listesinde ↑ ↓ ile sırayı değiştirir, ✕ ile gizlersin. <b>Hazır kartlardan ekle</b> bölümünden gizlediğin ya da hiç açmadığın kartları geri getirirsin. Seçimin hesabına kaydedilir; telefonda ve bilgisayarda aynı görünür. <b>Varsayılana dön</b> başlangıçtaki seti geri getirir.</p>
       <p><b>Listede olmayan bir hisse ya da kripto:</b> Aynı penceredeki <b>Kendin ekle</b> bölümünde türü seç (ABD hisse / ETF ya da Kripto), sembolü yaz ve <b>Ekle</b>'ye bas. Panel sembolü kontrol eder; bulunamazsa uyarır. Eklediğin sembol <b>Yatırımlarım</b>'da da seçilebilir hale gelir.</p>
       <p><b>Örnek:</b> Apple hissen var → Kendin ekle › ABD hisse / ETF › “AAPL”, ad “Apple” → “AAPL (Apple)” kartı çıkar. Sonra Yatırımlarım › + Ekle › ABD ETF &amp; Hisse listesinden “AAPL (Apple)”yu seçip adedini yazarsın.</p>
-      <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; “Günlük / Haftalık” ile aralığı değiştirirsin (son 30 gün / son 12 ay). Uranyumun vadeli kontratı neredeyse hiç işlem görmediği için grafiğinde eğilim olarak Sprott Fiziksel Uranyum Fonu gösterilir; başlıkta yazar. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
+      <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; “Günlük / Haftalık” ile aralığı değiştirirsin (son 30 gün / son 12 ay). Uranyum grafiği MetalCharts'tan gerçek U3O8 $/lb fiyatıdır; o kaynağa ulaşılamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu gösterilir ve başlıkta yazar. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
       <p><b>Fiyat kutusunun köşesindeki ışık:</b> yeşil = fiyat şu an canlı, kırmızı = kaynağa ulaşılamadı, son bilinen fiyat gösteriliyor.</p>
       <p class="kv-ipucu">💡 Önümüzdeki 3 gün içinde bir ödemen varsa sayfanın en üstünde turuncu bir uyarı şeridi çıkar; tıklarsan Ödeme Takvimi açılır. Gizlediğin bir kart yatırımlarında varsa fiyatı arka planda yine takip edilir; portföyün doğru kalır.</p>
       <button class="bolum-ekle" onclick="switchTab('gunluk')">Piyasa Özeti'ne git →</button>
@@ -5255,6 +5259,7 @@ async function loadChart(cfg, period){
   emptyEl.style.display = 'none';
   loadingEl.style.display = 'flex';
   subEl.textContent = period==='daily' ? 'Son 30 gün · günlük' : 'Son 12 ay · haftalık';
+  const kaynakEl = document.getElementById('chartKaynak'); if(kaynakEl) kaynakEl.hidden = true;
 
   try{
     const points = await fetchHistory(cfg, period);
@@ -5266,6 +5271,7 @@ async function loadChart(cfg, period){
       return;
     }
     if(points.not) subEl.textContent += ' · ' + points.not;
+    if(points.kaynak === 'MetalCharts' && kaynakEl) kaynakEl.hidden = false;   // ücretsiz katman şartı: görünür kaynak bağlantısı
     lastChartPoints = points;
     drawChart(svgEl, points);
   }catch(e){
@@ -5311,9 +5317,18 @@ async function fetchHistory(cfg, period){
     return await tdGecmis(cfg.symbol, period);
   }
 
-  // Uranyum: UX=F vadelisi neredeyse hiç işlem görmediği için geçmişi yok; eğilim için U3O8'i fiziksel olarak
-  // tutan Sprott Fiziksel Uranyum Fonu (SRUUF, $/pay) gösterilir ve grafik başlığında açıkça yazılır
+  // Uranyum: gerçek U3O8 $/lb geçmişi MetalCharts'tan (Worker, 12 saat önbellek). Alınamazsa: UX=F vadelisinin
+  // geçmişi neredeyse yok; eğilim için U3O8'i fiziksel olarak tutan Sprott Fiziksel Uranyum Fonu (SRUUF, $/pay), başlıkta yazar
   if(cfg.key === 'uranium'){
+    try{
+      const res = await fetchWithTimeout(MY_WORKER + '/uranyum-gecmis?aralik=' + (period === 'daily' ? '1M' : '1Y'), 12000);
+      const d = await res.json();
+      if(res.ok && Array.isArray(d.noktalar) && d.noktalar.length >= 5){
+        const p = d.noktalar.map(([t, v]) => ({ t, v }));
+        p.not = 'U3O8 $/lb'; p.kaynak = 'MetalCharts';
+        return p;
+      }
+    }catch(e){ /* eğilime düş */ }
     try{
       const p = await yahooGecmis(cfg.symbol, period);
       if(p.length >= 5) return p;

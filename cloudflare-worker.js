@@ -16,6 +16,7 @@
 //     /ai, /extract-loan                   -> Anthropic geçidi (şimdilik yalnız yönetici; diğerleri kendi anahtarıyla — sonraki aşama)
 //     /td, /td-series, /fh                 -> Twelve Data / Finnhub geçitleri (ortak kota için 60 sn önbellek)
 //     /uranyum                             -> uranyum fiyatı
+//     /uranyum-gecmis?aralik=1M|1Y         -> uranyum U3O8 $/lb geçmişi (MetalCharts API, secret: metalcharts; D1'de 12 saat önbellek)
 //     /auth/check                          -> ESKİ panel uyumluluğu (geçiş süresince)
 //
 // KURULUM (Cloudflare panelinde):
@@ -173,6 +174,7 @@ async function semaHazirla(env) {
     env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions (user_id)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS ukv (user_id TEXT NOT NULL, key TEXT NOT NULL, value TEXT NOT NULL, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, key))'),
     env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_ukv_user_time ON ukv (user_id, updated_at)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS onbellek (k TEXT PRIMARY KEY, v TEXT NOT NULL, ts INTEGER NOT NULL)'),   // kotalı dış servis cevapları
   ]);
   // Sonradan eklenen sütunlar (profil fotoğrafı, tercihler)
   const { results: sutunlar } = await env.DB.prepare("SELECT name FROM pragma_table_info('users')").all();
@@ -437,6 +439,36 @@ export default {
     if (url.pathname === '/uranyum') {
       try { return json(await uranyumGetir()); }
       catch (e) { return json({ error: 'uranyum fiyatı alınamadı: ' + e.message }, 502); }
+    }
+
+    // ---------- URANYUM GEÇMİŞİ (MetalCharts; ücretsiz katman ayda 200 istek → 12 saat D1 önbelleği, hatada 1 saat bekleme) ----------
+    if (url.pathname === '/uranyum-gecmis') {
+      const anahtar = (env.metalcharts || env.METALCHARTS_API_KEY || '').trim();
+      if (!anahtar) return json({ error: 'MetalCharts anahtarı tanımlı değil' }, 503);
+      const aralik = url.searchParams.get('aralik') === '1Y' ? '1Y' : '1M';
+      const ck = 'mc:UXA:' + aralik;
+      const simdi = Date.now();
+      const kayit = await env.DB.prepare('SELECT v, ts FROM onbellek WHERE k = ?').bind(ck).first();
+      if (kayit && simdi - kayit.ts < 12 * 3600 * 1000) return json(JSON.parse(kayit.v));
+      const hata = await env.DB.prepare('SELECT v, ts FROM onbellek WHERE k = ?').bind(ck + ':hata').first();
+      if (hata && simdi - hata.ts < 3600 * 1000) {
+        return kayit ? json(JSON.parse(kayit.v)) : json({ error: 'MetalCharts şu an kullanılamıyor: ' + hata.v }, 502);
+      }
+      try {
+        const res = await fetch(`https://api.metalcharts.org/v1/history/UXA?range=${aralik}&interval=${aralik === '1Y' ? '1w' : '1d'}`, {
+          headers: { Authorization: 'Bearer ' + anahtar, 'Accept': 'application/json', 'User-Agent': 'FinansTakip/1.0' },
+        });
+        const d = await res.json().catch(() => ({}));
+        if (!res.ok || !Array.isArray(d.data)) throw new Error((d && d.error) || ('HTTP ' + res.status));
+        const noktalar = d.data.map(x => [Date.parse(x.timestamp), Number(x.close != null ? x.close : x.price)]).filter(x => isFinite(x[0]) && isFinite(x[1]) && x[1] > 0);
+        if (noktalar.length < 2) throw new Error('veri yok');
+        const sonuc = { noktalar, kaynak: 'MetalCharts', birim: 'USD/lb', aralik, alindi: simdi };
+        await env.DB.prepare('INSERT OR REPLACE INTO onbellek (k, v, ts) VALUES (?, ?, ?)').bind(ck, JSON.stringify(sonuc), simdi).run();
+        return json(sonuc);
+      } catch (e) {
+        await env.DB.prepare('INSERT OR REPLACE INTO onbellek (k, v, ts) VALUES (?, ?, ?)').bind(ck + ':hata', String(e.message || e).slice(0, 200), simdi).run();
+        return kayit ? json(JSON.parse(kayit.v)) : json({ error: 'uranyum geçmişi alınamadı: ' + (e.message || e) }, 502);
+      }
     }
 
     // ---------- VERİ (her kullanıcının kendi verisi) ----------
