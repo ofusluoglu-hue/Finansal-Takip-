@@ -16,6 +16,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 10. Şifre ve oturum anahtarı düz metin saklanmaz: şifre PBKDF2 (tuzlu), oturum SHA-256 özeti. PBKDF2 tekrar sayısı Workers CPU sınırına göre seçilir (`SIFRE_ITER`); artırmadan önce istek süresi ölçülür.
 11. Kodda hiçbir kullanıcının kişisel verisi (kredi, banka, tutar, ad, e-posta) bulunmaz; kılavuz örnekleri genel adlarla yazılır (“Ev”, “ihtiyaç kredisi”). Yeni kullanıcı boş hesapla başlar.
 12. Bir cihazda başka bir hesapla giriş yapılırsa önceki hesabın yerel verisi silinir (`oturumKaydet`); veriler hesaplar arasında asla birleştirilmez.
+13b. Kullanıcıdan gelen profil alanları sunucuda doğrulanır: ad kırpılır ve 80 karakterle sınırlanır, fotoğraf yalnız `data:image/(jpeg|png|webp);base64` ve 120 KB'a kadar, tercihler yalnız izinli anahtarlar. Fotoğraf sayfaya yalnız bu biçimde doğrulandıktan sonra `<img src>` olarak konur.
 13. Yapay zekâ uçları sunucunun Anthropic anahtarını yalnızca yönetici için kullanır; diğer kullanıcılara açmak için kendi anahtarları (şifreli saklanan) gerekir.
 
 ## Kod

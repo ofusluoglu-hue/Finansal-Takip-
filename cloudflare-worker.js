@@ -8,6 +8,7 @@
 //
 //   Uç noktalar:
 //     /auth/login (POST) · /auth/logout (POST) · /auth/me (GET) · /auth/sifre (POST, kendi şifresini değiştirir)
+//     /auth/profil (POST: ad, fotoğraf, tercihler) · /auth/cikis-diger (POST: diğer cihazlardaki oturumları kapatır)
 //     /admin/kullanicilar (GET, POST) · /admin/kullanicilar/:id/sifre (POST) · /admin/kullanicilar/:id/durum (POST)
 //     /admin/kullanicilar/:id (DELETE)                                   — yalnız yönetici
 //     /data (GET), /data/:anahtar (PUT)    -> kullanıcının verileri (cihazlar arası senkron)
@@ -43,6 +44,17 @@ const KILIT_PENCERE_MS = 15 * 60 * 1000;
 const OTURUM_SURE_MS = 180 * 24 * 3600 * 1000;   // 180 gün; kullanıldıkça uzar
 const SIFRE_ITER = 20000;            // PBKDF2 tekrar sayısı: ücretsiz plan istek başına ~10 ms CPU verir (60 bin ≈ 22 ms). Kullanıcı başına saklanır, ileride artırılabilir.
 const SIFRE_MIN = 8;
+const FOTO_MAX = 120000;             // profil fotoğrafı (panel 192×192 JPEG'e küçültür, ~15–30 KB)
+const FOTO_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/;
+const TERCIH_ALANLARI = ['acilis'];   // users.ayar içinde saklanabilen tercihler
+
+// İstemciye giden hesap bilgisi (şifre özeti vb. asla)
+function kullaniciCikti(u, ek) {
+  let ayar = {};
+  try { ayar = JSON.parse(u.ayar || '{}') || {}; } catch { ayar = {}; }
+  return Object.assign({ id: u.id, email: u.email, ad: u.ad, rol: u.role, sifreDegismeli: !!u.must_change, foto: u.foto || null, ayar,
+    olusturma: u.created_at || null, sonGiris: u.last_login || null }, ek || {});
+}
 
 function corsBasliklari(request, env) {
   const izinli = ((env && env.ALLOWED_ORIGIN) || VARSAYILAN_ORIGIN).split(',').map(x => x.trim());
@@ -162,6 +174,11 @@ async function semaHazirla(env) {
     env.DB.prepare('CREATE TABLE IF NOT EXISTS ukv (user_id TEXT NOT NULL, key TEXT NOT NULL, value TEXT NOT NULL, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, key))'),
     env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_ukv_user_time ON ukv (user_id, updated_at)'),
   ]);
+  // Sonradan eklenen sütunlar (profil fotoğrafı, tercihler)
+  const { results: sutunlar } = await env.DB.prepare("SELECT name FROM pragma_table_info('users')").all();
+  const var_ = new Set((sutunlar || []).map(x => x.name));
+  if (!var_.has('foto')) await env.DB.prepare('ALTER TABLE users ADD COLUMN foto TEXT').run();
+  if (!var_.has('ayar')) await env.DB.prepare('ALTER TABLE users ADD COLUMN ayar TEXT').run();
   // Kullanıcı tablosu boşsa: ilk yöneticiyi LOGIN_USER + ACCESS_TOKEN ile aç, eski verileri ona kopyala (bir kez)
   const say = await env.DB.prepare('SELECT COUNT(*) AS n FROM users').first();
   if (!say || !say.n) {
@@ -171,7 +188,7 @@ async function semaHazirla(env) {
       const s = await yeniSifreKaydi(env.ACCESS_TOKEN.trim());
       await env.DB.batch([
         env.DB.prepare('INSERT OR IGNORE INTO users (id, email, ad, pass_hash, pass_salt, pass_iter, role, created_at) VALUES (?, ?, ?, ?, ?, ?, \'admin\', ?)')
-          .bind(id, eposta, 'Yönetici', s.pass_hash, s.pass_salt, s.pass_iter, Date.now()),
+          .bind(id, eposta, null, s.pass_hash, s.pass_salt, s.pass_iter, Date.now()),
         // Aynı anda iki ilk istek gelirse kullanıcı satırı bir kez oluşur (e-posta UNIQUE); veri de o satırın kimliğine kopyalanır
         env.DB.prepare('INSERT OR IGNORE INTO ukv (user_id, key, value, updated_at) SELECT (SELECT id FROM users WHERE email = ?), key, value, updated_at FROM kv').bind(eposta),
       ]);
@@ -281,7 +298,7 @@ export default {
       }
       await env.DB.prepare('UPDATE users SET last_login = ? WHERE id = ?').bind(Date.now(), u.id).run();
       const token = await oturumAc(env, u.id);
-      return json({ token, kullanici: { id: u.id, email: u.email, ad: u.ad, rol: u.role, sifreDegismeli: !!u.must_change } });
+      return json({ token, kullanici: kullaniciCikti(u) });
     }
 
     // ---------- KİMLİK KAPISI: bundan sonraki her şey geçerli bir oturum ister ----------
@@ -297,7 +314,40 @@ export default {
     // ---------- Eski panel uyumluluğu (geçiş süresince) ----------
     if (url.pathname === '/auth/check') return json({ ok: true, d1: true });
 
-    if (url.pathname === '/auth/me') return json({ kullanici: { id: ben.id, email: ben.email, ad: ben.ad, rol: ben.role, sifreDegismeli: ben.must_change } });
+    if (url.pathname === '/auth/me') {
+      const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(ben.id).first();
+      const o = await env.DB.prepare('SELECT COUNT(*) AS n FROM sessions WHERE user_id = ? AND expires_at > ?').bind(ben.id, Date.now()).first();
+      return json({ kullanici: kullaniciCikti(u, { oturum: o ? o.n : 0 }) });
+    }
+
+    if (url.pathname === '/auth/profil' && request.method === 'POST') {
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      const alanlar = [], degerler = [];
+      if (g.ad !== undefined) {
+        const ad = String(g.ad || '').trim().replace(/\s+/g, ' ').slice(0, 80);
+        alanlar.push('ad = ?'); degerler.push(ad || null);
+      }
+      if (g.foto !== undefined) {
+        if (g.foto !== null && (typeof g.foto !== 'string' || g.foto.length > FOTO_MAX || !FOTO_RE.test(g.foto))) return json({ error: 'fotoğraf geçersiz ya da çok büyük' }, 400);
+        alanlar.push('foto = ?'); degerler.push(g.foto);
+      }
+      if (g.ayar !== undefined) {
+        if (!g.ayar || typeof g.ayar !== 'object') return json({ error: 'tercihler geçersiz' }, 400);
+        const temiz = {};
+        TERCIH_ALANLARI.forEach(k => { if (typeof g.ayar[k] === 'string' && g.ayar[k].length <= 40) temiz[k] = g.ayar[k]; });
+        alanlar.push('ayar = ?'); degerler.push(JSON.stringify(temiz));
+      }
+      if (!alanlar.length) return json({ error: 'değişiklik yok' }, 400);
+      await env.DB.prepare('UPDATE users SET ' + alanlar.join(', ') + ' WHERE id = ?').bind(...degerler, ben.id).run();
+      const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(ben.id).first();
+      return json({ ok: true, kullanici: kullaniciCikti(u) });
+    }
+
+    if (url.pathname === '/auth/cikis-diger' && request.method === 'POST') {
+      const b = (request.headers.get('Authorization') || '').slice(7).trim();
+      const r = await env.DB.prepare('DELETE FROM sessions WHERE user_id = ? AND token_hash != ?').bind(ben.id, hex(await sha256(b))).run();
+      return json({ ok: true, kapanan: (r.meta && r.meta.changes) || 0 });
+    }
 
     if (url.pathname === '/auth/logout' && request.method === 'POST') {
       const b = (request.headers.get('Authorization') || '').slice(7).trim();
@@ -330,7 +380,7 @@ export default {
       const hedefId = parca[2] ? decodeURIComponent(parca[2]) : null, eylem = parca[3] || null;
 
       if (!hedefId && request.method === 'GET') {
-        const { results } = await env.DB.prepare('SELECT u.id, u.email, u.ad, u.role, u.disabled, u.must_change, u.created_at, u.last_login, (SELECT COUNT(*) FROM ukv WHERE user_id = u.id) AS kayit, (SELECT COALESCE(SUM(LENGTH(value)), 0) FROM ukv WHERE user_id = u.id) AS boyut FROM users u ORDER BY u.created_at').all();
+        const { results } = await env.DB.prepare('SELECT u.id, u.email, u.ad, u.foto, u.role, u.disabled, u.must_change, u.created_at, u.last_login, (SELECT COUNT(*) FROM ukv WHERE user_id = u.id) AS kayit, (SELECT COALESCE(SUM(LENGTH(value)), 0) FROM ukv WHERE user_id = u.id) AS boyut FROM users u ORDER BY u.created_at').all();
         return json({ kullanicilar: results || [] });
       }
       if (!hedefId && request.method === 'POST') {

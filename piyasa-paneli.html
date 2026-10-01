@@ -123,6 +123,12 @@
     .nav-diger{display:flex !important;}
     .nav-alt{flex-direction:row !important;align-items:center;justify-content:space-between;margin-top:0 !important;padding:0 !important;border-top:none !important;}
     .nav-alt .hesap-bilgi{display:none !important;}   /* telefonda hesap işlemleri Diğer menüsünde */
+    .sidebar-kutu{display:flex;align-items:center;gap:10px;}
+    .sidebar-kutu > .profil-kutu{flex:1 1 auto;margin:0;padding:2px 4px;border-bottom:none;border-radius:8px;}
+    .sidebar-kutu > .profil-kutu .avatar{width:30px;height:30px;font-size:12px;}
+    .sidebar-kutu > .profil-kutu small, .sidebar-kutu > .profil-kutu .profil-ok{display:none;}
+    .sidebar-kutu > .nav-alt{flex:0 0 auto;}
+    .profil-kutu:not([hidden]) ~ .nav-alt > .cikis-btn{display:none;}
     .wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important;}
   }
 
@@ -1680,6 +1686,39 @@
   .cikis-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:11.5px;padding:6px 8px;cursor:pointer;font-family:inherit;text-align:left;}
   .cikis-btn:hover{color:var(--down);border-color:var(--down);}
   .hesap-bilgi{display:flex;flex-direction:column;gap:6px;}
+  .profil-kutu{display:flex;align-items:center;gap:10px;padding:8px 8px 12px;margin:0 0 6px;border-bottom:1px solid var(--border);cursor:pointer;min-width:0;border-radius:8px 8px 0 0;}
+  .profil-kutu:hover{background:var(--panel-2);}
+  .profil-kutu[hidden]{display:none !important;}
+  .profil-kutu.active .profil-metin b, .profil-kutu.active .profil-ok{color:var(--amber);}
+  .profil-metin{display:flex;flex-direction:column;min-width:0;flex:1 1 auto;line-height:1.3;}
+  .profil-metin b{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .profil-metin small{font-size:11px;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .profil-ok{color:var(--muted-2);font-size:16px;flex:0 0 auto;}
+  .avatar{width:36px;height:36px;border-radius:50%;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;overflow:hidden;background:var(--panel-2);letter-spacing:.02em;}
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .avatar-kucuk{width:28px;height:28px;font-size:11px;}
+  .avatar-buyuk{width:96px;height:96px;font-size:32px;}
+  .profil-ust{display:flex;align-items:center;gap:22px;padding:18px 20px;flex-wrap:wrap;}
+  .profil-foto-alan{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .profil-foto-dugmeler{display:flex;gap:6px;}
+  .profil-foto-dugmeler label{cursor:pointer;}
+  .profil-kimlik{min-width:0;flex:1 1 220px;}
+  .profil-ad{font-size:21px;font-weight:700;color:var(--text);overflow-wrap:anywhere;}
+  .profil-eposta{font-size:13px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere;}
+  .profil-rozetler{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:10px;font-size:12px;color:var(--muted-2);}
+  .pf-rozet{display:inline-block;padding:2px 9px;border-radius:10px;font-weight:700;font-size:11px;color:var(--amber);border:1px solid rgba(231,168,59,.45);}
+  .pf-rozet.gri{color:var(--muted);border-color:var(--border);}
+  .pf-alan{padding:2px 0 12px;}
+  .pf-deger{font-size:14px;color:var(--text);padding:4px 0 2px;overflow-wrap:anywhere;}
+  .pf-satir{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;padding:11px 0;border-top:1px solid var(--border);flex-wrap:wrap;}
+  .bolum-bas + .pf-satir{border-top:none;}
+  .pf-satir > div{min-width:0;flex:1 1 220px;}
+  .pf-baslik{font-size:13.5px;font-weight:600;color:var(--text);}
+  .pf-cikis:hover{color:var(--down);border-color:var(--down);}
+  .pf-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--panel-2);border:1px solid var(--up);color:var(--text);padding:9px 16px;border-radius:10px;font-size:13px;z-index:10001;box-shadow:0 8px 24px rgba(0,0,0,.45);max-width:calc(100vw - 32px);}
+  .diger-profil{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--panel-2);cursor:pointer;min-width:0;}
+  .diger-profil .profil-ok{font-size:12px;font-weight:600;color:var(--amber);}
+  @media (max-width:900px){ .pf-toast{bottom:calc(92px + env(safe-area-inset-bottom));} }
   .hesap-bilgi[hidden], .nav-yonetim[hidden]{display:none !important;}
   .hesap-eposta{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .diger-hesap{display:flex;flex-direction:column;gap:8px;padding:2px 4px 6px;}
@@ -2159,6 +2198,11 @@
 
   <div class="sidebar">
    <div class="sidebar-kutu">
+    <div class="profil-kutu" id="profilKutu" onclick="switchTab('profil')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') switchTab('profil')" title="Profilim" hidden>
+      <span class="avatar" id="profilAvatar"></span>
+      <span class="profil-metin"><b id="profilAd"></b><small id="profilEposta"></small></span>
+      <span class="profil-ok" aria-hidden="true">›</span>
+    </div>
     <div class="nav-panel" id="navPanel">
       <div class="nav-item active" data-tab="gunluk" data-alt="1" onclick="switchTab('gunluk')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg>
@@ -2242,10 +2286,6 @@
     </div>
     <div class="nav-alt">
       <div id="senkronDurum" data-durum="senkron">☁ Senkronize ediliyor…</div>
-      <div class="hesap-bilgi" id="hesapBilgi" hidden>
-        <span class="hesap-eposta" id="hesapEposta"></span>
-        <button class="cikis-btn" onclick="sifreDegistirAc()">🔑 Şifremi değiştir</button>
-      </div>
       <button class="cikis-btn" onclick="cikisYap()">🔒 Çıkış yap</button>
     </div>
    </div>
@@ -3082,6 +3122,7 @@
       <div class="bolum-bas"><span class="bolum-baslik">İlk kurulum — 10 dakikada hazır</span></div>
       <p class="kv-p">Panel, girdiğin bilgilerden hesap yapar. Aşağıdaki sırayla bir kez girersen bütün sayfalar dolar; sonra yalnızca değişeni güncellersin.</p>
       <ol class="kv-adim">
+        <li><b>Profilim</b> — menünün en üstündeki adına (telefonda üstteki adına) tıkla; adını soyadını yaz, istersen fotoğraf ekle. <a href="#" onclick="switchTab('profil'); return false;">Profilim'e git →</a></li>
         <li><b>Borçlarım</b> — kredilerini (ödeme planını PDF ya da Excel olarak yükle), kredi kartı borçlarını, KMH'yi ve elden borçlarını gir. <a href="#" onclick="switchTab('borclar'); return false;">Borçlarım'a git →</a></li>
         <li><b>Finansal Durumum › Varlıklarım</b> — ev, arsa, araba gibi varlıklarını ve nakitte duran paranı gir. <a href="#" onclick="switchTab('finansal'); return false;">Git →</a></li>
         <li><b>Yatırımlarım</b> — ETF, kripto, BİST hissesi ve altın/gümüşünü adetiyle gir; fiyatlar kendiliğinden gelir. <a href="#" onclick="switchTab('yatirim'); return false;">Git →</a></li>
@@ -3228,10 +3269,17 @@
       <button class="bolum-ekle" onclick="switchTab('rapor')">Aylık Rapor'a git →</button>
     </div></details>
 
-    <details class="kv-bolum" id="kv-hesap"><summary>🔑 Hesabın <span>giriş, şifre, çıkış</span></summary><div class="kv-ic">
+    <details class="kv-bolum" id="kv-hesap"><summary>👤 Profilim ve hesabın <span>ad, fotoğraf, tercihler, şifre, çıkış</span></summary><div class="kv-ic">
       <p><b>Hesabı kim açar:</b> Panelde kayıt ekranı yok; hesapları yönetici açar ve sana e-posta adresinle bir <b>geçici şifre</b> iletir.</p>
       <p><b>İlk giriş:</b> E-posta ve geçici şifreyle gir. Panel hemen kendi şifreni belirlemeni ister (en az 8 karakter); bunu yapmadan devam edemezsin. Hesabın boş açılır; Kılavuz'un başındaki <b>İlk kurulum</b> adımlarıyla doldurursun.</p>
-      <p><b>Şifre değiştirme:</b> Sol alttaki <b>🔑 Şifremi değiştir</b> (telefonda <b>Diğer › Hesap</b>). Mevcut şifreni ve yenisini yazarsın; diğer cihazlarındaki oturumlar kapanır, oralarda yeni şifrenle girersin.</p>
+      <p><b>Profilim sayfası:</b> Menünün en üstündeki fotoğrafına ve adına tıkla (telefonda en üstteki adına ya da <b>Diğer › Hesap › Profilim</b>). Burada:</p>
+      <ul class="kv-liste">
+        <li><b>📷 Fotoğraf yükle:</b> telefon ya da bilgisayardan bir fotoğraf seç; kare olarak ortadan kırpılır ve küçültülür. <b>Kaldır</b> ile silersin; yerine adının baş harfleri görünür (ör. “Ayşe Yılmaz” → AY).</li>
+        <li><b>Ad soyad:</b> yaz ve <b>Kaydet</b>. Menüde e-postan yerine adın görünür.</li>
+        <li><b>Açılış sayfası:</b> panel açılınca ilk hangi sayfanın geleceğini seç (ör. her gün harcama giriyorsan Harcama Takibim).</li>
+        <li><b>Güvenlik:</b> 🔑 <b>Şifremi değiştir</b> (mevcut şifre + en az 8 karakterlik yeni şifre; diğer cihazlardaki oturumlar kapanır), <b>Diğer cihazlardan çıkış yap</b> (ör. iş bilgisayarında açık unuttuysan) ve bu cihazdan <b>Çıkış yap</b>. Kaç cihazda açık olduğun da yazar.</li>
+      </ul>
+      <p>Profil bilgilerin hesabında saklanır; bütün cihazlarında aynı görünür.</p>
       <p><b>Şifreni unuttuysan:</b> Yöneticine yaz; sana yeni bir geçici şifre verir, ilk girişte yine kendi şifreni belirlersin. Verilerin silinmez.</p>
       <p><b>Çıkış:</b> <b>🔒 Çıkış yap</b> yalnızca o cihazdaki kopyayı temizler; verilerin hesabında kalır. Ortak kullanılan bir bilgisayarda işin bitince çıkış yap.</p>
     </div></details>
@@ -3327,14 +3375,17 @@
 
     <div class="kv-grup-bas">Görünüm</div>
     <details class="kv-bolum kv-sss"><summary>Satırların başındaki yeşil ve kırmızı ışıklar ne demek?</summary><div class="kv-ic"><p><b>Yeşil:</b> değer güncel. Ya bugün güncelledin ya da canlı hesaplanıyor (kur, faiz, fiyat). <b>Kırmızı:</b> değeri en son bugünden önce güncelledin ya da canlı fiyata ulaşılamadı ve son bilinen değer gösteriliyor. Kırmızı bir hata değildir; yalnızca “bunu güncellemek isteyebilirsin” demektir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor, Kullanım Kılavuzu ve Sık Sorulan Sorular) sağ alttaki <b>Diğer</b> düğmesindedir. Şifre değiştirme ve çıkış da orada, en alttaki <b>Hesap</b> bölümünde.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor, Kullanım Kılavuzu ve Sık Sorulan Sorular) sağ alttaki <b>Diğer</b> düğmesindedir. Profilim, şifre değiştirme ve çıkış da orada, en alttaki <b>Hesap</b> bölümünde; ayrıca ekranın en üstündeki adına dokunarak da Profilim'e gidersin.</p></div></details>
 
     <div class="kv-grup-bas">Hesap, güvenlik ve Bay Piyasa</div>
     <details class="kv-bolum kv-sss"><summary>Verilerim diğer cihazlarımda da görünür mü?</summary><div class="kv-ic"><p>Evet. Girdiğin her şey hesabında saklanır ve aynı e-posta ve şifreyle girdiğin her cihazda görünür. Sol alttaki “☁ Senkron tamam” bunun gerçekleştiğini gösterir. İnternet yokken yaptığın değişiklikler bağlantı gelince gönderilir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Çıkış yaparsam verilerim silinir mi?</summary><div class="kv-ic"><p>Hayır. Çıkış yalnızca o cihazdaki kopyayı temizler. Verilerin hesabında kalır; tekrar giriş yapınca geri gelir. Aynı cihazda başka biri kendi hesabıyla girerse de senin verilerin o cihazdan silinir, onunkilerle karışmaz.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Giriş yapamıyorum, “çok fazla hatalı deneme” yazıyor.</summary><div class="kv-ic"><p>Güvenlik için arka arkaya 8 hatalı denemede o e-postaya giriş 15 dakika kilitlenir. 15 dakika bekleyip e-posta ve şifreni dikkatle tekrar yaz (şifrede büyük-küçük harf önemlidir). Hâlâ olmuyorsa şifreni unutmuş olabilirsin; aşağıdaki soruya bak.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Şifremi unuttum.</summary><div class="kv-ic"><p>Yöneticine yaz; Kullanıcılar sayfasından sana yeni bir <b>geçici şifre</b> verir. Onunla girince panel kendi şifreni belirlemeni ister. Verilerin silinmez, olduğu gibi kalır.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Şifremi nasıl değiştiririm?</summary><div class="kv-ic"><p>Sol alttaki <b>🔑 Şifremi değiştir</b>'e bas (telefonda <b>Diğer › Hesap</b>). Mevcut şifreni ve en az 8 karakterlik yeni şifreni yaz. Diğer cihazlarındaki oturumlar kapanır; oralarda yeni şifrenle girersin.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Şifremi nasıl değiştiririm?</summary><div class="kv-ic"><p>Menünün en üstündeki adına tıkla → <b>Profilim › Güvenlik › 🔑 Şifremi değiştir</b> (telefonda <b>Diğer › Hesap</b>'ta da var). Mevcut şifreni ve en az 8 karakterlik yeni şifreni yaz. Diğer cihazlarındaki oturumlar kapanır; oralarda yeni şifrenle girersin.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Profil fotoğrafımı ve adımı nasıl değiştiririm?</summary><div class="kv-ic"><p>Menünün en üstündeki adına tıkla (telefonda en üstteki adına). <b>Profilim</b>'de <b>📷 Fotoğraf yükle</b> ile fotoğraf seç, <b>Ad soyad</b>'a adını yazıp <b>Kaydet</b>'e bas. Fotoğraf kare olarak kırpılır; kendin ve yöneticin görür.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Başka bir bilgisayarda oturumum açık kaldı.</summary><div class="kv-ic"><p><b>Profilim › Güvenlik › Diğer cihazlardan çıkış yap</b>'a bas. Kullandığın cihaz dışındaki bütün oturumlar hemen kapanır; o bilgisayarda panel bir sonraki işlemde giriş ister. Şifreni de değiştirmek istersen yine aynı yerden yaparsın.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Panel her açılışta başka bir sayfayla açılsın istiyorum.</summary><div class="kv-ic"><p><b>Profilim › Tercihler › Açılış sayfası</b>'ndan seç (ör. Harcama Takibim). Seçim hesabına kaydedilir; bütün cihazlarında geçerli olur.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>İlk girişte neden şifremi değiştirmem isteniyor?</summary><div class="kv-ic"><p>Hesabın yönetici tarafından <b>geçici</b> bir şifreyle açıldı. Bu şifreyi başkası da bildiği için panel, devam etmeden önce yalnızca senin bildiğin bir şifre belirlemeni ister.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bir arkadaşım ya da eşim de paneli kullanabilir mi?</summary><div class="kv-ic"><p>Evet, ama kendi hesabıyla. Hesapları yönetici açar; ondan iste. Herkesin verisi ayrıdır, kimse diğerinin harcamasını ya da borcunu göremez. Aynı bilgisayarı kullanıyorsanız işin bitince <b>Çıkış yap</b>.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bay Piyasa verilerimi görüyor mu?</summary><div class="kv-ic"><p>Yalnızca Bay Piyasa sayfasındaki <b>“Portföyümü paylaş”</b> açıksa portföy, borç, harcama ve hedef <b>rakamların</b> gönderilir; isim ya da e-posta gönderilmez. Kapalıyken yalnızca piyasa ve haber verisini bilir. Aylık Rapor yorumu da aynı izni ister.</p></div></details>
@@ -3344,6 +3395,75 @@
     <div class="footnote"><b>Not:</b> Aradığın sorunun cevabı yoksa Bay Piyasa'ya sorabilir ya da Kullanım Kılavuzu'nda ilgili sayfanın bölümüne bakabilirsin.</div>
   </div>
   <!-- ================= /TAB: SIK SORULAN SORULAR ================= -->
+
+  <!-- ================= TAB: PROFİLİM ================= -->
+  <div class="tab-panel" id="tab-profil">
+    <div class="page-head"><h1>Profilim</h1></div>
+
+    <div class="bolum profil-ust">
+      <div class="profil-foto-alan">
+        <span class="avatar avatar-buyuk" id="pfAvatar"></span>
+        <div class="profil-foto-dugmeler">
+          <label class="bolum-ekle" for="pfFotoInput" tabindex="0" onkeydown="if(event.key==='Enter') this.click()">📷 Fotoğraf yükle</label>
+          <input type="file" id="pfFotoInput" accept="image/*" hidden onchange="profilFotoSec(this)">
+          <button class="bolum-ekle" id="pfFotoSil" onclick="profilFotoKaldir()" hidden>Kaldır</button>
+        </div>
+      </div>
+      <div class="profil-kimlik">
+        <div class="profil-ad" id="pfAdBaslik"></div>
+        <div class="profil-eposta" id="pfEpostaBaslik"></div>
+        <div class="profil-rozetler" id="pfRozet"></div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Kişisel bilgiler</span></div>
+      <div class="pf-alan">
+        <label class="giris-etiket" for="pfAd">Ad soyad</label>
+        <div class="loan-add-row">
+          <input type="text" id="pfAd" class="ai-input" style="max-width:320px;min-width:180px;" maxlength="80" placeholder="Adın ve soyadın" autocomplete="name" onkeydown="if(event.key==='Enter') profilAdKaydet()">
+          <button class="ai-btn" onclick="profilAdKaydet()">Kaydet</button>
+        </div>
+        <div class="ku-ipucu" id="pfAdIpucu">Adını yazarsan menüde, Aylık Rapor'da ve yöneticinin listesinde e-postan yerine adın görünür.</div>
+      </div>
+      <div class="pf-alan">
+        <div class="giris-etiket">E-posta</div>
+        <div class="pf-deger" id="pfEposta"></div>
+        <div class="ku-ipucu">Giriş e-postan; değişmesi gerekirse yöneticine yaz.</div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Tercihler</span></div>
+      <div class="pf-satir">
+        <div><div class="pf-baslik">Açılış sayfası</div><div class="ku-ipucu" style="margin:2px 0 0;">Panel açılınca ilk bu sayfa gelir — tüm cihazlarında.</div></div>
+        <select id="pfAcilis" class="ai-input bolum-secim" style="max-width:220px;" onchange="profilAcilisKaydet(this.value)"></select>
+      </div>
+      <div class="pf-satir">
+        <div><div class="pf-baslik">Piyasa Özeti kartları</div><div class="ku-ipucu" style="margin:2px 0 0;">Hangi fiyat kartlarını, hangi sırayla göreceğin.</div></div>
+        <button class="bolum-ekle" onclick="switchTab('gunluk'); kartDuzenAc();">⚙ Kartları düzenle</button>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Güvenlik</span></div>
+      <div class="pf-satir">
+        <div><div class="pf-baslik">Şifre</div><div class="ku-ipucu" style="margin:2px 0 0;">En az 8 karakter. Değişince diğer cihazlardaki oturumlar kapanır.</div></div>
+        <button class="bolum-ekle" onclick="sifreDegistirAc()">🔑 Şifremi değiştir</button>
+      </div>
+      <div class="pf-satir">
+        <div><div class="pf-baslik">Açık oturumlar</div><div class="ku-ipucu" style="margin:2px 0 0;" id="pfOturum"></div></div>
+        <button class="bolum-ekle" onclick="profilCikisDiger()">Diğer cihazlardan çıkış yap</button>
+      </div>
+      <div class="pf-satir">
+        <div><div class="pf-baslik">Bu cihaz</div><div class="ku-ipucu" style="margin:2px 0 0;">Bu cihazdaki kopya silinir; verilerin hesabında kalır.</div></div>
+        <button class="bolum-ekle pf-cikis" onclick="cikisYap()">🔒 Çıkış yap</button>
+      </div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Profil bilgilerin (ad, fotoğraf, tercihler) hesabında saklanır ve tüm cihazlarında aynı görünür. Fotoğraf yüklerken kare olarak ortadan kırpılır ve küçültülür; yalnızca sen ve yöneticin (Kullanıcılar listesinde) görürsünüz. Finansal verilerin bu sayfadan bağımsızdır.</div>
+  </div>
+  <!-- ================= /TAB: PROFİLİM ================= -->
 
   <!-- ================= TAB: KULLANICILAR (yalnız yönetici) ================= -->
   <div class="tab-panel" id="tab-kullanicilar">
@@ -3764,11 +3884,13 @@ async function oturumYukselt(){
 // Kenar çubuğundaki hesap satırı, yönetici menüsü, zorunlu şifre değişimi
 function hesapArayuzu(){
   const k = kullaniciBilgi();
-  const kutu = document.getElementById('hesapBilgi');
+  const kutu = document.getElementById('profilKutu');
   if(kutu && k){
     kutu.hidden = false;
-    document.getElementById('hesapEposta').textContent = k.email;
-    document.getElementById('hesapEposta').title = (k.ad ? k.ad + ' · ' : '') + k.email + (k.rol === 'admin' ? ' · yönetici' : '');
+    document.getElementById('profilAvatar').outerHTML = avatarHtml(k, '', 'profilAvatar');
+    document.getElementById('profilAd').textContent = gorunenAd(k);
+    document.getElementById('profilEposta').textContent = k.ad ? k.email : (k.rol === 'admin' ? 'Yönetici · profilini düzenle' : 'Profilini düzenle');
+    kutu.title = 'Profilim — ' + gorunenAd(k) + ' · ' + k.email;
   }
   document.querySelectorAll('.nav-yonetim').forEach(el => { el.hidden = !benYonetici(); });
   if(typeof kartGorunumUygula === 'function' && document.getElementById('kartDuzenKutu')) kartGorunumUygula();   // varsayılan kart seti role bağlı
@@ -3778,6 +3900,129 @@ function hesapArayuzu(){
     sifreDegistirAc('Hesabın yönetici tarafından geçici bir şifreyle açıldı. Devam etmeden önce kendine ait bir şifre belirle.');
   }
 }
+// ---------- Profil: avatar (fotoğraf ya da baş harfler), görünen ad, profil kaydı ----------
+function gorunenAd(k){ return (k && k.ad) || (k && k.email ? k.email.split('@')[0] : 'Hesabım'); }
+function basHarfler(k){
+  const ad = (k && k.ad || '').trim();
+  if(ad){ const p = ad.split(/\s+/); return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : '')).toLocaleUpperCase('tr-TR'); }
+  return ((k && k.email) || '?')[0].toLocaleUpperCase('tr-TR');
+}
+function avatarRengi(k){
+  let h = 0; const t = (k && (k.id || k.email)) || '';
+  for(let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 360;
+  return `hsl(${h} 42% 38%)`;
+}
+function avatarHtml(k, boyut, id){
+  const sinif = 'avatar' + (boyut ? ' avatar-' + boyut : '');
+  const idA = id ? ` id="${id}"` : '';
+  if(k && k.foto && /^data:image\/(jpeg|png|webp);base64,/.test(k.foto)) return `<span class="${sinif}"${idA}><img src="${k.foto}" alt=""></span>`;
+  return `<span class="${sinif}"${idA} style="background:${avatarRengi(k)};">${escapeHtml(basHarfler(k))}</span>`;
+}
+function kisaBildirim(metin){
+  const eski = document.getElementById('kisaBildirim'); if(eski) eski.remove();
+  const el = document.createElement('div');
+  el.id = 'kisaBildirim'; el.className = 'pf-toast'; el.setAttribute('role', 'status'); el.textContent = metin;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+function kullaniciGuncelle(yeni){
+  const k = Object.assign({}, kullaniciBilgi() || {}, yeni);
+  _snYaz(KULLANICI_KEY, JSON.stringify(k));
+  hesapArayuzu();
+  if(document.getElementById('tab-profil').classList.contains('active')) renderProfil();
+}
+// Sunucudaki güncel hesap bilgisi (başka cihazda değişen ad/fotoğraf, açık oturum sayısı)
+async function profilYenile(){
+  try{
+    const res = await fetch(MY_WORKER + '/auth/me', { cache: 'no-store' });
+    if(res.ok) kullaniciGuncelle((await res.json()).kullanici);
+  }catch(e){ /* bağlantı yok: yereldeki bilgi kullanılır */ }
+}
+async function profilKaydet(govde, basari){
+  try{
+    const res = await fetch(MY_WORKER + '/auth/profil', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(govde) });
+    if(!res.ok){ showAlertModal('Kaydedilemedi: ' + await sunucuHata(res)); return false; }
+    kullaniciGuncelle((await res.json()).kullanici);
+    if(basari) kisaBildirim(basari);
+    return true;
+  }catch(e){ showAlertModal('Sunucuya ulaşılamadı. İnternetini kontrol et.'); return false; }
+}
+function profilAdKaydet(){
+  const ad = document.getElementById('pfAd').value.trim().replace(/\s+/g, ' ');
+  const k = kullaniciBilgi() || {};
+  document.getElementById('pfAd').value = ad;
+  if(ad === (k.ad || '')) { kisaBildirim('Değişiklik yok'); return; }
+  profilKaydet({ ad }, ad ? 'Adın kaydedildi' : 'Ad kaldırıldı');
+}
+// Fotoğraf tarayıcıda 192×192 kare JPEG'e küçültülür (ortadan kırpılır), sunucuya ~15–30 KB gider
+function profilFotoSec(inp){
+  const f = inp.files && inp.files[0];
+  inp.value = '';
+  if(!f) return;
+  if(!/^image\//.test(f.type)){ showAlertModal('Bir resim dosyası seç (JPG, PNG…).'); return; }
+  if(f.size > 20 * 1024 * 1024){ showAlertModal('Bu resim çok büyük (en fazla 20 MB).'); return; }
+  const adres = URL.createObjectURL(f), img = new Image();
+  img.onload = () => {
+    const K = 192, c = document.createElement('canvas');
+    c.width = c.height = K;
+    const x = c.getContext('2d');
+    x.fillStyle = '#ffffff'; x.fillRect(0, 0, K, K);   // saydam PNG siyah görünmesin
+    const m = Math.min(img.naturalWidth, img.naturalHeight);
+    x.drawImage(img, (img.naturalWidth - m) / 2, (img.naturalHeight - m) / 2, m, m, 0, 0, K, K);
+    URL.revokeObjectURL(adres);
+    let veri = c.toDataURL('image/jpeg', 0.85);
+    if(veri.length > 100000) veri = c.toDataURL('image/jpeg', 0.6);
+    profilKaydet({ foto: veri }, 'Profil fotoğrafın güncellendi');
+  };
+  img.onerror = () => { URL.revokeObjectURL(adres); showAlertModal('Bu resim açılamadı. JPG ya da PNG bir fotoğraf dene.'); };
+  img.src = adres;
+}
+function profilFotoKaldir(){
+  showConfirmModal('Profil fotoğrafın kaldırılsın mı? Yerine adının baş harfleri görünür.', () => profilKaydet({ foto: null }, 'Fotoğraf kaldırıldı'));
+}
+function profilAcilisKaydet(sekme){
+  const k = kullaniciBilgi() || {};
+  profilKaydet({ ayar: Object.assign({}, k.ayar || {}, { acilis: sekme }) }, 'Açılış sayfası kaydedildi');
+}
+function profilCikisDiger(){
+  showConfirmModal('Bu cihaz dışındaki bütün cihazlarda oturumun kapansın mı? Oralarda yeniden giriş yapman gerekir.', async () => {
+    try{
+      const res = await fetch(MY_WORKER + '/auth/cikis-diger', { method: 'POST' });
+      if(!res.ok){ showAlertModal('Yapılamadı: ' + await sunucuHata(res)); return; }
+      const d = await res.json();
+      kisaBildirim(d.kapanan ? d.kapanan + ' oturum kapatıldı' : 'Başka açık oturum yoktu');
+      profilYenile();
+    }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); }
+  });
+}
+// Açılış sayfası seçenekleri: menüdeki (görünür) sayfalar
+function acilisSecenekleri(){
+  return [...document.querySelectorAll('#navPanel > .nav-item[data-tab]')].filter(el => !el.hidden)
+    .map(el => ({ tab: el.dataset.tab, ad: (el.querySelector('span') ? el.querySelector('span').firstChild.textContent.trim() : el.dataset.tab) }));
+}
+function renderProfil(){
+  const k = kullaniciBilgi();
+  if(!k) return;
+  document.getElementById('pfAvatar').outerHTML = avatarHtml(k, 'buyuk', 'pfAvatar');
+  document.getElementById('pfAdBaslik').textContent = gorunenAd(k);
+  document.getElementById('pfEpostaBaslik').textContent = k.email;
+  const tarih = ms => ms ? new Date(ms).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+  document.getElementById('pfRozet').innerHTML = [
+    k.rol === 'admin' ? '<span class="pf-rozet">Yönetici</span>' : '<span class="pf-rozet gri">Kullanıcı</span>',
+    k.olusturma ? 'Üyelik: ' + tarih(k.olusturma) : '',
+    k.sonGiris ? 'Son giriş: ' + kisaTarihSaat(new Date(k.sonGiris)) : '',
+  ].filter(Boolean).map(x => `<span>${x}</span>`).join('');
+  document.getElementById('pfFotoSil').hidden = !k.foto;
+  const adEl = document.getElementById('pfAd');
+  if(document.activeElement !== adEl) adEl.value = k.ad || '';
+  document.getElementById('pfAdIpucu').hidden = !!k.ad;
+  document.getElementById('pfEposta').textContent = k.email;
+  const sec = document.getElementById('pfAcilis');
+  const acilis = (k.ayar && k.ayar.acilis) || 'gunluk';
+  sec.innerHTML = acilisSecenekleri().map(o => `<option value="${o.tab}"${o.tab === acilis ? ' selected' : ''}>${escapeHtml(o.ad)}</option>`).join('');
+  document.getElementById('pfOturum').textContent = k.oturum != null ? (k.oturum <= 1 ? 'Yalnızca bu cihazda açık' : k.oturum + ' cihazda açık (bu cihaz dahil)') : 'Bu cihaz ve diğerleri';
+}
+
 async function cikisYap(){
   showConfirmModal('Çıkış yapılırsa bu cihazdaki veriler silinir (veriler hesabında güvende, tekrar giriş yapınca gelir). Emin misin?', async () => {
     try{ await senkronGonder(); }catch(e){ /* bağlantı yoksa devam */ }
@@ -4001,6 +4246,7 @@ async function senkronBaslat(){
   await oturumYukselt();
   if(!localStorage.getItem(ERISIM_KEY)) return;
   hesapArayuzu();
+  profilYenile();   // başka cihazda değişen ad/fotoğraf
   try{
     const degisti = await senkronCek();
     if(degisti && _snReloadIzinli()){ location.reload(); return; }
@@ -8399,6 +8645,7 @@ async function renderKullanicilar(){
     return `
     <div class="satir">
       <span class="led-dot ${u.disabled ? 'red' : 'green'}"></span>
+      ${avatarHtml(u, 'kucuk')}
       <div class="satir-ana">
         <div class="satir-ad" style="text-transform:none;" title="${escapeHtml(ad).replace(/"/g, '&quot;')}">${escapeHtml(ad)}</div>
         <div class="satir-alt">${alt}</div>
@@ -8497,7 +8744,7 @@ function digerMenuAc(){
   });
   bitir();
   const k = kullaniciBilgi();
-  html += `<div class="diger-grup">Hesap</div><div class="diger-hesap">${k ? `<span class="hesap-eposta">${escapeHtml(k.email)}</span>` : ''}
+  html += `<div class="diger-grup">Hesap</div><div class="diger-hesap">${k ? `<div class="diger-profil" onclick="switchTab('profil')">${avatarHtml(k)}<span class="profil-metin"><b>${escapeHtml(gorunenAd(k))}</b><small>${escapeHtml(k.email)}</small></span><span class="profil-ok">Profilim ›</span></div>` : ''}
     <div class="diger-hesap-dugme">${k ? '<button class="cikis-btn" onclick="digerMenuKapat(); sifreDegistirAc()">🔑 Şifremi değiştir</button>' : ''}<button class="cikis-btn" onclick="digerMenuKapat(); cikisYap()">🔒 Çıkış yap</button></div></div>`;
   const perde = document.createElement('div');
   perde.className = 'diger-perde'; perde.id = 'digerPerde';
@@ -10597,6 +10844,7 @@ const TAB_BASLIKLARI = {
   harcama:  ['Harcama Takibim', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe Planlaması', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
+  profil:   ['Profilim', 'Fotoğrafın, adın, tercihlerin ve hesap güvenliğin'],
   kullanicilar: ['Kullanıcılar', 'Hesap aç, geçici şifre ver, girişi kapat — yalnız yönetici görür'],
   sss:      ['Sık Sorulan Sorular', 'En sık takılınan noktaların kısa cevapları — konulara göre'],
   kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle'],
@@ -10631,6 +10879,8 @@ function switchTab(tabId){
   if(tabId === 'hedef') renderHedef();
   if(tabId === 'rapor') renderRapor();
   if(tabId === 'kullanicilar') renderKullanicilar();
+  if(tabId === 'profil'){ renderProfil(); profilYenile(); }
+  const pk = document.getElementById('profilKutu'); if(pk) pk.classList.toggle('active', tabId === 'profil');
   window.scrollTo(0, 0);
 }
 
@@ -10668,6 +10918,11 @@ tickDigitalClock();
 setInterval(tickDigitalClock, 1000);
 
 bpBaslat();   // Bay Piyasa: kayıtlı sohbetleri/ayarları yükle
+(function acilisSayfasi(){
+  const k = kullaniciBilgi(), t = k && k.ayar && k.ayar.acilis;
+  const oge = t && t !== 'gunluk' && document.querySelector(`#navPanel > .nav-item[data-tab="${t}"]`);
+  if(oge && !oge.hidden && (t !== 'kullanicilar' || benYonetici())) switchTab(t);
+})();
 senkronBaslat();   // D1 ile senkron: sunucudaki değişiklikleri çek, bekleyenleri gönder
 </script>
 </body>

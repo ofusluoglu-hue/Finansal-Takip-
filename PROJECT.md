@@ -15,7 +15,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 
 Panel çok kullanıcılıdır. Kayıt ekranı yoktur; hesapları yönetici açar.
 
-1. **Tablolar (D1):** `users (id, email UNIQUE, ad, pass_hash, pass_salt, pass_iter, role 'admin'|'user', disabled, must_change, created_at, last_login)`, `sessions (token_hash PK, user_id, created_at, expires_at, last_seen)`, `ukv (user_id, key, value, updated_at, PK(user_id, key))`, `auth_fail (ip, ts)`. Eski tek kullanıcılı `kv` tablosu yedek olarak durur, artık okunmaz.
+1. **Tablolar (D1):** `users (id, email UNIQUE, ad, pass_hash, pass_salt, pass_iter, role 'admin'|'user', disabled, must_change, created_at, last_login, foto, ayar)` (`foto`: 192×192 JPEG data URL, en fazla 120 KB, `FOTO_RE` ile doğrulanır; `ayar`: JSON tercihler, yalnız `TERCIH_ALANLARI` = `acilis`; iki sütun `semaHazirla`'da `pragma_table_info` kontrolüyle bir kez eklenir), `sessions (token_hash PK, user_id, created_at, expires_at, last_seen)`, `ukv (user_id, key, value, updated_at, PK(user_id, key))`, `auth_fail (ip, ts)`. Eski tek kullanıcılı `kv` tablosu yedek olarak durur, artık okunmaz.
 2. **Şifre:** PBKDF2-SHA256, 16 bayt rastgele tuz, `SIFRE_ITER` = 20.000 tekrar (Workers ücretsiz planı istek başına ~10 ms CPU verir; 60.000 ≈ 22 ms ölçüldü). Tekrar sayısı kullanıcı başına saklanır; artırılırsa eski şifreler kendi sayısıyla doğrulanmaya devam eder. En az 8 karakter.
 3. **Giriş:** `POST /auth/login {email, password}` → `{token, kullanici:{id,email,ad,rol,sifreDegismeli}}`. Token 32 rastgele bayt (base64url); veritabanında yalnızca SHA-256 özeti tutulur. 180 gün geçerli, kullanıldıkça uzar (saatte en fazla bir yazma). Kayıtlı olmayan e-postada da aynı PBKDF2 hesabı yapılır (e-postanın kayıtlı olup olmadığı süreden anlaşılmasın); hata mesajı hangi bilginin yanlış olduğunu söylemez.
 4. **Kilit:** her hatalı deneme `auth_fail`'e IP ve `e:<eposta>` olarak yazılır; 15 dakikada 8 hata → o IP ve o e-posta 429. Açık oturumla yapılan istekleri e-posta kilidi etkilemez.
@@ -24,6 +24,7 @@ Panel çok kullanıcılıdır. Kayıt ekranı yoktur; hesapları yönetici açar
 7. **Cihazda hesap değişimi:** `oturumKaydet` önceki `ft_kullanici.id` farklıysa yerel senkron verisini, senkron durumunu ve `ft_yedek_*` anahtarlarını siler (veriler karışmasın). Hesap bilgisi olmayan eski cihazdaki veri yöneticinin sayılır.
 8. **Eski sürümden geçiş:** `ft_erisim`'de eski erişim kodu varsa ve `ft_kullanici` yoksa `oturumYukselt` açılışta `/auth/me` (eski kodla) → `/auth/login` (aynı e-posta ve kodla) yapar ve kodu oturum anahtarıyla değiştirir; kullanıcı yeniden giriş yapmaz. Worker geçiş süresince `Bearer == ACCESS_TOKEN`'ı ilk yöneticinin oturumu sayar ve `/auth/check`'i yanıtlar. Kullanıcı tablosu boşsa ilk istekte `LOGIN_USER` + `ACCESS_TOKEN` ile yönetici açılır ve `kv` satırları ona kopyalanır (`semaHazirla`, bir kez).
 9. **Yönetici:** menüde **Yönetim › Kullanıcılar** ve kılavuzdaki ilgili bölüm `.nav-yonetim[hidden]` ile yalnız yöneticide görünür (`hesapArayuzu`); Worker'daki `/admin/*` uçları ayrıca rolü kontrol eder. Yönetici kendi hesabını devre dışı bırakamaz ve silemez.
+9b. **Profil:** kenar çubuğunun en üstünde `#profilKutu` (avatar `avatarHtml`: fotoğraf ya da baş harfler, renk e-posta/id'den; görünen ad `gorunenAd`); tıklayınca `profil` sekmesi (menüde ayrı öğe değil, `switchTab('profil')`). Hesap bilgisi `ft_kullanici`'de önbelleklenir, açılışta ve Profilim açılınca `/auth/me` ile tazelenir (`profilYenile`). Fotoğraf tarayıcıda ortadan kare kırpılıp 192 px JPEG'e çevrilir (`profilFotoSec`). Açılış sayfası tercihi sayfa yüklenirken uygulanır (`acilisSayfasi`; yönetici sayfası yalnız yöneticide). Telefonda üst satırda avatar + ad solda, senkron durumu sağda; çıkış Diğer › Hesap ve Profilim'de.
 10. **Çıkış:** bekleyen değişiklikler gönderilir, `/auth/logout` oturumu siler, yerel veriler silinir.
 11. **Yapay zekâ:** `/ai` ve `/extract-loan` şimdilik yalnız yöneticide (sunucunun anahtarı); diğerlerinde 403 `kod:'anahtar_gerekli'`, Bay Piyasa sayfasında bilgi notu, haber çevirisi yapılmaz.
 
@@ -70,8 +71,10 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (oturum anahtarı), `ft_kullanici` (gi
 |---|---|---|
 | `/` | GET | Sağlık kontrolü (`{ok:true}`) |
 | `/auth/login` | POST | `{email, password}` → `{token, kullanici}`; hatalı denemede kilit sayacı |
-| `/auth/me` | GET | Oturumun hesabı |
+| `/auth/me` | GET | Oturumun hesabı (ad, foto, ayar, üyelik ve son giriş tarihi, açık oturum sayısı) |
 | `/auth/logout` | POST | Oturumu siler |
+| `/auth/profil` | POST | `{ad?, foto?, ayar?}` (foto `null` = kaldır) → güncel `kullanici` |
+| `/auth/cikis-diger` | POST | Bu oturum dışındaki bütün oturumları siler → `{kapanan}` |
 | `/auth/sifre` | POST | `{eski, yeni}`: kendi şifresini değiştirir, diğer oturumları kapatır |
 | `/auth/check` | GET | Eski panel uyumluluğu (geçiş süresince) |
 | `/admin/kullanicilar` | GET, POST | Yönetici: hesap listesi (kayıt sayısı ve boyutla) / hesap aç `{email, ad, sifre}` (geçici şifre, `must_change=1`) |
@@ -268,6 +271,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | Profilim: menünün en üstünde fotoğraf/baş harf, ad soyad ve e-posta; profil sayfası (fotoğraf yükle/kaldır, ad soyad, açılış sayfası, kart düzenleme kısayolu, şifre, açık oturum sayısı, diğer cihazlardan çıkış, çıkış); Worker'da `users.foto`/`users.ayar`, `/auth/profil`, `/auth/cikis-diger`, zengin `/auth/me`; Kullanıcılar listesinde avatar; ilk yönetici adı artık boş başlar; kılavuz ve SSS (3 yeni soru) güncellendi |
 | 2026-10-01 | Piyasa Özeti'nde kullanıcı başına kart seçimi (`ft_kartlar_v1`, Worker izin listesine eklendi): göster/gizle, sırala, varsayılana dön, ABD hisse/ETF ve kripto sembolü ekleme (doğrulamalı; Yatırımlarım'da da seçilir); gizli ve kullanılmayan kartların fiyatı çekilmez; "QQM" etiketi QQQM olarak düzeltildi; kılavuz ve SSS güncellendi |
 | 2026-10-01 | **Çok kullanıcılı yapı:** kullanıcı hesapları (PBKDF2 şifre, oturum anahtarı, 180 gün), her kullanıcının verisi ayrı (`ukv`); yönetici için Kullanıcılar sayfası (hesap aç, geçici şifre, girişi kapat, sil); ilk girişte zorunlu şifre değişimi; Şifremi değiştir; eski erişim kodunun otomatik oturuma yükseltilmesi ve verilerin yönetici hesabına taşınması; IP + e-posta kilidi; Twelve Data / Finnhub / proxy için 60 sn ortak önbellek; koddaki kişisel kredi verisi (`LOANS_TOHUM`) kaldırıldı; AI şimdilik yalnız yöneticide; kılavuza Hesabın ve Kullanıcılar bölümleri, SSS'ye 5 hesap sorusu; yerelde (wrangler dev, yedek veriyle) uçtan uca test edildi |
 | 2026-10-01 | Yardım grubuna Sık Sorulan Sorular sekmesi (26 soru, konulara göre, aranabilir); kılavuzdaki sorular buraya taşındı, kılavuzda yönlendirme kutusu |

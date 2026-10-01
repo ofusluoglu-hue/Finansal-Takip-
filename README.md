@@ -25,6 +25,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 | **Kullanım Kılavuzu** | Yardım › Kullanım Kılavuzu: ilk kurulum adımları, her sayfanın ne işe yaradığı ve nasıl kullanıldığı (örneklerle), terimler sözlüğü, aranabilir |
 | **Sık Sorulan Sorular** | Yardım › SSS: konulara göre gruplanmış kısa cevaplar (harcama, borç ve kart, gelir ve tahmin, varlık, acil fon, hesap ve güvenlik), aranabilir |
 | **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması). Şimdilik yalnızca yönetici hesabında; diğer kullanıcılar için kendi API anahtarı ayarı planlanıyor |
+| **Profilim** | Menünün en üstünde fotoğraf (ya da baş harfler), ad soyad ve e-posta; tıklayınca profil sayfası: fotoğraf yükleme/kaldırma (kare kırpılır, küçültülür), ad soyad, açılış sayfası tercihi, kart düzenleme kısayolu, şifre değiştirme, açık oturum sayısı, diğer cihazlardan çıkış, çıkış. Bilgiler hesapta saklanır |
 | **Kullanıcılar** | Yalnız yönetici: hesap açma (geçici şifre üretip kopyalama), geçici şifre verme, girişi kapatma/açma, hesabı ve verisini silme; hesap başına son giriş, kayıt sayısı ve veri boyutu (verinin kendisi görünmez) |
 
 Telefonda da kullanılabilir: menü alta sabit sekme çubuğuna dönüşür; çubukta yer almayan sayfalar ve hesap işlemleri (şifre değiştirme, çıkış) **Diğer** menüsündedir.
