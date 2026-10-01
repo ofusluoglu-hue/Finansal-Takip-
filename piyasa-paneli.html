@@ -2390,8 +2390,9 @@
       </div>
       <div class="chart-controls">
         <div class="period-toggle">
-          <button class="period-btn active" id="btnDaily" onclick="setPeriod('daily')">Günlük</button>
-          <button class="period-btn" id="btnWeekly" onclick="setPeriod('weekly')">Haftalık</button>
+          <button class="period-btn active" data-aralik="ay" onclick="setPeriod('ay')">1 Ay</button>
+          <button class="period-btn" data-aralik="yil" onclick="setPeriod('yil')">1 Yıl</button>
+          <button class="period-btn" data-aralik="yil5" onclick="setPeriod('yil5')">5 Yıl</button>
         </div>
       </div>
     </div>
@@ -2424,7 +2425,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Hangi kartların hangi sırayla görüneceğini Kartları düzenle ile seçersin; ABD borsasındaki herhangi bir hisse ya da ETF'yi adıyla ya da koduyla arayıp, en büyük 30 kriptodan ya da Binance'teki başka bir kriptodan kart ekleyebilirsin (seçim hesabına kaydedilir). Gizli kartların fiyatı, yatırımlarında kullanılmıyorsa çekilmez. Karta tıklayınca açılan grafik: ABD hisse/ETF'lerde Yahoo (yedek Twelve Data) günlük ve haftalık kapanışları; uranyumda gerçek U3O8 $/lb geçmişi MetalCharts'tan (12 saatte bir yenilenir; alınamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu (SRUUF) gösterilir ve grafik başlığında yazar). Haberler yalnızca köklü kurumlardan alınır (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı, Reuters, Bloomberg, BBC, CNBC, MarketWatch; basın bültenleri hariç) ve 10 dakikada bir yenilenir. İngilizce başlıklar Türkçeye çevrilir; BBC ve CNBC haberleri Google Çeviri ile Türkçe açılır. Reuters, Bloomberg ve MarketWatch otomatik çevrilemediği için "İngilizce" işaretlidir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Hangi kartların hangi sırayla görüneceğini Kartları düzenle ile seçersin; ABD borsasındaki herhangi bir hisse ya da ETF'yi adıyla ya da koduyla arayıp, en büyük 30 kriptodan ya da Binance'teki başka bir kriptodan kart ekleyebilirsin (seçim hesabına kaydedilir). Gizli kartların fiyatı, yatırımlarında kullanılmıyorsa çekilmez. Karta tıklayınca açılan grafik 1 Ay, 1 Yıl (günlük) ve 5 Yıl (haftalık) gösterir, başlıkta dönemin toplam değişimi yazar: ABD hisse/ETF'lerde Yahoo (yedek Twelve Data), kriptoda Binance (geçmişi kısa coinde CoinGecko), altında Twelve Data (yedek Yahoo); uranyumda gerçek U3O8 $/lb geçmişi MetalCharts'tan (12 saatte bir yenilenir; alınamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu (SRUUF) gösterilir ve grafik başlığında yazar). Haberler yalnızca köklü kurumlardan alınır (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı, Reuters, Bloomberg, BBC, CNBC, MarketWatch; basın bültenleri hariç) ve 10 dakikada bir yenilenir. İngilizce başlıklar Türkçeye çevrilir; BBC ve CNBC haberleri Google Çeviri ile Türkçe açılır. Reuters, Bloomberg ve MarketWatch otomatik çevrilemediği için "İngilizce" işaretlidir.
   </div>
 
   </div>
@@ -3197,7 +3198,7 @@
       <p><b>Kartları seçme:</b> En üstte saatin yanındaki <b>Kartları düzenle</b> düğmesine bas (yalnız Piyasa Özeti'nde görünür; telefonda saatin sağında). <b>Gösterilenler</b> listesinde ↑ ↓ ile sırayı değiştirir, ✕ ile gizlersin. <b>Hazır kartlardan ekle</b> bölümünden gizlediğin ya da hiç açmadığın kartları geri getirirsin. Seçimin hesabına kaydedilir; telefonda ve bilgisayarda aynı görünür. <b>Varsayılana dön</b> başlangıçtaki seti geri getirir.</p>
       <p><b>Herhangi bir ABD hissesi, ETF ya da kripto:</b> Aynı penceredeki <b>Hisse, ETF ya da kripto ekle</b> kutusuna şirket adını ya da kodunu yaz (ör. “tesla”, “coca cola”, “nvidia”, “xrp”) — kod bilmene gerek yok, ilk birkaç harf ve küçük yazım hataları yeter. Kutuya tıklayınca yazmadan önce popüler hisseler (Apple, Tesla, Nvidia, TSMC, ASML…) listelenir. Çıkan listeden tıklarsın; kart hemen eklenir ve fiyatı gelir. ABD borsasındaki bütün hisse ve ETF'ler ile Borsa İstanbul hisseleri (ör. “aselsan”, “türk hava yolları”; fiyat ₺, 15 dk gecikmeli) aranabilir; kriptoda en büyük 30 kripto hazırdır, listede olmayan bir coinin kodunu yazarsan panel Binance'te dener. Eklediğin hisse <b>Yatırımlarım</b>'da da seçilebilir.</p>
       <p><b>Örnek:</b> Tesla hissen var → Kartları düzenle › kutuya “tesla” yaz › <b>TSLA — Tesla Inc</b>'e tıkla → “TSLA (Tesla Inc)” kartı çıkar. Yatırımlarım'a eklemek için de aynı aramayı orada yaparsın.</p>
-      <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; “Günlük / Haftalık” ile aralığı değiştirirsin (son 30 gün / son 12 ay). Uranyum grafiği MetalCharts'tan gerçek U3O8 $/lb fiyatıdır; o kaynağa ulaşılamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu gösterilir ve başlıkta yazar. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
+      <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; <b>1 Ay / 1 Yıl / 5 Yıl</b> ile aralığı seçersin (1 Ay ve 1 Yıl günlük, 5 Yıl haftalık veri). Başlıkta o dönemdeki toplam değişim yazar (ör. “+%14,4”); varlık seçtiğin aralıktan yeniyse (yeni listelenen coin, birkaç aylık fon) “veri … tarihinden beri” notu çıkar. Uranyum grafiği MetalCharts'tan gerçek U3O8 $/lb fiyatıdır; o kaynağa ulaşılamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu gösterilir ve başlıkta yazar. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
       <p><b>Fiyat kutusunun köşesindeki ışık:</b> yeşil = fiyat şu an canlı, kırmızı = kaynağa ulaşılamadı, son bilinen fiyat gösteriliyor.</p>
       <p class="kv-ipucu">💡 Önümüzdeki 3 gün içinde bir ödemen varsa sayfanın en üstünde turuncu bir uyarı şeridi çıkar; tıklarsan Ödeme Takvimi açılır. Gizlediğin bir kart yatırımlarında varsa fiyatı arka planda yine takip edilir; portföyün doğru kalır.</p>
       <button class="bolum-ekle" onclick="switchTab('gunluk')">Piyasa Özeti'ne git →</button>
@@ -5668,7 +5669,14 @@ function manualRefresh(){
 
 // ---------- Detay grafiği ----------
 let currentKey = null;
-let currentPeriod = 'daily';
+// Grafik aralıkları: her kaynak için çözünürlük (1 Ay ve 1 Yıl günlük, 5 Yıl haftalık)
+const GRAFIK_ARALIK = {
+  ay:   { etiket: 'Son 30 gün · günlük',  gun: 30,   yahoo: ['1mo', '1d'], td: ['1day', 30],   bn: ['1d', 30],  cgGun: 30,  cgAdim: 1, fredGun: 45,   fredAdim: 1, mc: '1M', enAz: 20 },
+  yil:  { etiket: 'Son 1 yıl · günlük',   gun: 365,  yahoo: ['1y', '1d'],  td: ['1day', 260],  bn: ['1d', 365], cgGun: 365, cgAdim: 1, fredGun: 370,  fredAdim: 1, mc: '1Y', enAz: 200 },
+  // 5 yıl: CoinGecko'nun ücretsiz geçmişi 1 yılla sınırlı → Binance'te çok yeni coinde 1 yılı haftalık örnekler
+  yil5: { etiket: 'Son 5 yıl · haftalık', gun: 1826, yahoo: ['5y', '1wk'], td: ['1week', 260], bn: ['1w', 261], cgGun: 365, cgAdim: 7, fredGun: 1830, fredAdim: 5, mc: null, enAz: 20 },
+};
+let currentPeriod = 'ay';
 
 function openChart(key){
   currentKey = key;
@@ -5681,9 +5689,8 @@ function openChart(key){
 }
 
 function setPeriod(period){
-  currentPeriod = period;
-  document.getElementById('btnDaily').classList.toggle('active', period==='daily');
-  document.getElementById('btnWeekly').classList.toggle('active', period==='weekly');
+  currentPeriod = GRAFIK_ARALIK[period] ? period : 'ay';
+  document.querySelectorAll('.period-btn[data-aralik]').forEach(b => b.classList.toggle('active', b.dataset.aralik === currentPeriod));
   if(currentKey){
     const cfg = CARDS.find(c=>c.key===currentKey);
     loadChart(cfg, period);
@@ -5701,7 +5708,7 @@ async function loadChart(cfg, period){
   svgEl.innerHTML = '';
   emptyEl.style.display = 'none';
   loadingEl.style.display = 'flex';
-  subEl.textContent = period==='daily' ? 'Son 30 gün · günlük' : 'Son 12 ay · haftalık';
+  subEl.textContent = (GRAFIK_ARALIK[period] || GRAFIK_ARALIK.ay).etiket;
   const kaynakEl = document.getElementById('chartKaynak'); if(kaynakEl) kaynakEl.hidden = true;
 
   try{
@@ -5713,6 +5720,12 @@ async function loadChart(cfg, period){
       lastChartPoints = null;
       return;
     }
+    // dönemdeki toplam değişim (ilk → son nokta)
+    const ilk = points[0].v, son = points[points.length - 1].v;
+    if(ilk > 0){ const d = (son / ilk - 1) * 100; subEl.textContent += ' · ' + (d >= 0 ? '+' : '−') + '%' + fmtNumber(Math.abs(d), Math.abs(d) >= 100 ? 0 : 1); }
+    // Varlık seçilen aralıktan yeniyse (ör. 6 aylık fon, yeni listelenen coin) başlık yanıltmasın
+    const beklenen = (GRAFIK_ARALIK[period] || GRAFIK_ARALIK.ay).gun;
+    if((points[points.length - 1].t - points[0].t) / 864e5 < beklenen * 0.85) subEl.textContent += ' · veri ' + new Date(points[0].t).toLocaleDateString('tr-TR') + ' tarihinden beri';
     if(points.not) subEl.textContent += ' · ' + points.not;
     if(points.kaynak === 'MetalCharts' && kaynakEl) kaynakEl.hidden = false;   // ücretsiz katman şartı: görünür kaynak bağlantısı
     lastChartPoints = points;
@@ -5726,8 +5739,7 @@ async function loadChart(cfg, period){
 
 // Yahoo günlük/haftalık kapanış serisi
 async function yahooGecmis(sembol, period){
-  const interval = period === 'daily' ? '1d' : '1wk';
-  const range = period === 'daily' ? '1mo' : '1y';
+  const [range, interval] = (GRAFIK_ARALIK[period] || GRAFIK_ARALIK.ay).yahoo;
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sembol)}?range=${range}&interval=${interval}`;
   const res = await fetchWithFallback(url);
   const data = await res.json();
@@ -5738,8 +5750,7 @@ async function yahooGecmis(sembol, period){
 }
 // Twelve Data geçmişi (Worker üzerinden; günlük kota ortak, 10 dk önbellekli)
 async function tdGecmis(sembol, period){
-  const interval = period === 'daily' ? '1day' : '1week';
-  const outputsize = period === 'daily' ? 30 : 52;
+  const [interval, outputsize] = (GRAFIK_ARALIK[period] || GRAFIK_ARALIK.ay).td;
   const url = MY_WORKER + '/td-series?symbol=' + encodeURIComponent(sembol) + '&interval=' + interval + '&outputsize=' + outputsize;
   const res = await fetchWithTimeout(url);
   const data = await res.json();
@@ -5764,7 +5775,9 @@ async function fetchHistory(cfg, period){
   // geçmişi neredeyse yok; eğilim için U3O8'i fiziksel olarak tutan Sprott Fiziksel Uranyum Fonu (SRUUF, $/pay), başlıkta yazar
   if(cfg.key === 'uranium'){
     try{
-      const res = await fetchWithTimeout(MY_WORKER + '/uranyum-gecmis?aralik=' + (period === 'daily' ? '1M' : '1Y'), 12000);
+      const mc = (GRAFIK_ARALIK[period] || GRAFIK_ARALIK.ay).mc;
+      if(!mc) throw new Error('5 yıl MetalCharts’ta yok');
+      const res = await fetchWithTimeout(MY_WORKER + '/uranyum-gecmis?aralik=' + mc, 12000);
       const d = await res.json();
       if(res.ok && Array.isArray(d.noktalar) && d.noktalar.length >= 5){
         const p = d.noktalar.map(([t, v]) => ({ t, v }));
@@ -5785,19 +5798,19 @@ async function fetchHistory(cfg, period){
 
   if(cfg.source === 'kripto'){
     const symbol = cfg.bnSymbol;
-    const interval = period === 'daily' ? '1d' : '1w';
-    const limit = period === 'daily' ? 30 : 52;
+    const A = GRAFIK_ARALIK[period] || GRAFIK_ARALIK.ay;
+    const [interval, limit] = A.bn;
     let bn = [];
     try{
       const res = await fetchWithTimeout(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`);
       if(res.ok) bn = (await res.json()).map(k => ({ t: k[6], v: parseFloat(k[4]) }));
     }catch(e){ /* CoinGecko'ya düş */ }
     // Binance'te yeni listelenen coinde (ör. HYPE) geçmiş kısa kalır: CoinGecko'nun günlük geçmişi kullanılır
-    if(bn.length >= (period === 'daily' ? 20 : 30) || !cfg.symbol) { if(bn.length) return bn; throw new Error('kripto geçmişi yok'); }
+    if(bn.length >= A.enAz || !cfg.symbol || !A.cgGun) { if(bn.length) return bn; throw new Error('kripto geçmişi yok'); }
     try{
-      const res = await fetchWithTimeout(`https://api.coingecko.com/api/v3/coins/${encodeURIComponent(cfg.symbol)}/market_chart?vs_currency=usd&days=${period === 'daily' ? 30 : 365}&interval=daily`, 12000);
-      const fiyatlar = ((await res.json()).prices || []).map(([t, v]) => ({ t, v })).filter(x => isFinite(x.v));
-      const cg = period === 'daily' ? fiyatlar : fiyatlar.filter((x, i) => (fiyatlar.length - 1 - i) % 7 === 0);   // haftalık: 7 günde bir
+      const res = await fetchWithTimeout(`https://api.coingecko.com/api/v3/coins/${encodeURIComponent(cfg.symbol)}/market_chart?vs_currency=usd&days=${A.cgGun}&interval=daily`, 12000);
+      const tum = ((await res.json()).prices || []).map(([t, v]) => ({ t, v })).filter(x => isFinite(x.v));
+      const cg = A.cgAdim > 1 ? tum.filter((x, i) => (tum.length - 1 - i) % A.cgAdim === 0) : tum;
       if(cg.length > bn.length) return cg;
     }catch(e){ /* Binance'teki kısa geçmiş kalır */ }
     return bn;
@@ -5810,9 +5823,8 @@ async function fetchHistory(cfg, period){
   }
 
   if(cfg.source === 'fred'){
-    const cosd = period === 'daily'
-      ? new Date(Date.now() - 45*24*3600*1000).toISOString().slice(0,10)
-      : new Date(Date.now() - 450*24*3600*1000).toISOString().slice(0,10);
+    const A = GRAFIK_ARALIK[period] || GRAFIK_ARALIK.ay;
+    const cosd = new Date(Date.now() - A.fredGun*24*3600*1000).toISOString().slice(0,10);
     const url = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${cfg.symbol}&cosd=${cosd}`;
     const res = await fetchWithFallback(url);
     const text = await res.text();
@@ -5821,9 +5833,7 @@ async function fetchHistory(cfg, period){
       .map(l=>l.split(','))
       .filter(cols=> cols.length===2 && cols[1].trim() !== '.' && cols[1].trim() !== '')
       .map(cols=>({ t: new Date(cols[0]).getTime(), v: parseFloat(cols[1]) }));
-    if(period === 'weekly'){
-      pts = pts.filter((_,i)=> i % 5 === 0);
-    }
+    if(A.fredAdim > 1) pts = pts.filter((_,i)=> i % A.fredAdim === 0);
     return pts;
   }
 
@@ -5850,7 +5860,9 @@ function drawChart(svgEl, points){
   const linePath = points.map((p,i)=> `${i===0?'M':'L'} ${x(i).toFixed(2)} ${y(p.v).toFixed(2)}`).join(' ');
   const areaPath = `${linePath} L ${x(points.length-1).toFixed(2)} ${H-PAD_B} L ${x(0).toFixed(2)} ${H-PAD_B} Z`;
 
-  const fmtDate = (t)=> new Date(t).toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit'});
+  // 1 yıldan uzun aralıkta ay + yıl ("Eki 2021"), 1 yıl civarında gün.ay.yıl, kısa aralıkta gün.ay
+  const sure = points[points.length-1].t - points[0].t;
+  const fmtDate = (t)=> new Date(t).toLocaleDateString('tr-TR', sure > 400*864e5 ? {month:'short', year:'numeric'} : sure > 60*864e5 ? {day:'2-digit', month:'2-digit', year:'2-digit'} : {day:'2-digit', month:'2-digit'});
 
   const gridLines = [0.25, 0.5, 0.75].map(frac=>{
     const yy = PAD_T + frac*(H-PAD_T-PAD_B);
