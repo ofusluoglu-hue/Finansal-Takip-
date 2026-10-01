@@ -9,7 +9,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 
 | Sekme | İçerik |
 |---|---|
-| **Piyasa Özeti** | ETF/hisse, döviz, emtia (altın, Brent, uranyum) ve kripto (Binance) fiyatları; ABD seans öncesi / kapanış / sonrası fiyatları kartta ayrı ayrı; detay grafiği; köklü kurumlardan güncel haberler (Türkçe kaynaklar öncelikli; İngilizceler Türkçe çeviriyle açılır) |
+| **Piyasa Özeti** | ETF/hisse, döviz, emtia (altın, Brent, uranyum) ve kripto (Binance) fiyatları; **kullanıcı başına kart seçimi** (göster/gizle, sırala, listede olmayan ABD hisse/ETF ya da kripto sembolü ekle — eklenen sembol yatırım olarak da seçilebilir); ABD seans öncesi / kapanış / sonrası fiyatları kartta ayrı ayrı; detay grafiği; köklü kurumlardan güncel haberler (Türkçe kaynaklar öncelikli; İngilizceler Türkçe çeviriyle açılır) |
 | **Finansal Durumum** | Varlıklar (konut, otomobil, arsa, nakit / mevduat — ₺, $, € ya da gram altın olarak, canlı kurla — vb.) ve net finansal durum; acil durum fonunun kaç aylık gideri karşıladığı |
 | **Yatırımlarım** | Portföy takibi: ABD ETF/hisse, kripto, BİST (kod + adet, fiyat arka planda) ve emtia (altın, gümüş — gram); günlük / haftalık / aylık performans |
 | **Borçlarım** | Krediler (canlı erken kapama hesaplayıcı), kredi kartları, KMH (aylık faizle günlük canlı işleyen borç: faiz + KKDF + BSMV), elden nakit borçlar; kredi planını **PDF'ten** (yapay zekâ) veya **Excel'den** içe aktarma |
