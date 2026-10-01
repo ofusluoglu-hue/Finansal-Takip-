@@ -68,7 +68,7 @@
     display:flex;
     align-items:center;
     gap:11px;
-    padding:7px 12px;   /* 31 px satır: 900 px ekranda menünün tamamı görünür */
+    padding:6.5px 12px;   /* ~30 px satır: 900 px ekranda menünün tamamı görünür (yönetim grubu ve Destek dahil) */
     border-radius:8px;
     cursor:pointer;
     color:var(--muted);
@@ -2021,6 +2021,21 @@
   .kv-bolum > summary:hover{background:var(--panel-2);}
   .kv-bolum[open] > summary{border-bottom:1px solid var(--border);}
   .kv-sss > summary{font-size:13.5px;font-weight:600;}
+  .destek-kart{display:flex;gap:18px;align-items:flex-start;padding:18px 20px;border-color:rgba(231,168,59,.35);}
+  .destek-ikon{flex:0 0 48px;height:48px;border-radius:12px;background:rgba(231,168,59,.12);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:24px;}
+  .destek-govde{min-width:0;flex:1 1 auto;}
+  .destek-baslik{font-size:17px;font-weight:700;color:var(--text);}
+  .destek-metin{margin:6px 0 10px;font-size:13px;line-height:1.55;color:var(--muted);}
+  .destek-eposta{font-size:18px;font-weight:700;color:var(--amber);margin-bottom:12px;overflow-wrap:anywhere;user-select:all;}
+  .destek-dugmeler{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .destek-gonder{text-decoration:none;display:inline-flex;align-items:center;}
+  .destek-ikili{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .destek-ikili > .bolum{margin-bottom:14px;min-width:0;}
+  .destek-hizli{display:flex;gap:8px;flex-wrap:wrap;}
+  .destek-liste{font-size:13px;color:var(--muted);}
+  .destek-liste li{line-height:1.55;}
+  .destek-liste b{color:var(--text);}
+  @media (max-width:900px){ .destek-ikili{grid-template-columns:1fr;gap:0;} .destek-kart{padding:14px;gap:12px;} .destek-ikon{flex-basis:40px;height:40px;font-size:20px;} }
   .kv-yonlendir{cursor:pointer;border-color:rgba(231,168,59,.35);}
   .kv-yonlendir:hover{border-color:var(--amber);}
   .kv-ic{padding:10px 18px 14px;font-size:13.5px;line-height:1.65;color:var(--text);}
@@ -2335,6 +2350,10 @@
       <div class="nav-item" data-tab="sss" onclick="switchTab('sss')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M10 10a2 2 0 1 1 2.8 1.8c-.5.2-.8.7-.8 1.2v.3"/><circle cx="12" cy="15.8" r=".5" fill="currentColor"/></svg>
         <span data-kisa="SSS">Sık Sorulan Sorular</span>
+      </div>
+      <div class="nav-item" data-tab="destek" onclick="switchTab('destek')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        <span data-kisa="Destek">Destek ve İletişim</span>
       </div>
       <div class="nav-grup nav-yonetim" hidden>Yönetim</div>
       <div class="nav-item nav-yonetim" data-tab="kullanicilar" onclick="switchTab('kullanicilar')" hidden>
@@ -3397,7 +3416,7 @@
       <p>Verilerin yalnızca senin hesabında saklanır; panelde kimse (yönetici de) başkasının verisini göremez. Giriş e-posta ve şifreyle yapılır; şifren sunucuda okunamaz biçimde (tuzlanmış özet olarak) saklanır. Arka arkaya 8 hatalı denemede o e-postaya ve o bağlantıya giriş 15 dakika kilitlenir. Fiyat ve yapay zekâ servislerinin gizli anahtarları senin tarayıcında değil, sunucuda durur. Bay Piyasa'ya rakamların yalnızca “Portföyümü paylaş” açıkken gider; isim ya da e-posta gönderilmez.</p>
     </div></div>
 
-    <div class="footnote"><b>Not:</b> Kılavuzdaki örnek rakamlar açıklama içindir; sayfalarda senin kendi verin görünür. Kısa cevaplar için <a href="#" onclick="switchTab('sss'); return false;" style="color:var(--amber);">Sık Sorulan Sorular</a>'a bakabilir ya da Bay Piyasa'ya “… nasıl yapılır?” diye sorabilirsin.</div>
+    <div class="footnote"><b>Not:</b> Kılavuzdaki örnek rakamlar açıklama içindir; sayfalarda senin kendi verin görünür. Kısa cevaplar için <a href="#" onclick="switchTab('sss'); return false;" style="color:var(--amber);">Sık Sorulan Sorular</a>'a bakabilir, Bay Piyasa'ya “… nasıl yapılır?” diye sorabilir ya da sorun çözülmezse <a href="#" onclick="switchTab('destek'); return false;" style="color:var(--amber);">Destek ve İletişim</a>'den bize yazabilirsin.</div>
   </div>
   <!-- ================= /TAB: KULLANIM KILAVUZU ================= -->
 
@@ -3462,6 +3481,7 @@
     <details class="kv-bolum kv-sss"><summary>Verilerim diğer cihazlarımda da görünür mü?</summary><div class="kv-ic"><p>Evet. Girdiğin her şey hesabında saklanır ve aynı e-posta ve şifreyle girdiğin her cihazda görünür. Sol alttaki “☁ Senkron tamam” bunun gerçekleştiğini gösterir. İnternet yokken yaptığın değişiklikler bağlantı gelince gönderilir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Çıkış yaparsam verilerim silinir mi?</summary><div class="kv-ic"><p>Hayır. Çıkış yalnızca o cihazdaki kopyayı temizler. Verilerin hesabında kalır; tekrar giriş yapınca geri gelir. Aynı cihazda başka biri kendi hesabıyla girerse de senin verilerin o cihazdan silinir, onunkilerle karışmaz.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Giriş yapamıyorum, “çok fazla hatalı deneme” yazıyor.</summary><div class="kv-ic"><p>Güvenlik için arka arkaya 8 hatalı denemede o e-postaya giriş 15 dakika kilitlenir. 15 dakika bekleyip e-posta ve şifreni dikkatle tekrar yaz (şifrede büyük-küçük harf önemlidir). Hâlâ olmuyorsa şifreni unutmuş olabilirsin; aşağıdaki soruya bak.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bir hata buldum ya da sorunum çözülmedi; kime yazarım?</summary><div class="kv-ic"><p>Menüde <b>Yardım › Destek ve İletişim</b>'e git (telefonda <b>Diğer</b>'de). <b>E-posta gönder</b>'e basınca e-posta uygulamanda konu ve hesap bilgilerin hazır gelir; ne yaptığını ve ne olduğunu yazman, mümkünse ekran görüntüsü eklemen yeterli. Genellikle 1–2 iş günü içinde dönüş yapılır. Şifreni ya da API anahtarını e-postayla gönderme.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Şifremi unuttum.</summary><div class="kv-ic"><p>Yöneticine yaz; Kullanıcılar sayfasından sana yeni bir <b>geçici şifre</b> verir. Onunla girince panel kendi şifreni belirlemeni ister. Verilerin silinmez, olduğu gibi kalır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Şifremi nasıl değiştiririm?</summary><div class="kv-ic"><p>Menünün en üstündeki adına tıkla → <b>Profilim › Güvenlik › 🔑 Şifremi değiştir</b> (telefonda <b>Diğer › Hesap</b>'ta da var). Mevcut şifreni ve en az 8 karakterlik yeni şifreni yaz. Diğer cihazlarındaki oturumlar kapanır; oralarda yeni şifrenle girersin.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Profil fotoğrafımı ve adımı nasıl değiştiririm?</summary><div class="kv-ic"><p>Menünün en üstündeki adına tıkla (telefonda en üstteki adına). <b>Profilim</b>'de <b>📷 Fotoğraf yükle</b> ile fotoğraf seç, <b>Ad soyad</b>'a adını yazıp <b>Kaydet</b>'e bas. Fotoğraf kare olarak kırpılır; kendin ve yöneticin görür.</p></div></details>
@@ -3474,9 +3494,58 @@
     <details class="kv-bolum kv-sss"><summary>Anthropic anahtarım güvende mi? Ne kadar tutar?</summary><div class="kv-ic"><p>Anahtar kaydedilmeden önce Anthropic'te doğrulanır, sunucuda <b>şifreli</b> saklanır ve yalnızca senin hesabının isteklerinde çözülür; panelde sana bile tamamı bir daha gösterilmez (yalnızca baş ve son harfleri), yönetici de göremez. Ücret kullandıkça Anthropic hesabından düşer: kısa bir soru genelde $0,01'in altındadır, her cevabın ücreti altında yazar ve Bay Piyasa sayfasındaki <b>günlük limit</b> (varsayılan $0,50) dolunca durur. Anahtarı Profilim'den istediğin an kaldırabilir ya da Anthropic'te iptal edebilirsin.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bay Piyasa ne kadar tutar?</summary><div class="kv-ic"><p>Her cevabın küçük bir ücreti vardır; cevabın altında yazar. Bay Piyasa sayfasındaki <b>günlük limit</b> (varsayılan $0,50) dolunca o gün durur; limiti oradan değiştirebilirsin. Aylık Rapor yorumu o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</p></div></details>
 
-    <div class="footnote"><b>Not:</b> Aradığın sorunun cevabı yoksa Bay Piyasa'ya sorabilir ya da Kullanım Kılavuzu'nda ilgili sayfanın bölümüne bakabilirsin.</div>
+    <div class="bolum kv-yonlendir" onclick="switchTab('destek')" role="link" tabindex="0" onkeydown="if(event.key==='Enter') switchTab('destek');">
+      <div class="bolum-bas"><span class="bolum-baslik">✉ Cevabını bulamadın mı?</span><span class="bolum-toplam" style="color:var(--amber);font-size:13px;">Destek ve İletişim →</span></div>
+      <p class="kv-p" style="margin:0 0 10px;">Bir hata gördüysen ya da sorun çözülmediyse bize e-postayla yaz; konu ve hesap bilgilerin hazır gelir.</p>
+    </div>
+    <div class="footnote"><b>Not:</b> Aradığın sorunun cevabı yoksa Bay Piyasa'ya sorabilir, Kullanım Kılavuzu'nda ilgili sayfanın bölümüne bakabilir ya da Destek ve İletişim'den bize yazabilirsin.</div>
   </div>
   <!-- ================= /TAB: SIK SORULAN SORULAR ================= -->
+
+  <!-- ================= TAB: DESTEK VE İLETİŞİM ================= -->
+  <div class="tab-panel" id="tab-destek">
+    <div class="page-head"><h1>Destek ve İletişim</h1></div>
+
+    <div class="bolum destek-kart">
+      <div class="destek-ikon" aria-hidden="true">✉</div>
+      <div class="destek-govde">
+        <div class="destek-baslik">Sorununu çözemedin mi? Bize yaz.</div>
+        <p class="destek-metin">Bir hata gördüysen, bir şeyi nasıl yapacağını bulamadıysan ya da bir önerin varsa e-postayla ulaşabilirsin. Genellikle 1–2 iş günü içinde dönüş yapılır.</p>
+        <div class="destek-eposta"><span id="destekEposta"></span></div>
+        <div class="destek-dugmeler">
+          <a class="ai-btn destek-gonder" id="destekGonder" href="#">✉ E-posta gönder</a>
+          <button class="bolum-ekle" onclick="destekKopyala()" id="destekKopyalaBtn">Adresi kopyala</button>
+        </div>
+        <div class="ku-ipucu" style="margin:8px 0 0;">“E-posta gönder” e-posta uygulamanı açar; konu ve hesap bilgilerin hazır gelir, yalnızca sorununu yazarsın. Uygulama açılmazsa adresi kopyalayıp kendi e-postandan gönder.</div>
+      </div>
+    </div>
+
+    <div class="destek-ikili">
+      <div class="bolum">
+        <div class="bolum-bas"><span class="bolum-baslik">Yazmadan önce</span></div>
+        <p class="kv-p">Çoğu sorunun cevabı hazır; bir dakikada bulabilirsin:</p>
+        <div class="destek-hizli">
+          <button class="bolum-ekle" onclick="switchTab('sss')">💬 Sık Sorulan Sorular</button>
+          <button class="bolum-ekle" onclick="switchTab('kilavuz')">📖 Kullanım Kılavuzu</button>
+          <button class="bolum-ekle" onclick="switchTab('ai')">✨ Bay Piyasa’ya sor</button>
+        </div>
+        <p class="kv-p" style="margin-top:10px;">Şifreni unuttuysan ya da hesabın kilitlendiyse yöneticine yazman yeterli; geçici şifre verilir, verilerin silinmez.</p>
+      </div>
+      <div class="bolum">
+        <div class="bolum-bas"><span class="bolum-baslik">Hızlı çözüm için ne yazmalı?</span></div>
+        <ul class="kv-liste destek-liste">
+          <li><b>Hangi sayfadaydın</b> ve ne yapmaya çalışıyordun?</li>
+          <li><b>Ne oldu</b>, ne olmasını bekliyordun? (ör. “Harcama ekle'ye bastım, liste güncellenmedi”)</li>
+          <li>Varsa <b>ekran görüntüsü</b> ekle — sorunu en hızlı anlatan şey budur.</li>
+          <li>Telefonda mı bilgisayarda mı? (E-posta şablonunda tarayıcı bilgisi kendiliğinden yazar.)</li>
+        </ul>
+        <p class="ku-ipucu" style="margin:6px 0 10px;">🔒 Şifreni ya da API anahtarını asla e-postayla gönderme; destek için gerekmez.</p>
+      </div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> E-postanda hesabının e-posta adresi yazar ki sorunu senin hesabında inceleyebilelim; finansal verilerin e-postaya eklenmez.</div>
+  </div>
+  <!-- ================= /TAB: DESTEK VE İLETİŞİM ================= -->
 
   <!-- ================= TAB: PROFİLİM ================= -->
   <div class="tab-panel" id="tab-profil">
@@ -9427,6 +9496,24 @@ function kullaniciSil(id){
   });
 }
 
+// ---------- Destek ve İletişim: hazır konu ve şablonlu e-posta (finansal veri eklenmez) ----------
+const DESTEK_EPOSTA = 'ofusluoglu@gmail.com';
+function destekHazirla(){
+  const k = kullaniciBilgi() || {};
+  document.getElementById('destekEposta').textContent = DESTEK_EPOSTA;
+  const cihaz = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || matchMedia('(pointer:coarse)').matches ? 'Telefon/tablet' : 'Bilgisayar';
+  const tarayici = (navigator.userAgent.match(/(Edg|OPR|Chrome|Firefox|Safari)\/[\d.]+/) || [''])[0].replace('Edg', 'Edge').replace('OPR', 'Opera');
+  const govde = ['Merhaba,', '', 'Sorun / önerim:', '', '', 'Hangi sayfadaydım:', '', 'Ne bekliyordum, ne oldu:', '', '',
+    '—', 'Hesap: ' + (k.email || '-'), 'Cihaz: ' + cihaz + (tarayici ? ' · ' + tarayici : ''), 'Ekran: ' + window.innerWidth + '×' + window.innerHeight, 'Panel: ' + location.host].join('\n');
+  document.getElementById('destekGonder').href = 'mailto:' + DESTEK_EPOSTA + '?subject=' + encodeURIComponent('Finansal Takip Paneli – Destek') + '&body=' + encodeURIComponent(govde);
+}
+async function destekKopyala(){
+  const btn = document.getElementById('destekKopyalaBtn');
+  try{ await navigator.clipboard.writeText(DESTEK_EPOSTA); btn.textContent = '✓ Kopyalandı'; }
+  catch(e){ const r = document.createRange(); r.selectNodeContents(document.getElementById('destekEposta')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Seçildi — Ctrl+C'; }
+  setTimeout(() => { btn.textContent = 'Adresi kopyala'; }, 2500);
+}
+
 // ---------- Telefonda "Diğer" menüsü: alt çubukta olmayan sayfalar, menüdeki gruplarıyla ----------
 function digerMenuAc(){
   digerMenuKapat();
@@ -11628,6 +11715,7 @@ const TAB_BASLIKLARI = {
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
   profil:   ['Profilim', 'Fotoğrafın, adın, tercihlerin ve hesap güvenliğin'],
   kullanicilar: ['Kullanıcılar', 'Hesap aç, geçici şifre ver, girişi kapat — yalnız yönetici görür'],
+  destek:   ['Destek ve İletişim', 'Çözemediğin bir sorun ya da önerin için bize yaz'],
   sss:      ['Sık Sorulan Sorular', 'En sık takılınan noktaların kısa cevapları — konulara göre'],
   kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle'],
   rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],
@@ -11661,6 +11749,7 @@ function switchTab(tabId){
   if(tabId === 'hedef') renderHedef();
   if(tabId === 'rapor') renderRapor();
   if(tabId === 'kullanicilar') renderKullanicilar();
+  if(tabId === 'destek') destekHazirla();
   if(tabId === 'profil'){ renderProfil(); profilYenile(); }
   const pk = document.getElementById('profilKutu'); if(pk) pk.classList.toggle('active', tabId === 'profil');
   const kdb = document.getElementById('kartDuzenBtn'); if(kdb) kdb.classList.toggle('gizli', tabId !== 'gunluk');
