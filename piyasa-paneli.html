@@ -2036,6 +2036,12 @@
   .destek-liste li{line-height:1.55;}
   .destek-liste b{color:var(--text);}
   @media (max-width:900px){ .destek-ikili{grid-template-columns:1fr;gap:0;} .destek-kart{padding:14px;gap:12px;} .destek-ikon{flex-basis:40px;height:40px;font-size:20px;} }
+  /* Çerçeve başlığında "N kalem · %…" açıklaması: telefonda başlığın altına iner (başlık kesilmesin) */
+  @media (max-width:640px){
+    .bolum-bas.aciklamali{flex-wrap:wrap;row-gap:0;}
+    .bolum-bas.aciklamali .bolum-baslik{flex:0 1 auto;}
+    .bolum-bas.aciklamali .baslik-aciklama{order:9;flex:1 0 100%;margin-top:-2px;}
+  }
   .kv-yonlendir{cursor:pointer;border-color:rgba(231,168,59,.35);}
   .kv-yonlendir:hover{border-color:var(--amber);}
   .kv-ic{padding:10px 18px 14px;font-size:13.5px;line-height:1.65;color:var(--text);}
@@ -2503,10 +2509,11 @@
       </div>
     </div>
 
-    <div class="bolum">
-      <div class="bolum-bas">
+    <div class="bolum cerceve-varlik">
+      <div class="bolum-bas aciklamali">
         <span class="bolum-baslik">Varlıklarım</span>
-        <span class="bolum-toplam" id="varlikToplamDeger" style="color:var(--up);">₺0</span>
+        <span class="ozet-soluk baslik-aciklama" id="varlikBolumAlt" style="font-size:12px;"></span>
+        <span class="bolum-toplam" id="varlikToplamDeger" style="color:var(--up);" title="Varlıklarının toplam değeri">₺0</span>
         <button class="bolum-ekle" onclick="bolumFormAc('varlikForm')">+ Ekle</button>
       </div>
       <div class="bolum-form" id="varlikForm">
@@ -2522,7 +2529,7 @@
           <select id="varlikBirimSelect" class="ai-input" style="max-width:140px;min-width:120px;display:none;" onchange="varlikFormTur()" title="Nakit / mevduatı hangi birimde tutuyorsun">
             <option value="TL">₺ TL</option><option value="USD">$ Dolar</option><option value="EUR">€ Euro</option><option value="ALTIN">Gram altın</option>
           </select>
-          <input type="text" id="varlikAdInput" class="ai-input" style="max-width:240px;min-width:160px;" placeholder="Ad (ör. Gaziosmanpaşa Dairesi)">
+          <input type="text" id="varlikAdInput" class="ai-input" style="max-width:240px;min-width:160px;" placeholder="Ad (ör. Ev, Yazlık, Araba)">
           <input type="number" step="0.01" id="varlikDegerInput" class="ai-input" style="max-width:170px;min-width:130px;" placeholder="Değer (TL)" onkeydown="if(event.key==='Enter')addVarlik()">
           <button class="ai-btn" onclick="addVarlik()">Varlık Ekle</button>
         </div>
@@ -8227,9 +8234,9 @@ function renderYatirim(){
       const katListe = list.filter(item => item.tur === kat);
       if(!katListe.length) return '';
       return `<div class="bolum cerceve-varlik">
-        <div class="bolum-bas">
+        <div class="bolum-bas aciklamali">
           <span class="bolum-baslik" style="color:${YATIRIM_KATEGORI_RENK[kat]};">${YATIRIM_KATEGORI_BASLIK[kat]}</span>
-          <span class="ozet-soluk" style="font-size:12px;">${katListe.length} kalem · %${fmtNumber(toplamYatirim > 0 ? kategoriToplam[kat] / toplamYatirim * 100 : 0, 1)}</span>
+          <span class="ozet-soluk baslik-aciklama" style="font-size:12px;">${katListe.length} kalem · %${fmtNumber(toplamYatirim > 0 ? kategoriToplam[kat] / toplamYatirim * 100 : 0, 1)}</span>
           <span class="bolum-toplam" style="color:var(--up);">₺${fmtNumber(kategoriToplam[kat], 0)}</span>
           <button class="bolum-ekle" title="${YATIRIM_KATEGORI_BASLIK[kat]} ekle" onclick="yatirimEkleAc('${kat}')">+</button>
         </div>
@@ -8378,6 +8385,9 @@ function renderVarlik(){
     : '<div class="bos-not">Henüz varlık eklenmedi — sağ üstteki + Ekle ile ekleyebilirsin.</div>';
 
   document.getElementById('varlikToplamDeger').textContent = list.length ? '₺' + fmtNumber(toplam, 0) : '';
+  // Yatırımlarım'daki tür çerçeveleriyle aynı: başlıkta "N kalem · servetin %X" (servet = varlıklar + yatırımlar)
+  const servet = toplam + (typeof _toplamYatirimTL === 'number' && _toplamYatirimTL > 0 ? _toplamYatirimTL : 0);
+  document.getElementById('varlikBolumAlt').textContent = list.length ? list.length + ' kalem · servetin %' + fmtNumber(servet > 0 ? toplam / servet * 100 : 0, 1) : '';
 
   renderFinansalOzet(toplam, list);
 }
