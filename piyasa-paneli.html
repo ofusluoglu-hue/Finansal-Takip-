@@ -2036,11 +2036,18 @@
   .destek-liste li{line-height:1.55;}
   .destek-liste b{color:var(--text);}
   @media (max-width:900px){ .destek-ikili{grid-template-columns:1fr;gap:0;} .destek-kart{padding:14px;gap:12px;} .destek-ikon{flex-basis:40px;height:40px;font-size:20px;} }
+  /* Çerçeveli listelerde (varlık, yatırım türleri, borçlar) başlık satırı listeden ayrılır ve tutarın "toplam" olduğu yazar:
+     aksi halde başlıktaki toplam, hemen altındaki satır tutarıyla aynı hizada bir satır gibi okunuyordu */
+  .bolum.cerceve-varlik > .bolum-bas, .bolum.cerceve-borc > .bolum-bas{border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:2px;}
+  .bolum.cerceve-varlik > .bolum-bas .bolum-toplam::before, .bolum.cerceve-borc > .bolum-bas .bolum-toplam::before{content:'Toplam';font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-2);margin-right:8px;vertical-align:1px;}
+  .bolum.cerceve-varlik > .bolum-bas .bolum-toplam:empty::before, .bolum.cerceve-borc > .bolum-bas .bolum-toplam:empty::before{content:none;}
   /* Çerçeve başlığında "N kalem · %…" açıklaması: telefonda başlığın altına iner (başlık kesilmesin) */
   @media (max-width:640px){
     .bolum-bas.aciklamali{flex-wrap:wrap;row-gap:0;}
     .bolum-bas.aciklamali .bolum-baslik{flex:0 1 auto;}
     .bolum-bas.aciklamali .baslik-aciklama{order:9;flex:1 0 100%;margin-top:-2px;}
+    /* uzun başlık ("Kredili Mevduat Hesabı (KMH)") "Toplam" etiketiyle sığmazsa kesilmez, iki satıra kayar */
+    .bolum.cerceve-varlik > .bolum-bas .bolum-baslik, .bolum.cerceve-borc > .bolum-bas .bolum-baslik{white-space:normal;overflow:visible;text-overflow:clip;flex:1 1 0;min-width:0;line-height:1.25;}
   }
   .kv-yonlendir{cursor:pointer;border-color:rgba(231,168,59,.35);}
   .kv-yonlendir:hover{border-color:var(--amber);}
