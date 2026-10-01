@@ -3072,7 +3072,7 @@
     </div>
 
     <div class="bolum">
-      <div class="bolum-bas"><span class="bolum-baslik">Aylık özet</span><span class="bolum-toplam ozet-soluk" style="font-size:12px;">her ayın son kaydı</span></div>
+      <div class="bolum-bas"><span class="bolum-baslik">Aylık özet</span><span class="bolum-toplam ozet-soluk" style="font-size:12px;">ay sonu değerleri</span></div>
       <div class="ist-tablo-kap"><table class="ist-tablo" id="ngAylik"></table></div>
       <div style="height:8px;"></div>
     </div>
@@ -3282,7 +3282,8 @@
       <p><b>Ne işe yarar:</b> Panel her gün net varlığını kendiliğinden kaydeder; 7 gün, 30 gün ve başlangıçtan beri değişimi gösterir.</p>
       <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez; paneli açtığın her gün bir kayıt alınır. Grafiği <b>₺ TL / $ Dolar / Altın</b> olarak görebilirsin.</p>
       <p><b>Neden dolar ve altın:</b> TL'de servetin %10 artmış görünürken dolar ya da altın bazında azalmış olabilir; bu, artışın gerçek mi yoksa enflasyon mu olduğunu gösterir. Aylık özet tablosunda her ayın son gününde net varlığın kaç dolar ve kaç gram altın ettiği yazar.</p>
-      <p class="kv-ipucu">💡 Geçmiş geriye dönük uydurulmaz; kayıt, paneli ilk açtığın günden başlar. Grafik ikinci günden itibaren çizilir.</p>
+      <p><b>Aylık özet = ay sonu:</b> Tablodaki her satır o ayın <b>son gününün</b> değeridir. Ayın son günü paneli açmadıysan, yeni ayda paneli ilk açtığında o gün kendiliğinden tamamlanır: yatırımların ayın son günündeki gerçek kapanış fiyatları ve o günkü dolar kuruyla hesaplanır; varlık ve borç o tarihe kadarki son kaydından alınır. Böyle satırlarda “ay sonu · tamamlandı ⓘ” yazar (ⓘ'nin üzerine gelince hangi kayıttan alındığı görünür). İçinde bulunduğun ay “devam ediyor” diye işaretlenir.</p>
+      <p class="kv-ipucu">💡 Paneli kullanmaya başladığın günden öncesi uydurulmaz; kayıt ilk açtığın günden başlar. Grafik ikinci günden itibaren çizilir.</p>
       <button class="bolum-ekle" onclick="switchTab('netgecmis')">Net Varlık Geçmişi'ne git →</button>
     </div></details>
 
@@ -10765,6 +10766,7 @@ function netGecmisKaydet(){
     if(manuelListeYukle('ft_yatirimlar_v1').length && !(_toplamYatirimTL > 0)) return;   // yatırım değeri henüz hesaplanmadı
     const d = netDurum();
     if(!(d.varlik || d.yatirim || d.borc)) return;
+    if(!_ayTamamCalisti) setTimeout(ayTamamlaGecmis, 4000);   // fiyat turu bitti: eksik ay sonlarını tamamla (oturumda bir kez)
     const id = bugunISO(), list = manuelListeYukle(NET_GECMIS_KEY);
     const gr = gramAltinTL();
     const kayit = { id, net: Math.round(d.net), varlik: Math.round(d.varlik), yatirim: Math.round(d.yatirim), borc: Math.round(d.borc), usd: _fxRates.USD ? Math.round(_fxRates.USD * 10000) / 10000 : null, gram: gr ? Math.round(gr * 100) / 100 : null, t: Date.now() };
@@ -10780,6 +10782,86 @@ function netGecmisKaydet(){
     const s = document.getElementById('tab-netgecmis');
     if(s && s.classList.contains('active')) renderNetGecmis();
   }catch(e){ /* geçmiş kaydı başarısız olursa bir sonraki turda tekrar denenir */ }
+}
+// ---------- Ay sonu tamamlama ----------
+// Kayıt yalnız panel açıkken yapılır; bir ayın son günü panel açılmadıysa yeni ayda o gün için kayıt üretilir:
+//  · yatırımlar: ayın son günündeki gerçek kapanış fiyatlarıyla (Yahoo / Binance; hafta sonunda son işlem günü) ve o günkü kurla
+//  · varlık ve borç: o tarihe kadarki son gerçek kayıttaki değer (elle girilen değerlerin geçmişi bilinmez)
+// Yalnız ilk kayıttan sonraki aylar; gerçek kaydı olan gün değiştirilmez; bir fiyat bulunamazsa o ay atlanır (sonraki açılışta yeniden denenir).
+let _ayTamamCalisti = false;
+function ayinSonGunu(ay){ return isoGun(new Date(+ay.slice(0, 4), +ay.slice(5, 7), 0)); }
+async function gecmisSeri(tur, sembol, basMs, sonMs){
+  if(tur === 'binance'){
+    const res = await fetchWithTimeout(`https://api.binance.com/api/v3/klines?symbol=${sembol}&interval=1d&startTime=${basMs}&endTime=${sonMs}&limit=1000`, 12000);
+    if(!res.ok) throw new Error('binance');
+    return (await res.json()).map(k => [new Date(k[0]).toISOString().slice(0, 10), parseFloat(k[4])]);
+  }
+  const res = await fetchWithFallback(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sembol)}?period1=${Math.floor(basMs / 1000)}&period2=${Math.floor(sonMs / 1000)}&interval=1d`);
+  const r = (await res.json()).chart.result[0];
+  const c = (r.indicators.quote[0] || {}).close || [];
+  return (r.timestamp || []).map((t, i) => [new Date(t * 1000).toISOString().slice(0, 10), c[i]]).filter(x => x[1] != null);
+}
+// D gününe eşit ya da öncesindeki son kapanış (en fazla 7 gün geriye; hafta sonu ve tatiller için)
+function seriKapanis(seri, D){
+  let son = null;
+  for(const [g, v] of seri){ if(g <= D) son = [g, v]; else break; }
+  if(!son) return null;
+  return (new Date(D) - new Date(son[0])) / 864e5 <= 7 ? son[1] : null;
+}
+function yatirimGecmisKaynak(it){
+  if(it.tur === 'bist') return it.kod ? ['yahoo', it.kod + '.IS', 'TRY'] : null;
+  if(it.tur === 'emtia') return ['yahoo', it.sembol === 'silver' ? 'SI=F' : 'GC=F', 'ONS'];
+  const c = CARDS.find(x => x.key === it.sembol);
+  if(!c) return null;
+  if(c.source === 'kripto') return ['binance', c.bnSymbol, 'USD'];
+  if(c.source === 'finnhub') return ['yahoo', c.symbol.replace(/\./g, '-'), 'USD'];
+  return ['yahoo', c.symbol, 'USD'];
+}
+async function ayTamamlaGecmis(){
+  if(_ayTamamCalisti || !_senkronHazir) return;
+  _ayTamamCalisti = true;
+  try{
+    const list = manuelListeYukle(NET_GECMIS_KEY).filter(x => x && x.id).sort((a, b) => a.id.localeCompare(b.id));
+    if(!list.length) return;
+    const buAy = bugunISO().slice(0, 7), hedefler = [];
+    for(let ay = list[0].id.slice(0, 7); ay < buAy; ay = ayKaydir(ay, 1)){
+      const D = ayinSonGunu(ay);
+      if(list.some(x => x.id === D)) continue;                // o gün gerçek (ya da tamamlanmış) kayıt var
+      const taban = [...list].reverse().find(x => x.id <= D);
+      if(taban) hedefler.push({ D, taban });
+    }
+    if(!hedefler.length) return;
+    const basMs = new Date(hedefler[0].D).getTime() - 12 * 864e5, sonMs = new Date(hedefler[hedefler.length - 1].D).getTime() + 2 * 864e5;
+    const yatirimlar = manuelListeYukle(YATIRIM_KEY);
+    const istek = new Map([['yahoo|USDTRY=X', ['yahoo', 'USDTRY=X']], ['yahoo|GC=F', ['yahoo', 'GC=F']]]);
+    yatirimlar.forEach(it => { const k = yatirimGecmisKaynak(it); if(k) istek.set(k[0] + '|' + k[1], k); });
+    const seriler = {};
+    await Promise.all([...istek].map(async ([anahtar, [tur, sembol]]) => { try{ seriler[anahtar] = await gecmisSeri(tur, sembol, basMs, sonMs); }catch(e){ /* bu seri yok */ } }));
+    const yeni = [];
+    for(const { D, taban } of hedefler){
+      const usd = seriKapanis(seriler['yahoo|USDTRY=X'] || [], D), ons = seriKapanis(seriler['yahoo|GC=F'] || [], D);
+      if(!usd) continue;
+      let yatirim = 0, eksik = false;
+      for(const it of yatirimlar){
+        if(it.tarih && it.tarih.slice(0, 10) > D) continue;   // o tarihte henüz panelde yoktu
+        if(it.tur === 'bist' && !it.kod){ yatirim += it.manuelTutarTL || 0; continue; }
+        const k = yatirimGecmisKaynak(it);
+        const f = k ? seriKapanis(seriler[k[0] + '|' + k[1]] || [], D) : null;
+        if(!f){ eksik = true; break; }
+        yatirim += k[2] === 'TRY' ? f * it.miktar : k[2] === 'ONS' ? f / 31.1034768 * it.miktar * usd : f * it.miktar * usd;
+      }
+      if(eksik) continue;
+      yatirim = Math.round(yatirim);
+      yeni.push({ id: D, net: Math.round(taban.varlik + yatirim - taban.borc), varlik: taban.varlik, yatirim, borc: taban.borc,
+        usd: Math.round(usd * 10000) / 10000, gram: ons ? Math.round(ons / 31.1034768 * usd * 100) / 100 : null, t: Date.now(), tamam: taban.id });
+    }
+    if(!yeni.length){ _ayTamamCalisti = false; return; }   // fiyat alınamadı: sonraki turda yeniden dene
+    const guncel = manuelListeYukle(NET_GECMIS_KEY);
+    yeni.forEach(k => { if(!guncel.some(x => x.id === k.id)) guncel.push(k); });
+    manuelListeKaydet(NET_GECMIS_KEY, guncel.sort((a, b) => a.id.localeCompare(b.id)).slice(-3650));
+    const sk = document.getElementById('tab-netgecmis');
+    if(sk && sk.classList.contains('active')) renderNetGecmis();
+  }catch(e){ _ayTamamCalisti = false; }
 }
 function netDegisim(list, gun){
   if(!list.length) return null;
@@ -10848,7 +10930,11 @@ function renderNetGecmis(){
     ayl.innerHTML = aylar.length ? `<thead><tr><th>Ay</th><th class="sag">Net varlık</th><th class="sag">Değişim</th><th class="sag">Varlık</th><th class="sag">Yatırım</th><th class="sag">Borç</th><th class="sag">Dolar</th><th class="sag" title="O günkü gram 24 ayar altın fiyatıyla">Altın (gr)</th></tr></thead><tbody>${aylar.map((k, i) => {
       const x = aySon[k], onceki = aySon[aylar[i + 1]];
       const f = onceki ? x.net - onceki.net : null;
-      return `<tr><td>${ayAdi(k)}<span class="ozet-soluk" style="font-size:11px;"> · ${+x.id.slice(8)}. gün</span></td><td class="sag"><b>₺${fmtNumber(x.net, 0)}</b></td>
+      const sonGun = x.id === ayinSonGunu(k), devam = k === bugunISO().slice(0, 7);
+      const etiket = devam ? `devam ediyor · ${+x.id.slice(8)}. gün`
+        : x.tamam ? '<span title="Ayın son günü panel açık değildi: yatırımlar o günün kapanış fiyatlarıyla, varlık ve borç ' + new Date(x.tamam + 'T00:00:00').toLocaleDateString('tr-TR') + ' kaydından">ay sonu · tamamlandı ⓘ</span>'
+        : sonGun ? 'ay sonu' : `${+x.id.slice(8)}. gün (ay sonu değil)`;
+      return `<tr><td>${ayAdi(k)}<span class="ozet-soluk" style="font-size:11px;"> · ${etiket}</span></td><td class="sag"><b>₺${fmtNumber(x.net, 0)}</b></td>
         <td class="sag" style="color:${f == null ? 'var(--muted)' : f >= 0 ? 'var(--up)' : 'var(--down)'};">${f == null ? '—' : isaretliTL(f)}</td>
         <td class="sag">₺${fmtNumber(x.varlik, 0)}</td><td class="sag">₺${fmtNumber(x.yatirim, 0)}</td><td class="sag" style="color:#FF8A8A;">₺${fmtNumber(x.borc, 0)}</td>
         ${ngKurHucreleri(x)}</tr>`;
