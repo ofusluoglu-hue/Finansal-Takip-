@@ -59,7 +59,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 
 ## Dokümantasyon
 
-- Bir özellik eklenir ya da kullanımı değişirse panel içindeki **Kullanım Kılavuzu** (`#tab-kilavuz`) da aynı committe güncellenir: ilgili sayfa bölümü, gerekiyorsa SSS ve Terimler. Kılavuz, kullanıcıya yanlış adım tarif etmemelidir.
+- **Her değişiklikte** panel içindeki **Kullanım Kılavuzu** (`#tab-kilavuz`) ve **Sık Sorulan Sorular** (`#tab-sss`) son duruma göre kontrol edilir ve aynı committe güncellenir: ilgili sayfa bölümü, adımlar, örnek rakamlar, menü adları/sırası, SSS ve Terimler. Kılavuz kullanıcıya yanlış adım tarif etmemelidir; bir soru iki yerde tekrarlanmaz (SSS'de olur, kılavuz yönlendirir).
 
 Her değişiklik veya eklentide ilgili dokümanlar **aynı commit'te** güncellenir:
 

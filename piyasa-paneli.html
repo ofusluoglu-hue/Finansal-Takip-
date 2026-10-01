@@ -1881,6 +1881,8 @@
   .kv-bolum > summary:hover{background:var(--panel-2);}
   .kv-bolum[open] > summary{border-bottom:1px solid var(--border);}
   .kv-sss > summary{font-size:13.5px;font-weight:600;}
+  .kv-yonlendir{cursor:pointer;border-color:rgba(231,168,59,.35);}
+  .kv-yonlendir:hover{border-color:var(--amber);}
   .kv-ic{padding:10px 18px 14px;font-size:13.5px;line-height:1.65;color:var(--text);}
   .kv-ic p{margin:0 0 9px;}
   .kv-ic b{color:var(--text);}
@@ -2184,6 +2186,10 @@
       <div class="nav-item" data-tab="kilavuz" onclick="switchTab('kilavuz')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>
         <span data-kisa="Kılavuz">Kullanım Kılavuzu</span>
+      </div>
+      <div class="nav-item" data-tab="sss" onclick="switchTab('sss')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M10 10a2 2 0 1 1 2.8 1.8c-.5.2-.8.7-.8 1.2v.3"/><circle cx="12" cy="15.8" r=".5" fill="currentColor"/></svg>
+        <span data-kisa="SSS">Sık Sorulan Sorular</span>
       </div>
       <div class="nav-item nav-diger" onclick="digerMenuAc()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -3170,17 +3176,10 @@
       <button class="bolum-ekle" onclick="switchTab('rapor')">Aylık Rapor'a git →</button>
     </div></details>
 
-    <div class="kv-grup-bas">Sık sorulan sorular</div>
-
-    <details class="kv-bolum kv-sss"><summary>Bir ayın harcamasını yanlış girdim, nasıl düzeltirim?</summary><div class="kv-ic"><p>Harcama Takibim'de aylık tablodaki o hücreye tıkla; o ayın o kategorideki kayıtları aşağıda açılır. Yanlış kaydı ✎ ile düzelt ya da ✕ ile sil; tablo kendiliğinden güncellenir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Maaşıma zam geldi, nereden değiştiririm?</summary><div class="kv-ic"><p>Nakit Akışı › Gelirler'de maaş satırının ✎'sine bas ve yeni tutarı yaz. Yeni tutar bu aydan itibaren geçerli olur; geçmiş aylar eski maaşla kalır. Maaş bittiyse 0 yaz.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Kredi kartımı ödedim, ne yapmalıyım?</summary><div class="kv-ic"><p>Borçlarım › Kredi Kartlarım'da kartın ✎'sine bas ve <b>kalan</b> borcu yaz. Örnek: ₺135.571 borcun vardı, ₺60.000 ödedin → ₺75.571 yaz. Ödeme Takvimi'ndeki hatırlatma kendiliğinden kaybolur.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Bir krediyi kapattım, listeden nasıl kaldırırım?</summary><div class="kv-ic"><p>Borçlarım › Kredilerim'de kredinin satırındaki ✓'ye bas ve onayla. Toplamlardan, takvimden ve borç planından çıkar.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Satırların başındaki yeşil ve kırmızı ışıklar ne demek?</summary><div class="kv-ic"><p><b>Yeşil:</b> değer güncel. Ya bugün güncelledin ya da canlı hesaplanıyor (kur, faiz, fiyat). <b>Kırmızı:</b> değeri en son bugünden önce güncelledin ya da canlı fiyata ulaşılamadı ve son bilinen değer gösteriliyor. Kırmızı bir hata değildir; yalnızca “bunu güncellemek isteyebilirsin” demektir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Verilerim diğer cihazlarımda da görünür mü?</summary><div class="kv-ic"><p>Evet. Girdiğin her şey hesabında saklanır ve aynı e-posta ve şifreyle girdiğin her cihazda görünür. Sol alttaki “☁ Senkron tamam” bunun gerçekleştiğini gösterir. İnternet yokken yaptığın değişiklikler bağlantı gelince gönderilir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Tahminler neden “tahmin”? Ne kadar güvenebilirim?</summary><div class="kv-ic"><p>Nakit Akışı, Borç Kapatma Planı ve Birikim Hedefleri gelecek için hesap yapar. Bu hesaplar senin geçmiş harcamalarına, kredi ödeme planlarına ve resmi enflasyon beklentisine (TÜİK, TCMB) dayanır. Gerçekleşme farklı olabilir. Önemli bir karar vermeden önce rakamları kendi durumunla karşılaştır.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor ve bu kılavuz) sağ alttaki <b>Diğer</b> düğmesindedir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Çıkış yaparsam verilerim silinir mi?</summary><div class="kv-ic"><p>Hayır. Çıkış, yalnızca o cihazdaki kopyayı temizler. Verilerin sunucuda kalır; tekrar giriş yapınca geri gelir.</p></div></details>
+    <div class="bolum kv-yonlendir" onclick="switchTab('sss')" role="link" tabindex="0" onkeydown="if(event.key==='Enter') switchTab('sss');">
+      <div class="bolum-bas"><span class="bolum-baslik">💬 Hızlı cevap mı arıyorsun?</span><span class="bolum-toplam" style="color:var(--amber);font-size:13px;">Sık Sorulan Sorular →</span></div>
+      <p class="kv-p" style="margin:0 0 10px;">“Kartımı ödedim, ne yapmalıyım?”, “Maaşıma zam geldi”, “Acil fonum ne kadar olmalı?” gibi soruların kısa cevapları ayrı sayfada, konulara göre.</p>
+    </div>
 
     <div class="kv-grup-bas">Terimler</div>
     <div class="bolum kv-sozluk">
@@ -3201,9 +3200,76 @@
       <p>Verilerin yalnızca senin hesabında saklanır; giriş e-posta ve şifreyle yapılır. Arka arkaya 8 hatalı denemede giriş 15 dakika kilitlenir. Fiyat ve yapay zekâ servislerinin gizli anahtarları senin tarayıcında değil, sunucuda durur. Bay Piyasa'ya rakamların yalnızca “Portföyümü paylaş” açıkken gider; isim ya da e-posta gönderilmez.</p>
     </div></div>
 
-    <div class="footnote"><b>Not:</b> Kılavuzdaki örnek rakamlar açıklama içindir; sayfalarda senin kendi verin görünür. Aradığını bulamazsan Bay Piyasa'ya “… nasıl yapılır?” diye sorabilirsin.</div>
+    <div class="footnote"><b>Not:</b> Kılavuzdaki örnek rakamlar açıklama içindir; sayfalarda senin kendi verin görünür. Kısa cevaplar için <a href="#" onclick="switchTab('sss'); return false;" style="color:var(--amber);">Sık Sorulan Sorular</a>'a bakabilir ya da Bay Piyasa'ya “… nasıl yapılır?” diye sorabilirsin.</div>
   </div>
   <!-- ================= /TAB: KULLANIM KILAVUZU ================= -->
+
+  <!-- ================= TAB: SIK SORULAN SORULAR ================= -->
+  <div class="tab-panel" id="tab-sss">
+    <div class="page-head"><h1>Sık Sorulan Sorular</h1></div>
+
+    <div class="kv-ust">
+      <input type="search" id="sssAra" class="ai-input" placeholder="Sorunu yaz… (ör. kart ödedim, zam, acil fon, ışık)" oninput="kilavuzAra(this.value, 'tab-sss', 'sssSonuc')" autocomplete="off">
+      <div class="kv-hizli">
+        <button class="bolum-ekle" onclick="kilavuzHepsi(true, 'tab-sss')">Tümünü aç</button>
+        <button class="bolum-ekle" onclick="kilavuzHepsi(false, 'tab-sss')">Tümünü kapat</button>
+      </div>
+    </div>
+    <div class="kv-sonuc" id="sssSonuc"></div>
+    <p class="kv-p kv-not" style="margin:0 2px 6px;">Bir sayfayı baştan öğrenmek istiyorsan <a href="#" onclick="switchTab('kilavuz'); return false;" style="color:var(--amber);">Kullanım Kılavuzu</a>'na bak. Burada en sık takılınan noktaların kısa cevapları var.</p>
+
+    <div class="kv-grup-bas">Başlarken</div>
+    <details class="kv-bolum kv-sss"><summary>Panele ilk kez giriyorum, nereden başlamalıyım?</summary><div class="kv-ic"><p>Kullanım Kılavuzu'ndaki <b>İlk kurulum</b> adımlarını sırayla yap: borçlar → varlıklar → yatırımlar → harcamalar → maaş → ödeme takvimi. Gerisi (bütçe önerisi, borç planı, tahminler, aylık rapor) kendiliğinden dolar. <a href="#" onclick="switchTab('kilavuz'); return false;">İlk kuruluma git →</a></p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Neyi ne sıklıkla güncellemeliyim?</summary><div class="kv-ic">
+      <ul class="kv-liste">
+        <li><b>Her ay başında:</b> geçen ayın harcamaları (Harcama Takibim).</li>
+        <li><b>Ekstre gelince:</b> kredi kartı borcu (Borçlarım) ve kartın dönem borcu, ödeyeceğin tutar (Ödeme Takvimi).</li>
+        <li><b>Değişince:</b> maaş (Nakit Akışı), düzenli ödemeler (Ödeme Takvimi), yeni yatırım adedi (Yatırımlarım).</li>
+        <li><b>Yılda bir-iki kez:</b> ev, arsa, araba gibi varlıkların değeri.</li>
+        <li><b>Hiç gerekmez:</b> fiyatlar, kurlar, kredi ve KMH faizi, net varlık kaydı; bunlar kendiliğinden işler.</li>
+      </ul></div></details>
+
+    <div class="kv-grup-bas">Harcama ve bütçe</div>
+    <details class="kv-bolum kv-sss"><summary>Bir ayın harcamasını yanlış girdim, nasıl düzeltirim?</summary><div class="kv-ic"><p>Harcama Takibim'de aylık tablodaki o hücreye tıkla; o ayın o kategorideki kayıtları aşağıda açılır. Yanlış kaydı ✎ ile düzelt ya da ✕ ile sil. Tablo kendiliğinden güncellenir; tablonun kendisi elle düzenlenmez.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Eylül'ün harcamasını Ekim başında giriyorum; form hangi ayı seçer?</summary><div class="kv-ic"><p>Ayın ilk 10 gününde form kendiliğinden <b>bir önceki ayı</b> seçer (ör. 5 Ekim'de Eylül). Başka bir ay için girmek istersen formdaki ay kutusundan değiştir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Harcamalarımda ↻ işaretli kayıtlar var, bunlar nereden geldi?</summary><div class="kv-ic"><p>Ödeme Takvimi'ne eklediğin düzenli ödemeler ve abonelikler (Netflix, aidat, fatura…) Harcama Takibim'e bu ay ve gelecek ay için kendiliğinden eklenir. İstemediğin bir kaydı silersen o ay için bir daha eklenmez. Hangi kategoriye ekleneceğini Ödeme Takvimi'ndeki satırda “harcamaya:” seçiminden değiştirirsin ya da “eklenmesin” dersin.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bütçemi aştığımı nereden anlarım?</summary><div class="kv-ic"><p>Bütçe Planlaması'nda o kategorinin çubuğu kırmızı olur ve “₺… aştı” yazar; çubuktaki ince beyaz çizgi sınırdır. Aylık Rapor'un “Öne çıkanlar” bölümü de bütçeyi aşan kategorileri tek tek listeler.</p></div></details>
+
+    <div class="kv-grup-bas">Borçlar ve kartlar</div>
+    <details class="kv-bolum kv-sss"><summary>Kredi kartımı ödedim, ne yapmalıyım?</summary><div class="kv-ic"><p>Borçlarım › Kredi Kartlarım'da kartın ✎'sine bas ve <b>kalan</b> borcu yaz. Örnek: ₺135.571 borcun vardı, ₺60.000 ödedin → ₺75.571 yaz. Ödeme Takvimi'ndeki hatırlatma kendiliğinden kaybolur.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Kartın tamamını değil bir kısmını ödeyeceğim, bunu nasıl gösteririm?</summary><div class="kv-ic"><p>Ödeme Takvimi › Kredi kartı son ödeme günleri'nde kartın altındaki dönem kutusuna <b>dönem borcunu</b> (ekstredeki tutar), varsa <b>asgariyi</b> ve <b>ödeyeceğim</b> tutarını yaz. Takvim ve ayın toplamı ödeyeceğin tutarı kullanır; ödemediğin kısmın sonraki döneme kalıp faiz işleyeceğini de gösterir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bir krediyi kapattım, listeden nasıl kaldırırım?</summary><div class="kv-ic"><p>Borçlarım › Kredilerim'de kredinin satırındaki ✓'ye bas ve onayla. Toplamlardan, takvimden ve borç planından çıkar.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>KMH borcum neden her gün artıyor?</summary><div class="kv-ic"><p>KMH faizi günlük işler ve üstüne KKDF ile BSMV eklenir. Panel bunu senin girdiğin aylık faiz ve anaparayla her gün hesaplar (ör. ₺4.000 anaparada %4,25 faizle günde ≈ ₺7,37). Banka ekstresinde faizi anaparaya eklediğinde satırdaki ⚙ ile yeni borcu ve anaparayı yaz.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Hangi borcumu önce kapatmalıyım?</summary><div class="kv-ic"><p>Borç Kapatma Planı bunu senin rakamlarınla hesaplar. Genel kural: önce en pahalı borç (<b>Çığ</b> yöntemi). Bu çoğu zaman KMH'dir, çünkü vergilerle aylık faizi en yüksektir. Ayda ne kadar ek ödeyebileceğini yazınca hangi borcun ne zaman biteceğini ve ne kadar faiz kazanacağını görürsün.</p></div></details>
+
+    <div class="kv-grup-bas">Gelir ve tahminler</div>
+    <details class="kv-bolum kv-sss"><summary>Maaşıma zam geldi, nereden değiştiririm?</summary><div class="kv-ic"><p>Nakit Akışı › Gelirler'de maaş satırının ✎'sine bas ve yeni tutarı yaz. Yeni tutar bu aydan itibaren geçerli olur; geçmiş aylar eski maaşla kalır. Maaş bittiyse 0 yaz.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Tahminler ne kadar güvenilir?</summary><div class="kv-ic"><p>Nakit Akışı, Borç Kapatma Planı ve Birikim Hedefleri geleceği hesaplar. Bu hesaplar senin geçmiş harcamalarına, kredi ödeme planlarına ve resmi enflasyon verisi ile beklentisine (TÜİK, TCMB) dayanır. Gerçekleşme farklı olabilir. Nakit Akışı'nın altındaki seçicilerden enflasyon varsayımını ve maaş artışını kendi durumuna göre değiştirirsen tahmin sana daha çok yaklaşır.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
+
+    <div class="kv-grup-bas">Yatırım ve varlıklar</div>
+    <details class="kv-bolum kv-sss"><summary>Dövizim ya da altınım var; Yatırımlarım'a mı, Varlıklarım'a mı girmeliyim?</summary><div class="kv-ic"><p><b>Yatırım amacıyla</b> tuttuğun altın, gümüş, ETF, kripto ve hisseleri <b>Yatırımlarım</b>'a gir; portföy puanına ve yatırım/borç oranına katılır. <b>Gerektiğinde harcamak için</b> kenarda duran parayı (acil durum fonu, mevduat) <b>Finansal Durumum › Varlıklarım</b>'a <b>Nakit / Mevduat</b> türüyle gir; ₺, $, € ya da gram altın seçebilirsin. İkisi de net varlığına girer; aynı parayı iki yere girme.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Fiyatlar güncellenmiyor ya da ışık kırmızı yanıyor.</summary><div class="kv-ic"><p>Fiyat kaynağına o an ulaşılamamış olabilir; panel son bilinen fiyatı gösterir ve ışık kırmızı yanar. Sağ üstteki <b>Yenile</b>'ye bas ya da bir dakika bekle. BİST fiyatları zaten yaklaşık 15 dakika gecikmelidir; ABD piyasası kapalıyken ETF fiyatı seans dışı fiyatla gösterilir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Evimin ya da arsamın değerini nasıl belirleyeyim?</summary><div class="kv-ic"><p>Panel bu fiyatları internetten çekmez. Yakın çevredeki benzer ilanların ortalamasını ya da bir ekspertiz değerini yaz; yılda bir-iki kez güncellemen yeterli. Gerçekçi olmayan yüksek değerler net varlığını şişirir.</p></div></details>
+
+    <div class="kv-grup-bas">Hedefler ve acil fon</div>
+    <details class="kv-bolum kv-sss"><summary>Acil durum fonum ne kadar olmalı?</summary><div class="kv-ic"><p>Yaygın ölçü <b>3–6 aylık zorunlu gider</b>. Panel bunu senin için hesaplar: Birikim Hedefleri'nde hedef eklerken “Bu bir acil durum fonu”nu işaretle; aylık giderini (harcama + kredi taksidi) ve 3 ile 6 aylık önerilen tutarı gösterir. Fonun kaç aylık gideri karşıladığı hedef satırında ve Finansal Durumum'da yazar.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Hedefimi bir yatırıma bağladım, birikim neden kendi kendine değişiyor?</summary><div class="kv-ic"><p>Yatırıma bağlı hedefler yatırımın <b>canlı</b> değerini izler; fiyat düşünce birikim de düşer. Sabit bir tutar izlemek istersen satırdaki ⇄ ile kaynağı “Elle gireceğim” ya da “Varlıklarımdan” yap.</p></div></details>
+
+    <div class="kv-grup-bas">Görünüm</div>
+    <details class="kv-bolum kv-sss"><summary>Satırların başındaki yeşil ve kırmızı ışıklar ne demek?</summary><div class="kv-ic"><p><b>Yeşil:</b> değer güncel. Ya bugün güncelledin ya da canlı hesaplanıyor (kur, faiz, fiyat). <b>Kırmızı:</b> değeri en son bugünden önce güncelledin ya da canlı fiyata ulaşılamadı ve son bilinen değer gösteriliyor. Kırmızı bir hata değildir; yalnızca “bunu güncellemek isteyebilirsin” demektir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor, Kullanım Kılavuzu ve Sık Sorulan Sorular) sağ alttaki <b>Diğer</b> düğmesindedir.</p></div></details>
+
+    <div class="kv-grup-bas">Hesap, güvenlik ve Bay Piyasa</div>
+    <details class="kv-bolum kv-sss"><summary>Verilerim diğer cihazlarımda da görünür mü?</summary><div class="kv-ic"><p>Evet. Girdiğin her şey hesabında saklanır ve aynı e-posta ve şifreyle girdiğin her cihazda görünür. Sol alttaki “☁ Senkron tamam” bunun gerçekleştiğini gösterir. İnternet yokken yaptığın değişiklikler bağlantı gelince gönderilir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Çıkış yaparsam verilerim silinir mi?</summary><div class="kv-ic"><p>Hayır. Çıkış yalnızca o cihazdaki kopyayı temizler. Verilerin sunucuda kalır; tekrar giriş yapınca geri gelir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Giriş yapamıyorum, “çok fazla hatalı deneme” yazıyor.</summary><div class="kv-ic"><p>Güvenlik için aynı yerden arka arkaya 8 hatalı denemede giriş 15 dakika kilitlenir. 15 dakika bekleyip e-posta ve şifreni dikkatle tekrar yaz (şifrede büyük-küçük harf önemlidir).</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bay Piyasa verilerimi görüyor mu?</summary><div class="kv-ic"><p>Yalnızca Bay Piyasa sayfasındaki <b>“Portföyümü paylaş”</b> açıksa portföy, borç, harcama ve hedef <b>rakamların</b> gönderilir; isim ya da e-posta gönderilmez. Kapalıyken yalnızca piyasa ve haber verisini bilir. Aylık Rapor yorumu da aynı izni ister.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bay Piyasa ne kadar tutar?</summary><div class="kv-ic"><p>Her cevabın küçük bir ücreti vardır; cevabın altında yazar. Bay Piyasa sayfasındaki <b>günlük limit</b> (varsayılan $0,50) dolunca o gün durur; limiti oradan değiştirebilirsin. Aylık Rapor yorumu o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</p></div></details>
+
+    <div class="footnote"><b>Not:</b> Aradığın sorunun cevabı yoksa Bay Piyasa'ya sorabilir ya da Kullanım Kılavuzu'nda ilgili sayfanın bölümüne bakabilirsin.</div>
+  </div>
+  <!-- ================= /TAB: SIK SORULAN SORULAR ================= -->
 
   <!-- ================= TAB: AYLIK RAPOR ================= -->
   <div class="tab-panel" id="tab-rapor">
@@ -9969,17 +10035,19 @@ function raporYorumla(){
 }
 
 // ---------- Kullanım Kılavuzu: arama, aç/kapat ----------
-function kilavuzHepsi(ac){ document.querySelectorAll('#tab-kilavuz details.kv-bolum').forEach(d => { d.open = ac; }); }
-function kilavuzAra(q){
-  const kok = document.getElementById('tab-kilavuz');
+function kilavuzHepsi(ac, sekme){ document.querySelectorAll('#' + (sekme || 'tab-kilavuz') + ' details.kv-bolum').forEach(d => { d.open = ac; }); }
+// Kılavuz ve SSS ortak arama: sekme kökü ve sonuç alanı parametreli
+function kilavuzAra(q, sekme, sonucId){
+  sekme = sekme || 'tab-kilavuz';
+  const kok = document.getElementById(sekme);
   if(!kok) return;
   // önceki işaretleri temizle
   kok.querySelectorAll('mark.kv-isaret').forEach(m => m.replaceWith(document.createTextNode(m.textContent)));
   kok.querySelectorAll('.kv-ic, summary').forEach(e => e.normalize());
   const t = String(q || '').trim().toLocaleLowerCase('tr-TR');
   const bolumler = [...kok.querySelectorAll('details.kv-bolum')];
-  const digerleri = [...kok.querySelectorAll('.kv-giris, .kv-sozluk, .kv-grup-bas, #tab-kilavuz > .bolum:not(.kv-giris):not(.kv-sozluk)')];
-  const sonuc = document.getElementById('kvSonuc');
+  const digerleri = [...kok.querySelectorAll(`.kv-giris, .kv-sozluk, .kv-grup-bas, .kv-yonlendir, #${sekme} > .bolum:not(.kv-giris):not(.kv-sozluk), #${sekme} > .kv-not`)];
+  const sonuc = document.getElementById(sonucId || 'kvSonuc');
   if(!t){
     bolumler.forEach(d => { d.classList.remove('kv-gizli'); d.open = false; });
     digerleri.forEach(e => e.classList.remove('kv-gizli'));
@@ -9996,7 +10064,7 @@ function kilavuzAra(q){
   kok.querySelectorAll('.kv-grup-bas').forEach(e => e.classList.add('kv-gizli'));
   const sozluk = kok.querySelector('.kv-sozluk'); if(sozluk && !sozluk.classList.contains('kv-gizli')) kilavuzIsaretle(sozluk, t);
   const sozlukte = sozluk && !sozluk.classList.contains('kv-gizli');
-  if(sonuc) sonuc.textContent = n || sozlukte ? (n ? n + ' bölümde' : '') + (n && sozlukte ? ' ve ' : '') + (sozlukte ? 'Terimler bölümünde' : '') + ' bulundu' : '“' + q + '” için sonuç yok — farklı bir kelime dene (ör. kart, maaş, faiz) ya da Bay Piyasa\'ya sor.';
+  if(sonuc) sonuc.textContent = n || sozlukte ? (n ? n + ' bölümde' : '') + (n && sozlukte ? ' ve ' : '') + (sozlukte ? 'Terimler bölümünde' : '') + ' bulundu' : '“' + q + '” için sonuç yok — farklı bir kelime dene (ör. kart, maaş, faiz)' + (sekme === 'tab-kilavuz' ? ', Sık Sorulan Sorular\'a bak' : ', Kullanım Kılavuzu\'na bak') + ' ya da Bay Piyasa\'ya sor.';
 }
 // Bulunan kelimeyi metin düğümlerinde işaretle (HTML'e dokunmadan)
 function kilavuzIsaretle(kok, t){
@@ -10029,6 +10097,7 @@ const TAB_BASLIKLARI = {
   harcama:  ['Harcama Takibim', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe Planlaması', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
+  sss:      ['Sık Sorulan Sorular', 'En sık takılınan noktaların kısa cevapları — konulara göre'],
   kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle'],
   rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],
   hedef:    ['Birikim Hedefleri', 'Tutar ve tarih koy — ayda ne kadar ayırman gerektiğini ve planın önünde mi olduğunu gör'],

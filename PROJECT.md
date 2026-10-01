@@ -173,6 +173,8 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 - Sekme `kilavuz` (menüde en altta Yardım grubu; telefonda Diğer menüsünde). İçerik HTML içinde statik: arama kutusu, "İlk kurulum" adımları (bağlantılı), her sayfa için `<details class="kv-bolum">` (ne işe yarar · nasıl kullanılır · örnek · 💡 ipucu · "…'e git" düğmesi), Sık sorulan sorular, Terimler sözlüğü, Verilerin ve güvenlik.
 - Arama (`kilavuzAra`): eşleşen bölümleri açar, diğerlerini gizler, kelimeyi `<mark>` ile işaretler (metin düğümlerinde; HTML'e dokunmaz), sonuç sayısını ve Terimler'de bulunduysa onu yazar; boş arama her şeyi geri getirir.
+- **Sık Sorulan Sorular** ayrı sekme (`sss`, Yardım grubunda): konulara göre gruplu `<details class="kv-bolum kv-sss">` sorular (Başlarken, Harcama ve bütçe, Borçlar ve kartlar, Gelir ve tahminler, Yatırım ve varlıklar, Hedefler ve acil fon, Görünüm, Hesap–güvenlik–Bay Piyasa). Kılavuzda soru tekrarlanmaz; yerine SSS'ye giden yönlendirme kutusu (`.kv-yonlendir`). Arama ortak: `kilavuzAra(q, sekme, sonucId)`, `kilavuzHepsi(ac, sekme)`; sonuç yoksa diğer yardım sayfasını önerir.
+- Her özellik değişikliğinde kılavuz ve SSS son duruma göre kontrol edilip aynı committe güncellenir (RULES › Dokümantasyon).
 - Yazım ilkesi: ekrandaki özet kutularına "kutu", kredi kartına "kart" denir (karışmasın). Örnek rakamlar gerçekçi ama açıklama içindir.
 
 ## 8h. Aylık Rapor
@@ -220,7 +222,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 ## 9. Arayüz
 
-- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama Takibim, Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **Asistan** (Bay Piyasa, Aylık Rapor) · **Yardım** (Kullanım Kılavuzu). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama Takibim, Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **Asistan** (Bay Piyasa, Aylık Rapor) · **Yardım** (Kullanım Kılavuzu, Sık Sorulan Sorular). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
 - Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
@@ -248,6 +250,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | Yardım grubuna Sık Sorulan Sorular sekmesi (26 soru, konulara göre, aranabilir); kılavuzdaki sorular buraya taşındı, kılavuzda yönlendirme kutusu |
 | 2026-10-01 | Kullanım Kılavuzu sayfası (Yardım grubu): ilk kurulum, sayfa sayfa anlatım ve örnekler, SSS, terimler, arama; Piyasa Özeti'nde Bitcoin etiketi BITCOIN |
 | 2026-10-01 | Nakit / Mevduat varlığı $ / € / gram altın olarak tutulabilir (miktar girilir, TL karşılığı canlı kur ve altın fiyatıyla); acil fon hedefi ve göstergesi bunu kullanır |
 | 2026-10-01 | Acil durum fonu: Varlıklarım'a Nakit / Mevduat türü; hedef kaynağı "Varlıklarımdan"; "acil durum fonu" hedefi 3/6 aylık gidere göre öneri ve "kaç aylık gideri karşılıyor" göstergesi (hedef satırı, Finansal Durumum) |

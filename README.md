@@ -22,7 +22,8 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 | **Net Varlık Geçmişi** | Her gün otomatik net varlık kaydı; 7 gün / 30 gün / başlangıçtan beri değişim (TL, dolar ve altın bazında), TL / $ / gram 24 ayar altın seçmeli grafik (30 gün–1 yıl–tümü), aylık özette o günün dolar ve gram altın karşılığı |
 | **Portföy İstatistikleri** | Genel puan: portföy yaşı, çeşitlendirme, borç karşılama, döviz koruması |
 | **Aylık Rapor** | Seçilen ayın özeti: harcama (önceki ay ve 6 ay ortalamasına göre), bütçe uyumu, ay sonu kalan, kredi anaparasındaki azalış, net varlık değişimi; kurallı "öne çıkanlar"; isteğe bağlı Bay Piyasa yorumu (ay başına kaydedilir); yazdır / PDF |
-| **Kullanım Kılavuzu** | Yardım › Kullanım Kılavuzu: ilk kurulum adımları, her sayfanın ne işe yaradığı ve nasıl kullanıldığı (örneklerle), sık sorulan sorular, terimler sözlüğü, aranabilir |
+| **Kullanım Kılavuzu** | Yardım › Kullanım Kılavuzu: ilk kurulum adımları, her sayfanın ne işe yaradığı ve nasıl kullanıldığı (örneklerle), terimler sözlüğü, aranabilir |
+| **Sık Sorulan Sorular** | Yardım › SSS: konulara göre gruplanmış kısa cevaplar (harcama, borç ve kart, gelir ve tahmin, varlık, acil fon, hesap ve güvenlik), aranabilir |
 | **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması) |
 
 Telefonda da kullanılabilir: menü alta sabit sekme çubuğuna dönüşür; çubukta yer almayan sayfalar **Diğer** menüsündedir.
