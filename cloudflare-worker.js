@@ -618,7 +618,8 @@ export default {
           : `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(url.searchParams.get('interval') || '1day')}&outputsize=${encodeURIComponent(url.searchParams.get('outputsize') || '30')}&apikey=${env.TWELVEDATA_API_KEY}`;
       }
       try {
-        const r = await onbellekliGetir(hedef, url.pathname === '/td-series' ? 600 : 60);
+        // Twelve Data günde 800 kredi: kaç kullanıcı olursa olsun anlık fiyat en fazla 5 dakikada bir (≈288/gün), geçmiş 10 dakikada bir çekilir
+        const r = await onbellekliGetir(hedef, url.pathname === '/td-series' ? 600 : url.pathname === '/td' ? 300 : 60);
         return new Response(r.body, { status: r.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
       } catch (e) {
         return json({ error: (url.pathname === '/fh' ? 'Finnhub' : 'Twelve Data') + ' isteği başarısız: ' + e.message }, 502);

@@ -86,7 +86,7 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (oturum anahtarı), `ft_kullanici` (gi
 | `/proxy?url=` | GET | CORS proxy; yalnızca izin listesindeki adresler; 60 sn ortak önbellek |
 | `/ai` | POST | Anthropic Messages API geçidi (model beyaz listesi, `max_tokens` 200–4000, isteğe bağlı web araması) |
 | `/extract-loan` | POST | Kredi planı PDF'ini (`pdfBase64`) Claude ile JSON'a çevirir (banka, faiz, anapara, kullandırım tarihi, ödeme planı) |
-| `/td` | GET | Twelve Data anlık fiyat (60 sn önbellek: kullanıcılar ortak kotayı paylaşır) |
+| `/td` | GET | Twelve Data anlık fiyat (5 dk önbellek: günlük 800 kredilik ortak kota kullanıcı sayısından bağımsız ≈288/gün kalır) |
 | `/td-series` | GET | Twelve Data geçmiş veri (grafik; 10 dk önbellek) |
 | `/fh` | GET | Finnhub anlık fiyat (60 sn önbellek) |
 | `/uranyum` | GET | Uranyum (U3O8) fiyatı, MetalCharts sayfasından; 20 dk önbellek |
@@ -273,6 +273,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | Ortak kota: Twelve Data anlık fiyat önbelleği 60 sn → 5 dk (altın fiyatı çok kullanıcıda da günlük 800 kredi sınırına takılmaz). Kullanıcıların piyasa verisi için API anahtarı gerekmez; anahtarlar sunucuda ortak |
 | 2026-10-01 | Uranyum grafiği gerçek U3O8 $/lb geçmişi: MetalCharts API (Worker `/uranyum-gecmis`, D1 `onbellek` tablosu, 12 saat önbellek, hatada 1 saat bekleme); grafikte zorunlu "Metal prices by MetalCharts" bağlantısı; alınamazsa SRUUF eğilimi |
 | 2026-10-01 | Grafik düzeltmesi: ABD hisse/ETF kartlarında (QQQM, VOO, URA, NLR, XLE, REXC, REMX, NVDA ve kullanıcının eklediği semboller) geçmiş Yahoo'dan, yedek Twelve Data; uranyumda UX=F geçmişi olmadığı için eğilim olarak SRUUF (başlıkta not); hızlı kart değişiminde eski cevabın yeni grafiğin üstüne çizilmesi engellendi (`_grafikIstek`) |
 | 2026-10-01 | Kartları düzenle üst çubuğa, saatin yanına taşındı (yalnız Piyasa Özeti'nde; telefonda saatin sağında); saat + düğme boşluğun ortasında, sekme değişince saat kaymaz; dar ekranda durum metni kısalır; ızgaradaki kutu kaldırıldı |
