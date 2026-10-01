@@ -90,7 +90,7 @@ Yalnızca yerelde tutulanlar: `ft_erisim` (oturum anahtarı), `ft_kullanici` (gi
 | `/td-series` | GET | Twelve Data geçmiş veri (grafik; 10 dk önbellek) |
 | `/fh` | GET | Finnhub anlık fiyat (60 sn önbellek) |
 | `/uranyum` | GET | Uranyum (U3O8) fiyatı, MetalCharts sayfasından; 20 dk önbellek |
-| `/uranyum-gecmis` | GET | `?aralik=1M` (günlük) / `1Y` (haftalık): U3O8 $/lb geçmişi, MetalCharts API `/v1/history/UXA` (secret `metalcharts`). Ücretsiz katman ayda 200 istek: sonuç D1 `onbellek` tablosunda 12 saat tutulur (en fazla ~120 istek/ay); hata 1 saat önbelleklenir (kota boşa gitmez), varsa eski sonuç döner. Ücretsiz katman şartı: grafikte görünür "Metal prices by MetalCharts" bağlantısı (`#chartKaynak`) |
+| `/uranyum-gecmis` | GET | `?aralik=1M` (günlük) / `1Y` (haftalık): U3O8 $/lb geçmişi, MetalCharts API `/v1/history/UXA` (secret `metalcharts`). Ücretsiz katman ayda 200 istek: sonuç D1 `onbellek` tablosunda 12 saat tutulur (en fazla ~120 istek/ay); geçici hata 1 saat, kalıcı hata (plan kapsamı, geçersiz anahtar) 7 gün önbelleklenir (kota boşa gitmez). **Durum (2026-10-01):** ücretsiz katman UXA geçmişini kapsamıyor ("Upgrade to basic or higher"); grafik SRUUF eğilimiyle çalışır, Basic API planına geçilirse kod değişmeden gerçek geçmişe döner, varsa eski sonuç döner. Ücretsiz katman şartı: grafikte görünür "Metal prices by MetalCharts" bağlantısı (`#chartKaynak`) |
 
 ## 5. Veri kaynakları
 

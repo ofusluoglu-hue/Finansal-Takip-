@@ -451,7 +451,9 @@ export default {
       const kayit = await env.DB.prepare('SELECT v, ts FROM onbellek WHERE k = ?').bind(ck).first();
       if (kayit && simdi - kayit.ts < 12 * 3600 * 1000) return json(JSON.parse(kayit.v));
       const hata = await env.DB.prepare('SELECT v, ts FROM onbellek WHERE k = ?').bind(ck + ':hata').first();
-      if (hata && simdi - hata.ts < 3600 * 1000) {
+      // Geçici hata: 1 saat; plan kapsamı / geçersiz anahtar gibi kalıcı hata: 7 gün yeniden denenmez (ücretsiz kota boşa gitmesin)
+      const kalici = hata && /plan|upgrade|invalid api key|requires an api key/i.test(hata.v);
+      if (hata && simdi - hata.ts < (kalici ? 7 * 24 : 1) * 3600 * 1000) {
         return kayit ? json(JSON.parse(kayit.v)) : json({ error: 'MetalCharts şu an kullanılamıyor: ' + hata.v }, 502);
       }
       try {
