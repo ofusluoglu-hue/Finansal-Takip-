@@ -1912,7 +1912,7 @@
     #istCesDetay .ist-detay, #istBorcDetay .ist-detay, #istDovDetay .ist-detay{gap:12px;}
   }
   .yas-liste{display:flex;flex-direction:column;gap:2px;padding-bottom:6px;}
-  .yas-satir{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(90px,1fr) 78px 52px;align-items:center;gap:14px;padding:4px 6px;border-radius:6px;}
+  .yas-satir{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(90px,1fr) 78px 120px;align-items:center;gap:14px;padding:5px 6px;border-radius:6px;}   /* dört bölümde aynı sütunlar: çubuk ve değerler hizalı */
   .yas-satir:hover{background:#171c25;}
   .yas-kod{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .yas-kod .yas-ad{font-weight:500;color:var(--muted);margin-left:8px;}
@@ -1927,8 +1927,17 @@
   .yas-deger.bos{color:var(--amber);font-weight:600;font-size:11.5px;}
   .yas-girdi{width:64px;background:var(--panel-2);border:1px solid var(--amber);border-radius:6px;color:var(--text);font-family:inherit;font-size:12.5px;padding:3px 6px;text-align:right;}
   .yas-pay{text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .ist-liste-deger{text-align:right;font-size:12.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap;padding:3px 6px;}
+  .ist-liste .yas-pay{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   @media (max-width:640px){
-    .yas-satir{grid-template-columns:minmax(0,1.2fr) minmax(50px,1fr) 62px 44px;gap:8px;padding:4px 2px;}
+    /* telefonda sağ sütunda değer üstte, ikinci değer (pay/tutar) altında: uzun tutarlar üst üste binmesin */
+    .yas-satir{grid-template-columns:minmax(0,1.2fr) minmax(36px,.7fr) 86px;column-gap:8px;row-gap:0;padding:5px 2px;}
+    .yas-satir > .yas-kod, .yas-satir > .yas-cubuk{grid-row:1 / span 2;}
+    .yas-satir > .yas-deger-kap, .yas-satir > .ist-liste-deger{grid-column:3;grid-row:1;}
+    .yas-satir > .yas-pay{grid-column:3;grid-row:2;font-size:10.5px;padding-right:6px;}
+    .ist-liste-deger, .yas-deger{font-size:12px;}
+    .yas-ust{flex-wrap:wrap;gap:4px 12px;}
+    .yas-ust-sag{display:none;}
     .yas-kod .yas-kat-ad{display:none;}
     .yas-kod .yas-ad{display:block;margin:1px 0 0 14px;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}   /* telefonda ad, kodun altında */
   }
@@ -2635,8 +2644,8 @@
 
     <div class="footnote"><b>Not:</b> Her kriter 0–100 arası puanlanır; genel puan dördünün basit ortalamasıdır. Derece: 70 ve üzeri <b style="color:var(--up)">İyi</b> · 40–69 <b>Orta</b> · 40 altı <b style="color:var(--down)">Zayıf</b>.
       <b>Portföy yaşı</b> = ortalama şirket/fon/coin yaşı ÷ 100 yıl × 100; yaşa tıklayıp değiştirebilirsin, yaşı girilmemiş varlıklar ortalamaya katılmaz, aynı varlık birden fazla kayıtsa tek satırda sayılır, sarı dikey çizgi ortalamadır, "ağırlıklı yaş" tutarı büyük varlıklara daha çok ağırlık verir.
-      <b>Çeşitlendirme</b> = (etkin varlık sayısı − 1) ÷ 9 × 100; etkin varlık sayısı = 1 ÷ Σ(pay²) — 10 eşit ağırlıklı varlık 100 puan, tek varlığa yaslanan portföy 0 puan.
-      <b>Borç karşılama</b> = yatırımlar ÷ toplam borç × 100 (en fazla 100; borç yoksa tam puan); konut/arsa gibi likit olmayan varlıklar puana katılmaz, "tüm varlıkla" oranı onları da sayar.
+      <b>Çeşitlendirme</b> = (etkin varlık sayısı − 1) ÷ 9 × 100; etkin varlık sayısı = 1 ÷ Σ(pay²) — 10 eşit ağırlıklı varlık 100 puan, tek varlığa yaslanan portföy 0 puan; sarı çizgi, paran bütün varlıklara eşit dağılsaydı her birinin payıdır (çizgiyi geçen varlık fazla ağırlıkta).
+      <b>Borç karşılama</b> = yatırımlar ÷ toplam borç × 100 (en fazla 100; borç yoksa tam puan); konut/arsa gibi likit olmayan varlıklar puana katılmaz, "tüm varlıkla" oranı onları da sayar; sarı çizgi toplam borçtur (çubuğu çizgiyi geçen kalem borcu tek başına karşılar), ölçek yatırım ve borca göredir, onları katlarca aşan "tüm varlıklar" çubuğu tam dolu çizilir.
       <b>Döviz koruması</b> = dolar bazlı varlık payı × 100; ABD ETF/hisse, kripto ve altın dolar bazlı, BİST hisseleri TL bazlıdır; konut/arsa dahil değildir.</div>
   </div>
   <!-- ================= /TAB: PORTFÖY İSTATİSTİKLERİ ================= -->
@@ -3291,8 +3300,8 @@
       <p><b>Ne işe yarar:</b> Portföyünü dört kritere göre 0–100 arası puanlar; genel puan dördünün ortalamasıdır (70+ İyi, 40–69 Orta, 40 altı Zayıf).</p>
       <ul class="kv-liste">
         <li><b>Portföy yaşı:</b> Yatırım yaptığın şirket, fon ya da coin'lerin ortalama yaşı (100 yıl = 100 puan). Sayfadaki “Portföy yaşı” listesinde bir yatırımın yaşına tıklayıp değiştirebilirsin; yaşı boş olan ortalamaya katılmaz.</li>
-        <li><b>Çeşitlendirme:</b> Paran kaç varlığa yayılmış. 10 eşit varlık 100 puan, tek varlık 0 puan.</li>
-        <li><b>Borç karşılama:</b> Yatırımların borcunu ne kadar karşılıyor (yatırım ÷ borç).</li>
+        <li><b>Çeşitlendirme:</b> Paran kaç varlığa yayılmış. 10 eşit varlık 100 puan, tek varlık 0 puan. Listede sarı çizgi “her şey eşit dağılsaydı” payıdır; çubuğu çizgiyi epey geçen varlık portföyünde fazla ağırlıkta.</li>
+        <li><b>Borç karşılama:</b> Yatırımların borcunu ne kadar karşılıyor (yatırım ÷ borç). Listede sarı çizgi toplam borçtur: yatırım çubuğu çizgiye ne kadar yakınsa borcun o kadarını karşılıyorsun.</li>
         <li><b>Döviz koruması:</b> Yatırımlarının ne kadarı dolar bazlı (ABD ETF, kripto, altın).</li>
       </ul>
       <button class="bolum-ekle" onclick="switchTab('istatistik')">Portföy İstatistikleri'ne git →</button>
@@ -6386,6 +6395,18 @@ function istHbar(etiket, oran, deger, renk){
     `<div class="ist-hval" style="color:${renk};">${deger}</div></div>`;
 }
 
+// Portföy İstatistikleri ortak liste düzeni (Portföy yaşı ile aynı): üstte özet satırı + sağda sütun adı;
+// satır: renk noktası · kalın ad · soluk açıklama · kategori | çubuk (sarı dikey çizgi = referans) | kalın değer | soluk ikinci değer
+function istListe({ ust, sagBaslik, satirlar, referans }){
+  return `<div class="yas-ust">${ust.filter(Boolean).map(x => `<span>${x}</span>`).join('')}<span class="yas-ust-sag">${escapeHtml(sagBaslik)}</span></div>
+    <div class="yas-liste ist-liste">${satirlar.map(x => `<div class="yas-satir" title="${escapeHtml(x.ipucu || x.ad)}">
+      <div class="yas-kod"><span class="ist-kat-nokta" style="background:${x.renk};"></span>${escapeHtml(x.ad)}${x.aciklama ? `<span class="yas-ad">${escapeHtml(x.aciklama)}</span>` : ''}${x.kat ? `<span class="yas-kat-ad">${escapeHtml(x.kat)}</span>` : ''}</div>
+      <div class="yas-cubuk"><div class="yas-dolgu" style="width:${Math.max(0, Math.min(100, x.oran)).toFixed(1)}%;background:${x.renk};"></div>${referans != null ? `<div class="yas-ort" style="left:${Math.max(0, Math.min(100, referans)).toFixed(1)}%;"></div>` : ''}</div>
+      <div class="ist-liste-deger">${x.deger}</div>
+      <div class="yas-pay">${x.ikinci || ''}</div>
+    </div>`).join('')}</div>`;
+}
+
 function renderIstatistik(){
   const tabloEl = document.getElementById('istTablo');
   if(!tabloEl) return;
@@ -6466,9 +6487,19 @@ function renderIstatistik(){
   istYaz('istCesEnBuyukAd', C ? C.enBuyuk.kod : '');
   istYaz('istCesKat', C ? '%' + fmtNumber(C.enBuyukKatPay, 1) : '—');
   istYaz('istCesKatAd', C ? (YATIRIM_KATEGORI_BASLIK[C.enBuyukKat] || C.enBuyukKat) : '');
-  document.getElementById('istCesDetay').innerHTML = C
-    ? '<div class="ist-detay">' + C.pozlar.map(g => istHbar(g.kod + (istNormalize(g.ad) !== istNormalize(g.kod) ? ' · ' + g.ad : ''), g.tl / tumTl * 100, '%' + fmtNumber(g.tl / tumTl * 100, 1) + ' · ₺' + fmtNumber(g.tl, 0), YATIRIM_KATEGORI_RENK[g.tur] || 'var(--text)')).join('') + '</div>'
-    : '';
+  // çubuk: en büyük paya göre ölçekli; sarı çizgi = herkes eşit olsaydı düşecek pay (üstünde kalan varlık portföyde fazla ağırlıkta)
+  if(C){
+    const enBuyukPay = Math.max(...C.pozlar.map(g => g.tl / tumTl * 100)), esit = 100 / C.n;
+    const tepePay = Math.max(enBuyukPay, esit) * 1.05;
+    document.getElementById('istCesDetay').innerHTML = istListe({
+      ust: [`<i class="yas-ort-simge"></i>Eşit dağılımda pay <b>%${fmtNumber(esit, 1)}</b> <span class="ozet-soluk">(${C.n} varlık)</span>`,
+            `Etkin <b>${fmtNumber(C.neff, 1)} varlık</b>`, `En büyük <b>${escapeHtml(C.enBuyuk.kod)} %${fmtNumber(C.enBuyukPay, 1)}</b>`],
+      sagBaslik: 'pay · tutar', referans: esit / tepePay * 100,
+      satirlar: C.pozlar.map(g => ({ renk: YATIRIM_KATEGORI_RENK[g.tur] || 'var(--text)', ad: g.kod, aciklama: istNormalize(g.ad) !== istNormalize(g.kod) ? g.ad : '',
+        kat: YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur, oran: (g.tl / tumTl * 100) / tepePay * 100, deger: '%' + fmtNumber(g.tl / tumTl * 100, 1), ikinci: '₺' + fmtNumber(g.tl, 0),
+        ipucu: g.ad + ' · ' + (YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur) })),
+    });
+  } else document.getElementById('istCesDetay').innerHTML = '';
 
   // ---- 3) Borç karşılama ----
   const B = H.borc;
@@ -6476,13 +6507,22 @@ function renderIstatistik(){
   istYaz('istBorcYatirim', B ? '₺' + fmtNumber(B.yatirim, 0) : '—');
   istYaz('istBorcToplam', B ? '₺' + fmtNumber(B.borc, 0) : '—');
   istYaz('istBorcKat', B ? (B.toplamKat != null ? fmtNumber(B.toplamKat, 1) + ' kat' : 'borç yok') : '—');
-  const tepeBorc = B ? Math.max(B.yatirim, B.borc, 1) : 1;
-  document.getElementById('istBorcDetay').innerHTML = B
-    ? '<div class="ist-detay">' +
-        istHbar('Yatırımlarım', B.yatirim / tepeBorc * 100, '₺' + fmtNumber(B.yatirim, 0), 'var(--up)') +
-        istHbar('Toplam borç', B.borc / tepeBorc * 100, '₺' + fmtNumber(B.borc, 0), 'var(--down)') +
-      '</div>'
-    : '';
+  // sarı çizgi = toplam borç: çubuğu çizgiyi geçen kalem borcu tek başına karşılar
+  if(B){
+    // ölçek yatırım ile borca göre: konut gibi büyük varlıklar ölçeği ezmesin; borcu aşan çubuk tam dolu çizilir
+    const tum = B.yatirim + B.varlik, tepeBorc = Math.max(B.yatirim, B.borc, 1) * 1.15;
+    const oranYaz = v => B.borc > 0 ? (v >= B.borc ? 'borcun ' + fmtNumber(v / B.borc, 1) + ' katı' : 'borcun %' + fmtNumber(v / B.borc * 100, 0) + '’i') : 'borç yok';
+    document.getElementById('istBorcDetay').innerHTML = istListe({
+      ust: [B.borc > 0 ? `<i class="yas-ort-simge"></i>Sarı çizgi: toplam borç <b>₺${fmtNumber(B.borc, 0)}</b>` : 'Kayıtlı borç yok',
+            B.borc > 0 ? `Yatırımlar borcun <b>%${fmtNumber(B.yatirim / B.borc * 100, 0)}</b>’ini karşılıyor` : ''],
+      sagBaslik: 'tutar · borca göre', referans: B.borc > 0 ? B.borc / tepeBorc * 100 : null,
+      satirlar: [
+        { renk: 'var(--up)', ad: 'Yatırımlarım', aciklama: 'puanı belirleyen', oran: B.yatirim / tepeBorc * 100, deger: '₺' + fmtNumber(B.yatirim, 0), ikinci: oranYaz(B.yatirim) },
+        { renk: '#5AC8C8', ad: 'Tüm varlıklar', aciklama: 'yatırım + konut, araba, nakit…', oran: tum / tepeBorc * 100, deger: '₺' + fmtNumber(tum, 0), ikinci: oranYaz(tum) },
+        { renk: 'var(--down)', ad: 'Toplam borç', aciklama: 'kredi, kart, KMH, elden', oran: B.borc / tepeBorc * 100, deger: '₺' + fmtNumber(B.borc, 0), ikinci: '' },
+      ],
+    });
+  } else document.getElementById('istBorcDetay').innerHTML = '';
 
   // ---- 4) Döviz koruması ----
   const D = H.dov;
@@ -6495,10 +6535,15 @@ function renderIstatistik(){
   if(D){
     const katTl = {};
     gruplar.forEach(g => { katTl[g.tur] = (katTl[g.tur] || 0) + g.tl; });
-    document.getElementById('istDovDetay').innerHTML = '<div class="ist-detay">' +
-      YATIRIM_KATEGORI_SIRA.filter(k => katTl[k] > 0).map(k => istHbar(
-        (YATIRIM_KATEGORI_BASLIK[k] || k) + (DOLAR_BAZLI_TURLER.includes(k) ? ' · $' : ' · ₺'),
-        katTl[k] / tumTl * 100, '%' + fmtNumber(katTl[k] / tumTl * 100, 1) + ' · ₺' + fmtNumber(katTl[k], 0), YATIRIM_KATEGORI_RENK[k] || 'var(--text)')).join('') + '</div>';
+    const katlar = YATIRIM_KATEGORI_SIRA.filter(k => katTl[k] > 0);
+    const tepeKat = Math.max(...katlar.map(k => katTl[k] / tumTl * 100)) * 1.05;
+    document.getElementById('istDovDetay').innerHTML = istListe({
+      ust: [`Dolar bazlı <b>%${fmtNumber(D.dolarPay, 1)}</b>${usd ? ` <span class="ozet-soluk">(≈ $${fmtNumber(D.dolarTl / usd, 0)})</span>` : ''}`, `TL bazlı <b>%${fmtNumber(100 - D.dolarPay, 1)}</b>`],
+      sagBaslik: 'pay · tutar',
+      satirlar: katlar.map(k => ({ renk: YATIRIM_KATEGORI_RENK[k] || 'var(--text)', ad: YATIRIM_KATEGORI_BASLIK[k] || k,
+        aciklama: DOLAR_BAZLI_TURLER.includes(k) ? '$ dolar bazlı' : '₺ TL bazlı', oran: (katTl[k] / tumTl * 100) / tepeKat * 100,
+        deger: '%' + fmtNumber(katTl[k] / tumTl * 100, 1), ikinci: '₺' + fmtNumber(katTl[k], 0) })),
+    });
   } else {
     document.getElementById('istDovDetay').innerHTML = '';
   }
