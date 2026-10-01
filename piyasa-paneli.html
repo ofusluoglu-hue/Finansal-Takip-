@@ -5694,14 +5694,27 @@ async function fetchHistory(cfg, period){
     const symbol = cfg.bnSymbol;
     const interval = period === 'daily' ? '1d' : '1w';
     const limit = period === 'daily' ? 30 : 52;
-    const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
-    const res = await fetchWithTimeout(url);
-    if(!res.ok) throw new Error('binance fetch failed');
-    const data = await res.json();
-    return data.map(k => ({ t: k[6], v: parseFloat(k[4]) }));
+    let bn = [];
+    try{
+      const res = await fetchWithTimeout(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`);
+      if(res.ok) bn = (await res.json()).map(k => ({ t: k[6], v: parseFloat(k[4]) }));
+    }catch(e){ /* CoinGecko'ya düş */ }
+    // Binance'te yeni listelenen coinde (ör. HYPE) geçmiş kısa kalır: CoinGecko'nun günlük geçmişi kullanılır
+    if(bn.length >= (period === 'daily' ? 20 : 30) || !cfg.symbol) { if(bn.length) return bn; throw new Error('kripto geçmişi yok'); }
+    try{
+      const res = await fetchWithTimeout(`https://api.coingecko.com/api/v3/coins/${encodeURIComponent(cfg.symbol)}/market_chart?vs_currency=usd&days=${period === 'daily' ? 30 : 365}&interval=daily`, 12000);
+      const fiyatlar = ((await res.json()).prices || []).map(([t, v]) => ({ t, v })).filter(x => isFinite(x.v));
+      const cg = period === 'daily' ? fiyatlar : fiyatlar.filter((x, i) => (fiyatlar.length - 1 - i) % 7 === 0);   // haftalık: 7 günde bir
+      if(cg.length > bn.length) return cg;
+    }catch(e){ /* Binance'teki kısa geçmiş kalır */ }
+    return bn;
   }
 
-  if(cfg.source === 'twelvedata') return await tdGecmis(cfg.symbol, period);
+  // Altın (Twelve Data): kota dolar ya da servis cevap vermezse Yahoo altın vadelisi (GC=F) geçmişi
+  if(cfg.source === 'twelvedata'){
+    try{ return await tdGecmis(cfg.symbol, period); }
+    catch(e){ if(cfg.key === 'gold') return await yahooGecmis('GC=F', period); throw e; }
+  }
 
   if(cfg.source === 'fred'){
     const cosd = period === 'daily'
