@@ -273,6 +273,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | Fiyat (dakikada bir) ve haber (10 dakikada bir) turları yalnız sekme görünürken çalışır; sekmeye dönünce eskimişse hemen tazelenir (`arkaPlanTuru`). Ölçüm: açık sekme dakikada ~10–16 Worker isteği; 100 kullanıcıda arka plan sekmeleri Workers ücretsiz planının günlük 100 bin isteğini aşardı |
 | 2026-10-01 | Ortak kota: Twelve Data anlık fiyat önbelleği 60 sn → 5 dk (altın fiyatı çok kullanıcıda da günlük 800 kredi sınırına takılmaz). Kullanıcıların piyasa verisi için API anahtarı gerekmez; anahtarlar sunucuda ortak |
 | 2026-10-01 | Uranyum grafiği gerçek U3O8 $/lb geçmişi: MetalCharts API (Worker `/uranyum-gecmis`, D1 `onbellek` tablosu, 12 saat önbellek, hatada 1 saat bekleme); grafikte zorunlu "Metal prices by MetalCharts" bağlantısı; alınamazsa SRUUF eğilimi |
 | 2026-10-01 | Grafik düzeltmesi: ABD hisse/ETF kartlarında (QQQM, VOO, URA, NLR, XLE, REXC, REMX, NVDA ve kullanıcının eklediği semboller) geçmiş Yahoo'dan, yedek Twelve Data; uranyumda UX=F geçmişi olmadığı için eğilim olarak SRUUF (başlıkta not); hızlı kart değişiminde eski cevabın yeni grafiğin üstüne çizilmesi engellendi (`_grafikIstek`) |

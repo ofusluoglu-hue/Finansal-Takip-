@@ -10965,10 +10965,20 @@ setTimeout(aylikKurlariGuncelle, 8000);   // açılıştaki fiyat turunu bekleme
 if(location.protocol === 'file:'){
   document.getElementById('fileWarning').style.display = 'block';
 }
-refreshAll();
-setInterval(refreshAll, 60000);
-loadNews();
-setInterval(loadNews, 600000);
+// Fiyat ve haber turları yalnızca sekme görünürken çalışır: arka planda / küçültülmüş sekme sunucuya istek atmaz
+// (Workers ücretsiz planı günde 100 bin istek; açık unutulan sekmeler bu kotayı tüketmesin). Sekmeye dönünce eskimişse hemen tazelenir.
+let _sonFiyatTuru = 0, _sonHaberTuru = 0;
+function fiyatTuru(){ _sonFiyatTuru = Date.now(); return refreshAll(); }
+function haberTuru(){ _sonHaberTuru = Date.now(); return loadNews(); }
+function arkaPlanTuru(){
+  if(document.visibilityState !== 'visible') return;
+  if(Date.now() - _sonFiyatTuru >= 55000) fiyatTuru();
+  if(Date.now() - _sonHaberTuru >= 590000) haberTuru();
+}
+fiyatTuru();
+haberTuru();
+setInterval(arkaPlanTuru, 60000);
+document.addEventListener('visibilitychange', arkaPlanTuru);
 openChart(gorunenKartlar()[0] || 'btc');
 
 // ---------- Dijital saat/tarih (Piyasa Özeti, sağ üst) ----------
