@@ -15,6 +15,7 @@
 //     /proxy?url=...                       -> CORS proxy (Yahoo, FRED, Google News, haber RSS'leri; 60 sn önbellek)
 //     /ai, /extract-loan                   -> Anthropic geçidi (şimdilik yalnız yönetici; diğerleri kendi anahtarıyla — sonraki aşama)
 //     /td, /td-series, /fh                 -> Twelve Data / Finnhub geçitleri (ortak kota için 60 sn önbellek)
+//     /fh-ara?q=                           -> ABD hisse/ETF sembol araması (Finnhub, 1 gün önbellek)
 //     /uranyum                             -> uranyum fiyatı
 //     /uranyum-gecmis?aralik=1M|1Y         -> uranyum U3O8 $/lb geçmişi (MetalCharts API, secret: metalcharts; D1'de 12 saat önbellek)
 //     /auth/check                          -> ESKİ panel uyumluluğu (geçiş süresince)
@@ -600,6 +601,26 @@ export default {
         return json(extracted);
       } catch (e) {
         return json({ error: 'Kredi çıkarma isteği başarısız: ' + e.message }, 502);
+      }
+    }
+
+    // ---------- ABD HİSSE / ETF ARAMA (Finnhub symbol lookup; aynı sorgu 1 gün önbellekte) ----------
+    if (url.pathname === '/fh-ara') {
+      const q = (url.searchParams.get('q') || '').trim().toUpperCase().slice(0, 30);
+      if (q.length < 1) return json({ sonuc: [] });
+      if (!env.FINNHUB_API_KEY) return json({ error: 'FINNHUB_API_KEY tanımlı değil' }, 500);
+      try {
+        const r = await onbellekliGetir(`https://finnhub.io/api/v1/search?q=${encodeURIComponent(q)}&exchange=US&token=${env.FINNHUB_API_KEY}`, 86400);
+        const d = JSON.parse(new TextDecoder().decode(r.body));
+        if (r.status !== 200) throw new Error((d && d.error) || ('HTTP ' + r.status));
+        const sonuc = (d.result || [])
+          .filter(x => x && /^[A-Z][A-Z.]{0,6}$/.test(x.symbol || '') && /Common Stock|ADR|ETP|ETF|REIT/i.test(x.type || ''))
+          .map(x => ({ sembol: x.symbol, ad: String(x.description || '').slice(0, 60), tur: x.type }))
+          .sort((a, b) => (b.sembol === q) - (a.sembol === q))
+          .slice(0, 15);
+        return json({ sonuc });
+      } catch (e) {
+        return json({ error: 'arama yapılamadı: ' + (e.message || e) }, 502);
       }
     }
 

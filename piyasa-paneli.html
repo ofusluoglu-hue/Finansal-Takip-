@@ -1774,6 +1774,19 @@
   .kd-cip button:hover{color:var(--amber);}
   .kd-cip .kd-cip-sil{border-left:1px solid var(--border);padding:5px 8px;}
   .kd-yeni{display:flex;gap:6px;flex-wrap:wrap;}
+  .sembol-kutu{position:relative;min-width:0;}
+  .sembol-kutu .sembol-girdi{width:100%;box-sizing:border-box;}
+  .sembol-liste{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:60;background:var(--panel);border:1px solid var(--border);border-radius:10px;max-height:300px;overflow-y:auto;box-shadow:0 10px 28px rgba(0,0,0,.5);}
+  .sembol-kutu.satir-ici .sembol-liste{position:static;margin-top:6px;box-shadow:none;max-height:260px;}
+  .sembol-liste[hidden]{display:none;}
+  .sembol-oge{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-top:1px solid var(--border);min-width:0;}
+  .sembol-oge:first-child{border-top:none;}
+  .sembol-oge b{flex:0 0 62px;font-size:13px;color:var(--text);}
+  .sembol-ad{flex:1 1 auto;min-width:0;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sembol-oge small{flex:0 0 auto;font-size:11px;color:var(--muted-2);}
+  .sembol-oge.aktif, .sembol-oge:hover{background:var(--panel-2);}
+  .sembol-oge.aktif b{color:var(--amber);}
+  .sembol-bilgi{padding:10px 12px;font-size:12.5px;color:var(--muted-2);}
   .kart-duzen .form-modal-dugmeler{position:sticky;bottom:-20px;background:var(--panel);padding:12px 0 2px;margin-top:6px;border-top:1px solid var(--border);}
   .kd-yeni .ai-input{flex:1 1 110px;min-width:0;width:auto;}
   .kd-yeni #kdSembol{flex:1 1 150px;}
@@ -2401,7 +2414,7 @@
   </div>
 
   <div class="footnote">
-    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Hangi kartların hangi sırayla görüneceğini ⚙ Kartları düzenle ile seçersin; listede olmayan ABD hisse/ETF ya da kripto sembolünü de ekleyebilirsin (seçim hesabına kaydedilir). Gizli kartların fiyatı, yatırımlarında kullanılmıyorsa çekilmez. Karta tıklayınca açılan grafik: ABD hisse/ETF'lerde Yahoo (yedek Twelve Data) günlük ve haftalık kapanışları; uranyumda gerçek U3O8 $/lb geçmişi MetalCharts'tan (12 saatte bir yenilenir; alınamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu (SRUUF) gösterilir ve grafik başlığında yazar). Haberler yalnızca köklü kurumlardan alınır (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı, Reuters, Bloomberg, BBC, CNBC, MarketWatch; basın bültenleri hariç) ve 10 dakikada bir yenilenir. İngilizce başlıklar Türkçeye çevrilir; BBC ve CNBC haberleri Google Çeviri ile Türkçe açılır. Reuters, Bloomberg ve MarketWatch otomatik çevrilemediği için "İngilizce" işaretlidir.
+    <b>Not:</b> ABD hisse/ETF fiyatları Finnhub ve Yahoo'dan (piyasa öncesi/sonrası dahil; kartın altında öncesi, kapanış ve sonrası ayrıca gösterilir — gece seansı 20:00–04:00 ET verisi ücretsiz kaynaklarda bulunmadığı için gösterilemez), Dolar/Euro Yahoo'dan, altın (spot ons) Twelve Data'dan, kripto Binance'ten (yedek: CoinGecko) gelir. Diğer kartların altında "Dün" (önceki kapanış ve düne göre fark) ile günün en düşük–en yüksek aralığı, kriptoda 24 saat önceki fiyat ve 24 saatlik aralık yer alır. Kart köşesindeki LED: yeşil canlı, turuncu piyasa kapalı ya da eski işlem, kırmızı veri çekilemedi (son bilinen değer gösterilir). Hangi kartların hangi sırayla görüneceğini Kartları düzenle ile seçersin; ABD borsasındaki herhangi bir hisse ya da ETF'yi adıyla ya da koduyla arayıp, en büyük 30 kriptodan ya da Binance'teki başka bir kriptodan kart ekleyebilirsin (seçim hesabına kaydedilir). Gizli kartların fiyatı, yatırımlarında kullanılmıyorsa çekilmez. Karta tıklayınca açılan grafik: ABD hisse/ETF'lerde Yahoo (yedek Twelve Data) günlük ve haftalık kapanışları; uranyumda gerçek U3O8 $/lb geçmişi MetalCharts'tan (12 saatte bir yenilenir; alınamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu (SRUUF) gösterilir ve grafik başlığında yazar). Haberler yalnızca köklü kurumlardan alınır (Investing.com Türkiye, Bloomberg HT, Anadolu Ajansı, Reuters, Bloomberg, BBC, CNBC, MarketWatch; basın bültenleri hariç) ve 10 dakikada bir yenilenir. İngilizce başlıklar Türkçeye çevrilir; BBC ve CNBC haberleri Google Çeviri ile Türkçe açılır. Reuters, Bloomberg ve MarketWatch otomatik çevrilemediği için "İngilizce" işaretlidir.
   </div>
 
   </div>
@@ -2514,6 +2527,7 @@
             <option value="emtia">Emtia</option>
           </select>
           <select id="yatirimSembolSelect" class="ai-input" style="max-width:260px;min-width:200px;"></select>
+          <div id="yatirimAra" style="display:none;flex:1 1 240px;max-width:340px;min-width:200px;"></div>
           <input type="text" id="yatirimBistAdInput" class="ai-input" style="max-width:160px;min-width:130px;display:none;" placeholder="Hisse kodu (ör. THYAO)" onkeydown="if(event.key==='Enter')addYatirim()">
           <input type="number" step="0.000001" id="yatirimAdetInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Adet" onkeydown="if(event.key==='Enter')addYatirim()">
           <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram" onkeydown="if(event.key==='Enter')addYatirim()">
@@ -3170,8 +3184,8 @@
     <details class="kv-bolum" id="kv-piyasa"><summary>📈 Piyasa Özeti <span>fiyatlar ve haberler</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Seçtiğin piyasaların (dolar ve euro kuru, ons altın, Brent petrol, ABD hisse ve ETF'leri, kriptolar…) güncel fiyatını ve günlük değişimini gösterir. Altta Türkçe ve İngilizce güvenilir kaynaklardan haber başlıkları vardır.</p>
       <p><b>Kartları seçme:</b> En üstte saatin yanındaki <b>Kartları düzenle</b> düğmesine bas (yalnız Piyasa Özeti'nde görünür; telefonda saatin sağında). <b>Gösterilenler</b> listesinde ↑ ↓ ile sırayı değiştirir, ✕ ile gizlersin. <b>Hazır kartlardan ekle</b> bölümünden gizlediğin ya da hiç açmadığın kartları geri getirirsin. Seçimin hesabına kaydedilir; telefonda ve bilgisayarda aynı görünür. <b>Varsayılana dön</b> başlangıçtaki seti geri getirir.</p>
-      <p><b>Listede olmayan bir hisse ya da kripto:</b> Aynı penceredeki <b>Kendin ekle</b> bölümünde türü seç (ABD hisse / ETF ya da Kripto), sembolü yaz ve <b>Ekle</b>'ye bas. Panel sembolü kontrol eder; bulunamazsa uyarır. Eklediğin sembol <b>Yatırımlarım</b>'da da seçilebilir hale gelir.</p>
-      <p><b>Örnek:</b> Apple hissen var → Kendin ekle › ABD hisse / ETF › “AAPL”, ad “Apple” → “AAPL (Apple)” kartı çıkar. Sonra Yatırımlarım › + Ekle › ABD ETF &amp; Hisse listesinden “AAPL (Apple)”yu seçip adedini yazarsın.</p>
+      <p><b>Herhangi bir ABD hissesi, ETF ya da kripto:</b> Aynı penceredeki <b>Hisse, ETF ya da kripto ekle</b> kutusuna şirket adını ya da kodunu yaz (ör. “tesla”, “TSM”, “asml”, “xrp”). Çıkan listeden tıklarsın; kart hemen eklenir ve fiyatı gelir. ABD borsasındaki bütün hisse ve ETF'ler aranabilir; kriptoda en büyük 30 kripto hazırdır, listede olmayan bir coinin kodunu yazarsan panel Binance'te dener. Eklediğin hisse <b>Yatırımlarım</b>'da da seçilebilir.</p>
+      <p><b>Örnek:</b> Tesla hissen var → Kartları düzenle › kutuya “tesla” yaz › <b>TSLA — Tesla Inc</b>'e tıkla → “TSLA (Tesla Inc)” kartı çıkar. Yatırımlarım'a eklemek için de aynı aramayı orada yaparsın.</p>
       <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; “Günlük / Haftalık” ile aralığı değiştirirsin (son 30 gün / son 12 ay). Uranyum grafiği MetalCharts'tan gerçek U3O8 $/lb fiyatıdır; o kaynağa ulaşılamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu gösterilir ve başlıkta yazar. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
       <p><b>Fiyat kutusunun köşesindeki ışık:</b> yeşil = fiyat şu an canlı, kırmızı = kaynağa ulaşılamadı, son bilinen fiyat gösteriliyor.</p>
       <p class="kv-ipucu">💡 Önümüzdeki 3 gün içinde bir ödemen varsa sayfanın en üstünde turuncu bir uyarı şeridi çıkar; tıklarsan Ödeme Takvimi açılır. Gizlediğin bir kart yatırımlarında varsa fiyatı arka planda yine takip edilir; portföyün doğru kalır.</p>
@@ -3189,7 +3203,13 @@
 
     <details class="kv-bolum" id="kv-yatirim"><summary>📊 Yatırımlarım <span>portföyün, canlı fiyatla</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Yatırımlarının bugünkü TL değerini canlı fiyatla hesaplar; türlere göre (ABD ETF & Hisse, Kripto, BİST, Emtia) ayrı çerçevelerde gösterir. Üstte toplam, dolar karşılığı ve günlük / haftalık / aylık değişim vardır.</p>
-      <p><b>Nasıl kullanılır:</b> <b>+ Ekle</b> (ya da türün çerçevesindeki <b>+</b>) → türü seç → sembolü seç → <b>adedi</b> yaz. BİST hissesinde kodu yazarsın (ör. TUPRS) ve adedi girersin; fiyat 15 dakika gecikmeli gelir. Altın ve gümüş gram olarak girilir.</p>
+      <p><b>Nasıl kullanılır:</b> <b>+ Ekle</b> (ya da türün çerçevesindeki <b>+</b>) → türü seç → <b>adedi</b> yaz.</p>
+      <ul class="kv-liste">
+        <li><b>ABD ETF &amp; Hisse:</b> arama kutusuna şirket adını ya da kodunu yaz (ör. “tesla”, “TSM”, “asml”, “VOO”) ve listeden seç. ABD borsasındaki bütün hisse ve ETF'ler bulunur; Piyasa Özeti'ne kart olarak eklemen gerekmez, fiyatı yine de takip edilir.</li>
+        <li><b>Kripto:</b> listeden seç (en büyük 30 kripto: Bitcoin, Ethereum, XRP, Solana, BNB, Dogecoin…). Listede yoksa önce Kartları düzenle'de kodunu arayıp ekle.</li>
+        <li><b>BİST:</b> kodu yaz (ör. TUPRS) ve adedi gir; fiyat 15 dakika gecikmeli gelir.</li>
+        <li><b>Emtia:</b> altın ve gümüş gram olarak girilir.</li>
+      </ul>
       <p><b>Örnek:</b> Kripto · Bitcoin · 0,0006983 → o anki fiyat $95.000 ve kur ₺48,90 ise değer ≈ ₺3.244.</p>
       <p><b>Yatırım / Borç oranı:</b> Yatırımlarının borcunu ne kadar karşıladığı. %50 altı kırmızı, %50–99 sarı, %100 ve üstü yeşil.</p>
       <button class="bolum-ekle" onclick="switchTab('yatirim')">Yatırımlarım'a git →</button>
@@ -3397,7 +3417,7 @@
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
     <details class="kv-bolum kv-sss"><summary>Dövizim ya da altınım var; Yatırımlarım'a mı, Varlıklarım'a mı girmeliyim?</summary><div class="kv-ic"><p><b>Yatırım amacıyla</b> tuttuğun altın, gümüş, ETF, kripto ve hisseleri <b>Yatırımlarım</b>'a gir; portföy puanına ve yatırım/borç oranına katılır. <b>Gerektiğinde harcamak için</b> kenarda duran parayı (acil durum fonu, mevduat) <b>Finansal Durumum › Varlıklarım</b>'a <b>Nakit / Mevduat</b> türüyle gir; ₺, $, € ya da gram altın seçebilirsin. İkisi de net varlığına girer; aynı parayı iki yere girme.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Piyasa Özeti'nde istemediğim kartlar var / takip ettiğim hisse yok.</summary><div class="kv-ic"><p>Piyasa Özeti'nde en üstte saatin yanındaki <b>Kartları düzenle</b>'ye bas. ✕ ile istemediğini gizle, ↑ ↓ ile sırala. Listede olmayan bir ABD hissesi, ETF ya da kripto için <b>Kendin ekle</b>'ye sembolünü yaz (ör. AAPL, XRP). Eklediğin sembolü Yatırımlarım'da da seçebilirsin. BİST hisselerini kart olarak değil, doğrudan Yatırımlarım'a kod ve adetle eklersin.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Piyasa Özeti'nde istemediğim kartlar var / takip ettiğim hisse yok.</summary><div class="kv-ic"><p>Piyasa Özeti'nde en üstte saatin yanındaki <b>Kartları düzenle</b>'ye bas. ✕ ile istemediğini gizle, ↑ ↓ ile sırala. Herhangi bir ABD hissesi, ETF ya da kripto için pencerede arama kutusuna adını ya da kodunu yaz (ör. Tesla, TSM, ASML, XRP) ve listeden seç. Eklediğin hisseyi Yatırımlarım'da da seçebilirsin. BİST hisselerini kart olarak değil, doğrudan Yatırımlarım'a kod ve adetle eklersin.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Fiyatlar güncellenmiyor ya da ışık kırmızı yanıyor.</summary><div class="kv-ic"><p>Fiyat kaynağına o an ulaşılamamış olabilir; panel son bilinen fiyatı gösterir ve ışık kırmızı yanar. Sağ üstteki <b>Yenile</b>'ye bas ya da bir dakika bekle. BİST fiyatları zaten yaklaşık 15 dakika gecikmelidir; ABD piyasası kapalıyken ETF fiyatı seans dışı fiyatla gösterilir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Evimin ya da arsamın değerini nasıl belirleyeyim?</summary><div class="kv-ic"><p>Panel bu fiyatları internetten çekmez. Yakın çevredeki benzer ilanların ortalamasını ya da bir ekspertiz değerini yaz; yılda bir-iki kez güncellemen yeterli. Gerçekçi olmayan yüksek değerler net varlığını şişirir.</p></div></details>
 
@@ -4334,14 +4354,42 @@ const CARDS = [
   { key:'aave',   label:'AAVE',         source:'kripto', bnSymbol:'AAVEUSDT', symbol:'aave',        fmt:'usd2', fallback:{price:180.00, chg:0.50} },
   { key:'sol',    label:'SOL',          source:'kripto', bnSymbol:'SOLUSDT',  symbol:'solana',      fmt:'usd2', fallback:{price:150.00, chg:0.50} },
   { key:'nvda',   label:'NVDA',         source:'finnhub', symbol:'NVDA',   fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
+  // En büyük 30 kripto (BTC, ETH, SOL, HYPE, AAVE yukarıda): Binance USDT çifti ve CoinGecko yedek kimliği 2026-10-01'de doğrulandı.
+  // Kendiliğinden kimsenin ekranına eklenmez; Kartları düzenle ve Yatırımlarım'da seçilir.
+  { key:'bnb',   label:'BNB', source:'kripto', bnSymbol:'BNBUSDT', symbol:'binancecoin', fmt:'oto', fallback:{} },
+  { key:'xrp',   label:'XRP', source:'kripto', bnSymbol:'XRPUSDT', symbol:'ripple', fmt:'oto', fallback:{} },
+  { key:'doge',  label:'DOGECOIN (DOGE)', source:'kripto', bnSymbol:'DOGEUSDT', symbol:'dogecoin', fmt:'oto', fallback:{} },
+  { key:'ada',   label:'CARDANO (ADA)', source:'kripto', bnSymbol:'ADAUSDT', symbol:'cardano', fmt:'oto', fallback:{} },
+  { key:'trx',   label:'TRON (TRX)', source:'kripto', bnSymbol:'TRXUSDT', symbol:'tron', fmt:'oto', fallback:{} },
+  { key:'avax',  label:'AVALANCHE (AVAX)', source:'kripto', bnSymbol:'AVAXUSDT', symbol:'avalanche-2', fmt:'oto', fallback:{} },
+  { key:'link',  label:'CHAINLINK (LINK)', source:'kripto', bnSymbol:'LINKUSDT', symbol:'chainlink', fmt:'oto', fallback:{} },
+  { key:'sui',   label:'SUI', source:'kripto', bnSymbol:'SUIUSDT', symbol:'sui', fmt:'oto', fallback:{} },
+  { key:'ltc',   label:'LITECOIN (LTC)', source:'kripto', bnSymbol:'LTCUSDT', symbol:'litecoin', fmt:'oto', fallback:{} },
+  { key:'bch',   label:'BITCOIN CASH (BCH)', source:'kripto', bnSymbol:'BCHUSDT', symbol:'bitcoin-cash', fmt:'oto', fallback:{} },
+  { key:'xlm',   label:'STELLAR (XLM)', source:'kripto', bnSymbol:'XLMUSDT', symbol:'stellar', fmt:'oto', fallback:{} },
+  { key:'hbar',  label:'HEDERA (HBAR)', source:'kripto', bnSymbol:'HBARUSDT', symbol:'hedera-hashgraph', fmt:'oto', fallback:{} },
+  { key:'dot',   label:'POLKADOT (DOT)', source:'kripto', bnSymbol:'DOTUSDT', symbol:'polkadot', fmt:'oto', fallback:{} },
+  { key:'uni',   label:'UNISWAP (UNI)', source:'kripto', bnSymbol:'UNIUSDT', symbol:'uniswap', fmt:'oto', fallback:{} },
+  { key:'near',  label:'NEAR', source:'kripto', bnSymbol:'NEARUSDT', symbol:'near', fmt:'oto', fallback:{} },
+  { key:'pepe',  label:'PEPE', source:'kripto', bnSymbol:'PEPEUSDT', symbol:'pepe', fmt:'oto', fallback:{} },
+  { key:'shib',  label:'SHIBA INU (SHIB)', source:'kripto', bnSymbol:'SHIBUSDT', symbol:'shiba-inu', fmt:'oto', fallback:{} },
+  { key:'ton',   label:'TONCOIN (TON)', source:'kripto', bnSymbol:'TONUSDT', symbol:'the-open-network', fmt:'oto', fallback:{} },
+  { key:'etc',   label:'ETHEREUM CLASSIC (ETC)', source:'kripto', bnSymbol:'ETCUSDT', symbol:'ethereum-classic', fmt:'oto', fallback:{} },
+  { key:'apt',   label:'APTOS (APT)', source:'kripto', bnSymbol:'APTUSDT', symbol:'aptos', fmt:'oto', fallback:{} },
+  { key:'ena',   label:'ETHENA (ENA)', source:'kripto', bnSymbol:'ENAUSDT', symbol:'ethena', fmt:'oto', fallback:{} },
+  { key:'tao',   label:'BITTENSOR (TAO)', source:'kripto', bnSymbol:'TAOUSDT', symbol:'bittensor', fmt:'oto', fallback:{} },
+  { key:'wld',   label:'WORLDCOIN (WLD)', source:'kripto', bnSymbol:'WLDUSDT', symbol:'worldcoin-wld', fmt:'oto', fallback:{} },
+  { key:'arb',   label:'ARBITRUM (ARB)', source:'kripto', bnSymbol:'ARBUSDT', symbol:'arbitrum', fmt:'oto', fallback:{} },
+  { key:'ondo',  label:'ONDO', source:'kripto', bnSymbol:'ONDOUSDT', symbol:'ondo-finance', fmt:'oto', fallback:{} },
 ];
+// Çok kullanıcılı yapıdan önceki 18 kart: kart seçimi kaydı olmayan yöneticide bu görünüm korunur
+const ESKI_KARTLAR = ['ndx', 'sp500', 'ura', 'nlr', 'xle', 'usdtry', 'eurtry', 'gold', 'brent', 'uranium', 'rexc', 'remx', 'btc', 'eth', 'hype', 'aave', 'sol', 'nvda'];
 
 // ---------- Kart seçimi (kullanıcı başına): hangi kartlar, hangi sırayla + kullanıcının eklediği semboller ----------
 // ft_kartlar_v1: [{ id:'ayar', gorunen:[kart anahtarları, sırayla] }, { id:'oz-<sembol>', tur:'etf'|'kripto', sembol, ad }]
 // Kayıt yoksa: yöneticide bütün hazır kartlar (eski görünüm), diğer kullanıcılarda temel set.
 const KARTLAR_KEY = 'ft_kartlar_v1';
 const VARSAYILAN_KARTLAR = ['usdtry', 'eurtry', 'gold', 'btc', 'sp500', 'ndx'];
-const HAZIR_KART_SAYISI = CARDS.length;
 function kartAyarlari(){ return manuelListeYukle(KARTLAR_KEY); }
 function kartOzelCfg(o){
   const sembol = String(o.sembol || '').toUpperCase();
@@ -4355,7 +4403,7 @@ kartAyarlari().filter(o => o && String(o.id).startsWith('oz-') && o.sembol).forE
 function gorunenKartlar(){
   const ayar = kartAyarlari().find(o => o && o.id === 'ayar');
   const liste = ayar && Array.isArray(ayar.gorunen) ? ayar.gorunen
-              : (typeof benYonetici === 'function' && benYonetici()) ? CARDS.slice(0, HAZIR_KART_SAYISI).map(c => c.key)
+              : (typeof benYonetici === 'function' && benYonetici()) ? ESKI_KARTLAR
               : VARSAYILAN_KARTLAR;
   return liste.filter(k => CARDS.some(c => c.key === k));
 }
@@ -4389,15 +4437,8 @@ function kartDuzenAc(){
     <div class="form-modal-baslik">Kartları düzenle</div>
     <div class="form-modal-aciklama">Piyasa Özeti'nde hangi kartları, hangi sırayla göreceğini seç. Seçimin hesabına kaydedilir; tüm cihazlarında aynı görünür.</div>
     <div id="kdIcerik"></div>
-    <div class="kd-baslik">Listede yok mu? Kendin ekle <span class="ozet-soluk">— ABD hisse/ETF ya da kripto</span></div>
-    <div class="kd-yeni">
-      <select id="kdTur" class="ai-input" onchange="document.getElementById('kdSembol').placeholder = this.value === 'kripto' ? 'Sembol, ör. XRP' : 'Sembol, ör. AAPL'">
-        <option value="etf">ABD hisse / ETF</option><option value="kripto">Kripto</option>
-      </select>
-      <input id="kdSembol" class="ai-input" placeholder="Sembol, ör. AAPL" autocomplete="off" maxlength="12" onkeydown="if(event.key==='Enter') kartOzelEkle()">
-      <input id="kdAd" class="ai-input" placeholder="Ad (isteğe bağlı)" autocomplete="off" maxlength="30" onkeydown="if(event.key==='Enter') kartOzelEkle()">
-      <button type="button" class="loan-btn-save" id="kdEkleBtn" onclick="kartOzelEkle()">Ekle</button>
-    </div>
+    <div class="kd-baslik">Hisse, ETF ya da kripto ekle</div>
+    <div id="kdAra"></div>
     <div class="giris-mesaj" id="kdMesaj" role="alert"></div>
     <div id="kdEklenebilir"></div>
     <div class="form-modal-dugmeler">
@@ -4408,6 +4449,19 @@ function kartDuzenAc(){
   ov.addEventListener('click', e => { if(e.target === ov) ov.remove(); });
   document.body.appendChild(ov);
   kartModalCiz();
+  sembolKutusuKur('kdAra', { turler: ['etf', 'kripto'], satirIci: true, ph: 'Ara: Tesla, TSM, ASML, Apple, XRP…', secince: kartAramaSecildi });
+  setTimeout(() => { const i = document.querySelector('#kdAra input'); if(i && matchMedia('(min-width:901px)').matches) i.focus(); }, 60);
+}
+async function kartAramaSecildi(oge, inp){
+  const msj = document.getElementById('kdMesaj');
+  if(!oge){ msj.textContent = ''; return; }
+  msj.style.color = 'var(--muted)'; msj.textContent = oge.sembol + ' ekleniyor…';
+  try{
+    const c = await ozelKartHazirla(oge, true);
+    if(!gorunenKartlar().includes(c.key)) kartGoster(c.key); else { kartGorunumUygula(); kartModalCiz(); }
+    msj.style.color = 'var(--up)'; msj.textContent = c.label + ' Piyasa Özeti’ne eklendi' + (c.ozel ? '; Yatırımlarım’da da seçebilirsin.' : '.');
+    inp.value = '';
+  }catch(e){ msj.style.color = ''; msj.textContent = e.message; }
 }
 function kartModalCiz(){
   const kap = document.getElementById('kdIcerik'); if(!kap) return;
@@ -4447,7 +4501,7 @@ function kartGoster(k){
   if(c && !_lastGoodValues[k]) kartTekYenile(c);   // gizliyken çekilmemiş olabilir
 }
 function kartVarsayilan(){
-  const g = (benYonetici() ? CARDS.slice(0, HAZIR_KART_SAYISI).map(c => c.key) : VARSAYILAN_KARTLAR.slice());
+  const g = (benYonetici() ? ESKI_KARTLAR : VARSAYILAN_KARTLAR).slice();
   kartAyarKaydet(g); kartGorunumUygula(); kartModalCiz();
   g.forEach(k => { const c = CARDS.find(x => x.key === k); if(c && !_lastGoodValues[k]) kartTekYenile(c); });
 }
@@ -4467,43 +4521,6 @@ async function kartTekYenile(c){
     } else await kartYahooYenile(c);
   }catch(e){ renderStale(c); }
 }
-async function kartOzelEkle(){
-  const tur = document.getElementById('kdTur').value;
-  const sembol = document.getElementById('kdSembol').value.trim().toUpperCase().replace(/USDT$/, tur === 'kripto' ? '' : 'USDT');
-  const ad = document.getElementById('kdAd').value.trim().slice(0, 30);
-  const msj = document.getElementById('kdMesaj'), btn = document.getElementById('kdEkleBtn');
-  msj.style.color = ''; msj.textContent = '';
-  if(!/^[A-Z0-9.\-]{1,10}$/.test(sembol)){ msj.textContent = 'Geçerli bir sembol yaz (ör. ' + (tur === 'kripto' ? 'XRP' : 'AAPL') + ').'; return; }
-  const id = 'oz-' + (tur === 'kripto' ? 'k-' : '') + sembol.toLowerCase();
-  const hazir = CARDS.find(c => c.symbol === sembol || c.bnSymbol === sembol + 'USDT' || c.key === id);
-  if(hazir){
-    if(gorunenKartlar().includes(hazir.key)) msj.textContent = hazir.label + ' zaten gösteriliyor.';
-    else { kartGoster(hazir.key); msj.style.color = 'var(--up)'; msj.textContent = hazir.label + ' gösterilenlere eklendi.'; }
-    return;
-  }
-  const o = { id, tur, sembol, ad: ad || undefined, t: Date.now() };
-  const c = kartOzelCfg(o);
-  btn.disabled = true; btn.textContent = 'Kontrol ediliyor…';
-  let fiyat = null;
-  try{
-    if(tur === 'kripto') fiyat = (await fetchBinanceTicker([c.bnSymbol]))[c.bnSymbol];
-    else fiyat = await fetchEtfHibrit(sembol);
-  }catch(e){ fiyat = null; }
-  btn.disabled = false; btn.textContent = 'Ekle';
-  if(!fiyat || !isFinite(fiyat.price)){
-    msj.textContent = sembol + ' bulunamadı. ' + (tur === 'kripto' ? 'Binance’te dolar karşılığı (ör. XRP) işlem gören bir kripto olmalı.' : 'ABD borsasında işlem gören bir hisse ya da ETF kodu olmalı (ör. AAPL, QQQ).');
-    return;
-  }
-  CARDS.push(c);
-  YATIRIM_LABELS[c.key] = c.label;
-  grid.appendChild(kartElemanOlustur(c));
-  kartAyarKaydet(gorunenKartlar().concat([c.key]), o);
-  if(tur === 'kripto') renderCard(c, fiyat.price, fiyat.chgPct, false, { seanslar: kartEkSatirlari(c, fiyat.price, fiyat.acilis, fiyat.dusuk, fiyat.yuksek) });
-  else renderCard(c, fiyat.price, fiyat.chgPct, false, { seans: fiyat.seans, kapanis: fiyat.kapanis, seanslar: fiyat.seanslar });
-  kartGorunumUygula(); kartModalCiz();
-  document.getElementById('kdSembol').value = ''; document.getElementById('kdAd').value = '';
-  msj.style.color = 'var(--up)'; msj.textContent = c.label + ' eklendi. Yatırımlarım’da da seçebilirsin.';
-}
 function kartOzelSil(k){
   const c = CARDS.find(x => x.key === k);
   if(!c || !c.ozel) return;
@@ -4513,6 +4530,123 @@ function kartOzelSil(k){
   const el = document.getElementById('card-' + k); if(el) el.remove();
   kartModalCiz();
 }
+// ---------- Sembol arama: "tesla", "TSM", "asml", "xrp" → kartlar ve Yatırımlarım için öneri ----------
+const _araOnbellek = new Map();
+// Finnhub şirket adı: "TAIWAN SEMICONDUCTOR-SP ADR" → "Taiwan Semiconductor", "ASML HOLDING NV-NY REG SHS" → "ASML Holding NV"
+function adDuzelt(ad, sembol){
+  const t = String(ad || '').trim()
+    .replace(/\s*-\s*(SPONS?(ORED)?\s+|SP\s+|UNSP(ONS?)?\s+)?ADR\b.*$/i, '')
+    .replace(/\s*-\s*(NY\s+)?(REG(ISTERED)?\s+)?SHS?\b.*$/i, '')
+    .replace(/\s*-\s*CL(ASS)?\s+[A-Z]\b.*$/i, '')
+    .replace(/\s+/g, ' ').trim();
+  const KISA = { NV: 'NV', SA: 'SA', AG: 'AG', SE: 'SE', PLC: 'plc', ADR: 'ADR', ETF: 'ETF', SPDR: 'SPDR', ISHARES: 'iShares', US: 'US', USA: 'USA', AI: 'AI', REIT: 'REIT', 'A/S': 'A/S' };
+  return t.split(' ').map(w => {
+    const u = w.toUpperCase();
+    if(KISA[u]) return KISA[u];
+    if(sembol && u === String(sembol).toUpperCase()) return u;   // ASML, AMD gibi adın içindeki kısaltma büyük kalsın
+    return w.toLowerCase().replace(/(^|[(.&-])([a-z])/g, (m, x, y) => x + y.toUpperCase());
+  }).join(' ');
+}
+function _araNormal(t){ return String(t || '').toLocaleLowerCase('tr-TR').replace(/[ıi̇]/g, 'i'); }
+// Öneride sembolün yanında tekrar etmesin: "TSLA (Tesla Inc)" → "Tesla Inc", "XRP" → "", "DOGECOIN (DOGE)" → "Dogecoin"
+function _oneriAdi(etiket, sembol){
+  const e = String(etiket || ''), m = e.match(/^(.*?)\s*\(([^)]*)\)$/);
+  if(m && m[1].toUpperCase() === sembol.toUpperCase()) return m[2];
+  if(m && m[2].toUpperCase() === sembol.toUpperCase()) return m[1].toLowerCase().replace(/(^|\s)([a-zçğıöşü])/g, (x, a2, b2) => a2 + b2.toUpperCase());
+  return e.toUpperCase() === sembol.toUpperCase() ? '' : e;
+}
+async function sembolAra(q, turler){
+  const t = _araNormal(q.trim());
+  if(!t) return [];
+  const sonuc = [];
+  const katalog = CARDS.filter(c => (turler.includes('etf') && c.source === 'finnhub') || (turler.includes('kripto') && c.source === 'kripto'));
+  katalog.forEach(c => {
+    const sembol = c.source === 'kripto' ? c.bnSymbol.replace(/USDT$/, '') : c.symbol;
+    const puan = _araNormal(sembol) === t ? 3 : _araNormal(sembol).startsWith(t) ? 2 : _araNormal(c.label).includes(t) ? 1 : 0;
+    if(puan) sonuc.push({ key: c.key, tur: c.source === 'kripto' ? 'kripto' : 'etf', sembol, ad: _oneriAdi(c.label, sembol), puan });
+  });
+  sonuc.sort((a, b) => b.puan - a.puan);
+  if(turler.includes('etf') && t.length >= 1){
+    let uzak = _araOnbellek.get(t);
+    if(!uzak){
+      try{
+        const res = await fetch(MY_WORKER + '/fh-ara?q=' + encodeURIComponent(q.trim()));
+        uzak = res.ok ? ((await res.json()).sonuc || []) : [];
+      }catch(e){ uzak = []; }
+      _araOnbellek.set(t, uzak);
+    }
+    uzak.forEach(x => {
+      if(sonuc.some(y => y.sembol === x.sembol)) return;
+      const var_ = CARDS.find(c => c.source === 'finnhub' && c.symbol === x.sembol);
+      sonuc.push(var_ ? { key: var_.key, tur: 'etf', sembol: x.sembol, ad: _oneriAdi(var_.label, x.sembol) } : { tur: 'etf', sembol: x.sembol, ad: adDuzelt(x.ad, x.sembol), tip: x.tur, yeni: true });
+    });
+  }
+  // Hiçbir şey bulunamadıysa: Binance'te bu sembolle kripto var mı diye dene (listede olmayan bir coin)
+  if(turler.includes('kripto') && !sonuc.length && /^[a-z0-9]{2,10}$/.test(t)){
+    sonuc.push({ tur: 'kripto', sembol: q.trim().toUpperCase(), ad: 'Binance’te ara', yeni: true });
+  }
+  return sonuc.slice(0, 20);
+}
+// Arama kutusu: yazdıkça öneri listesi; ↑↓ Enter Esc; seçilince secince(oge)
+function sembolKutusuKur(kapId, { turler, ph, secince, satirIci }){
+  const kap = document.getElementById(kapId);
+  if(!kap) return;
+  kap.classList.add('sembol-kutu'); if(satirIci) kap.classList.add('satir-ici');
+  kap.innerHTML = `<input type="search" class="ai-input sembol-girdi" placeholder="${escapeHtml(ph)}" autocomplete="off" spellcheck="false" aria-autocomplete="list"><div class="sembol-liste" hidden role="listbox"></div>`;
+  const inp = kap.querySelector('input'), liste = kap.querySelector('.sembol-liste');
+  let ogeler = [], aktif = -1, zaman = null, sira = 0;
+  const ciz = (bilgi) => {
+    if(bilgi){ liste.innerHTML = `<div class="sembol-bilgi">${bilgi}</div>`; liste.hidden = false; return; }
+    if(!ogeler.length){ liste.innerHTML = `<div class="sembol-bilgi">Sonuç yok — sembolü dene (ör. TSLA)</div>`; liste.hidden = !inp.value.trim(); return; }
+    liste.innerHTML = ogeler.map((o, i) => `<div class="sembol-oge${i === aktif ? ' aktif' : ''}" role="option" data-i="${i}">
+      <b>${escapeHtml(o.sembol)}</b><span class="sembol-ad">${escapeHtml(o.ad)}</span><small>${o.tur === 'kripto' ? 'Kripto' : (o.tip && /ETP|ETF/i.test(o.tip) ? 'ETF' : 'ABD hisse')}${o.yeni ? ' · yeni' : ''}</small></div>`).join('');
+    liste.hidden = false;
+  };
+  const sec = i => { const o = ogeler[i]; if(!o) return; liste.hidden = true; inp.value = o.sembol + ' — ' + o.ad; secince(o, inp); };
+  inp.addEventListener('input', () => {
+    clearTimeout(zaman);
+    const q = inp.value.trim();
+    if(!q){ ogeler = []; liste.hidden = true; secince(null, inp); return; }
+    secince(null, inp);
+    ciz('Aranıyor…');
+    zaman = setTimeout(async () => {
+      const no = ++sira;
+      const s = await sembolAra(q, turler);
+      if(no !== sira) return;   // eski aramanın cevabı yenisinin üstüne yazılmasın
+      ogeler = s; aktif = s.length ? 0 : -1; ciz();
+    }, 280);
+  });
+  inp.addEventListener('keydown', e => {
+    if(e.key === 'ArrowDown' && ogeler.length){ e.preventDefault(); aktif = (aktif + 1) % ogeler.length; ciz(); }
+    else if(e.key === 'ArrowUp' && ogeler.length){ e.preventDefault(); aktif = (aktif - 1 + ogeler.length) % ogeler.length; ciz(); }
+    else if(e.key === 'Enter' && !liste.hidden && aktif >= 0){ e.preventDefault(); sec(aktif); }
+    else if(e.key === 'Escape'){ liste.hidden = true; }
+  });
+  liste.addEventListener('mousedown', e => { const el = e.target.closest('.sembol-oge'); if(el){ e.preventDefault(); sec(+el.dataset.i); } });
+  inp.addEventListener('blur', () => setTimeout(() => { liste.hidden = true; }, 150));
+  return inp;
+}
+// Aramadan seçilen yeni sembol için kart kataloğuna kayıt (fiyat bir kez çekilerek doğrulanır). goster: Piyasa Özeti'nde göster
+async function ozelKartHazirla(oge, goster){
+  if(oge.key) return CARDS.find(c => c.key === oge.key);
+  const sembol = String(oge.sembol || '').toUpperCase();
+  const id = 'oz-' + (oge.tur === 'kripto' ? 'k-' : '') + sembol.toLowerCase();
+  const var_ = CARDS.find(c => c.key === id); if(var_) return var_;
+  const o = { id, tur: oge.tur, sembol, ad: oge.tur === 'kripto' ? undefined : (oge.ad || undefined), t: Date.now() };
+  const c = kartOzelCfg(o);
+  let f = null;
+  try{ f = oge.tur === 'kripto' ? (await fetchBinanceTicker([c.bnSymbol]))[c.bnSymbol] : await fetchEtfHibrit(sembol); }catch(e){ f = null; }
+  if(!f || !isFinite(f.price)) throw new Error(sembol + (oge.tur === 'kripto' ? ' Binance’te dolar karşılığıyla işlem görmüyor.' : ' için fiyat alınamadı (ABD borsasında işlem görmüyor olabilir).'));
+  CARDS.push(c);
+  YATIRIM_LABELS[c.key] = c.label;
+  grid.appendChild(kartElemanOlustur(c));
+  kartAyarKaydet(goster ? gorunenKartlar().concat([c.key]) : gorunenKartlar(), o);
+  if(oge.tur === 'kripto') renderCard(c, f.price, f.chgPct, false, { seanslar: kartEkSatirlari(c, f.price, f.acilis, f.dusuk, f.yuksek) });
+  else renderCard(c, f.price, f.chgPct, false, { seans: f.seans, kapanis: f.kapanis, seanslar: f.seanslar });
+  kartGorunumUygula();
+  return c;
+}
+
 // Kullanıcının eklediği semboller Yatırımlarım'daki seçeneklerde de çıkar
 function kartOzelSecenekleri(tur){
   return CARDS.filter(c => c.ozel && (tur === 'kripto' ? c.source === 'kripto' : c.source === 'finnhub')).map(c => ({ key: c.key, label: c.label }));
@@ -7137,6 +7271,31 @@ const KRIPTO_OPTIONS = [
   { key:'hype', label:'HYPE' },
   { key:'aave', label:'AAVE' },
   { key:'sol',  label:'Solana (SOL)' },
+  { key:'bnb',  label:'BNB' },
+  { key:'xrp',  label:'XRP' },
+  { key:'doge', label:'Dogecoin (DOGE)' },
+  { key:'ada',  label:'Cardano (ADA)' },
+  { key:'trx',  label:'Tron (TRX)' },
+  { key:'avax', label:'Avalanche (AVAX)' },
+  { key:'link', label:'Chainlink (LINK)' },
+  { key:'sui',  label:'SUI' },
+  { key:'ltc',  label:'Litecoin (LTC)' },
+  { key:'bch',  label:'Bitcoin Cash (BCH)' },
+  { key:'xlm',  label:'Stellar (XLM)' },
+  { key:'hbar', label:'Hedera (HBAR)' },
+  { key:'dot',  label:'Polkadot (DOT)' },
+  { key:'uni',  label:'Uniswap (UNI)' },
+  { key:'near', label:'NEAR' },
+  { key:'pepe', label:'PEPE' },
+  { key:'shib', label:'Shiba Inu (SHIB)' },
+  { key:'ton',  label:'Toncoin (TON)' },
+  { key:'etc',  label:'Ethereum Classic (ETC)' },
+  { key:'apt',  label:'Aptos (APT)' },
+  { key:'ena',  label:'Ethena (ENA)' },
+  { key:'tao',  label:'Bittensor (TAO)' },
+  { key:'wld',  label:'Worldcoin (WLD)' },
+  { key:'arb',  label:'Arbitrum (ARB)' },
+  { key:'ondo', label:'ONDO' },
 ];
 const EMTIA_OPTIONS = [
   { key:'gold',   label:'Altın (gram)' },
@@ -7170,6 +7329,7 @@ function yatirimTurDegisti(){
   const bistTutarInput = document.getElementById('yatirimBistTutarInput');
 
   sembolSelect.style.display = 'none';
+  document.getElementById('yatirimAra').style.display = 'none';
   adetInput.style.display = 'none';
   gramInput.style.display = 'none';
   bistAdInput.style.display = 'none';
@@ -7182,15 +7342,22 @@ function yatirimTurDegisti(){
   } else if(tur === 'bist'){
     bistAdInput.style.display = '';
     adetInput.style.display = '';   // BİST: hisse kodu + adet; fiyat arka planda Yahoo'dan (KOD.IS)
+  } else if(tur === 'etf'){
+    // ABD hisse/ETF: binlerce sembol → arama kutusu (Tesla, TSM, ASML…)
+    const ara = document.getElementById('yatirimAra');
+    ara.style.display = '';
+    adetInput.style.display = '';
+    if(!ara.querySelector('input')) sembolKutusuKur('yatirimAra', { turler: ['etf'], ph: 'Hisse ya da ETF ara: Tesla, TSM, VOO…', secince: o => { _yatirimSecim = o; if(o) document.getElementById('yatirimAdetInput').focus(); } });
   } else {
     sembolSelect.style.display = '';
     adetInput.style.display = '';
-    const options = (tur === 'kripto' ? KRIPTO_OPTIONS : ETF_OPTIONS).concat(kartOzelSecenekleri(tur));
+    const options = KRIPTO_OPTIONS.concat(kartOzelSecenekleri(tur));
     sembolSelect.innerHTML = options.map(o => `<option value="${o.key}">${escapeHtml(o.label)}</option>`).join('');
   }
 }
 
-function addYatirim(){
+let _yatirimSecim = null;   // ABD hisse/ETF arama kutusunda seçilen
+async function addYatirim(){
   const tur = document.getElementById('yatirimTurSelect').value;
   let item;
 
@@ -7207,9 +7374,17 @@ function addYatirim(){
     bistHisseEkle(kod, adet);   // kod Yahoo'da doğrulanır, fiyat alınır, sonra eklenir
     return;
   } else {
-    const sembol = document.getElementById('yatirimSembolSelect').value;
     const adet = parseFloat(document.getElementById('yatirimAdetInput').value);
-    if(isNaN(adet) || adet <= 0){ showAlertModal('Lütfen geçerli bir adet gir.'); return; }
+    let sembol;
+    if(tur === 'etf'){
+      if(!_yatirimSecim){ showAlertModal('Önce listeden bir hisse ya da ETF seç: kutuya adını ya da kodunu yaz (ör. Tesla, TSM), çıkan listeden tıkla.'); const i = document.querySelector('#yatirimAra input'); if(i) i.focus(); return; }
+      if(isNaN(adet) || adet <= 0){ showAlertModal('Lütfen geçerli bir adet gir.'); return; }
+      try{ sembol = (await ozelKartHazirla(_yatirimSecim, false)).key; }
+      catch(e){ showAlertModal(e.message); return; }
+    } else {
+      sembol = document.getElementById('yatirimSembolSelect').value;
+      if(isNaN(adet) || adet <= 0){ showAlertModal('Lütfen geçerli bir adet gir.'); return; }
+    }
     item = { id: 'y-' + Date.now(), tur, sembol, miktar: adet, tarih: new Date().toISOString() };
   }
 
@@ -7218,6 +7393,7 @@ function addYatirim(){
   manuelListeKaydet(YATIRIM_KEY, list);
 
   document.getElementById('yatirimAdetInput').value = '';
+  _yatirimSecim = null; { const i = document.querySelector('#yatirimAra input'); if(i) i.value = ''; }
   document.getElementById('yatirimGramInput').value = '';
   document.getElementById('yatirimBistAdInput').value = '';
   document.getElementById('yatirimBistTutarInput').value = '';
