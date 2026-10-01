@@ -1861,6 +1861,43 @@
   .portfoy-kap .bolum-form{margin-bottom:12px;}
   .portfoy-kap > #yatirimListContainer > .bos-not{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 18px;}
   .liste-daha{display:block;margin:8px auto 6px;color:var(--muted);}
+  /* Kullanım Kılavuzu */
+  .kv-ust{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+  .kv-ust input{flex:1 1 280px;min-height:42px;font-size:14px;}
+  .kv-hizli{display:flex;gap:6px;}
+  .kv-sonuc{font-size:12px;color:var(--muted);margin:0 2px 10px;min-height:0;}
+  .kv-sonuc:empty{display:none;}
+  .kv-p{font-size:13.5px;line-height:1.65;color:var(--text);margin:4px 0 8px;}
+  .kv-not{color:var(--muted);font-size:12.5px;}
+  .kv-adim{margin:4px 0 8px 20px;padding:0;display:flex;flex-direction:column;gap:7px;font-size:13.5px;line-height:1.55;color:var(--text);}
+  .kv-adim a, .kv-ic a{color:var(--amber);text-decoration:none;white-space:nowrap;}
+  .kv-grup-bas{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);margin:18px 4px 8px;}
+  .kv-bolum{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;}
+  .kv-bolum > summary{cursor:pointer;list-style:none;padding:13px 18px;font-size:14.5px;font-weight:700;color:var(--text);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .kv-bolum > summary::-webkit-details-marker{display:none;}
+  .kv-bolum > summary::after{content:'+';margin-left:auto;color:var(--muted);font-weight:700;font-size:16px;}
+  .kv-bolum[open] > summary::after{content:'−';}
+  .kv-bolum > summary span{font-size:12px;font-weight:500;color:var(--muted-2);}
+  .kv-bolum > summary:hover{background:var(--panel-2);}
+  .kv-bolum[open] > summary{border-bottom:1px solid var(--border);}
+  .kv-sss > summary{font-size:13.5px;font-weight:600;}
+  .kv-ic{padding:10px 18px 14px;font-size:13.5px;line-height:1.65;color:var(--text);}
+  .kv-ic p{margin:0 0 9px;}
+  .kv-ic b{color:var(--text);}
+  .kv-ipucu{background:rgba(231,168,59,.08);border:1px solid rgba(231,168,59,.28);border-radius:8px;padding:8px 12px;color:var(--text);}
+  .kv-liste{margin:0 0 10px 18px;padding:0;display:flex;flex-direction:column;gap:5px;}
+  .kv-ic .bolum-ekle{margin-top:2px;}
+  .kv-sozluk dl{margin:6px 0 4px;display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:9px 18px;font-size:13px;line-height:1.55;}
+  .kv-sozluk dt{font-weight:700;color:var(--amber);}
+  .kv-sozluk dd{margin:0;color:var(--text);}
+  .kv-gizli{display:none !important;}
+  mark.kv-isaret{background:rgba(231,168,59,.35);color:inherit;border-radius:3px;padding:0 1px;}
+  @media (max-width:640px){
+    .kv-bolum > summary{padding:12px 14px;}
+    .kv-ic{padding:10px 14px 12px;}
+    .kv-sozluk dl{grid-template-columns:1fr;gap:2px;}
+    .kv-sozluk dd{margin-bottom:8px;}
+  }
   /* Aylık Rapor */
   .rapor-one{list-style:none;margin:2px 0 8px;padding:0;display:flex;flex-direction:column;gap:7px;}
   .rapor-one li{position:relative;padding:8px 12px 8px 30px;border:1px solid var(--border);border-radius:9px;background:var(--panel-2);font-size:13px;line-height:1.5;color:var(--text);}
@@ -2142,6 +2179,11 @@
       <div class="nav-item" data-tab="rapor" onclick="switchTab('rapor')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
         <span data-kisa="Rapor">Aylık Rapor</span>
+      </div>
+      <div class="nav-grup">Yardım</div>
+      <div class="nav-item" data-tab="kilavuz" onclick="switchTab('kilavuz')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>
+        <span data-kisa="Kılavuz">Kullanım Kılavuzu</span>
       </div>
       <div class="nav-item nav-diger" onclick="digerMenuAc()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -2969,6 +3011,200 @@
   </div>
   <!-- ================= /TAB: ÖDEME TAKVİMİ ================= -->
 
+  <!-- ================= TAB: KULLANIM KILAVUZU ================= -->
+  <div class="tab-panel" id="tab-kilavuz">
+    <div class="page-head"><h1>Kullanım Kılavuzu</h1></div>
+
+    <div class="kv-ust">
+      <input type="search" id="kvAra" class="ai-input" placeholder="Kılavuzda ara… (ör. maaş, kart, acil fon, enflasyon)" oninput="kilavuzAra(this.value)" autocomplete="off">
+      <div class="kv-hizli">
+        <button class="bolum-ekle" onclick="kilavuzHepsi(true)">Tümünü aç</button>
+        <button class="bolum-ekle" onclick="kilavuzHepsi(false)">Tümünü kapat</button>
+      </div>
+    </div>
+    <div class="kv-sonuc" id="kvSonuc"></div>
+
+    <div class="bolum kv-giris">
+      <div class="bolum-bas"><span class="bolum-baslik">İlk kurulum — 10 dakikada hazır</span></div>
+      <p class="kv-p">Panel, girdiğin bilgilerden hesap yapar. Aşağıdaki sırayla bir kez girersen bütün sayfalar dolar; sonra yalnızca değişeni güncellersin.</p>
+      <ol class="kv-adim">
+        <li><b>Borçlarım</b> — kredilerini (ödeme planını PDF ya da Excel olarak yükle), kredi kartı borçlarını, KMH'yi ve elden borçlarını gir. <a href="#" onclick="switchTab('borclar'); return false;">Borçlarım'a git →</a></li>
+        <li><b>Finansal Durumum › Varlıklarım</b> — ev, arsa, araba gibi varlıklarını ve nakitte duran paranı gir. <a href="#" onclick="switchTab('finansal'); return false;">Git →</a></li>
+        <li><b>Yatırımlarım</b> — ETF, kripto, BİST hissesi ve altın/gümüşünü adetiyle gir; fiyatlar kendiliğinden gelir. <a href="#" onclick="switchTab('yatirim'); return false;">Git →</a></li>
+        <li><b>Harcama Takibim</b> — her ay sonunda o ayın harcamalarını kategori kategori gir (ör. Eylül 2026 · Market · ₺26.985). <a href="#" onclick="switchTab('harcama'); return false;">Git →</a></li>
+        <li><b>Nakit Akışı › Gelirler</b> — maaşını bir kez “Her ay” olarak ekle. <a href="#" onclick="switchTab('nakitakis'); return false;">Git →</a></li>
+        <li><b>Ödeme Takvimi</b> — kart son ödeme günlerini ve kira, aidat, fatura, abonelik gibi düzenli ödemelerini gir. <a href="#" onclick="switchTab('odeme'); return false;">Git →</a></li>
+      </ol>
+      <p class="kv-p kv-not">Bunlardan sonra Bütçe Planlaması, Borç Kapatma Planı, Birikim Hedefleri, Net Varlık Geçmişi ve Aylık Rapor kendiliğinden çalışır; ayrıca veri girmen gerekmez.</p>
+    </div>
+
+    <div class="kv-grup-bas">Sayfalar</div>
+
+    <details class="kv-bolum" id="kv-piyasa"><summary>📈 Piyasa Özeti <span>fiyatlar ve haberler</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> ABD ETF'leri (QQQM, VOO, URA, NLR, XLE…), dolar ve euro kuru, ons altın, Brent petrol, uranyum ve kriptoların (Bitcoin, Ethereum…) güncel fiyatını ve günlük değişimini gösterir. Altta Türkçe ve İngilizce güvenilir kaynaklardan haber başlıkları vardır.</p>
+      <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; “Günlük / Haftalık” ile aralığı değiştirirsin. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
+      <p><b>Fiyat kutusunun köşesindeki ışık:</b> yeşil = fiyat şu an canlı, kırmızı = kaynağa ulaşılamadı, son bilinen fiyat gösteriliyor.</p>
+      <p class="kv-ipucu">💡 Önümüzdeki 3 gün içinde bir ödemen varsa sayfanın en üstünde turuncu bir uyarı şeridi çıkar; tıklarsan Ödeme Takvimi açılır.</p>
+      <button class="bolum-ekle" onclick="switchTab('gunluk')">Piyasa Özeti'ne git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-finansal"><summary>💼 Finansal Durumum <span>net servetin</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Sahip olduklarını ve borçlarını tek yerde toplar: <b>Net varlık = varlıklar + yatırımlar − borçlar</b>.</p>
+      <p><b>Nasıl kullanılır:</b> Varlıklarım bölümünde <b>+ Ekle</b>'ye bas, türü seç (Konut, Arsa, Otomobil, Dükkan, Nakit / Mevduat, Diğer), adını ve bugünkü değerini yaz. Değer değişince satırdaki ✎ ile güncelle.</p>
+      <p><b>Örnek:</b> “GOP Daire · Konut · ₺6.850.000”. Satırdaki ışık yeşilse değeri bugün güncellemişsin; kırmızıysa daha önce.</p>
+      <p><b>Dövizde ya da altında duran para:</b> Türü <b>Nakit / Mevduat</b> seçince yanında birim seçici çıkar: ₺ TL, $ Dolar, € Euro ya da Gram altın. Bu durumda tutar değil <b>miktar</b> girersin (ör. $7.000 ya da 50 gram). TL karşılığı güncel kurla kendiliğinden hesaplanır: $7.000 × ₺50 = ₺350.000.</p>
+      <p class="kv-ipucu">💡 Konut, arsa gibi varlıkların fiyatı internetten çekilmez; yılda bir-iki kez gerçekçi bir değerle güncellemen yeterli. Birikim Hedefleri'nde bir acil durum fonu tanımladıysan, üstteki Toplam Varlık kutusunda “Acil fon ₺… · n ay” satırı da görünür.</p>
+      <button class="bolum-ekle" onclick="switchTab('finansal')">Finansal Durumum'a git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-yatirim"><summary>📊 Yatırımlarım <span>portföyün, canlı fiyatla</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Yatırımlarının bugünkü TL değerini canlı fiyatla hesaplar; türlere göre (ABD ETF & Hisse, Kripto, BİST, Emtia) ayrı çerçevelerde gösterir. Üstte toplam, dolar karşılığı ve günlük / haftalık / aylık değişim vardır.</p>
+      <p><b>Nasıl kullanılır:</b> <b>+ Ekle</b> (ya da türün çerçevesindeki <b>+</b>) → türü seç → sembolü seç → <b>adedi</b> yaz. BİST hissesinde kodu yazarsın (ör. TUPRS) ve adedi girersin; fiyat 15 dakika gecikmeli gelir. Altın ve gümüş gram olarak girilir.</p>
+      <p><b>Örnek:</b> Kripto · Bitcoin · 0,0006983 → o anki fiyat $95.000 ve kur ₺48,90 ise değer ≈ ₺3.244.</p>
+      <p><b>Yatırım / Borç oranı:</b> Yatırımlarının borcunu ne kadar karşıladığı. %50 altı kırmızı, %50–99 sarı, %100 ve üstü yeşil.</p>
+      <button class="bolum-ekle" onclick="switchTab('yatirim')">Yatırımlarım'a git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-borclar"><summary>💳 Borçlarım <span>krediler, kartlar, KMH, elden borç</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Bütün borçlarının bugünkü toplamını gösterir. Kredi ve KMH borcu her gün işleyen faizle canlı hesaplanır.</p>
+      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca ✓'ye bas.</p>
+      <p><b>Kredi Kartlarım:</b> Kartın bugünkü toplam borcunu yaz; ekstre gelince ✎ ile güncelle.</p>
+      <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki ⚙ ile de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
+      <p><b>Elden Nakit Borçlar:</b> Birinden aldığın borcu TL, dolar ya da euro olarak gir. Dövizliyse TL karşılığı güncel kurla hesaplanır; kur canlıyken ışık yeşil yanar.</p>
+      <p class="kv-ipucu">💡 Satırdaki ışık: yeşil = bugün güncel (ya da canlı hesaplanıyor), kırmızı = son güncelleme bugünden önce.</p>
+      <button class="bolum-ekle" onclick="switchTab('borclar')">Borçlarım'a git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-harcama"><summary>🧾 Harcama Takibim <span>aylık harcamalar</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Harcamalarını ay ve kategori bazında toplar: aylık grafik, kategoriler, aylık tablo, aylık ve yıllık ortalamalar.</p>
+      <p><b>Nasıl kullanılır:</b> Harcama kayıtları bölümünde <b>+ Ekle</b> → <b>ay</b>, <b>kategori</b>, <b>tutar</b> ve istersen bir not. Ayın ilk 10 gününde form kendiliğinden bir önceki ayı seçer, çünkü Eylül'ün harcamasını genelde Ekim başında girersin.</p>
+      <p><b>Örnek:</b> “Eylül 2026 · Market · ₺26.985 · not: Migros”. Aynı ay ve kategoriye birden çok kayıt girebilirsin; tabloda toplanır.</p>
+      <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan ✎ ile düzeltir ya da ✕ ile silersin.</p>
+      <p><b>₺ TL / $ Dolar / Altın:</b> Grafiğin başlığındaki seçiciyle harcamalarını dolar ya da gram altın olarak da görürsün. Her ay <b>o ayın</b> ortalama kuruyla çevrilir; böylece enflasyonun etkisini ayırırsın.</p>
+      <p class="kv-ipucu">💡 ↻ işaretli kayıtlar Ödeme Takvimi'ndeki düzenli ödemelerden kendiliğinden gelir (bu ay ve gelecek ay). İstemediğini silebilirsin; silinen ay tekrar eklenmez.</p>
+      <button class="bolum-ekle" onclick="switchTab('harcama')">Harcama Takibim'e git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-odeme"><summary>📅 Ödeme Takvimi <span>ne zaman, ne kadar ödeyeceksin</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Kredi taksitleri, kart son ödeme günleri, kira, aidat, fatura ve abonelikler tek takvimde görünür. Üstteki ilk iki kutu seçtiğin ayı gösterir (ör. <b>“Ekim ödemeleri”</b> ve <b>“Ekim kalan”</b>): birincisi ayın bütün ödemelerinin toplamıdır ve gün geçtikçe değişmez, ikincisi bugünden sonra ödeyeceklerindir.</p>
+      <p><b>Düzenli ödemeler:</b> <b>+ Ekle</b> → ad (ör. Netflix), tutar, tür (abonelik, fatura, kira…), her ay ya da her yıl, ödeme günü. Her ödemenin “harcamaya:” seçimiyle Harcama Takibim'e hangi kategoriyle ekleneceğini belirlersin.</p>
+      <p><b>Kredi kartları:</b> Kartın son ödeme gününü bir kez yaz. Sıradaki dönem için <b>dönem borcu</b> (ekstre), <b>asgari</b> ve <b>ödeyeceğim</b> tutarını girebilirsin. Takvim önce “ödeyeceğim” tutarını kullanır.</p>
+      <p><b>Örnek:</b> Akbank toplam borç ₺135.571, dönem borcu ₺95.000, ödeyeceğim ₺60.000 → takvimde ₺60.000 görünür; altında “ödeme sonrası kalan borç ≈ ₺75.571” ve “₺35.000 sonraki döneme kalır (faiz işler)” yazar.</p>
+      <p class="kv-ipucu">💡 Ödeme günü geçtiği halde kartın borcunu Borçlarım'da güncellemediysen satırda bir hatırlatma çıkar. Bugünden önceki ödemeler “✓ ödendi” sayılır.</p>
+      <button class="bolum-ekle" onclick="switchTab('odeme')">Ödeme Takvimi'ne git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-nakit"><summary>⇄ Nakit Akışı <span>ay sonunda ne kalıyor</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> <b>Kalan = gelir − harcama − kredi taksitleri</b>. Geçmiş 6 ayı ve önümüzdeki 11 ayı tahminle gösterir. Kart ödemeleri ayrıca sayılmaz, çünkü kartla yaptığın harcama zaten harcamalarda var.</p>
+      <p><b>Nasıl kullanılır:</b> Gelirler bölümünde maaşını <b>“Her ay”</b> olarak bir kez ekle; prim gibi gelirleri <b>“Tek seferlik”</b> ekle. Maaşın değişince ✎ ile yeni tutarı yaz; yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır.</p>
+      <p><b>Tahmin nasıl yapılır:</b> Gelecek ayların harcaması, son 6 ayın bugünün fiyatına getirilmiş ortası alınıp <b>enflasyonla</b> büyütülerek hesaplanır. Maaşın da varsayılan olarak her Ocak geçen yılın enflasyonu kadar artar. Grafiğin altındaki seçicilerden enflasyon kaynağını (TCMB beklentisi, resmi TÜFE, kişisel ya da elle) ve maaş artışını değiştirebilirsin.</p>
+      <p><b>Örnek:</b> Son 6 ayın harcaması bugünün fiyatlarıyla ₺94.947 → 12 ay sonra ≈ ₺117.450 (TCMB beklentisi %23,7). “Bugünün parasıyla” görünümü bu gelecek tutarları bugünkü alım gücüne çevirir.</p>
+      <button class="bolum-ekle" onclick="switchTab('nakitakis')">Nakit Akışı'na git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-butce"><summary>◔ Bütçe Planlaması <span>kategori başına aylık sınır</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Her kategori için aylık bir üst sınır koyarsın; harcamaların bu sınırla karşılaştırılır. Yeşil = %90'a kadar, sarı = sınıra yakın, kırmızı = aştın.</p>
+      <p><b>En kolay başlangıç:</b> Henüz bütçe yokken sayfa sana hazır bir öneri gösterir: her kategori için son 6 ayın ortası (medyan). <b>“Önerilen bütçeyi kullan”</b>a basman yeterli; sonra ✎ ile istediğini değiştirirsin.</p>
+      <p><b>Satırı okumak:</b> Çubuktaki ince beyaz çizgi bütçe sınırıdır; çubuk çizgiyi geçtiyse aşmışsın. Süren ayda ikinci ince çizgi ayın ne kadarının geçtiğini gösterir.</p>
+      <p><b>İleriyi planlamak:</b> Ay seçiciden gelecek ayları da seçebilirsin. Bir tutarı <b>“her ay”</b> ya da <b>“yalnız o ay”</b> için kaydedersin. <b>Örnek:</b> Kasım'da kasko ödeyeceksen Sigorta'ya “yalnız Kasım 2026” ₺20.000 koyarsın; diğer aylar etkilenmez.</p>
+      <button class="bolum-ekle" onclick="switchTab('butce')">Bütçe Planlaması'na git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-netgecmis"><summary>📉 Net Varlık Geçmişi <span>servetin zamanla nasıl değişiyor</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Panel her gün net varlığını kendiliğinden kaydeder; 7 gün, 30 gün ve başlangıçtan beri değişimi gösterir.</p>
+      <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez; paneli açtığın her gün bir kayıt alınır. Grafiği <b>₺ TL / $ Dolar / Altın</b> olarak görebilirsin.</p>
+      <p><b>Neden dolar ve altın:</b> TL'de servetin %10 artmış görünürken dolar ya da altın bazında azalmış olabilir; bu, artışın gerçek mi yoksa enflasyon mu olduğunu gösterir. Aylık özet tablosunda her ayın son gününde net varlığın kaç dolar ve kaç gram altın ettiği yazar.</p>
+      <p class="kv-ipucu">💡 Geçmiş geriye dönük uydurulmaz; kayıt, paneli ilk açtığın günden başlar. Grafik ikinci günden itibaren çizilir.</p>
+      <button class="bolum-ekle" onclick="switchTab('netgecmis')">Net Varlık Geçmişi'ne git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-istatistik"><summary>📶 Portföy İstatistikleri <span>portföyün 100 üzerinden puanı</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Portföyünü dört kritere göre 0–100 arası puanlar; genel puan dördünün ortalamasıdır (70+ İyi, 40–69 Orta, 40 altı Zayıf).</p>
+      <ul class="kv-liste">
+        <li><b>Portföy yaşı:</b> Yatırım yaptığın şirket, fon ya da coin'lerin ortalama yaşı (100 yıl = 100 puan). Sayfadaki “Portföy yaşı” listesinde bir yatırımın yaşına tıklayıp değiştirebilirsin; yaşı boş olan ortalamaya katılmaz.</li>
+        <li><b>Çeşitlendirme:</b> Paran kaç varlığa yayılmış. 10 eşit varlık 100 puan, tek varlık 0 puan.</li>
+        <li><b>Borç karşılama:</b> Yatırımların borcunu ne kadar karşılıyor (yatırım ÷ borç).</li>
+        <li><b>Döviz koruması:</b> Yatırımlarının ne kadarı dolar bazlı (ABD ETF, kripto, altın).</li>
+      </ul>
+      <button class="bolum-ekle" onclick="switchTab('istatistik')">Portföy İstatistikleri'ne git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-borcplan"><summary>☑ Borç Kapatma Planı <span>hangi borcu önce kapatmalı</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Ayda ne kadar <b>ek ödeme</b> yaparsan borçlarının hangi sırayla ve ne zaman biteceğini, ne kadar faiz ödeyeceğini hesaplar.</p>
+      <p><b>Nasıl kullanılır:</b> “Ayda ek ödeme” kutusuna tutar yaz (ya da ₺2.500, ₺5.000… düğmelerine bas), istersen “bugün tek seferlik” ödeme ekle ve yöntemi seç:</p>
+      <ul class="kv-liste">
+        <li><b>Çığ:</b> Önce en yüksek faizli borç. En az faizi bu yöntem öder.</li>
+        <li><b>Kartopu:</b> Önce en küçük borç. Borç sayısı hızlı azalır, motivasyon verir.</li>
+      </ul>
+      <p><b>Örnek:</b> Ayda ₺5.000 ek ödemeyle Çığ yöntemi Ağustos 2027'de borçsuz tarihe ulaşıyor ve Kartopu'ya göre ₺7.636 daha az faiz ödüyor. İlk hedef genelde KMH, çünkü vergiler dahil aylık %5,5 ile en pahalı borç.</p>
+      <p class="kv-ipucu">💡 Her ay tamamını ödediğin kartlar plana girmez. Faiz işleyen bir kartın varsa “Kredi kartları” bölümünde “faiz işliyor”u işaretleyip aylık oranını yaz.</p>
+      <button class="bolum-ekle" onclick="switchTab('borcplan')">Borç Kapatma Planı'na git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-hedef"><summary>◎ Birikim Hedefleri <span>araba, ev, acil durum fonu…</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Bir hedef ve tarih koyarsın; ayda ne kadar ayırman gerektiğini ve planın önünde mi geride mi olduğunu gösterir. Tutarı ₺ ya da $ olarak koyabilirsin.</p>
+      <p><b>Biriken para nereden izlenir:</b></p>
+      <ul class="kv-liste">
+        <li><b>Elle gireceğim:</b> Biriktirdikçe satırdaki <b>+</b> ile eklersin (eksi yazıp çıkarırsın).</li>
+        <li><b>Varlıklarımdan:</b> Finansal Durumum'daki bir varlığa bağlanır (ör. bankadaki acil fon). Orada tutarı güncelledikçe hedef de güncellenir.</li>
+        <li><b>Yatırımlarımdan:</b> Bir ya da birkaç yatırımına bağlanır (ör. BTC + ETH); değeri canlı fiyatla işler.</li>
+      </ul>
+      <p><b>Acil durum fonu:</b> Formda “Bu bir acil durum fonu”nu işaretlersen sayfa aylık zorunlu giderini hesaplar ve 3 aylık ile 6 aylık tutarı önerir. <b>Örnek:</b> Aylık gider ≈ ₺107.730 → ₺300.000 = 2,8 aylık gider (sarı); yaygın ölçü 3–6 ay.</p>
+      <p class="kv-ipucu">💡 Kaynağı sonradan satırdaki ⇄ ile değiştirebilirsin. Aynı yatırımı iki hedefe bağlarsan iki hedefte de sayılır; aynı parayı iki kez saymamaya dikkat et.</p>
+      <button class="bolum-ekle" onclick="switchTab('hedef')">Birikim Hedefleri'ne git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-bp"><summary>✨ Bay Piyasa <span>yapay zekâ asistanın</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Piyasayı, haberleri ve izin verirsen senin portföyünü ve borçlarını bilen bir sohbet asistanı. Soru sorarsın ya da hazır raporlardan birini seçersin (Günlük özet, Portföy analizi, Borç planı, Harcama analizi…).</p>
+      <p><b>Gizlilik:</b> Rakamların yalnızca <b>“Portföyümü paylaş”</b> açıksa gönderilir. Kapalıyken yalnız piyasa ve haber verisini bilir.</p>
+      <p><b>Maliyet:</b> Her cevabın küçük bir ücreti vardır; ekranda yazar. <b>Günlük limit</b> (varsayılan $0,50) dolunca durur. Model seçimiyle hız ve fiyatı ayarlarsın; günlük kullanım için Sonnet yeterli.</p>
+      <p><b>Örnek soru:</b> “KMH'yi mi kapatayım yoksa On Bank kredisine ek ödeme mi yapayım?”</p>
+      <p class="kv-ipucu">💡 Cevaplar yatırım tavsiyesi değildir; senaryo ve olasılık dilinde düşünmene yardım eder.</p>
+      <button class="bolum-ekle" onclick="switchTab('ai')">Bay Piyasa'ya git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-rapor"><summary>📄 Aylık Rapor <span>ayın özeti tek sayfada</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Seçtiğin ayın harcamasını (önceki aya ve son 6 aya göre), bütçe uyumunu, ay sonu kalanı, kredi anaparasındaki azalışı ve net varlık değişimini tek sayfada özetler. “Öne çıkanlar” kendiliğinden yazılır ve ücretsizdir.</p>
+      <p><b>Bay Piyasa yorumu:</b> <b>“Bay Piyasa yorumlasın”</b>a basarsan rakamlara bakıp gelecek ay için 3 somut öneri yazar. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</p>
+      <p><b>Yazdır / PDF:</b> Raporu yazdırabilir ya da PDF olarak kaydedebilirsin.</p>
+      <button class="bolum-ekle" onclick="switchTab('rapor')">Aylık Rapor'a git →</button>
+    </div></details>
+
+    <div class="kv-grup-bas">Sık sorulan sorular</div>
+
+    <details class="kv-bolum kv-sss"><summary>Bir ayın harcamasını yanlış girdim, nasıl düzeltirim?</summary><div class="kv-ic"><p>Harcama Takibim'de aylık tablodaki o hücreye tıkla; o ayın o kategorideki kayıtları aşağıda açılır. Yanlış kaydı ✎ ile düzelt ya da ✕ ile sil; tablo kendiliğinden güncellenir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Maaşıma zam geldi, nereden değiştiririm?</summary><div class="kv-ic"><p>Nakit Akışı › Gelirler'de maaş satırının ✎'sine bas ve yeni tutarı yaz. Yeni tutar bu aydan itibaren geçerli olur; geçmiş aylar eski maaşla kalır. Maaş bittiyse 0 yaz.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Kredi kartımı ödedim, ne yapmalıyım?</summary><div class="kv-ic"><p>Borçlarım › Kredi Kartlarım'da kartın ✎'sine bas ve <b>kalan</b> borcu yaz. Örnek: ₺135.571 borcun vardı, ₺60.000 ödedin → ₺75.571 yaz. Ödeme Takvimi'ndeki hatırlatma kendiliğinden kaybolur.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bir krediyi kapattım, listeden nasıl kaldırırım?</summary><div class="kv-ic"><p>Borçlarım › Kredilerim'de kredinin satırındaki ✓'ye bas ve onayla. Toplamlardan, takvimden ve borç planından çıkar.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Satırların başındaki yeşil ve kırmızı ışıklar ne demek?</summary><div class="kv-ic"><p><b>Yeşil:</b> değer güncel. Ya bugün güncelledin ya da canlı hesaplanıyor (kur, faiz, fiyat). <b>Kırmızı:</b> değeri en son bugünden önce güncelledin ya da canlı fiyata ulaşılamadı ve son bilinen değer gösteriliyor. Kırmızı bir hata değildir; yalnızca “bunu güncellemek isteyebilirsin” demektir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Verilerim diğer cihazlarımda da görünür mü?</summary><div class="kv-ic"><p>Evet. Girdiğin her şey hesabında saklanır ve aynı e-posta ve şifreyle girdiğin her cihazda görünür. Sol alttaki “☁ Senkron tamam” bunun gerçekleştiğini gösterir. İnternet yokken yaptığın değişiklikler bağlantı gelince gönderilir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Tahminler neden “tahmin”? Ne kadar güvenebilirim?</summary><div class="kv-ic"><p>Nakit Akışı, Borç Kapatma Planı ve Birikim Hedefleri gelecek için hesap yapar. Bu hesaplar senin geçmiş harcamalarına, kredi ödeme planlarına ve resmi enflasyon beklentisine (TÜİK, TCMB) dayanır. Gerçekleşme farklı olabilir. Önemli bir karar vermeden önce rakamları kendi durumunla karşılaştır.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor ve bu kılavuz) sağ alttaki <b>Diğer</b> düğmesindedir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Çıkış yaparsam verilerim silinir mi?</summary><div class="kv-ic"><p>Hayır. Çıkış, yalnızca o cihazdaki kopyayı temizler. Verilerin sunucuda kalır; tekrar giriş yapınca geri gelir.</p></div></details>
+
+    <div class="kv-grup-bas">Terimler</div>
+    <div class="bolum kv-sozluk">
+      <dl>
+        <dt>KKDF ve BSMV</dt><dd>Kredi faizine eklenen iki vergi (her biri faizin %15'i). Panel kredi ve KMH faizini bunlarla birlikte hesaplar: aylık %4,25 faiz, vergilerle aslında aylık ≈ %5,5'tir.</dd>
+        <dt>KMH</dt><dd>Kredili mevduat hesabı (eksi hesap). Faizi günlük işler ve genelde en pahalı borçtur.</dd>
+        <dt>Medyan (ortası)</dt><dd>Sayıları sıralayınca tam ortadaki değer. Tek bir aşırı ay (ör. düğün harcaması) ortalamayı şişirir, medyanı şişirmez; öneriler bu yüzden medyanla yapılır.</dd>
+        <dt>Nominal / bugünün parasıyla (reel)</dt><dd>Nominal: o ayın fiyatlarıyla tutar. Bugünün parasıyla: enflasyondan arındırılmış, bugünkü alım gücü. ₺117.450 12 ay sonra, bugünün parasıyla ≈ ₺95.000 eder.</dd>
+        <dt>Çığ / Kartopu</dt><dd>Borç kapatma yöntemleri. Çığ önce en yüksek faizliyi kapatır (en az faiz), Kartopu önce en küçüğü kapatır (hızlı ilerleme hissi).</dd>
+        <dt>Gram 24 ayar altın</dt><dd>Saf altının gram fiyatı: ons fiyatı ÷ 31,1035 × dolar kuru. Kuyumcu ya da banka satış fiyatı biraz farklı olabilir.</dd>
+        <dt>Dönem borcu / asgari ödeme</dt><dd>Dönem borcu: kart ekstresinde bu dönem ödenmesi gereken tutar. Asgari: gecikmeye düşmemek için en az ödenmesi gereken kısım. Dönem borcunun tamamını ödemezsen ödemediğin kısma faiz işler; asgariyi bile ödemezsen gecikme faizi de eklenir.</dd>
+        <dt>Acil durum fonu</dt><dd>İşsizlik ya da beklenmedik bir masraf için hemen kullanılabilecek para. Yaygın ölçü 3–6 aylık zorunlu gider.</dd>
+      </dl>
+    </div>
+
+    <div class="kv-grup-bas">Verilerin ve güvenlik</div>
+    <div class="bolum"><div class="kv-ic" style="padding-top:12px;">
+      <p>Verilerin yalnızca senin hesabında saklanır; giriş e-posta ve şifreyle yapılır. Arka arkaya 8 hatalı denemede giriş 15 dakika kilitlenir. Fiyat ve yapay zekâ servislerinin gizli anahtarları senin tarayıcında değil, sunucuda durur. Bay Piyasa'ya rakamların yalnızca “Portföyümü paylaş” açıkken gider; isim ya da e-posta gönderilmez.</p>
+    </div></div>
+
+    <div class="footnote"><b>Not:</b> Kılavuzdaki örnek rakamlar açıklama içindir; sayfalarda senin kendi verin görünür. Aradığını bulamazsan Bay Piyasa'ya “… nasıl yapılır?” diye sorabilirsin.</div>
+  </div>
+  <!-- ================= /TAB: KULLANIM KILAVUZU ================= -->
+
   <!-- ================= TAB: AYLIK RAPOR ================= -->
   <div class="tab-panel" id="tab-rapor">
     <div class="page-head"><h1>Aylık Rapor</h1></div>
@@ -3503,7 +3739,7 @@ const CARDS = [
   { key:'rexc',   label:'REXC ETF (Sprott Rare Earths Ex-China)', source:'finnhub', symbol:'REXC', fmt:'usd2', fallback:{price:17.00, chg:0.20} },
   { key:'remx',   label:'REMX ETF (VanEck Rare Earth)', source:'finnhub', symbol:'REMX', fmt:'usd2', fallback:{price:68.00, chg:0.20} },
   // Kripto: Binance (anahtarsız, geniş istek sınırı); Binance cevap vermezse CoinGecko (symbol) yedeği
-  { key:'btc',    label:'BİTCOİN',      source:'kripto', bnSymbol:'BTCUSDT',  symbol:'bitcoin',     fmt:'usd0', fallback:{price:78170.59, chg:-0.15} },
+  { key:'btc',    label:'BITCOIN',      source:'kripto', bnSymbol:'BTCUSDT',  symbol:'bitcoin',     fmt:'usd0', fallback:{price:78170.59, chg:-0.15} },
   { key:'eth',    label:'ETHEREUM',     source:'kripto', bnSymbol:'ETHUSDT',  symbol:'ethereum',    fmt:'usd2', fallback:{price:3120.40, chg:0.85} },
   { key:'hype',   label:'HYPE',         source:'kripto', bnSymbol:'HYPEUSDT', symbol:'hyperliquid', fmt:'usd2', fallback:{price:35.00, chg:0.50} },
   { key:'aave',   label:'AAVE',         source:'kripto', bnSymbol:'AAVEUSDT', symbol:'aave',        fmt:'usd2', fallback:{price:180.00, chg:0.50} },
@@ -9732,6 +9968,57 @@ function raporYorumla(){
   calistir();
 }
 
+// ---------- Kullanım Kılavuzu: arama, aç/kapat ----------
+function kilavuzHepsi(ac){ document.querySelectorAll('#tab-kilavuz details.kv-bolum').forEach(d => { d.open = ac; }); }
+function kilavuzAra(q){
+  const kok = document.getElementById('tab-kilavuz');
+  if(!kok) return;
+  // önceki işaretleri temizle
+  kok.querySelectorAll('mark.kv-isaret').forEach(m => m.replaceWith(document.createTextNode(m.textContent)));
+  kok.querySelectorAll('.kv-ic, summary').forEach(e => e.normalize());
+  const t = String(q || '').trim().toLocaleLowerCase('tr-TR');
+  const bolumler = [...kok.querySelectorAll('details.kv-bolum')];
+  const digerleri = [...kok.querySelectorAll('.kv-giris, .kv-sozluk, .kv-grup-bas, #tab-kilavuz > .bolum:not(.kv-giris):not(.kv-sozluk)')];
+  const sonuc = document.getElementById('kvSonuc');
+  if(!t){
+    bolumler.forEach(d => { d.classList.remove('kv-gizli'); d.open = false; });
+    digerleri.forEach(e => e.classList.remove('kv-gizli'));
+    if(sonuc) sonuc.textContent = '';
+    return;
+  }
+  let n = 0;
+  bolumler.forEach(d => {
+    const var_ = d.textContent.toLocaleLowerCase('tr-TR').includes(t);
+    d.classList.toggle('kv-gizli', !var_); d.open = var_;
+    if(var_){ n++; kilavuzIsaretle(d, t); }
+  });
+  digerleri.forEach(e => e.classList.toggle('kv-gizli', !e.classList.contains('kv-grup-bas') && !e.textContent.toLocaleLowerCase('tr-TR').includes(t)));
+  kok.querySelectorAll('.kv-grup-bas').forEach(e => e.classList.add('kv-gizli'));
+  const sozluk = kok.querySelector('.kv-sozluk'); if(sozluk && !sozluk.classList.contains('kv-gizli')) kilavuzIsaretle(sozluk, t);
+  const sozlukte = sozluk && !sozluk.classList.contains('kv-gizli');
+  if(sonuc) sonuc.textContent = n || sozlukte ? (n ? n + ' bölümde' : '') + (n && sozlukte ? ' ve ' : '') + (sozlukte ? 'Terimler bölümünde' : '') + ' bulundu' : '“' + q + '” için sonuç yok — farklı bir kelime dene (ör. kart, maaş, faiz) ya da Bay Piyasa\'ya sor.';
+}
+// Bulunan kelimeyi metin düğümlerinde işaretle (HTML'e dokunmadan)
+function kilavuzIsaretle(kok, t){
+  const yurut = document.createTreeWalker(kok, NodeFilter.SHOW_TEXT, null);
+  const dugumler = [];
+  while(yurut.nextNode()) dugumler.push(yurut.currentNode);
+  dugumler.forEach(dg => {
+    const metin = dg.nodeValue, kucuk = metin.toLocaleLowerCase('tr-TR');
+    let i = kucuk.indexOf(t);
+    if(i < 0 || dg.parentNode.closest('button')) return;
+    const parca = document.createDocumentFragment();
+    let son = 0;
+    while(i >= 0){
+      parca.appendChild(document.createTextNode(metin.slice(son, i)));
+      const m = document.createElement('mark'); m.className = 'kv-isaret'; m.textContent = metin.slice(i, i + t.length); parca.appendChild(m);
+      son = i + t.length; i = kucuk.indexOf(t, son);
+    }
+    parca.appendChild(document.createTextNode(metin.slice(son)));
+    dg.parentNode.replaceChild(parca, dg);
+  });
+}
+
 // ---------- Sekme geçişi ----------
 const TAB_BASLIKLARI = {
   gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
@@ -9742,6 +10029,7 @@ const TAB_BASLIKLARI = {
   harcama:  ['Harcama Takibim', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe Planlaması', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
+  kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle'],
   rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],
   hedef:    ['Birikim Hedefleri', 'Tutar ve tarih koy — ayda ne kadar ayırman gerektiğini ve planın önünde mi olduğunu gör'],
   netgecmis: ['Net Varlık Geçmişi', 'Net servetinin günden güne değişimi'],

@@ -59,6 +59,8 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 
 ## Dokümantasyon
 
+- Bir özellik eklenir ya da kullanımı değişirse panel içindeki **Kullanım Kılavuzu** (`#tab-kilavuz`) da aynı committe güncellenir: ilgili sayfa bölümü, gerekiyorsa SSS ve Terimler. Kılavuz, kullanıcıya yanlış adım tarif etmemelidir.
+
 Her değişiklik veya eklentide ilgili dokümanlar **aynı commit'te** güncellenir:
 
 - [README.md](README.md): özellik veya kurulum değiştiyse
