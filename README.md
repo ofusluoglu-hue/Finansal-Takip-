@@ -1,9 +1,9 @@
 # Finansal Takip Paneli
 
-Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım portföyü, varlıklar, krediler ve borçlar tek ekranda. Yapay zekâ destekli sohbet asistanı **Bay Piyasa** ve cihazlar arası veri senkronu içerir.
+Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım portföyü, varlıklar, krediler ve borçlar tek ekranda. Yapay zekâ destekli sohbet asistanı **Bay Piyasa** ve cihazlar arası veri senkronu içerir. **Çok kullanıcılı:** her kullanıcının kendi hesabı ve ayrı verisi vardır; hesapları yönetici açar.
 
 **Canlı adres:** https://ofusluoglu-hue.github.io/Finansal-Takip-/piyasa-paneli.html
-(E-posta ve şifre ile giriş yapılır.)
+(E-posta ve şifre ile giriş yapılır. Kayıt ekranı yoktur; hesabı yönetici açar ve geçici şifre verir, ilk girişte kullanıcı kendi şifresini belirler.)
 
 ## Özellikler
 
@@ -24,16 +24,18 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 | **Aylık Rapor** | Seçilen ayın özeti: harcama (önceki ay ve 6 ay ortalamasına göre), bütçe uyumu, ay sonu kalan, kredi anaparasındaki azalış, net varlık değişimi; kurallı "öne çıkanlar"; isteğe bağlı Bay Piyasa yorumu (ay başına kaydedilir); yazdır / PDF |
 | **Kullanım Kılavuzu** | Yardım › Kullanım Kılavuzu: ilk kurulum adımları, her sayfanın ne işe yaradığı ve nasıl kullanıldığı (örneklerle), terimler sözlüğü, aranabilir |
 | **Sık Sorulan Sorular** | Yardım › SSS: konulara göre gruplanmış kısa cevaplar (harcama, borç ve kart, gelir ve tahmin, varlık, acil fon, hesap ve güvenlik), aranabilir |
-| **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması) |
+| **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması). Şimdilik yalnızca yönetici hesabında; diğer kullanıcılar için kendi API anahtarı ayarı planlanıyor |
+| **Kullanıcılar** | Yalnız yönetici: hesap açma (geçici şifre üretip kopyalama), geçici şifre verme, girişi kapatma/açma, hesabı ve verisini silme; hesap başına son giriş, kayıt sayısı ve veri boyutu (verinin kendisi görünmez) |
 
-Telefonda da kullanılabilir: menü alta sabit sekme çubuğuna dönüşür; çubukta yer almayan sayfalar **Diğer** menüsündedir.
+Telefonda da kullanılabilir: menü alta sabit sekme çubuğuna dönüşür; çubukta yer almayan sayfalar ve hesap işlemleri (şifre değiştirme, çıkış) **Diğer** menüsündedir.
 
 ## Mimari (özet)
 
 ```
 Tarayıcı (GitHub Pages)                Cloudflare Worker                 Dış servisler
-piyasa-paneli.html  ── Bearer kod ──▶  cloudflare-worker.js  ──────▶  Anthropic, Twelve Data,
-  localStorage (önbellek)              D1 veritabanı (senkron)           Finnhub, Yahoo, FRED,
+piyasa-paneli.html  ─ Bearer oturum ▶ cloudflare-worker.js  ──────▶  Anthropic, Twelve Data,
+  localStorage (önbellek)              D1: kullanıcılar, oturumlar,      Finnhub, Yahoo, FRED,
+                                       kullanıcı başına veri (ukv)
                                                                          haber RSS'leri, MetalCharts
 ```
 
@@ -66,10 +68,12 @@ npx.cmd wrangler deploy
 > Windows PowerShell'de `npx` yerine `npx.cmd` kullanın (script çalıştırma kısıtlaması).
 
 ### Gerekli secret'lar (Cloudflare)
-`ACCESS_TOKEN` (giriş şifresi), `LOGIN_USER` (giriş e-postası; virgülle birden fazla), `ANTHROPIC_API_KEY`, `TWELVEDATA_API_KEY`, `FINNHUB_API_KEY`: hepsi **Secret** türünde. İsteğe bağlı: `ALLOWED_ORIGIN`.
+`ANTHROPIC_API_KEY`, `TWELVEDATA_API_KEY`, `FINNHUB_API_KEY`: hepsi **Secret** türünde. İlk yönetici hesabı için `LOGIN_USER` (e-posta) ve `ACCESS_TOKEN` (ilk şifre): kullanıcı tablosu boşsa ilk istekte bu bilgilerle yönetici hesabı açılır ve eski tek kullanıcılı veriler bu hesaba kopyalanır; sonrasında `ACCESS_TOKEN` yalnızca eski sürüm panellerin geçişi için kullanılır. İsteğe bağlı: `ALLOWED_ORIGIN` (virgülle birden fazla site adresi).
 
 ## Güvenlik
 
-- Giriş e-posta + şifre ile yapılır; Worker'a yapılan her istek şifreyle doğrulanır. Hatalı girişte hangi bilginin yanlış olduğu söylenmez; 15 dakikada 8 hatalı denemede (yanlış e-posta dahil) IP 15 dakika kilitlenir.
+- Giriş e-posta + şifre ile yapılır; sunucu rastgele bir oturum anahtarı verir (180 gün, kullanıldıkça uzar) ve her istek bununla doğrulanır. Şifreler PBKDF2-SHA256 + tuzla, oturum anahtarları yalnızca SHA-256 özetiyle saklanır.
+- Her kullanıcının verisi ayrıdır; Worker her istekte veriyi oturumun sahibine göre okur ve yazar. Yönetici başkasının verisini panelden göremez.
+- Hatalı girişte hangi bilginin yanlış olduğu söylenmez; 15 dakikada 8 hatalı denemede hem o IP hem o e-posta 15 dakika kilitlenir.
 - CORS yalnızca GitHub Pages adresine izin verir.
 - API anahtarları yalnızca Cloudflare secret'larında durur; repoda hiçbir anahtar bulunmaz.

@@ -5,14 +5,18 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 ## Güvenlik
 
 1. **Repoya hiçbir anahtar, parola veya erişim kodu yazılmaz.** Tüm anahtarlar Cloudflare'de **Secret** türünde saklanır (düz metin değişken olarak değil).
-2. Erişim kodu yalnızca `MY_WORKER` adresine gönderilir; üçüncü taraf servislere asla.
-3. Worker'daki `/` dışındaki her yeni uç nokta kimlik kapısının (`yetkiKontrol`) **arkasında** olmalıdır.
+2. Oturum anahtarı yalnızca `MY_WORKER` adresine gönderilir; üçüncü taraf servislere asla.
+3. Worker'daki `/` ve `/auth/login` dışındaki her yeni uç nokta kimlik kapısının (`oturumKullanici`) **arkasında** olmalıdır. Kullanıcı verisine dokunan her sorgu `user_id = ben.id` ile sınırlanır; istemciden gelen kullanıcı kimliğine asla güvenilmez. Yönetim uçları ayrıca `role = 'admin'` kontrol eder.
 4. Proxy'ye yeni bir alan adı eklemek bilinçli bir karardır; `allowed` listesine yalnızca gerçekten gereken adresler girer.
 5. Dış servislere giden URL'lerdeki kullanıcı kaynaklı parametreler `encodeURIComponent` ile kodlanır.
-6. Üçüncü taraf yedek proxy'lerden (`allorigins`, `corsproxy`, `codetabs`) yalnızca herkese açık piyasa/haber verisi geçer; kullanıcı verisi, erişim kodu veya yapay zekâ istekleri asla bu proxy'lere gönderilmez.
+6. Üçüncü taraf yedek proxy'lerden (`allorigins`, `corsproxy`, `codetabs`) yalnızca herkese açık piyasa/haber verisi geçer; kullanıcı verisi, oturum anahtarı veya yapay zekâ istekleri asla bu proxy'lere gönderilmez.
 7. Giriş hatalarında hangi bilginin (e-posta mı şifre mi) yanlış olduğu söylenmez; yanlış e-posta da kilit sayacına işlenir.
 8. Kimlik doğrulama değişiklikleri önce yerelde `wrangler dev` (geçici `.dev.vars`, commit edilmez) ile test edilir; canlı sunucuya yanlış giriş denemesi gönderilmez (IP kilidi).
 9. Bir anahtar herhangi bir yerde (log, ekran görüntüsü, sohbet) açığa çıkarsa hemen yenilenir ve eskisi iptal edilir.
+10. Şifre ve oturum anahtarı düz metin saklanmaz: şifre PBKDF2 (tuzlu), oturum SHA-256 özeti. PBKDF2 tekrar sayısı Workers CPU sınırına göre seçilir (`SIFRE_ITER`); artırmadan önce istek süresi ölçülür.
+11. Kodda hiçbir kullanıcının kişisel verisi (kredi, banka, tutar, ad, e-posta) bulunmaz; kılavuz örnekleri genel adlarla yazılır (“Ev”, “ihtiyaç kredisi”). Yeni kullanıcı boş hesapla başlar.
+12. Bir cihazda başka bir hesapla giriş yapılırsa önceki hesabın yerel verisi silinir (`oturumKaydet`); veriler hesaplar arasında asla birleştirilmez.
+13. Yapay zekâ uçları sunucunun Anthropic anahtarını yalnızca yönetici için kullanır; diğer kullanıcılara açmak için kendi anahtarları (şifreli saklanan) gerekir.
 
 ## Kod
 
@@ -29,7 +33,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 ## Veri
 
 1. Yeni bir senkron anahtarı eklenirse **hem** ön yüzdeki `SENKRON_ANAHTARLARI` **hem** Worker'daki `IZINLI_ANAHTARLAR` güncellenir.
-2. Veri anahtarları `ft_<ad>_v<sürüm>` biçimindedir (istisna: yalnızca yerelde tutulan `ft_erisim` ve `ft_senkron_meta`). Veri yapısı geriye uyumsuz değişirse sürüm artırılır (`_v2`) ve eski veriden taşıma yazılır.
+2. Veri anahtarları `ft_<ad>_v<sürüm>` biçimindedir (istisna: yalnızca yerelde tutulan `ft_erisim`, `ft_kullanici` ve `ft_senkron_meta`). Veri yapısı geriye uyumsuz değişirse sürüm artırılır (`_v2`) ve eski veriden taşıma yazılır.
 3. Tek kayıt 1,5 MB'ı geçemez (D1 sınırı).
 3b. Nakit Akışı'nın enflasyon verisi (`ENFLASYON_VERI`: TÜİK aylık TÜFE ve TCMB Piyasa Katılımcıları Anketi) her yeni açıklamada kaynağıyla birlikte güncellenir; değerler uydurulmaz, derleme ayı ve kaynak yorumda yazılır.
 4. Kullanıcı verisi (kredi, borç, portföy) koddan sabit değer olarak üretilmez veya uydurulmaz.
@@ -56,6 +60,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 4. [wrangler.toml](wrangler.toml)'daki `keep_vars = true` ve D1 bağlantısı (`DB`) kaldırılmaz; kaldırılırsa deploy panelden eklenen ayarları siler.
 5. `.wrangler/` klasörü (yerel önbellek) commit edilmez.
 6. Deploy sonrası temel kontrol: panele giriş, fiyatların gelmesi, Bay Piyasa'nın cevap vermesi.
+7. Kimlik/veri yapısı değişikliklerinde sıra: üretim D1'in tam yedeği (`wrangler d1 export … --remote`) → yerelde yedekle test → **önce Worker** (geriye uyumlu) → sonra ön yüz. Eski `kv` tablosu silinmez.
 
 ## Dokümantasyon
 

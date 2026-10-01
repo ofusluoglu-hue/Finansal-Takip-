@@ -11,17 +11,25 @@ Uygulama iki parçadan oluşur:
 
 Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 
-## 2. Kimlik doğrulama
+## 2. Kimlik doğrulama ve hesaplar
 
-1. Açılışta oturum yoksa giriş ekranı gösterilir: **E-posta** + **Şifre** (göster/gizle düğmeli; tarayıcı şifre yöneticisiyle uyumlu `autocomplete=username/current-password`). `/auth/check` isteğinde şifre `Authorization: Bearer`, e-posta `X-Kullanici` başlığıyla gider. Worker şifreyi `ACCESS_TOKEN`, e-postayı `LOGIN_USER` (virgülle birden fazla, büyük/küçük harf duyarsız, sabit zamanlı karşılaştırma) ile doğrular; hata mesajı hangi bilginin yanlış olduğunu söylemez. Başarılıysa şifre `ft_erisim`, e-posta (yalnızca kolaylık için) `ft_giris_eposta` anahtarında saklanır. E-posta yalnızca girişte kontrol edilir; sonraki istekler yalnızca şifreyle doğrulanır (açık oturumlar etkilenmez).
-2. `window.fetch` sarmalanmıştır: **yalnızca** `MY_WORKER` adresine giden isteklere `Authorization: Bearer <kod>` başlığı eklenir. Üçüncü taraf proxy'lere kod asla gönderilmez.
-3. Worker 401 dönerse giriş ekranı yeniden açılır.
-4. Worker tarafında karşılaştırma SHA-256 üzerinden sabit zamanlıdır. Hatalı denemeler (yanlış şifre ve yanlış e-posta) D1'deki `auth_fail` tablosuna yazılır; 15 dakikada 8 hata → IP kilidi (429).
-5. Çıkış yapıldığında bekleyen değişiklikler gönderilir, ardından yerel veriler silinir.
+Panel çok kullanıcılıdır. Kayıt ekranı yoktur; hesapları yönetici açar.
+
+1. **Tablolar (D1):** `users (id, email UNIQUE, ad, pass_hash, pass_salt, pass_iter, role 'admin'|'user', disabled, must_change, created_at, last_login)`, `sessions (token_hash PK, user_id, created_at, expires_at, last_seen)`, `ukv (user_id, key, value, updated_at, PK(user_id, key))`, `auth_fail (ip, ts)`. Eski tek kullanıcılı `kv` tablosu yedek olarak durur, artık okunmaz.
+2. **Şifre:** PBKDF2-SHA256, 16 bayt rastgele tuz, `SIFRE_ITER` = 20.000 tekrar (Workers ücretsiz planı istek başına ~10 ms CPU verir; 60.000 ≈ 22 ms ölçüldü). Tekrar sayısı kullanıcı başına saklanır; artırılırsa eski şifreler kendi sayısıyla doğrulanmaya devam eder. En az 8 karakter.
+3. **Giriş:** `POST /auth/login {email, password}` → `{token, kullanici:{id,email,ad,rol,sifreDegismeli}}`. Token 32 rastgele bayt (base64url); veritabanında yalnızca SHA-256 özeti tutulur. 180 gün geçerli, kullanıldıkça uzar (saatte en fazla bir yazma). Kayıtlı olmayan e-postada da aynı PBKDF2 hesabı yapılır (e-postanın kayıtlı olup olmadığı süreden anlaşılmasın); hata mesajı hangi bilginin yanlış olduğunu söylemez.
+4. **Kilit:** her hatalı deneme `auth_fail`'e IP ve `e:<eposta>` olarak yazılır; 15 dakikada 8 hata → o IP ve o e-posta 429. Açık oturumla yapılan istekleri e-posta kilidi etkilemez.
+5. **Ön yüz:** oturum anahtarı `ft_erisim`, hesap bilgisi `ft_kullanici` (yalnızca yerel). `window.fetch` sarmalanmıştır: **yalnızca** `MY_WORKER` adresine giden isteklere `Authorization: Bearer <oturum>` eklenir; üçüncü taraf proxy'lere asla. Worker 401 dönerse giriş ekranı açılır ("Oturumun sona erdi").
+6. **Zorunlu şifre değişimi:** yöneticinin açtığı ya da şifresini sıfırladığı hesapta `must_change = 1`; açılışta kapatılamayan "Şifremi değiştir" penceresi çıkar (`formModal`). `POST /auth/sifre {eski, yeni}` başarılıysa diğer oturumlar kapatılır.
+7. **Cihazda hesap değişimi:** `oturumKaydet` önceki `ft_kullanici.id` farklıysa yerel senkron verisini, senkron durumunu ve `ft_yedek_*` anahtarlarını siler (veriler karışmasın). Hesap bilgisi olmayan eski cihazdaki veri yöneticinin sayılır.
+8. **Eski sürümden geçiş:** `ft_erisim`'de eski erişim kodu varsa ve `ft_kullanici` yoksa `oturumYukselt` açılışta `/auth/me` (eski kodla) → `/auth/login` (aynı e-posta ve kodla) yapar ve kodu oturum anahtarıyla değiştirir; kullanıcı yeniden giriş yapmaz. Worker geçiş süresince `Bearer == ACCESS_TOKEN`'ı ilk yöneticinin oturumu sayar ve `/auth/check`'i yanıtlar. Kullanıcı tablosu boşsa ilk istekte `LOGIN_USER` + `ACCESS_TOKEN` ile yönetici açılır ve `kv` satırları ona kopyalanır (`semaHazirla`, bir kez).
+9. **Yönetici:** menüde **Yönetim › Kullanıcılar** ve kılavuzdaki ilgili bölüm `.nav-yonetim[hidden]` ile yalnız yöneticide görünür (`hesapArayuzu`); Worker'daki `/admin/*` uçları ayrıca rolü kontrol eder. Yönetici kendi hesabını devre dışı bırakamaz ve silemez.
+10. **Çıkış:** bekleyen değişiklikler gönderilir, `/auth/logout` oturumu siler, yerel veriler silinir.
+11. **Yapay zekâ:** `/ai` ve `/extract-loan` şimdilik yalnız yöneticide (sunucunun anahtarı); diğerlerinde 403 `kod:'anahtar_gerekli'`, Bay Piyasa sayfasında bilgi notu, haber çevirisi yapılmaz.
 
 ## 3. Veri saklama ve senkron
 
-- `localStorage` hızlı önbellektir; kalıcı kaynak **Cloudflare D1** (`finansal-takip` veritabanı, `kv` tablosu).
+- `localStorage` hızlı önbellektir; kalıcı kaynak **Cloudflare D1** (`finansal-takip` veritabanı, `ukv` tablosu: her satır bir kullanıcının bir anahtarı).
 - Senkronlanan anahtarlar hem ön yüzde (`SENKRON_ANAHTARLARI`) hem Worker'da (`IZINLI_ANAHTARLAR`) tanımlıdır. **İkisi aynı olmalıdır.**
 
 | Anahtar | İçerik |
@@ -30,7 +38,7 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_varliklarim_v1` | Varlıklar |
 | `ft_custom_loans_v1` | Kullanıcının eklediği krediler |
 | `ft_closed_loans_v1` | Kapatılan kredilerin id listesi |
-| `ft_sabit_krediler_v1` | Sabit krediler |
+| `ft_sabit_krediler_v1` | Eski sürümde kodda tanımlı olan krediler (yalnız ilk yöneticinin hesabında; yeni kullanıcıda boş — kod artık kişisel kredi verisi içermez) |
 | `ft_kredi_kartlari_v1` | Kredi kartları |
 | `ft_kmh_v1` | KMH borçları |
 | `ft_elden_nakit_v1` | Elden nakit borçlar |
@@ -45,30 +53,38 @@ Worker adresi ön yüzde `MY_WORKER` sabitindedir.
 | `ft_hedefler_v1` | Birikim hedefleri `{ id:'hd-…', ad, hedef, birim:'TL'\|'USD', ay, kaynak:'elle'\|'tum'\|'yatirim'\|'varlik', yatirimlar:[id], varliklar:[id], acil?, birikmis, baslangic, baslangicDeger }` (eski `kaynak:'y:<id>'` de okunur) |
 | `ft_raporlar_v1` | Aylık Rapor'un Bay Piyasa yorumları `{ id:'YYYY-MM', metin, model, maliyet, ts }` (son 36 ay) |
 
-Yalnızca yerelde tutulanlar: `ft_erisim` (giriş şifresi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_gram_altin_son_v1` (son bilinen gram altın TL fiyatı; altın cinsinden varlık için, fiyat gelmeden açılışta), `ft_harcama_birim` (Harcama grafiği birimi), `ft_gunluk_kur_v1` (günlük USD/TRY ve gram altın kapanışları; kuru olmayan eski net varlık kayıtları için), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
+Yalnızca yerelde tutulanlar: `ft_erisim` (oturum anahtarı), `ft_kullanici` (giriş yapan hesap: id, e-posta, ad, rol, şifre değişmeli mi), `ft_giris_eposta` (son giriş e-postası), `ft_senkron_meta` (senkron durumu), `ft_fx_son_bilinen_v1` (son bilinen kurlar), `ft_gram_altin_son_v1` (son bilinen gram altın TL fiyatı; altın cinsinden varlık için, fiyat gelmeden açılışta), `ft_harcama_birim` (Harcama grafiği birimi), `ft_gunluk_kur_v1` (günlük USD/TRY ve gram altın kapanışları; kuru olmayan eski net varlık kayıtları için), `ft_aylik_kur_v1` (her ayın ortalama USD/TRY kuru ve gram altın fiyatı; harcamaların dolar/altın karşılığı için), `ft_yatirim_son_fiyat_v1` (yatırımların son bilinen fiyat/tutarı; fiyat her yenilendiğinde senkron listesi yeniden yazılmasın diye ayrı tutulur).
 
 **Senkron akışı:**
 - `localStorage.setItem` sarmalanmıştır; senkron anahtarlarına yazılan her **değişiklik** "bekleyen" olarak işaretlenir (değer aynıysa gönderilmez) ve Worker'a `PUT /data/:anahtar` ile gönderilir.
 - Çekme: `GET /data?since=<zaman>`, yalnızca son çekmeden sonra değişenler gelir. Açılışta, sekmeye dönüldüğünde ve 5 dakikada bir çalışır.
 - Çakışma: istemci `expected` (son bildiği `updated_at`) gönderir; sunucudaki kayıt daha yeniyse Worker 409 ve güncel değeri döner.
-- `updated_at` tüm anahtarlar genelinde kesinlikle artandır (aynı milisaniyedeki yazmalar `since` çekmesinde kaybolmasın diye).
+- `updated_at` kullanıcının tüm anahtarları genelinde kesinlikle artandır (aynı milisaniyedeki yazmalar `since` çekmesinde kaybolmasın diye).
 
 ## 4. Worker uç noktaları
 
-`/` dışındaki her uç nokta erişim kodu ister.
+`/` ve `/auth/login` dışındaki her uç nokta geçerli bir oturum ister; `/data` her zaman oturum sahibinin verisini okur/yazar.
 
 | Yol | Metot | Görev |
 |---|---|---|
 | `/` | GET | Sağlık kontrolü (`{ok:true}`) |
-| `/auth/check` | GET | Giriş: şifre (`Authorization`) + e-posta (`X-Kullanici`, `LOGIN_USER` tanımlıysa) doğrular, D1 bağlı mı bildirir |
+| `/auth/login` | POST | `{email, password}` → `{token, kullanici}`; hatalı denemede kilit sayacı |
+| `/auth/me` | GET | Oturumun hesabı |
+| `/auth/logout` | POST | Oturumu siler |
+| `/auth/sifre` | POST | `{eski, yeni}`: kendi şifresini değiştirir, diğer oturumları kapatır |
+| `/auth/check` | GET | Eski panel uyumluluğu (geçiş süresince) |
+| `/admin/kullanicilar` | GET, POST | Yönetici: hesap listesi (kayıt sayısı ve boyutla) / hesap aç `{email, ad, sifre}` (geçici şifre, `must_change=1`) |
+| `/admin/kullanicilar/:id/sifre` | POST | Yönetici: geçici şifre ver, oturumlarını kapat |
+| `/admin/kullanicilar/:id/durum` | POST | Yönetici: `{disabled}` girişi kapat/aç |
+| `/admin/kullanicilar/:id` | DELETE | Yönetici: hesabı, oturumlarını ve tüm verisini sil |
 | `/data` | GET | `since` sonrası değişen kayıtlar |
 | `/data/:anahtar` | PUT | Kayıt yazar (`{value, expected}`), en fazla 1,5 MB |
-| `/proxy?url=` | GET | CORS proxy; yalnızca Yahoo, FRED, Google News, Stooq |
+| `/proxy?url=` | GET | CORS proxy; yalnızca izin listesindeki adresler; 60 sn ortak önbellek |
 | `/ai` | POST | Anthropic Messages API geçidi (model beyaz listesi, `max_tokens` 200–4000, isteğe bağlı web araması) |
 | `/extract-loan` | POST | Kredi planı PDF'ini (`pdfBase64`) Claude ile JSON'a çevirir (banka, faiz, anapara, kullandırım tarihi, ödeme planı) |
-| `/td` | GET | Twelve Data anlık fiyat |
-| `/td-series` | GET | Twelve Data geçmiş veri (grafik) |
-| `/fh` | GET | Finnhub anlık fiyat |
+| `/td` | GET | Twelve Data anlık fiyat (60 sn önbellek: kullanıcılar ortak kotayı paylaşır) |
+| `/td-series` | GET | Twelve Data geçmiş veri (grafik; 10 dk önbellek) |
+| `/fh` | GET | Finnhub anlık fiyat (60 sn önbellek) |
 | `/uranyum` | GET | Uranyum (U3O8) fiyatı, MetalCharts sayfasından; 20 dk önbellek |
 
 ## 5. Veri kaynakları
@@ -222,8 +238,8 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 ## 9. Arayüz
 
-- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama Takibim, Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **Asistan** (Bay Piyasa, Aylık Rapor) · **Yardım** (Kullanım Kılavuzu, Sık Sorulan Sorular). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
-- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır.
+- Menü hep açık grup başlıklarıyla: Piyasa Özeti · **Varlık ve borç** (Finansal Durumum, Yatırımlarım, Borçlarım) · **Harcama ve bütçe** (Harcama Takibim, Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması) · **İstatistikler** (Net Varlık Geçmişi, Portföy İstatistikleri) · **Planlama** (Borç Kapatma Planı, Birikim Hedefleri) · **Asistan** (Bay Piyasa, Aylık Rapor) · **Yardım** (Kullanım Kılavuzu, Sık Sorulan Sorular) · yalnız yöneticide **Yönetim** (Kullanıcılar). Açılır/kapanır alt menü bilinçli olarak kullanılmadı: harcama girişi sık yapılan bir iş, fazladan tık istemez; telefondaki alt çubukta da çalışmaz.
+- Masaüstünde solda sabit menü; 900 px altında menü **alta sabit sekme çubuğu** olur: yalnızca `data-alt` işaretli 6 sayfa (Piyasa · Durum · Yatırım · Borç · Harcama · Asistan — kısa etiket `data-kisa`) ve **Diğer** düğmesi. Diğer, alttan açılan bir sayfada geri kalan sayfaları menüdeki gruplarıyla listeler (`digerMenuAc`, menüden otomatik üretilir); böyle bir sayfa açıkken Diğer yanar. Senkron durumu ve çıkış üstte ince bir satırda kalır; hesap satırı (e-posta, Şifremi değiştir) telefonda gizlenir, Diğer menüsünün sonundaki **Hesap** bölümünde yer alır.
 - Tüm sekmeler 390 px telefon genişliğinde yatay taşma olmadan test edilir.
 - ETF dışı kartların alt satırları (`kartEkSatirlari`): **Dün** — önceki kapanış ve düne göre fark (Dolar/Euro/Brent: Yahoo; altın: Twelve Data `previous_close`), **Aralık** — günün en düşük–en yüksek değeri; kriptoda **24s önce** ve **24s aralık** (Binance ticker `openPrice`, `lowPrice`, `highPrice`); uranyumda **Önceki** (yüzdeden geri hesaplanır). ETF'de hiç seans satırı yoksa **Önceki** kapanış gösterilir. 1000 üstü değerlerde alt satırlarda küsurat gösterilmez.
 - Finansal Durumum › Varlık Dağılımı (`.pasta-kart`): açıklama satırı `.pl-oge` (renk noktası · ad (taşarsa …) · sağa hizalı yüzde). Telefonda (≤640 px) kart tam genişlik, halka 84 px solda, açıklama tek sütun — ortada ve sağda halka denendi: ortası kartı ~55 px uzatıp üst kartlarla hizayı bozdu, sağı okuma sırasını ters çevirdi; iki sütun 360 px'te adları kesti.
@@ -250,6 +266,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | **Çok kullanıcılı yapı:** kullanıcı hesapları (PBKDF2 şifre, oturum anahtarı, 180 gün), her kullanıcının verisi ayrı (`ukv`); yönetici için Kullanıcılar sayfası (hesap aç, geçici şifre, girişi kapat, sil); ilk girişte zorunlu şifre değişimi; Şifremi değiştir; eski erişim kodunun otomatik oturuma yükseltilmesi ve verilerin yönetici hesabına taşınması; IP + e-posta kilidi; Twelve Data / Finnhub / proxy için 60 sn ortak önbellek; koddaki kişisel kredi verisi (`LOANS_TOHUM`) kaldırıldı; AI şimdilik yalnız yöneticide; kılavuza Hesabın ve Kullanıcılar bölümleri, SSS'ye 5 hesap sorusu; yerelde (wrangler dev, yedek veriyle) uçtan uca test edildi |
 | 2026-10-01 | Yardım grubuna Sık Sorulan Sorular sekmesi (26 soru, konulara göre, aranabilir); kılavuzdaki sorular buraya taşındı, kılavuzda yönlendirme kutusu |
 | 2026-10-01 | Kullanım Kılavuzu sayfası (Yardım grubu): ilk kurulum, sayfa sayfa anlatım ve örnekler, SSS, terimler, arama; Piyasa Özeti'nde Bitcoin etiketi BITCOIN |
 | 2026-10-01 | Nakit / Mevduat varlığı $ / € / gram altın olarak tutulabilir (miktar girilir, TL karşılığı canlı kur ve altın fiyatıyla); acil fon hedefi ve göstergesi bunu kullanır |

@@ -122,6 +122,7 @@
     .nav-item:not([data-alt]){display:none;}
     .nav-diger{display:flex !important;}
     .nav-alt{flex-direction:row !important;align-items:center;justify-content:space-between;margin-top:0 !important;padding:0 !important;border-top:none !important;}
+    .nav-alt .hesap-bilgi{display:none !important;}   /* telefonda hesap işlemleri Diğer menüsünde */
     .wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important;}
   }
 
@@ -1678,6 +1679,20 @@
   #senkronDurum[data-durum="hata"]{color:var(--amber);}
   .cikis-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:11.5px;padding:6px 8px;cursor:pointer;font-family:inherit;text-align:left;}
   .cikis-btn:hover{color:var(--down);border-color:var(--down);}
+  .hesap-bilgi{display:flex;flex-direction:column;gap:6px;}
+  .hesap-bilgi[hidden], .nav-yonetim[hidden]{display:none !important;}
+  .hesap-eposta{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .diger-hesap{display:flex;flex-direction:column;gap:8px;padding:2px 4px 6px;}
+  .diger-hesap-dugme{display:flex;gap:8px;flex-wrap:wrap;}
+  .diger-hesap .cikis-btn{flex:1 1 0;text-align:center;padding:9px 10px;font-size:12.5px;}
+  .form-modal{position:fixed;inset:0;background:rgba(0,0,0,0.62);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;}
+  .form-modal-kutu{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px 22px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:6px;}
+  .form-modal-kutu .ai-input{width:100%;box-sizing:border-box;min-height:40px;font-size:14px;}
+  .form-modal-baslik{font-size:16px;font-weight:700;color:var(--text);}
+  .form-modal-aciklama{font-size:12.5px;line-height:1.55;color:var(--muted);margin-bottom:4px;}
+  .form-modal-mesaj{margin-top:4px;min-height:16px;}
+  .form-modal-dugmeler{display:flex;gap:10px;flex-wrap:wrap;}
+  .ku-ipucu{font-size:12px;color:var(--muted-2);margin:6px 0 10px;line-height:1.5;}
 
 
   /* ===== Portföy İstatistikleri ===== */
@@ -2112,7 +2127,7 @@
     </div>
     <button type="submit" id="girisBtn" class="giris-btn">Giriş</button>
     <div class="giris-mesaj" id="girisMesaj" role="alert"></div>
-    <div class="giris-alt">8 hatalı denemede giriş 15 dakika kilitlenir. Giriş yaptıktan sonra oturumun bu cihazda açık kalır; verilerin tüm cihazlarında senkronlanır.</div>
+    <div class="giris-alt">Hesapları yönetici açar; şifreni unuttuysan yöneticine yaz. 8 hatalı denemede giriş 15 dakika kilitlenir. Giriş yaptıktan sonra oturumun bu cihazda açık kalır; verilerin yalnızca senin hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </form>
 </div>
 <div class="wrap">
@@ -2191,6 +2206,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M10 10a2 2 0 1 1 2.8 1.8c-.5.2-.8.7-.8 1.2v.3"/><circle cx="12" cy="15.8" r=".5" fill="currentColor"/></svg>
         <span data-kisa="SSS">Sık Sorulan Sorular</span>
       </div>
+      <div class="nav-grup nav-yonetim" hidden>Yönetim</div>
+      <div class="nav-item nav-yonetim" data-tab="kullanicilar" onclick="switchTab('kullanicilar')" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18.5 14a6 6 0 0 1 3 6"/></svg>
+        <span data-kisa="Kullanıcılar">Kullanıcılar</span>
+      </div>
       <div class="nav-item nav-diger" onclick="digerMenuAc()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
         <span data-kisa="Diğer">Diğer</span>
@@ -2198,6 +2218,10 @@
     </div>
     <div class="nav-alt">
       <div id="senkronDurum" data-durum="senkron">☁ Senkronize ediliyor…</div>
+      <div class="hesap-bilgi" id="hesapBilgi" hidden>
+        <span class="hesap-eposta" id="hesapEposta"></span>
+        <button class="cikis-btn" onclick="sifreDegistirAc()">🔑 Şifremi değiştir</button>
+      </div>
       <button class="cikis-btn" onclick="cikisYap()">🔒 Çıkış yap</button>
     </div>
    </div>
@@ -3057,7 +3081,7 @@
     <details class="kv-bolum" id="kv-finansal"><summary>💼 Finansal Durumum <span>net servetin</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Sahip olduklarını ve borçlarını tek yerde toplar: <b>Net varlık = varlıklar + yatırımlar − borçlar</b>.</p>
       <p><b>Nasıl kullanılır:</b> Varlıklarım bölümünde <b>+ Ekle</b>'ye bas, türü seç (Konut, Arsa, Otomobil, Dükkan, Nakit / Mevduat, Diğer), adını ve bugünkü değerini yaz. Değer değişince satırdaki ✎ ile güncelle.</p>
-      <p><b>Örnek:</b> “GOP Daire · Konut · ₺6.850.000”. Satırdaki ışık yeşilse değeri bugün güncellemişsin; kırmızıysa daha önce.</p>
+      <p><b>Örnek:</b> “Ev · Konut · ₺4.500.000”. Satırdaki ışık yeşilse değeri bugün güncellemişsin; kırmızıysa daha önce.</p>
       <p><b>Dövizde ya da altında duran para:</b> Türü <b>Nakit / Mevduat</b> seçince yanında birim seçici çıkar: ₺ TL, $ Dolar, € Euro ya da Gram altın. Bu durumda tutar değil <b>miktar</b> girersin (ör. $7.000 ya da 50 gram). TL karşılığı güncel kurla kendiliğinden hesaplanır: $7.000 × ₺50 = ₺350.000.</p>
       <p class="kv-ipucu">💡 Konut, arsa gibi varlıkların fiyatı internetten çekilmez; yılda bir-iki kez gerçekçi bir değerle güncellemen yeterli. Birikim Hedefleri'nde bir acil durum fonu tanımladıysan, üstteki Toplam Varlık kutusunda “Acil fon ₺… · n ay” satırı da görünür.</p>
       <button class="bolum-ekle" onclick="switchTab('finansal')">Finansal Durumum'a git →</button>
@@ -3073,7 +3097,7 @@
 
     <details class="kv-bolum" id="kv-borclar"><summary>💳 Borçlarım <span>krediler, kartlar, KMH, elden borç</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Bütün borçlarının bugünkü toplamını gösterir. Kredi ve KMH borcu her gün işleyen faizle canlı hesaplanır.</p>
-      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca ✓'ye bas.</p>
+      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; şimdilik yalnız yönetici hesabında) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca ✓'ye bas.</p>
       <p><b>Kredi Kartlarım:</b> Kartın bugünkü toplam borcunu yaz; ekstre gelince ✎ ile güncelle.</p>
       <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki ⚙ ile de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
       <p><b>Elden Nakit Borçlar:</b> Birinden aldığın borcu TL, dolar ya da euro olarak gir. Dövizliyse TL karşılığı güncel kurla hesaplanır; kur canlıyken ışık yeşil yanar.</p>
@@ -3095,7 +3119,7 @@
       <p><b>Ne işe yarar:</b> Kredi taksitleri, kart son ödeme günleri, kira, aidat, fatura ve abonelikler tek takvimde görünür. Üstteki ilk iki kutu seçtiğin ayı gösterir (ör. <b>“Ekim ödemeleri”</b> ve <b>“Ekim kalan”</b>): birincisi ayın bütün ödemelerinin toplamıdır ve gün geçtikçe değişmez, ikincisi bugünden sonra ödeyeceklerindir.</p>
       <p><b>Düzenli ödemeler:</b> <b>+ Ekle</b> → ad (ör. Netflix), tutar, tür (abonelik, fatura, kira…), her ay ya da her yıl, ödeme günü. Her ödemenin “harcamaya:” seçimiyle Harcama Takibim'e hangi kategoriyle ekleneceğini belirlersin.</p>
       <p><b>Kredi kartları:</b> Kartın son ödeme gününü bir kez yaz. Sıradaki dönem için <b>dönem borcu</b> (ekstre), <b>asgari</b> ve <b>ödeyeceğim</b> tutarını girebilirsin. Takvim önce “ödeyeceğim” tutarını kullanır.</p>
-      <p><b>Örnek:</b> Akbank toplam borç ₺135.571, dönem borcu ₺95.000, ödeyeceğim ₺60.000 → takvimde ₺60.000 görünür; altında “ödeme sonrası kalan borç ≈ ₺75.571” ve “₺35.000 sonraki döneme kalır (faiz işler)” yazar.</p>
+      <p><b>Örnek:</b> Kartının toplam borcu ₺135.571, dönem borcu ₺95.000, ödeyeceğin ₺60.000 → takvimde ₺60.000 görünür; altında “ödeme sonrası kalan borç ≈ ₺75.571” ve “₺35.000 sonraki döneme kalır (faiz işler)” yazar.</p>
       <p class="kv-ipucu">💡 Ödeme günü geçtiği halde kartın borcunu Borçlarım'da güncellemediysen satırda bir hatırlatma çıkar. Bugünden önceki ödemeler “✓ ödendi” sayılır.</p>
       <button class="bolum-ekle" onclick="switchTab('odeme')">Ödeme Takvimi'ne git →</button>
     </div></details>
@@ -3164,7 +3188,8 @@
       <p><b>Ne işe yarar:</b> Piyasayı, haberleri ve izin verirsen senin portföyünü ve borçlarını bilen bir sohbet asistanı. Soru sorarsın ya da hazır raporlardan birini seçersin (Günlük özet, Portföy analizi, Borç planı, Harcama analizi…).</p>
       <p><b>Gizlilik:</b> Rakamların yalnızca <b>“Portföyümü paylaş”</b> açıksa gönderilir. Kapalıyken yalnız piyasa ve haber verisini bilir.</p>
       <p><b>Maliyet:</b> Her cevabın küçük bir ücreti vardır; ekranda yazar. <b>Günlük limit</b> (varsayılan $0,50) dolunca durur. Model seçimiyle hız ve fiyatı ayarlarsın; günlük kullanım için Sonnet yeterli.</p>
-      <p><b>Örnek soru:</b> “KMH'yi mi kapatayım yoksa On Bank kredisine ek ödeme mi yapayım?”</p>
+      <p><b>Örnek soru:</b> “KMH'yi mi kapatayım yoksa ihtiyaç kredime ek ödeme mi yapayım?”</p>
+      <p><b>Kimde çalışır:</b> Şimdilik yalnız yönetici hesabında. Diğer hesaplarda sayfanın üstünde “Bay Piyasa şimdilik kapalı” yazar; kendi Anthropic API anahtarını hesabına ekleyebileceğin ayar yakında gelecek. Panelin geri kalanı Bay Piyasa olmadan da tamamen çalışır.</p>
       <p class="kv-ipucu">💡 Cevaplar yatırım tavsiyesi değildir; senaryo ve olasılık dilinde düşünmene yardım eder.</p>
       <button class="bolum-ekle" onclick="switchTab('ai')">Bay Piyasa'ya git →</button>
     </div></details>
@@ -3174,6 +3199,22 @@
       <p><b>Bay Piyasa yorumu:</b> <b>“Bay Piyasa yorumlasın”</b>a basarsan rakamlara bakıp gelecek ay için 3 somut öneri yazar. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</p>
       <p><b>Yazdır / PDF:</b> Raporu yazdırabilir ya da PDF olarak kaydedebilirsin.</p>
       <button class="bolum-ekle" onclick="switchTab('rapor')">Aylık Rapor'a git →</button>
+    </div></details>
+
+    <details class="kv-bolum" id="kv-hesap"><summary>🔑 Hesabın <span>giriş, şifre, çıkış</span></summary><div class="kv-ic">
+      <p><b>Hesabı kim açar:</b> Panelde kayıt ekranı yok; hesapları yönetici açar ve sana e-posta adresinle bir <b>geçici şifre</b> iletir.</p>
+      <p><b>İlk giriş:</b> E-posta ve geçici şifreyle gir. Panel hemen kendi şifreni belirlemeni ister (en az 8 karakter); bunu yapmadan devam edemezsin. Hesabın boş açılır; Kılavuz'un başındaki <b>İlk kurulum</b> adımlarıyla doldurursun.</p>
+      <p><b>Şifre değiştirme:</b> Sol alttaki <b>🔑 Şifremi değiştir</b> (telefonda <b>Diğer › Hesap</b>). Mevcut şifreni ve yenisini yazarsın; diğer cihazlarındaki oturumlar kapanır, oralarda yeni şifrenle girersin.</p>
+      <p><b>Şifreni unuttuysan:</b> Yöneticine yaz; sana yeni bir geçici şifre verir, ilk girişte yine kendi şifreni belirlersin. Verilerin silinmez.</p>
+      <p><b>Çıkış:</b> <b>🔒 Çıkış yap</b> yalnızca o cihazdaki kopyayı temizler; verilerin hesabında kalır. Ortak kullanılan bir bilgisayarda işin bitince çıkış yap.</p>
+    </div></details>
+
+    <details class="kv-bolum nav-yonetim" id="kv-kullanicilar" hidden><summary>👥 Kullanıcılar <span>yalnız yönetici görür</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Paneli kullanacak kişilerin hesaplarını açar ve yönetirsin. Her hesabın verisi ayrıdır; listede yalnızca kayıt sayısı ve boyut görünür, kimsenin rakamlarını göremezsin.</p>
+      <p><b>Hesap açma:</b> <b>+ Ekle</b> → e-posta, istersen ad. Geçici şifreyi boş bırakırsan 🎲 ile otomatik üretilir. Açılan pencerede adres, e-posta ve geçici şifre yazar; <b>📋 Kopyala</b> ile kişiye mesajla ilet. Bu şifre bir daha gösterilmez.</p>
+      <p><b>Satırdaki düğmeler:</b> 🔑 yeni geçici şifre verir (şifresini unutan için; o kişinin bütün oturumları kapanır). ⏸ girişini kapatır, verisini silmez; ▶ tekrar açar. ✕ hesabı ve <b>tüm verisini kalıcı olarak</b> siler.</p>
+      <p><b>Örnek:</b> Ayşe şifresini unuttu → satırındaki 🔑 → “Geçici şifre verildi” penceresindeki bilgileri ona gönder → Ayşe girer, kendi şifresini belirler. “Şifresini belirlemedi” kutusunda geçici şifreyle bekleyen hesapları görürsün.</p>
+      <button class="bolum-ekle" onclick="switchTab('kullanicilar')">Kullanıcılar'a git →</button>
     </div></details>
 
     <div class="bolum kv-yonlendir" onclick="switchTab('sss')" role="link" tabindex="0" onkeydown="if(event.key==='Enter') switchTab('sss');">
@@ -3197,7 +3238,7 @@
 
     <div class="kv-grup-bas">Verilerin ve güvenlik</div>
     <div class="bolum"><div class="kv-ic" style="padding-top:12px;">
-      <p>Verilerin yalnızca senin hesabında saklanır; giriş e-posta ve şifreyle yapılır. Arka arkaya 8 hatalı denemede giriş 15 dakika kilitlenir. Fiyat ve yapay zekâ servislerinin gizli anahtarları senin tarayıcında değil, sunucuda durur. Bay Piyasa'ya rakamların yalnızca “Portföyümü paylaş” açıkken gider; isim ya da e-posta gönderilmez.</p>
+      <p>Verilerin yalnızca senin hesabında saklanır; panelde kimse (yönetici de) başkasının verisini göremez. Giriş e-posta ve şifreyle yapılır; şifren sunucuda okunamaz biçimde (tuzlanmış özet olarak) saklanır. Arka arkaya 8 hatalı denemede o e-postaya ve o bağlantıya giriş 15 dakika kilitlenir. Fiyat ve yapay zekâ servislerinin gizli anahtarları senin tarayıcında değil, sunucuda durur. Bay Piyasa'ya rakamların yalnızca “Portföyümü paylaş” açıkken gider; isim ya da e-posta gönderilmez.</p>
     </div></div>
 
     <div class="footnote"><b>Not:</b> Kılavuzdaki örnek rakamlar açıklama içindir; sayfalarda senin kendi verin görünür. Kısa cevaplar için <a href="#" onclick="switchTab('sss'); return false;" style="color:var(--amber);">Sık Sorulan Sorular</a>'a bakabilir ya da Bay Piyasa'ya “… nasıl yapılır?” diye sorabilirsin.</div>
@@ -3258,18 +3299,72 @@
 
     <div class="kv-grup-bas">Görünüm</div>
     <details class="kv-bolum kv-sss"><summary>Satırların başındaki yeşil ve kırmızı ışıklar ne demek?</summary><div class="kv-ic"><p><b>Yeşil:</b> değer güncel. Ya bugün güncelledin ya da canlı hesaplanıyor (kur, faiz, fiyat). <b>Kırmızı:</b> değeri en son bugünden önce güncelledin ya da canlı fiyata ulaşılamadı ve son bilinen değer gösteriliyor. Kırmızı bir hata değildir; yalnızca “bunu güncellemek isteyebilirsin” demektir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor, Kullanım Kılavuzu ve Sık Sorulan Sorular) sağ alttaki <b>Diğer</b> düğmesindedir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor, Kullanım Kılavuzu ve Sık Sorulan Sorular) sağ alttaki <b>Diğer</b> düğmesindedir. Şifre değiştirme ve çıkış da orada, en alttaki <b>Hesap</b> bölümünde.</p></div></details>
 
     <div class="kv-grup-bas">Hesap, güvenlik ve Bay Piyasa</div>
     <details class="kv-bolum kv-sss"><summary>Verilerim diğer cihazlarımda da görünür mü?</summary><div class="kv-ic"><p>Evet. Girdiğin her şey hesabında saklanır ve aynı e-posta ve şifreyle girdiğin her cihazda görünür. Sol alttaki “☁ Senkron tamam” bunun gerçekleştiğini gösterir. İnternet yokken yaptığın değişiklikler bağlantı gelince gönderilir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Çıkış yaparsam verilerim silinir mi?</summary><div class="kv-ic"><p>Hayır. Çıkış yalnızca o cihazdaki kopyayı temizler. Verilerin sunucuda kalır; tekrar giriş yapınca geri gelir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Giriş yapamıyorum, “çok fazla hatalı deneme” yazıyor.</summary><div class="kv-ic"><p>Güvenlik için aynı yerden arka arkaya 8 hatalı denemede giriş 15 dakika kilitlenir. 15 dakika bekleyip e-posta ve şifreni dikkatle tekrar yaz (şifrede büyük-küçük harf önemlidir).</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Çıkış yaparsam verilerim silinir mi?</summary><div class="kv-ic"><p>Hayır. Çıkış yalnızca o cihazdaki kopyayı temizler. Verilerin hesabında kalır; tekrar giriş yapınca geri gelir. Aynı cihazda başka biri kendi hesabıyla girerse de senin verilerin o cihazdan silinir, onunkilerle karışmaz.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Giriş yapamıyorum, “çok fazla hatalı deneme” yazıyor.</summary><div class="kv-ic"><p>Güvenlik için arka arkaya 8 hatalı denemede o e-postaya giriş 15 dakika kilitlenir. 15 dakika bekleyip e-posta ve şifreni dikkatle tekrar yaz (şifrede büyük-küçük harf önemlidir). Hâlâ olmuyorsa şifreni unutmuş olabilirsin; aşağıdaki soruya bak.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Şifremi unuttum.</summary><div class="kv-ic"><p>Yöneticine yaz; Kullanıcılar sayfasından sana yeni bir <b>geçici şifre</b> verir. Onunla girince panel kendi şifreni belirlemeni ister. Verilerin silinmez, olduğu gibi kalır.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Şifremi nasıl değiştiririm?</summary><div class="kv-ic"><p>Sol alttaki <b>🔑 Şifremi değiştir</b>'e bas (telefonda <b>Diğer › Hesap</b>). Mevcut şifreni ve en az 8 karakterlik yeni şifreni yaz. Diğer cihazlarındaki oturumlar kapanır; oralarda yeni şifrenle girersin.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>İlk girişte neden şifremi değiştirmem isteniyor?</summary><div class="kv-ic"><p>Hesabın yönetici tarafından <b>geçici</b> bir şifreyle açıldı. Bu şifreyi başkası da bildiği için panel, devam etmeden önce yalnızca senin bildiğin bir şifre belirlemeni ister.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bir arkadaşım ya da eşim de paneli kullanabilir mi?</summary><div class="kv-ic"><p>Evet, ama kendi hesabıyla. Hesapları yönetici açar; ondan iste. Herkesin verisi ayrıdır, kimse diğerinin harcamasını ya da borcunu göremez. Aynı bilgisayarı kullanıyorsanız işin bitince <b>Çıkış yap</b>.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bay Piyasa verilerimi görüyor mu?</summary><div class="kv-ic"><p>Yalnızca Bay Piyasa sayfasındaki <b>“Portföyümü paylaş”</b> açıksa portföy, borç, harcama ve hedef <b>rakamların</b> gönderilir; isim ya da e-posta gönderilmez. Kapalıyken yalnızca piyasa ve haber verisini bilir. Aylık Rapor yorumu da aynı izni ister.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bay Piyasa sayfasında “şimdilik kapalı” yazıyor.</summary><div class="kv-ic"><p>Bay Piyasa yapay zekâ kullanır ve her sorunun ücreti vardır; şimdilik yalnızca yönetici hesabında çalışır. Kendi Anthropic API anahtarını hesabına ekleyebileceğin ayar yakında gelecek. Bu arada haber başlıkları İngilizce kalabilir ve kredi PDF'ini okutamazsın; krediyi Excel şablonuyla eklersin. Diğer her şey çalışır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bay Piyasa ne kadar tutar?</summary><div class="kv-ic"><p>Her cevabın küçük bir ücreti vardır; cevabın altında yazar. Bay Piyasa sayfasındaki <b>günlük limit</b> (varsayılan $0,50) dolunca o gün durur; limiti oradan değiştirebilirsin. Aylık Rapor yorumu o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</p></div></details>
 
     <div class="footnote"><b>Not:</b> Aradığın sorunun cevabı yoksa Bay Piyasa'ya sorabilir ya da Kullanım Kılavuzu'nda ilgili sayfanın bölümüne bakabilirsin.</div>
   </div>
   <!-- ================= /TAB: SIK SORULAN SORULAR ================= -->
+
+  <!-- ================= TAB: KULLANICILAR (yalnız yönetici) ================= -->
+  <div class="tab-panel" id="tab-kullanicilar">
+    <div class="page-head"><h1>Kullanıcılar</h1></div>
+
+    <div class="ozet-grid k4">
+      <div class="ozet-kart mavi">
+        <div class="ozet-etiket">Hesaplar</div>
+        <div class="ozet-deger" id="kuToplam">—</div>
+        <div class="ozet-alt" id="kuToplamAlt"></div>
+      </div>
+      <div class="ozet-kart yesil">
+        <div class="ozet-etiket">Son 30 günde giriş</div>
+        <div class="ozet-deger" id="kuAktif" style="color:var(--up);">—</div>
+        <div class="ozet-alt" id="kuAktifAlt"></div>
+      </div>
+      <div class="ozet-kart sari">
+        <div class="ozet-etiket">Şifresini belirlemedi</div>
+        <div class="ozet-deger" id="kuBekleyen">—</div>
+        <div class="ozet-alt" id="kuBekleyenAlt"></div>
+      </div>
+      <div class="ozet-kart mor">
+        <div class="ozet-etiket">Toplam veri</div>
+        <div class="ozet-deger" id="kuVeri">—</div>
+        <div class="ozet-alt" id="kuVeriAlt"></div>
+      </div>
+    </div>
+
+    <div class="bolum">
+      <div class="bolum-bas">
+        <span class="bolum-baslik">Hesaplar</span>
+        <button class="bolum-ekle" style="margin-left:auto;" onclick="bolumFormAc('kuForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="kuForm">
+        <div class="loan-add-row">
+          <input type="email" id="kuEposta" class="ai-input" style="max-width:240px;min-width:180px;" placeholder="E-posta" autocomplete="off" onkeydown="if(event.key==='Enter')kullaniciEkle()">
+          <input type="text" id="kuAd" class="ai-input" style="max-width:170px;min-width:120px;" placeholder="Ad (isteğe bağlı)" autocomplete="off" onkeydown="if(event.key==='Enter')kullaniciEkle()">
+          <input type="text" id="kuSifre" class="ai-input" style="max-width:170px;min-width:130px;" placeholder="Geçici şifre" autocomplete="off" onkeydown="if(event.key==='Enter')kullaniciEkle()">
+          <button class="loan-btn-cancel" type="button" onclick="document.getElementById('kuSifre').value = geciciSifreUret()" title="Rastgele geçici şifre üret">🎲 Üret</button>
+        </div>
+        <div class="loan-add-row" style="margin-top:4px;"><button class="ai-btn" onclick="kullaniciEkle()">Kullanıcı Ekle</button></div>
+        <div class="ku-ipucu">Geçici şifreyi kişiye kendin ilet (mesaj, telefon). İlk girişte kendi şifresini belirlemesi istenir.</div>
+      </div>
+      <div id="kuListe"><div class="bos-not">Yükleniyor…</div></div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Bu sayfayı yalnızca yönetici görür. Her hesabın verisi ayrıdır; kimse başkasının verisini göremez — sen de (liste yalnızca kayıt sayısını ve boyutunu gösterir). 🔑 geçici şifre verir ve o kişinin tüm cihazlardaki oturumunu kapatır; ⏸ hesabı silmeden girişini kapatır; ✕ hesabı ve tüm verisini kalıcı olarak siler. Bay Piyasa ve PDF okuma şimdilik yalnızca yönetici hesabında çalışır.</div>
+  </div>
+  <!-- ================= /TAB: KULLANICILAR ================= -->
 
   <!-- ================= TAB: AYLIK RAPOR ================= -->
   <div class="tab-panel" id="tab-rapor">
@@ -3455,6 +3550,9 @@
   <div class="tab-panel" id="tab-ai">
     <div class="page-head"><h1>Bay Piyasa</h1></div>
 
+    <div class="ai-setup" id="bpAnahtarNot" hidden>
+      <b>🔑 Bay Piyasa şimdilik kapalı.</b> Bay Piyasa yapay zekâ kullanır ve her soru küçük bir ücrete tabidir. Hesabına kendi Anthropic API anahtarını ekleyebileceğin ayar yakında gelecek; o zamana kadar sorular cevaplanamaz. Panelin geri kalanı (takip, plan, rapor) tamamen çalışır.
+    </div>
     <div class="ai-setup" id="aiSetup">
       <b>⚙ Kurulum gerekiyor.</b> Bay Piyasa'nın çalışması için dosyada <code>MY_WORKER</code> adresini kendi Cloudflare Worker adresinle tanımlaman gerekiyor. API anahtarı Worker'ın içinde saklanır, bu sayfada görünmez.
     </div>
@@ -3523,11 +3621,13 @@
 
 <script>
 // ===== GÜVENLİK & SENKRON BAŞLANGIÇ =====
-// 1) Erişim kodu: kod girilmeden Worker'a hiçbir istek gitmez; giriş ekranı sayfayı kaplar.
+// 1) Hesap: e-posta + şifreyle giriş → sunucu bir oturum anahtarı verir (ft_erisim). Oturum yoksa Worker'a hiçbir istek
+//    gitmez; giriş ekranı sayfayı kaplar. Her kullanıcının verisi sunucuda ayrıdır; hesapları yönetici açar.
 // 2) Senkron: veriler Cloudflare D1'de saklanır. Tarayıcı (localStorage) hızlı önbellektir; her değişiklik D1'e gönderilir,
 //    açılışta ve sekmeye dönüldüğünde diğer cihazlardaki değişiklikler çekilir.
 const MY_WORKER = 'https://weathered-dream-54b3.ofusluoglu.workers.dev';
-const ERISIM_KEY = 'ft_erisim';
+const ERISIM_KEY = 'ft_erisim';            // oturum anahtarı (eski sürümde erişim kodu — açılışta otomatik yükseltilir)
+const KULLANICI_KEY = 'ft_kullanici';      // yalnızca bu cihazda: giriş yapan hesap { id, email, ad, rol, sifreDegismeli }
 const SENKRON_META_KEY = 'ft_senkron_meta';
 const SENKRON_ANAHTARLARI = new Set([
   'ft_yatirimlar_v1', 'ft_varliklarim_v1', 'ft_custom_loans_v1', 'ft_closed_loans_v1',
@@ -3551,7 +3651,7 @@ window.fetch = function(input, init){
     h.set('Authorization', 'Bearer ' + kod);
     init.headers = h;
     return _orijinalFetch(input, init).then(res => {
-      if(res.status === 401) girisGoster('Erişim kodu geçersiz — tekrar gir.');
+      if(res.status === 401) girisGoster('Oturumun sona erdi — tekrar giriş yap.');
       return res;
     });
   }
@@ -3588,22 +3688,135 @@ async function girisYap(){
   if(!kod){ msj.textContent = 'Şifreni yaz.'; kodEl.focus(); return; }
   btn.disabled = true; btn.textContent = 'Kontrol ediliyor…'; msj.textContent = '';
   try{
-    const res = await _orijinalFetch(MY_WORKER + '/auth/check', { headers: { Authorization: 'Bearer ' + kod, 'X-Kullanici': eposta } });
-    if(res.ok){ _snYaz(ERISIM_KEY, kod); _snYaz(GIRIS_EPOSTA_KEY, eposta.toLocaleLowerCase('tr-TR')); location.reload(); return; }
+    const res = await _orijinalFetch(MY_WORKER + '/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: eposta, password: kod }),
+    });
+    if(res.ok){ const d = await res.json(); oturumKaydet(d.token, d.kullanici); location.reload(); return; }
     msj.textContent = res.status === 429 ? 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.'
-                    : res.status === 503 ? 'Sunucu kurulumu eksik (Cloudflare\'da ACCESS_TOKEN tanımlı değil).'
+                    : res.status === 503 ? 'Sunucu kurulumu eksik (Cloudflare\'da veritabanı bağlı değil).'
                     : 'E-posta veya şifre hatalı.';
     kodEl.select();
   }catch(e){ msj.textContent = 'Sunucuya ulaşılamadı. İnternetini kontrol et.'; }
   btn.disabled = false; btn.textContent = 'Giriş';
 }
+function kullaniciBilgi(){ try{ return JSON.parse(localStorage.getItem(KULLANICI_KEY) || 'null'); }catch(e){ return null; } }
+function benYonetici(){ const k = kullaniciBilgi(); return !!k && k.rol === 'admin'; }
+// Bu cihazdaki hesap verilerini sil (çıkışta ve cihazda başka biri giriş yapınca) — veriler sunucuda kalır
+function yerelVeriyiSil(){
+  SENKRON_ANAHTARLARI.forEach(k => localStorage.removeItem(k));
+  localStorage.removeItem(SENKRON_META_KEY);
+  Object.keys(localStorage).filter(k => k.startsWith('ft_yedek_')).forEach(k => localStorage.removeItem(k));
+}
+function oturumKaydet(token, k){
+  const onceki = kullaniciBilgi();
+  // Bu cihazda başka bir hesabın verisi varsa karışmasın. Hesap bilgisi olmayan eski (tek kullanıcılı) cihazdaki veri yöneticinindir.
+  if(onceki ? onceki.id !== k.id : k.rol !== 'admin') yerelVeriyiSil();
+  _snYaz(ERISIM_KEY, token);
+  _snYaz(KULLANICI_KEY, JSON.stringify(k));
+  _snYaz(GIRIS_EPOSTA_KEY, k.email);
+}
+// Eski sürümden kalan erişim kodunu bir kez kişisel oturuma çevirir (kullanıcı tekrar giriş yapmak zorunda kalmaz)
+async function oturumYukselt(){
+  const kod = localStorage.getItem(ERISIM_KEY);
+  if(!kod || kullaniciBilgi()) return;
+  try{
+    const me = await _orijinalFetch(MY_WORKER + '/auth/me', { headers: { Authorization: 'Bearer ' + kod } });
+    if(!me.ok){ if(me.status === 401){ localStorage.removeItem(ERISIM_KEY); girisGoster('Panel artık kişisel hesaplarla çalışıyor — e-posta ve şifrenle giriş yap.'); } return; }
+    const k = (await me.json()).kullanici;
+    const res = await _orijinalFetch(MY_WORKER + '/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: k.email, password: kod }),
+    });
+    if(res.ok){ const d = await res.json(); oturumKaydet(d.token, d.kullanici); }
+    else _snYaz(KULLANICI_KEY, JSON.stringify(k));
+  }catch(e){ /* bağlantı yok: bir sonraki açılışta denenir */ }
+}
+// Kenar çubuğundaki hesap satırı, yönetici menüsü, zorunlu şifre değişimi
+function hesapArayuzu(){
+  const k = kullaniciBilgi();
+  const kutu = document.getElementById('hesapBilgi');
+  if(kutu && k){
+    kutu.hidden = false;
+    document.getElementById('hesapEposta').textContent = k.email;
+    document.getElementById('hesapEposta').title = (k.ad ? k.ad + ' · ' : '') + k.email + (k.rol === 'admin' ? ' · yönetici' : '');
+  }
+  document.querySelectorAll('.nav-yonetim').forEach(el => { el.hidden = !benYonetici(); });
+  const bpNot = document.getElementById('bpAnahtarNot');
+  if(bpNot) bpNot.hidden = !k || benYonetici();
+  if(k && k.sifreDegismeli && !document.getElementById('sifreModal')){
+    sifreDegistirAc('Hesabın yönetici tarafından geçici bir şifreyle açıldı. Devam etmeden önce kendine ait bir şifre belirle.');
+  }
+}
 async function cikisYap(){
-  showConfirmModal('Çıkış yapılırsa bu cihazdaki veriler silinir (veriler sunucuda güvende, tekrar giriş yapınca gelir). Emin misin?', async () => {
+  showConfirmModal('Çıkış yapılırsa bu cihazdaki veriler silinir (veriler hesabında güvende, tekrar giriş yapınca gelir). Emin misin?', async () => {
     try{ await senkronGonder(); }catch(e){ /* bağlantı yoksa devam */ }
-    SENKRON_ANAHTARLARI.forEach(k => localStorage.removeItem(k));
+    try{ await fetch(MY_WORKER + '/auth/logout', { method: 'POST' }); }catch(e){ /* oturum sunucuda kendiliğinden düşer */ }
+    yerelVeriyiSil();
     localStorage.removeItem(ERISIM_KEY);
-    localStorage.removeItem(SENKRON_META_KEY);
+    localStorage.removeItem(KULLANICI_KEY);
     location.reload();
+  });
+}
+
+// ---------- Form penceresi (şifre değiştirme, kullanıcı işlemleri) ----------
+// alanlar: [{ id, etiket, tip, deger, ph, oto }]; kaydet(degerler) hata metni döndürürse pencere açık kalır
+function formModal({ id, baslik, aciklama, alanlar, dugme, kaydet, kapatilamaz, vazgecYok }){
+  const eski = document.getElementById(id); if(eski) eski.remove();
+  const overlay = document.createElement('div');
+  overlay.id = id;
+  overlay.className = 'form-modal';
+  overlay.innerHTML = `
+    <form class="form-modal-kutu" novalidate>
+      <div class="form-modal-baslik">${escapeHtml(baslik)}</div>
+      ${aciklama ? `<div class="form-modal-aciklama">${aciklama}</div>` : ''}
+      ${alanlar.map(a => `<label class="giris-etiket" for="${a.id}">${escapeHtml(a.etiket)}</label>
+        <input class="ai-input" id="${a.id}" type="${a.tip || 'text'}" ${a.oto ? `autocomplete="${a.oto}"` : ''} placeholder="${escapeHtml(a.ph || '')}" value="${escapeHtml(a.deger || '').replace(/"/g, '&quot;')}">`).join('')}
+      <div class="giris-mesaj form-modal-mesaj" role="alert"></div>
+      <div class="form-modal-dugmeler">
+        <button type="submit" class="loan-btn-save">${escapeHtml(dugme || 'Kaydet')}</button>
+        ${kapatilamaz || vazgecYok ? '' : '<button type="button" class="loan-btn-cancel" data-vazgec>Vazgeç</button>'}
+      </div>
+    </form>`;
+  document.body.appendChild(overlay);
+  const form = overlay.querySelector('form'), msj = overlay.querySelector('.form-modal-mesaj'), btn = form.querySelector('[type=submit]');
+  const kapat = () => overlay.remove();
+  const vz = overlay.querySelector('[data-vazgec]'); if(vz) vz.onclick = kapat;
+  if(!kapatilamaz) overlay.addEventListener('click', e => { if(e.target === overlay) kapat(); });
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const d = {}; alanlar.forEach(a => { d[a.id] = form.querySelector('#' + a.id).value; });
+    btn.disabled = true; msj.textContent = '';
+    let hata = null;
+    try{ hata = await kaydet(d); }catch(er){ hata = 'Sunucuya ulaşılamadı. İnternetini kontrol et.'; }
+    btn.disabled = false;
+    if(hata) msj.textContent = hata; else kapat();
+  };
+  setTimeout(() => { const i = form.querySelector('input'); if(i) i.focus(); }, 50);
+  return overlay;
+}
+async function sunucuHata(res){ try{ const j = await res.json(); return typeof j.error === 'string' ? j.error : (j.error && j.error.message) || ('HTTP ' + res.status); }catch(e){ return 'HTTP ' + res.status; } }
+function sifreDegistirAc(zorunluNot){
+  formModal({
+    id: 'sifreModal', baslik: 'Şifremi değiştir', kapatilamaz: !!zorunluNot,
+    aciklama: (zorunluNot ? escapeHtml(zorunluNot) + '<br>' : '') + 'En az 8 karakter. Şifre değişince diğer cihazlarındaki oturumlar kapanır.',
+    alanlar: [
+      { id: 'sdEski', etiket: zorunluNot ? 'Geçici şifren' : 'Mevcut şifren', tip: 'password', oto: 'current-password' },
+      { id: 'sdYeni', etiket: 'Yeni şifre', tip: 'password', oto: 'new-password' },
+      { id: 'sdTekrar', etiket: 'Yeni şifre (tekrar)', tip: 'password', oto: 'new-password' },
+    ],
+    dugme: 'Şifreyi değiştir',
+    kaydet: async d => {
+      if(!d.sdEski) return 'Mevcut şifreni yaz.';
+      if(d.sdYeni.length < 8) return 'Yeni şifre en az 8 karakter olmalı.';
+      if(d.sdYeni !== d.sdTekrar) return 'Yeni şifreler aynı değil.';
+      if(d.sdYeni === d.sdEski) return 'Yeni şifre eskisinden farklı olmalı.';
+      const res = await fetch(MY_WORKER + '/auth/sifre', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eski: d.sdEski, yeni: d.sdYeni }) });
+      if(!res.ok) return res.status === 400 ? (await sunucuHata(res)).replace(/^./, c => c.toLocaleUpperCase('tr-TR')) + '.' : await sunucuHata(res);
+      const k = kullaniciBilgi(); if(k){ k.sifreDegismeli = false; _snYaz(KULLANICI_KEY, JSON.stringify(k)); }
+      showAlertModal('Şifren değiştirildi. Diğer cihazlarında yeni şifrenle tekrar giriş yapman gerekecek.');
+      return null;
+    },
   });
 }
 
@@ -3755,6 +3968,9 @@ function _snReloadIzinli(){
 async function senkronBaslat(){
   if(!localStorage.getItem(ERISIM_KEY)) return;
   senkronDurumYaz('senkron');
+  await oturumYukselt();
+  if(!localStorage.getItem(ERISIM_KEY)) return;
+  hesapArayuzu();
   try{
     const degisti = await senkronCek();
     if(degisti && _snReloadIzinli()){ location.reload(); return; }
@@ -3762,7 +3978,6 @@ async function senkronBaslat(){
     senkronDurumYaz('hata');
   }
   _senkronHazir = true;
-  if(typeof krediTohumla === 'function') krediTohumla();     // sabit kredileri ilk kez D1'e yaz
   if(typeof duzenliHarcamaEkle === 'function') duzenliHarcamaEkle();   // düzenli ödemeler → bu ay ve gelecek ayın harcamaları
   if(Object.keys(_snMeta.bekleyen).length) senkronGonder(); else if(_snSonCekme) senkronDurumYaz('ok');
 }
@@ -4883,6 +5098,7 @@ async function haberleriCevir(){
   });
   if(!bekleyen.length) return;
   if(typeof bpBugunHarcama === 'function' && bpBugunHarcama() >= bp.ayar.limit) return;   // günlük limit doluysa çevirme
+  if(kullaniciBilgi() && !benYonetici()) return;   // AI şimdilik yalnız yönetici hesabında (başlıklar aslıyla kalır)
 
   _ceviriDevam = true;
   try{
@@ -5817,87 +6033,12 @@ if(!AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
 // ---------- Kredilerim — canlı erken kapama hesaplayıcı ----------
 // Ortak formül: kalan anapara × (aylık faiz oranı / 30) × geçen gün + %15 KKDF + %15 BSMV.
 // KKDF ve BSMV oranları (%15/%15) tüketici kredilerinde Türkiye'de yasal/standart orandır;
-// Garanti'de bu, bankanın PDF'indeki "Bugünkü Kredi Borcu" (44.475,42 ₺) ile tam eşleşerek doğrulandı.
+// Bankanın PDF'indeki "Bugünkü Kredi Borcu" rakamıyla kuruşu kuruşuna eşleştiği doğrulandı.
 //
 // İki mod var:
-//  - 'schedule': tüm ödeme planı bilinen krediler (ör. Garanti, On Bank) — taban tarih/anapara otomatik ilerler.
+//  - 'schedule': tüm ödeme planı bilinen krediler (PDF/Excel'den okunan) — taban tarih/anapara otomatik ilerler.
 //  - 'anchor'  : tek bir referans nokta bilinen krediler — taban tarih/anapara sabittir,
 //                bir sonraki ödemeden sonra kullanıcı tarafından elle güncellenmesi gerekir.
-const LOANS_TOHUM = [
-  {
-    id: 'garanti',
-    ad: 'Garanti BBVA',
-    faizOraniAylik: 1.99,
-    kkdfOrani: 15,
-    bsmvOrani: 15,
-    mode: 'schedule',
-    kaynakNotu: `Garanti BBVA'nın 19.09.2026 tarihli ödeme planı PDF'i — "Bugünkü Kredi Borcu" (44.475,42 ₺) ile tam eşleşerek doğrulandı.`,
-    schedule: [
-      { tarih:'2026-04-15', kalanAnapara:48854.76 },
-      { tarih:'2026-05-05', kalanAnapara:47582.32 },
-      { tarih:'2026-06-01', kalanAnapara:46576.51 },
-      { tarih:'2026-07-07', kalanAnapara:45893.38 },
-      { tarih:'2026-08-21', kalanAnapara:45483.42 },
-      { tarih:'2026-09-15', kalanAnapara:44322.54 },
-      { tarih:'2026-10-23', kalanAnapara:43508.99 },
-      { tarih:'2026-11-23', kalanAnapara:42483.29 },
-      { tarih:'2026-12-23', kalanAnapara:41431.06 },
-      { tarih:'2027-01-23', kalanAnapara:40351.61 },
-      { tarih:'2027-02-23', kalanAnapara:39244.24 },
-      { tarih:'2027-03-23', kalanAnapara:38108.21 },
-      { tarih:'2027-04-23', kalanAnapara:36942.79 },
-      { tarih:'2027-05-23', kalanAnapara:35747.22 },
-      { tarih:'2027-06-23', kalanAnapara:34520.74 },
-      { tarih:'2027-07-23', kalanAnapara:33262.51 },
-      { tarih:'2027-08-23', kalanAnapara:31971.74 },
-      { tarih:'2027-09-23', kalanAnapara:30647.59 },
-      { tarih:'2027-10-23', kalanAnapara:29289.17 },
-      { tarih:'2027-11-23', kalanAnapara:27895.61 },
-      { tarih:'2027-12-23', kalanAnapara:26466.00 },
-      { tarih:'2028-01-23', kalanAnapara:24999.40 },
-      { tarih:'2028-02-23', kalanAnapara:23494.86 },
-      { tarih:'2028-03-23', kalanAnapara:21951.40 },
-      { tarih:'2028-04-23', kalanAnapara:20368.00 },
-      { tarih:'2028-05-23', kalanAnapara:18743.65 },
-      { tarih:'2028-06-23', kalanAnapara:17077.28 },
-      { tarih:'2028-07-23', kalanAnapara:15367.81 },
-      { tarih:'2028-08-23', kalanAnapara:13614.10 },
-      { tarih:'2028-09-23', kalanAnapara:11815.03 },
-      { tarih:'2028-10-23', kalanAnapara:9969.42 },
-      { tarih:'2028-11-23', kalanAnapara:8076.06 },
-      { tarih:'2028-12-23', kalanAnapara:6133.72 },
-      { tarih:'2029-01-23', kalanAnapara:4141.13 },
-      { tarih:'2029-02-23', kalanAnapara:2096.99 },
-      { tarih:'2029-03-23', kalanAnapara:0.00 },
-    ],
-  },
-  {
-    id: 'onbank',
-    ad: 'On Bank',
-    faizOraniAylik: 2.99,
-    kkdfOrani: 15,
-    bsmvOrani: 15,
-    mode: 'schedule',
-    // Kaynak: kullanıcının yüklediği ONBANK_KREDİ_.xlsx — 12 taksitlik tam ödeme planı.
-    // Doğrulama: 1. ve 2. taksit (anapara+faiz+KKDF+BSMV) daha önce kullanıcının elle bildirdiği
-    // rakamlarla birebir eşleşti; toplam anapara tam ₺100.000,00 çıktı (Excel'deki kredi tutarıyla uyumlu).
-    schedule: [
-      { tarih:'2026-08-17', kalanAnapara:93301.53 },
-      { tarih:'2026-09-17', kalanAnapara:86342.70 },
-      { tarih:'2026-10-19', kalanAnapara:79113.38 },
-      { tarih:'2026-11-17', kalanAnapara:71603.04 },
-      { tarih:'2026-12-17', kalanAnapara:63800.78 },
-      { tarih:'2027-01-18', kalanAnapara:55695.25 },
-      { tarih:'2027-02-17', kalanAnapara:47274.65 },
-      { tarih:'2027-03-17', kalanAnapara:38526.75 },
-      { tarih:'2027-04-19', kalanAnapara:29438.81 },
-      { tarih:'2027-05-20', kalanAnapara:19997.62 },
-      { tarih:'2027-06-17', kalanAnapara:10189.46 },
-      { tarih:'2027-07-19', kalanAnapara:0.00 },
-    ],
-    kaynakNotu: `On Bank ödeme planı Excel'inden (ONBANK_KREDİ_.xlsx) otomatik işlendi — taban tarih/anapara ay geçtikçe kendiliğinden ilerler.`,
-  },
-];
 
 function loanGuncelBorc(loan, now = new Date()){
   const bugun = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // saat bilgisini at, sadece takvim günü
@@ -5967,20 +6108,15 @@ function saveClosedLoanIds(list){
   try{ localStorage.setItem(CLOSED_LOANS_KEY, JSON.stringify(list)); }catch(e){ /* yok say */ }
 }
 
-// Sabit krediler artık D1'de saklanır (ft_sabit_krediler_v1). LOANS_TOHUM yalnızca ilk taşıma içindir:
-// anahtar hiç yoksa (ilk kurulum) buradan yazılır, sonra sunucudaki kopya kullanılır.
+// Eski sürümde kodda tanımlı olan krediler (ft_sabit_krediler_v1) — artık yalnızca kullanıcının hesabından gelir.
+// Yeni kullanıcıda bu liste boştur; krediler PDF/Excel ya da elle Kredilerim'den eklenir (ft_custom_loans_v1).
 const FIXED_LOANS_KEY = 'ft_sabit_krediler_v1';
 function loadFixedLoans(){
   try{
     const raw = localStorage.getItem(FIXED_LOANS_KEY);
     if(raw) return JSON.parse(raw);
-  }catch(e){ /* bozuk kayıt: tohuma düş */ }
-  return (typeof LOANS_TOHUM !== 'undefined') ? LOANS_TOHUM : [];
-}
-function krediTohumla(){
-  if(localStorage.getItem(FIXED_LOANS_KEY) === null && typeof LOANS_TOHUM !== 'undefined' && LOANS_TOHUM.length){
-    localStorage.setItem(FIXED_LOANS_KEY, JSON.stringify(LOANS_TOHUM));
-  }
+  }catch(e){ /* bozuk kayıt */ }
+  return [];
 }
 
 function getAllLoans(){
@@ -7987,18 +8123,146 @@ window.addEventListener('resize', () => {
   }, 200);
 });
 
+// ---------- Kullanıcılar (yalnız yönetici): hesap ekle, geçici şifre ver, devre dışı bırak, sil ----------
+let _kullanicilar = [];
+function geciciSifreUret(){
+  const harf = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';   // karışan karakterler (0/O, 1/l/I) yok
+  const r = crypto.getRandomValues(new Uint8Array(10));
+  return [...r].map(x => harf[x % harf.length]).join('');
+}
+function boyutYaz(b){ return b >= 1048576 ? (b / 1048576).toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' MB' : Math.max(1, Math.round(b / 1024)).toLocaleString('tr-TR') + ' KB'; }
+async function renderKullanicilar(){
+  const kap = document.getElementById('kuListe');
+  if(!kap) return;
+  try{
+    const res = await fetch(MY_WORKER + '/admin/kullanicilar', { cache: 'no-store' });
+    if(!res.ok){ kap.innerHTML = `<div class="bos-not">Liste alınamadı: ${escapeHtml(await sunucuHata(res))}</div>`; return; }
+    _kullanicilar = (await res.json()).kullanicilar || [];
+  }catch(e){ kap.innerHTML = '<div class="bos-not">Sunucuya ulaşılamadı.</div>'; return; }
+  const ben = kullaniciBilgi() || {};
+  const simdi = Date.now(), ay = 30 * 864e5;
+  const L = _kullanicilar;
+  const aktif = L.filter(u => !u.disabled && u.last_login && simdi - u.last_login < ay).length;
+  const bekleyen = L.filter(u => u.must_change && !u.disabled).length;
+  const toplamB = L.reduce((t, u) => t + (u.boyut || 0), 0);
+  document.getElementById('kuToplam').textContent = L.length;
+  document.getElementById('kuToplamAlt').textContent = L.filter(u => u.disabled).length ? L.filter(u => u.disabled).length + ' hesap devre dışı' : 'hepsi açık';
+  document.getElementById('kuAktif').textContent = aktif;
+  document.getElementById('kuAktifAlt').textContent = 'açık hesaplardan ' + L.filter(u => !u.disabled).length + ' içinde';
+  document.getElementById('kuBekleyen').textContent = bekleyen;
+  document.getElementById('kuBekleyenAlt').textContent = bekleyen ? 'geçici şifreyle bekliyor' : 'herkes kendi şifresini belirledi';
+  document.getElementById('kuVeri').textContent = boyutYaz(toplamB);
+  document.getElementById('kuVeriAlt').textContent = L.reduce((t, u) => t + (u.kayit || 0), 0) + ' kayıt alanı';
+  kap.innerHTML = L.map(u => {
+    const kendim = u.id === ben.id;
+    const durum = u.disabled ? '<span style="color:var(--down);">devre dışı</span>'
+                : u.must_change ? '<span style="color:var(--amber);">geçici şifre — henüz kendi şifresini belirlemedi</span>'
+                : u.last_login ? 'son giriş ' + kisaTarihSaat(new Date(u.last_login)) : 'henüz giriş yapmadı';
+    const alt = [u.role === 'admin' ? '<b style="color:var(--amber);">yönetici</b>' : '', durum, u.kayit ? u.kayit + ' kayıt · ' + boyutYaz(u.boyut || 0) : 'veri yok'].filter(Boolean).join(' · ');
+    const ad = (u.ad ? u.ad + ' — ' : '') + u.email + (kendim ? ' (sen)' : '');
+    return `
+    <div class="satir">
+      <span class="led-dot ${u.disabled ? 'red' : 'green'}"></span>
+      <div class="satir-ana">
+        <div class="satir-ad" style="text-transform:none;" title="${escapeHtml(ad).replace(/"/g, '&quot;')}">${escapeHtml(ad)}</div>
+        <div class="satir-alt">${alt}</div>
+      </div>
+      <div class="satir-tutar"></div>
+      <div class="satir-aksiyon">
+        <button class="ikon-btn" title="${kendim ? 'Şifremi değiştir' : 'Geçici şifre ver'}" onclick="${kendim ? 'sifreDegistirAc()' : `kullaniciSifreSifirla('${u.id}')`}">🔑</button>
+        ${kendim ? '' : `<button class="ikon-btn" title="${u.disabled ? 'Girişi aç' : 'Girişi kapat (devre dışı bırak)'}" onclick="kullaniciDurum('${u.id}', ${u.disabled ? 'false' : 'true'})">${u.disabled ? '▶' : '⏸'}</button>
+        <button class="ikon-btn sil" title="Hesabı ve tüm verisini sil" onclick="kullaniciSil('${u.id}')">✕</button>`}
+      </div>
+    </div>`;
+  }).join('') || '<div class="bos-not">Henüz hesap yok.</div>';
+}
+function kuBul(id){ return _kullanicilar.find(u => u.id === id) || { email: '?' }; }
+function kuBilgiVer(eposta, sifre, ilk){
+  formModal({
+    id: 'kuBilgiModal', baslik: ilk ? 'Hesap açıldı' : 'Geçici şifre verildi', dugme: 'Tamam', vazgecYok: true,
+    aciklama: 'Aşağıdaki bilgileri kişiye kendin ilet. İlk girişte kendi şifresini belirlemesi istenecek. Bu şifre bir daha gösterilmez.',
+    alanlar: [
+      { id: 'kbAdres', etiket: 'Panel adresi', deger: location.origin + location.pathname },
+      { id: 'kbEposta', etiket: 'E-posta', deger: eposta },
+      { id: 'kbSifre', etiket: 'Geçici şifre', deger: sifre },
+    ],
+    kaydet: async () => null,
+  });
+  const m = document.getElementById('kuBilgiModal');
+  m.querySelectorAll('input').forEach(i => { i.readOnly = true; i.onfocus = () => i.select(); });
+  const kopya = document.createElement('button');
+  kopya.type = 'button'; kopya.className = 'loan-btn-cancel'; kopya.textContent = '📋 Kopyala';
+  kopya.onclick = async () => {
+    const metin = `Finansal Takip Paneli\nAdres: ${location.origin + location.pathname}\nE-posta: ${eposta}\nGeçici şifre: ${sifre}\nİlk girişte kendi şifreni belirlemen istenecek.`;
+    try{ await navigator.clipboard.writeText(metin); kopya.textContent = '✓ Kopyalandı'; }catch(e){ kopya.textContent = 'Kopyalanamadı — elle seç'; }
+  };
+  m.querySelector('.form-modal-dugmeler').appendChild(kopya);
+}
+async function kullaniciEkle(){
+  const ep = document.getElementById('kuEposta'), ad = document.getElementById('kuAd'), sf = document.getElementById('kuSifre');
+  const eposta = ep.value.trim(), sifre = sf.value.trim() || geciciSifreUret();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(eposta)){ showAlertModal('Geçerli bir e-posta adresi yaz.'); ep.focus(); return; }
+  if(sifre.length < 8){ showAlertModal('Geçici şifre en az 8 karakter olmalı — boş bırakırsan otomatik üretilir.'); sf.focus(); return; }
+  try{
+    const res = await fetch(MY_WORKER + '/admin/kullanicilar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: eposta, ad: ad.value.trim(), sifre }) });
+    if(!res.ok){ showAlertModal('Eklenemedi: ' + await sunucuHata(res)); return; }
+  }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); return; }
+  ep.value = ''; ad.value = ''; sf.value = '';
+  document.getElementById('kuForm').classList.remove('acik');
+  await renderKullanicilar();
+  kuBilgiVer(eposta.toLocaleLowerCase('tr-TR'), sifre, true);
+}
+function kullaniciSifreSifirla(id){
+  const u = kuBul(id);
+  showConfirmModal(u.email + ' için yeni bir geçici şifre üretilsin mi? Eski şifresi geçersiz olur ve tüm cihazlardaki oturumu kapanır.', async () => {
+    const sifre = geciciSifreUret();
+    try{
+      const res = await fetch(MY_WORKER + '/admin/kullanicilar/' + encodeURIComponent(id) + '/sifre', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sifre }) });
+      if(!res.ok){ showAlertModal('Şifre verilemedi: ' + await sunucuHata(res)); return; }
+    }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); return; }
+    await renderKullanicilar();
+    kuBilgiVer(u.email, sifre, false);
+  });
+}
+function kullaniciDurum(id, kapat){
+  const u = kuBul(id);
+  const isle = async () => {
+    try{
+      const res = await fetch(MY_WORKER + '/admin/kullanicilar/' + encodeURIComponent(id) + '/durum', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ disabled: kapat }) });
+      if(!res.ok){ showAlertModal('Yapılamadı: ' + await sunucuHata(res)); return; }
+    }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); return; }
+    renderKullanicilar();
+  };
+  if(kapat) showConfirmModal(u.email + ' devre dışı bırakılsın mı? Giriş yapamaz, açık oturumları kapanır; verisi silinmez, istediğinde tekrar açabilirsin.', isle);
+  else isle();
+}
+function kullaniciSil(id){
+  const u = kuBul(id);
+  showConfirmModal(u.email + ' hesabı ve TÜM verisi (' + (u.kayit || 0) + ' kayıt) kalıcı olarak silinsin mi? Bu geri alınamaz. Yalnızca girişini kapatmak istiyorsan ⏸ kullan.', async () => {
+    try{
+      const res = await fetch(MY_WORKER + '/admin/kullanicilar/' + encodeURIComponent(id), { method: 'DELETE' });
+      if(!res.ok){ showAlertModal('Silinemedi: ' + await sunucuHata(res)); return; }
+    }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); return; }
+    renderKullanicilar();
+  });
+}
+
 // ---------- Telefonda "Diğer" menüsü: alt çubukta olmayan sayfalar, menüdeki gruplarıyla ----------
 function digerMenuAc(){
   digerMenuKapat();
   let html = '', grup = null, ogeler = '';
   const bitir = () => { if(ogeler) html += (grup ? `<div class="diger-grup">${escapeHtml(grup)}</div>` : '') + `<div class="diger-izgara">${ogeler}</div>`; ogeler = ''; };
   document.querySelectorAll('#navPanel > .nav-grup, #navPanel > .nav-item[data-tab]').forEach(el => {
+    if(el.hidden) return;
     if(el.classList.contains('nav-grup')){ bitir(); grup = el.textContent.trim(); return; }
     if(el.hasAttribute('data-alt')) return;
     const svg = el.querySelector('svg'), ad = el.querySelector('span');
     ogeler += `<div class="diger-oge${el.classList.contains('active') ? ' active' : ''}" onclick="switchTab('${el.dataset.tab}')">${svg ? svg.outerHTML : ''}<span>${escapeHtml(ad ? ad.firstChild.textContent.trim() : '')}</span></div>`;
   });
   bitir();
+  const k = kullaniciBilgi();
+  html += `<div class="diger-grup">Hesap</div><div class="diger-hesap">${k ? `<span class="hesap-eposta">${escapeHtml(k.email)}</span>` : ''}
+    <div class="diger-hesap-dugme">${k ? '<button class="cikis-btn" onclick="digerMenuKapat(); sifreDegistirAc()">🔑 Şifremi değiştir</button>' : ''}<button class="cikis-btn" onclick="digerMenuKapat(); cikisYap()">🔒 Çıkış yap</button></div></div>`;
   const perde = document.createElement('div');
   perde.className = 'diger-perde'; perde.id = 'digerPerde';
   perde.innerHTML = `<div class="diger-sayfa" role="dialog" aria-label="Diğer sayfalar"><div class="diger-tutamak"></div>${html}</div>`;
@@ -10045,7 +10309,7 @@ function kilavuzAra(q, sekme, sonucId){
   kok.querySelectorAll('mark.kv-isaret').forEach(m => m.replaceWith(document.createTextNode(m.textContent)));
   kok.querySelectorAll('.kv-ic, summary').forEach(e => e.normalize());
   const t = String(q || '').trim().toLocaleLowerCase('tr-TR');
-  const bolumler = [...kok.querySelectorAll('details.kv-bolum')];
+  const bolumler = [...kok.querySelectorAll('details.kv-bolum')].filter(d => !d.hidden);   // yönetici bölümü diğerlerinde aramaya da girmez
   const digerleri = [...kok.querySelectorAll(`.kv-giris, .kv-sozluk, .kv-grup-bas, .kv-yonlendir, #${sekme} > .bolum:not(.kv-giris):not(.kv-sozluk), #${sekme} > .kv-not`)];
   const sonuc = document.getElementById(sonucId || 'kvSonuc');
   if(!t){
@@ -10097,6 +10361,7 @@ const TAB_BASLIKLARI = {
   harcama:  ['Harcama Takibim', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
   butce:    ['Bütçe Planlaması', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
   borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
+  kullanicilar: ['Kullanıcılar', 'Hesap aç, geçici şifre ver, girişi kapat — yalnız yönetici görür'],
   sss:      ['Sık Sorulan Sorular', 'En sık takılınan noktaların kısa cevapları — konulara göre'],
   kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle'],
   rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],
@@ -10129,6 +10394,7 @@ function switchTab(tabId){
   if(tabId === 'netgecmis') renderNetGecmis();
   if(tabId === 'hedef') renderHedef();
   if(tabId === 'rapor') renderRapor();
+  if(tabId === 'kullanicilar') renderKullanicilar();
   window.scrollTo(0, 0);
 }
 
