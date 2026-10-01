@@ -139,6 +139,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 - Aylık ortalama = seçili yılda harcama girilmiş **tamamlanmış** ayların ortalaması (süren ay yarım olduğu için katılmaz; kategori ortalamaları da aynı); yıl sonu tahmini = ortalama × 12. Süren ay kartında önceki ayla kıyas yerine "ortalamanın %X kadarı · ayın G/N günü" gösterilir.
 - 2025 Mart–Aralık aylık toplamları (HrcmAylık sayfası, toplam ₺675.029) `genel` kategorisinde aylık toplam olarak eklendi.
 - 2026 Ocak–Eylül verisi eski bütçe Excel'inden (Bütçe Hedef Gider 2026.xlsx) bir kereliğine aktarıldı: Ocak–Ağustos aylık kategori toplamı (`kaynak:'excel'`), Eylül tek tek kayıt (`xl-2026-09-*`). Excel artık kullanılmıyor; harcamalar panelden girilir.
+- **Grafik birimi** (yıl seçicinin yanında ₺ TL / $ Dolar / Altın; `_harcamaBirim`, bu cihazda `ft_harcama_birim` ile hatırlanır): her ay **o ayın** ortalama kuru ve gram altın fiyatıyla (`T.ayUSD`, `T.ayGr`; `ft_aylik_kur_v1`). Çubuk rengi TL sarı-turuncu, dolar yeşil, altın altın sarısı; eksen, ortalama çizgisi ve başlıktaki yıl toplamı seçili birimde (kuru henüz gelmeyen ay "…" ve başlıkta "… + n ay kur bekleniyor"). İpucu seçili birimde değer + ortalamaya göre fark + diğer iki birim + o ayın ortalama kuru/gram fiyatı + en büyük 3 kategori (seçili birimde). Çubuklar `pointer-events:none` — ipucu çubuğun üstünde de açılır (önceden uzun çubuğun üstünde açılmıyordu).
 - Grafik (`harcamaGrafikCiz`, yükseklik `HARCAMA_GRAFIK_H` = 165 px; grafik + Kategoriler satırı ≈223 px): tek renk sütunlar (≤24 px, 4 px yuvarlak üst), ortalama çizgisi, bant genişliğinde isabet alanıyla fare/klavye ipucu; aylık tablo grafiğin tablo karşılığıdır. Kategori dağılımı tek renk yatay çubuk (kimliği etiket taşır; 9 kategori renkle ayırt edilmez); çubuklar en büyük kategoriye göre ölçeklenir, değer sütunu sabit (yıl toplamı + silik aylık ortalama).
 - Bay Piyasa: portföy paylaşımı açıkken harcama özeti bağlama eklenir; "💸 Harcama analizi" hazır raporu vardır.
 
@@ -237,6 +238,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | Harcama Takibim: aylık harcamalar grafiği ₺ TL / $ Dolar / gram Altın olarak seçilebilir (her ay kendi kuruyla); çubuk üstünde ipucu açılmama hatası giderildi |
 | 2026-10-01 | Nakit Akışı tahminleri enflasyon ve satın alma gücüyle: TCMB beklentisi / resmi TÜFE / kişisel / elle enflasyon yolu, harcama bugünün fiyatına taşınıp enflasyonla büyütülür, maaş artışı varsayımı (Ocak / Ocak-Temmuz / yok), "bugünün parasıyla" görünümü |
 | 2026-09-30 | Bütçe Planlaması: gelecek 12 ay seçilebilir; tutar "her ay" ya da "yalnız o ay" için kaydedilir (aya özel bütçe), ısı tablosunda gelecek aylar "plan" |
 | 2026-09-30 | "Bütçe" sayfasının adı "Bütçe Planlaması" oldu |

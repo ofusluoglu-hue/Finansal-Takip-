@@ -1800,12 +1800,17 @@
   .harcama-ikili > .bolum{margin-bottom:14px;}
   .harcama-grafik{position:relative;min-height:165px;}
   .harcama-grafik svg{display:block;width:100%;height:165px;overflow:visible;}
-  .harcama-grafik .hc-cubuk{fill:var(--amber);transition:opacity .15s;}
+  .harcama-grafik .hc-cubuk{fill:var(--amber);transition:opacity .15s;pointer-events:none;}
+  .harcama-grafik svg text{pointer-events:none;}
   .harcama-grafik .hc-cubuk.gecmis{opacity:.72;}
   .harcama-grafik .hc-hedef{fill:transparent;cursor:pointer;outline:none;}
   .harcama-grafik .hc-hedef:hover + .hc-cubuk, .harcama-grafik .hc-hedef:focus + .hc-cubuk{opacity:1;filter:brightness(1.15);}
   .harcama-grafik .hc-eksen{fill:var(--muted-2);font-size:10.5px;font-family:inherit;}
   .harcama-grafik .hc-eksen.bu-ay{fill:var(--text);font-weight:700;}
+  .birim-secim .period-btn{padding:4px 9px;font-size:11.5px;}
+  .birim-secim .period-btn[data-birim="USD"].active{color:var(--up);}
+  .birim-secim .period-btn[data-birim="ALTIN"].active{color:#F2C94C;}
+  .birim-secim .period-btn[data-birim="TL"].active{color:var(--amber);}
   .harcama-grafik .hc-ort{stroke:var(--muted);stroke-width:1;}
   .harcama-grafik .hc-ort-yazi{fill:var(--muted);font-size:10.5px;font-weight:600;font-family:inherit;}
   .harcama-ipucu{position:absolute;pointer-events:none;background:#0f141b;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--muted);box-shadow:0 6px 18px rgba(0,0,0,.45);min-width:150px;z-index:5;display:none;}
@@ -2613,9 +2618,14 @@
 
     <div class="harcama-ikili">
       <div class="bolum">
-        <div class="bolum-bas">
+        <div class="bolum-bas sarmal">
           <span class="bolum-baslik">Aylık harcamalar</span>
           <select id="harcamaYil" class="bolum-secim" title="Yıl" onchange="_harcamaYil = +this.value; renderHarcama();"></select>
+          <div class="period-toggle birim-secim" id="harcamaBirimler" role="group" aria-label="Grafik birimi">
+            <button class="period-btn" data-birim="TL" onclick="harcamaBirimSec('TL')" title="Türk lirası">₺ TL</button>
+            <button class="period-btn" data-birim="USD" onclick="harcamaBirimSec('USD')" title="Her ay o ayın ortalama dolar kuruyla">$ Dolar</button>
+            <button class="period-btn" data-birim="ALTIN" onclick="harcamaBirimSec('ALTIN')" title="Her ay o ayın ortalama gram 24 ayar altın fiyatıyla">Altın</button>
+          </div>
           <span class="bolum-toplam" id="harcamaGrafikAlt" style="color:var(--amber);"></span>
         </div>
         <div class="harcama-grafik" id="harcamaGrafik"></div>
@@ -2657,7 +2667,7 @@
       <div id="harcamaKayitlar"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Harcamaları ay bazında tek kalem olarak girersin (ay, kategori, tutar, not — ör. Eylül 2026 · Market · ₺32.000; ayın ilk 10 gününde varsayılan ay bir önceki aydır; aynı ay ve kategorideki kalemler toplanır); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. İstersen bir ayın kategori toplamını tablodan doğrudan da yazabilirsin — o ay ve kategori için elle yazılan toplam esas alınır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Harcamaları ay bazında tek kalem olarak girersin (ay, kategori, tutar, not — ör. Eylül 2026 · Market · ₺32.000; ayın ilk 10 gününde varsayılan ay bir önceki aydır; aynı ay ve kategorideki kalemler toplanır); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. İstersen bir ayın kategori toplamını tablodan doğrudan da yazabilirsin — o ay ve kategori için elle yazılan toplam esas alınır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Aylık harcamalar grafiğini ₺ TL, $ Dolar ya da gram Altın olarak görebilirsin (seçim bu cihazda hatırlanır). Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: HARCAMA İSTATİSTİKLERİ ================= -->
 
@@ -7292,12 +7302,41 @@ function guzelAdim(x){
 function kisaTL(v){ return v >= 1e6 ? '₺' + fmtNumber(v / 1e6, 1) + ' mn' : v >= 1e3 ? '₺' + fmtNumber(v / 1e3, v >= 1e4 ? 0 : 1) + ' bin' : '₺' + fmtNumber(v, 0); }
 
 const HARCAMA_GRAFIK_H = 165;   // grafik yüksekliği (px) — Kategoriler listesiyle aynı boyda
+// Grafik birimi: ₺ TL | $ Dolar | gram altın — her ay O AYIN ortalama kuru / gram altın fiyatıyla (ft_aylik_kur_v1). Tercih bu cihazda hatırlanır.
+let _harcamaBirim = 'TL';
+try{ const b0 = localStorage.getItem('ft_harcama_birim'); if(['TL', 'USD', 'ALTIN'].includes(b0)) _harcamaBirim = b0; }catch(e){ /* yok */ }
+const HARCAMA_BIRIM_RENK = { TL: 'var(--amber)', USD: 'var(--up)', ALTIN: '#F2C94C' };
+function harcamaBirimSec(b){
+  _harcamaBirim = b;
+  try{ localStorage.setItem('ft_harcama_birim', b); }catch(e){ /* yok */ }
+  renderHarcama();
+}
+function harcamaBirimFmt(v, birim, kisa){
+  if(v == null) return '—';
+  if(birim === 'USD') return '$' + (kisa && v >= 1e3 ? fmtNumber(v / 1e3, v >= 1e4 ? 0 : 1) + ' bin' : fmtNumber(v, 0));
+  if(birim === 'ALTIN') return fmtNumber(v, kisa || v >= 100 ? 0 : 1) + ' gr';
+  return kisa ? kisaTL(v) : '₺' + fmtNumber(v, 0);
+}
+// Seçili birimde aylık değerler ve ortalama (kuru henüz gelmeyen ay null)
+function harcamaBirimDegerleri(T, birim){
+  if(birim === 'USD') return { aylar: T.ayUSD, ort: T.ortUSD, yil: T.yilUSD };
+  if(birim === 'ALTIN') return { aylar: T.ayGr, ort: T.ortGr, yil: T.yilGr };
+  return { aylar: T.ayToplam, ort: T.ortalama, yil: T.yilToplam };
+}
 function harcamaGrafikCiz(T){
   const kap = document.getElementById('harcamaGrafik');
   if(!kap) return;
+  document.querySelectorAll('#harcamaBirimler button').forEach(x => x.classList.toggle('active', x.dataset.birim === _harcamaBirim));
   if(!T.yilToplam){ kap.innerHTML = '<div class="harcama-bos">Bu yıl için henüz harcama yok — aşağıdan kayıt ekleyebilir ya da tablodan aylık toplam yazabilirsin.</div>'; return; }
+  const B = _harcamaBirim, D = harcamaBirimDegerleri(T, B), renk = HARCAMA_BIRIM_RENK[B];
+  // Harcaması olup kuru henüz gelmeyen aylar (dolar/altın görünümünde)
+  const bekleyen = T.ayToplam.map((v, i) => v > 0 && D.aylar[i] == null ? i : -1).filter(i => i >= 0);
+  if(B !== 'TL' && bekleyen.length === T.veriliAylar.length){
+    kap.innerHTML = `<div class="harcama-bos">${B === 'USD' ? 'Dolar' : 'Gram altın'} karşılıkları için aylık kurlar yükleniyor…</div>`;
+    return;
+  }
   const W = Math.max(kap.clientWidth || 0, 300), H = HARCAMA_GRAFIK_H, PL = 52, PR = 10, PT = 12, PB = 24;
-  const tepeHam = Math.max(...T.ayToplam, T.ortalama);
+  const tepeHam = Math.max(...D.aylar.map(v => v || 0), D.ort || 0);
   const adim = guzelAdim(tepeHam / 4);
   const tepe = Math.ceil(tepeHam / adim) * adim || adim;
   const y = v => PT + (1 - v / tepe) * (H - PT - PB);
@@ -7306,40 +7345,45 @@ function harcamaGrafikCiz(T){
   let svg = '';
   for(let v = 0; v <= tepe + 1e-9; v += adim){
     svg += `<line x1="${PL}" x2="${W - PR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="#222a35" stroke-width="1"/>`;
-    svg += `<text class="hc-eksen" x="${PL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end">${kisaTL(v)}</text>`;
+    svg += `<text class="hc-eksen" x="${PL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end">${harcamaBirimFmt(v, B, true)}</text>`;
   }
-  T.ayToplam.forEach((v, i) => {
+  D.aylar.forEach((v, i) => {
     const x0 = PL + i * bant + (bant - bw) / 2;
     svg += `<text class="hc-eksen${i === buAy ? ' bu-ay' : ''}" x="${(x0 + bw / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle">${AY_KISA[i]}</text>`;
     // Görünmez, bandın tamamını kaplayan isabet alanı (işaretten büyük) — klavyeyle de odaklanır
-    svg += `<rect class="hc-hedef" data-ay="${i}" tabindex="0" x="${(PL + i * bant).toFixed(1)}" y="${PT}" width="${bant.toFixed(1)}" height="${H - PT - PB}" aria-label="${AY_UZUN[i]} ${fmtNumber(v, 0)} TL"></rect>`;
+    svg += `<rect class="hc-hedef" data-ay="${i}" tabindex="0" x="${(PL + i * bant).toFixed(1)}" y="${PT}" width="${bant.toFixed(1)}" height="${H - PT - PB}" aria-label="${AY_UZUN[i]} ${harcamaBirimFmt(v, B)}"></rect>`;
     if(v > 0){
-      const y0 = y(v), taban = H - PB, r = Math.min(4, taban - y0);
-      svg += `<path class="hc-cubuk${i === buAy ? '' : ' gecmis'}" d="M${x0.toFixed(1)},${taban} V${(y0 + r).toFixed(1)} Q${x0.toFixed(1)},${y0.toFixed(1)} ${(x0 + r).toFixed(1)},${y0.toFixed(1)} H${(x0 + bw - r).toFixed(1)} Q${(x0 + bw).toFixed(1)},${y0.toFixed(1)} ${(x0 + bw).toFixed(1)},${(y0 + r).toFixed(1)} V${taban} Z"/>`;
+      const y0 = y(v), taban = H - PB, r0 = Math.min(4, taban - y0);
+      svg += `<path class="hc-cubuk${i === buAy ? '' : ' gecmis'}" style="fill:${renk};" d="M${x0.toFixed(1)},${taban} V${(y0 + r0).toFixed(1)} Q${x0.toFixed(1)},${y0.toFixed(1)} ${(x0 + r0).toFixed(1)},${y0.toFixed(1)} H${(x0 + bw - r0).toFixed(1)} Q${(x0 + bw).toFixed(1)},${y0.toFixed(1)} ${(x0 + bw).toFixed(1)},${(y0 + r0).toFixed(1)} V${taban} Z"/>`;
+    } else if(T.ayToplam[i] > 0){
+      svg += `<text class="hc-eksen" x="${(x0 + bw / 2).toFixed(1)}" y="${(H - PB - 4).toFixed(1)}" text-anchor="middle">…</text><path class="hc-cubuk" d="" />`;   // kur bekleniyor
     } else {
       svg += `<path class="hc-cubuk" d="" />`;
     }
   });
-  if(T.ortalama > 0){
-    const yo = y(T.ortalama).toFixed(1);
+  if(D.ort > 0){
+    const yo = y(D.ort).toFixed(1);
     svg += `<line class="hc-ort" x1="${PL}" x2="${W - PR}" y1="${yo}" y2="${yo}"/>`;
-    svg += `<text class="hc-ort-yazi" x="${W - PR}" y="${(+yo - 5).toFixed(1)}" text-anchor="end">ort. ${kisaTL(T.ortalama)}</text>`;
+    svg += `<text class="hc-ort-yazi" x="${W - PR}" y="${(+yo - 5).toFixed(1)}" text-anchor="end">ort. ${harcamaBirimFmt(D.ort, B, true)}</text>`;
   }
-  kap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${_harcamaYil} aylık harcama toplamları">${svg}</svg><div class="harcama-ipucu" id="harcamaIpucu"></div>`;
+  kap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${_harcamaYil} aylık harcama toplamları (${B === 'USD' ? 'dolar' : B === 'ALTIN' ? 'gram altın' : 'TL'})">${svg}</svg><div class="harcama-ipucu" id="harcamaIpucu"></div>`;
 
-  // İpucu: değer önde (güçlü), ay adı ve en büyük 3 kategori ardından. Metinler textContent ile eklenir.
+  // İpucu: seçili birimde değer önde; ay adı ve ortalamaya göre; diğer iki birim ve o ayın kuru; en büyük 3 kategori (seçili birimde)
   const ipucu = document.getElementById('harcamaIpucu');
+  const satir = (sol, sag, renk2) => { const sat = document.createElement('div'); const s1 = document.createElement('span'); s1.textContent = sol; const s2 = document.createElement('span'); s2.textContent = sag; s2.style.color = renk2 || 'var(--text)'; sat.append(s1, s2); ipucu.appendChild(sat); };
   const goster = (hedef) => {
-    const ay = +hedef.dataset.ay, v = T.ayToplam[ay];
+    const ay = +hedef.dataset.ay, tl = T.ayToplam[ay], v = D.aylar[ay];
+    const kur = _aylikKur[ayAnahtar(_harcamaYil, ay)];
     ipucu.textContent = '';
-    const b = document.createElement('b'); b.textContent = '₺' + fmtNumber(v, 0); ipucu.appendChild(b);
-    const baslik = document.createElement('div'); baslik.textContent = AY_UZUN[ay] + ' ' + _harcamaYil + (T.ortalama && v ? ' · ort. ' + (v >= T.ortalama ? '+' : '−') + '%' + fmtNumber(Math.abs(v / T.ortalama - 1) * 100, 0) : ''); ipucu.appendChild(baslik);
-    if(T.ayUSD[ay] != null){ const kr = document.createElement('div'); kr.textContent = '$' + fmtNumber(T.ayUSD[ay], 0) + ' · ' + fmtGr(T.ayGr[ay]); kr.style.color = 'var(--text)'; ipucu.appendChild(kr); }
+    const b = document.createElement('b'); b.textContent = tl > 0 && v == null ? 'kur yükleniyor…' : harcamaBirimFmt(v || 0, B); b.style.color = renk; ipucu.appendChild(b);
+    const baslik = document.createElement('div'); baslik.textContent = AY_UZUN[ay] + ' ' + _harcamaYil + (D.ort && v ? ' · ort. ' + (v >= D.ort ? '+' : '−') + '%' + fmtNumber(Math.abs(v / D.ort - 1) * 100, 0) : ''); ipucu.appendChild(baslik);
+    if(B !== 'TL') satir('TL', '₺' + fmtNumber(tl, 0), 'var(--amber)');
+    if(B !== 'USD' && T.ayUSD[ay] != null) satir('Dolar', '$' + fmtNumber(T.ayUSD[ay], 0), 'var(--up)');
+    if(B !== 'ALTIN' && T.ayGr[ay] != null) satir('Gram altın', fmtGr(T.ayGr[ay]), '#F2C94C');
+    if(kur && B !== 'TL') satir('O ayın ort. ' + (B === 'USD' ? 'kuru' : 'gram altını'), '₺' + fmtNumber(B === 'USD' ? kur.usd : kur.gramAltin, B === 'USD' ? 2 : 0), 'var(--muted)');
+    const bol = B === 'USD' ? (kur && kur.usd) : B === 'ALTIN' ? (kur && kur.gramAltin) : 1;
     HARCAMA_KATEGORILER.map(({ k, ad }) => [ad, T.hucre[k][ay].tutar]).filter(x => x[1] > 0).sort((a, b2) => b2[1] - a[1]).slice(0, 3).forEach(([ad, t]) => {
-      const sat = document.createElement('div');
-      const s1 = document.createElement('span'); s1.textContent = ad;
-      const s2 = document.createElement('span'); s2.textContent = '₺' + fmtNumber(t, 0); s2.style.color = 'var(--text)';
-      sat.append(s1, s2); ipucu.appendChild(sat);
+      satir(ad, bol ? harcamaBirimFmt(t / bol, B) : '₺' + fmtNumber(t, 0));
     });
     ipucu.style.display = 'block';
     const kr = kap.getBoundingClientRect(), hr = hedef.getBoundingClientRect();
@@ -7417,7 +7461,10 @@ function renderHarcama(){
   ozetDetayYaz('harcamaEnBuyukDetay', katSira[1] ? [['2.', katSira[1].ad + ' %' + fmtNumber(katSira[1].t / T.yilToplam * 100, 0)], katSira[2] ? ['3.', katSira[2].ad + ' %' + fmtNumber(katSira[2].t / T.yilToplam * 100, 0)] : null] : []);
 
   // ---- Grafik (yalnızca sekme görünürken çizilir; gizli sekmede genişlik 0'dır)
-  istYaz('harcamaGrafikAlt', T.yilToplam ? '₺' + fmtNumber(T.yilToplam, 0) : '');
+  { const D = harcamaBirimDegerleri(T, _harcamaBirim), el = document.getElementById('harcamaGrafikAlt');
+    const eksik = T.veriliAylar.filter(i => D.aylar[i] == null).length;
+    const kismi = T.veriliAylar.reduce((t, i) => t + (D.aylar[i] || 0), 0);
+    if(el){ el.textContent = !T.yilToplam ? '' : D.yil != null ? harcamaBirimFmt(D.yil, _harcamaBirim) : eksik < T.veriliAylar.length ? harcamaBirimFmt(kismi, _harcamaBirim) + ' + ' + eksik + ' ay kur bekleniyor' : 'kurlar yükleniyor…'; el.style.color = HARCAMA_BIRIM_RENK[_harcamaBirim]; el.title = _harcamaBirim === 'TL' ? '' : 'Yıl toplamı: her ay kendi ortalama kuruyla çevrilip toplandı'; } }
   const sekme = document.getElementById('tab-harcama');
   if(sekme && sekme.classList.contains('active')) harcamaGrafikCiz(T);
 
