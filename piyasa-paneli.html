@@ -1895,7 +1895,7 @@
   .hk-kutu{border:1px dashed var(--border);border-radius:10px;padding:10px 12px;margin:6px 0 8px;background:var(--panel-2);}
   .hk-bas{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
   .hk-bas > span{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
-  .hk-kutu[data-mod="elle"] .hk-yat, .hk-kutu[data-mod="yatirim"] .hk-elle{display:none;}
+  .hk-kutu[data-mod="elle"] .hk-yat, .hk-kutu[data-mod="elle"] .hk-var, .hk-kutu[data-mod="yatirim"] .hk-elle, .hk-kutu[data-mod="yatirim"] .hk-var, .hk-kutu[data-mod="varlik"] .hk-elle, .hk-kutu[data-mod="varlik"] .hk-yat{display:none;}
   .hk-liste{display:grid;grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));gap:4px 16px;margin-top:6px;}
   .hk-grup{display:flex;flex-direction:column;gap:2px;}
   .hk-grup-ad{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin:4px 0 2px;}
@@ -1905,6 +1905,11 @@
   .hk-tum span{text-transform:none;font-weight:600;}
   .hk-tum small{color:var(--muted-2);font-weight:500;}
   .hk-toplam{margin-top:8px;font-size:12px;color:var(--muted);}
+  .hk-acil{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--text);margin:4px 2px 2px;cursor:pointer;}
+  .hk-acil-oneri{font-size:12px;color:var(--muted);line-height:1.9;margin:2px 2px 4px;}
+  .hk-acil-oneri:empty{display:none;}
+  .hk-acil-oneri b{color:var(--text);}
+  .hk-acil-oneri .bolum-ekle{padding:3px 9px;margin-right:4px;}
   .hk-toplam b{color:var(--up);}
   .period-btn:disabled{opacity:.4;cursor:default;}
   @media (max-width:640px){
@@ -2285,6 +2290,7 @@
             <option value="Otomobil">Otomobil</option>
             <option value="Arsa">Arsa</option>
             <option value="Dükkan">Dükkan</option>
+            <option value="Nakit / Mevduat">Nakit / Mevduat</option>
             <option value="Diğer">Diğer</option>
           </select>
           <input type="text" id="varlikAdInput" class="ai-input" style="max-width:240px;min-width:160px;" placeholder="Ad (ör. Gaziosmanpaşa Dairesi)">
@@ -3063,13 +3069,15 @@
           <select id="hedefBirimInput" class="ai-input" style="max-width:90px;min-width:80px;" title="Hedefin para birimi — enflasyona karşı dolar seçebilirsin"><option value="TL">₺ TL</option><option value="USD">$ USD</option></select>
           <select id="hedefAyInput" class="ai-input" style="max-width:160px;min-width:130px;" title="Hedef ay"></select>
         </div>
+        <label class="hk-acil"><input type="checkbox" id="hedefAcilInput" onchange="hedefAcilDegisti()"> Bu bir <b>acil durum fonu</b> <span class="ozet-soluk">— kaç aylık gideri karşıladığı gösterilir</span></label>
+        <div class="hk-acil-oneri" id="hedefAcilOneri"></div>
         <div id="hedefKaynakAlan"></div>
         <div class="loan-add-row" style="margin-top:4px;"><button class="ai-btn" onclick="hedefEkle()">Hedef Ekle</button></div>
       </div>
       <div id="hdListe"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Her hedef için tutar ve tarih girersin; ayda ayırman gereken = kalan ÷ hedef ayına kadar kalan ay (içinde bulunulan ay hariç, hedef ayı dahil). Çubuktaki ince çizgi, hedefi eklediğin günden hedef ayının sonuna doğrusal plana göre bugün ulaşman gereken yerdir: birikim çizginin önündeyse "planın önünde". Birikimi elle takip edersen + ile ekler (eksi yazıp çıkarırsın); "Yatırımlarımdan (otomatik)" seçip bir ya da birkaç yatırımını (ya da tüm yatırımlarını) işaretlersen canlı değerleri toplanıp kendiliğinden işler (↻). Kaynağı sonradan ⇄ ile değiştirebilirsin: önceki elle değer saklanır (geri dönersen o gelir, yoksa o anki değer yazılır) ve plan çizgisi değiştirdiğin günden, o anki birikimden yeniden başlar. Enflasyona karşı hedefi dolar olarak koyabilirsin; TL karşılığı bugünkü kurla gösterilir. Kartlardaki dolar ve altın karşılıkları güncel kur ve gram 24 ayar altın fiyatıyladır (ons ÷ 31,1035 × kur) ve fiyatlar her yenilendiğinde güncellenir. Gelirini Nakit Akışı'na girdiysen, gereken tutar ay sonunda kalan ortalamayla karşılaştırılır. Hedefler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Her hedef için tutar ve tarih girersin; ayda ayırman gereken = kalan ÷ hedef ayına kadar kalan ay (içinde bulunulan ay hariç, hedef ayı dahil). Çubuktaki ince çizgi, hedefi eklediğin günden hedef ayının sonuna doğrusal plana göre bugün ulaşman gereken yerdir: birikim çizginin önündeyse "planın önünde". Birikimi elle takip edersen + ile ekler (eksi yazıp çıkarırsın); "Yatırımlarımdan (otomatik)" seçip bir ya da birkaç yatırımını (ya da tüm yatırımlarını) işaretlersen canlı değerleri toplanıp kendiliğinden işler (↻). Birikimi Varlıklarım'daki bir varlığa da bağlayabilirsin (ör. Nakit / Mevduat türündeki acil durum fonu; Varlıklarım'da tutarı güncelledikçe hedef de güncellenir). "Acil durum fonu" olarak işaretlenen hedefte, birikimin kaç aylık zorunlu gideri karşıladığı gösterilir (aylık gider = Nakit Akışı'ndaki harcama tahmini, yani son 6 ayın bugünün fiyatına taşınmış medyanı ya da bütçe + önümüzdeki 3 ayın ortalama kredi taksidi; 1 ayın altı kırmızı, 3 ayın altı sarı, 3 ay ve üstü yeşil; yaygın ölçü 3–6 ay). Kaynağı sonradan ⇄ ile değiştirebilirsin: önceki elle değer saklanır (geri dönersen o gelir, yoksa o anki değer yazılır) ve plan çizgisi değiştirdiğin günden, o anki birikimden yeniden başlar. Enflasyona karşı hedefi dolar olarak koyabilirsin; TL karşılığı bugünkü kurla gösterilir. Kartlardaki dolar ve altın karşılıkları güncel kur ve gram 24 ayar altın fiyatıyladır (ons ÷ 31,1035 × kur) ve fiyatlar her yenilendiğinde güncellenir. Gelirini Nakit Akışı'na girdiysen, gereken tutar ay sonunda kalan ortalamayla karşılaştırılır. Hedefler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: BİRİKİM HEDEFLERİ ================= -->
 
@@ -6647,6 +6655,7 @@ const VARLIK_KATEGORI_RENK = {
   Dükkan: '#C9A6FF',
   Diğer: '#5EEAD4',
   'Yatırımlar': '#FF8A65',
+  'Nakit / Mevduat': '#E879F9',
 };
 
 // Halka (donut) grafik — SVG. Dilimler arasında her yerde aynı kalınlıkta aralık (kart zemini rengi, 2 px).
@@ -6698,7 +6707,10 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   // Kartların alt satırları
   const brut = toplamVarlikListesi + toplamYatirim;
   ozetDetayYaz('finansalNetDetay', [['Varlık+yat.', '₺' + fmtNumber(brut, 0)], ['Borç', '−₺' + fmtNumber(toplamBorc, 0)]]);
-  ozetDetayYaz('finansalVarlikDetay', [['Kalem', (varlikListesi || []).length + ' varlık'], brut > 0 ? ['Servetin', '%' + fmtNumber(toplamVarlikListesi / brut * 100, 1)] : null]);
+  let acil = null;
+  try{ acil = acilFonDurum(); }catch(e){ /* açılışta hedef/enflasyon sabitleri henüz tanımlı değilse: bir sonraki çizimde gelir */ }
+  ozetDetayYaz('finansalVarlikDetay', [['Kalem', (varlikListesi || []).length + ' varlık'], brut > 0 ? ['Servetin', '%' + fmtNumber(toplamVarlikListesi / brut * 100, 1)] : null,
+    acil && acil.ay != null ? ['Acil fon', `<span style="color:${acil.renk};" title="Acil durum fonu ₺${fmtNumber(acil.tl, 0)} · aylık zorunlu gider ≈ ₺${fmtNumber(acil.gider.toplam, 0)} (${acil.etiket})">₺${fmtNumber(acil.tl, 0)} · ${fmtNumber(acil.ay, 1)} ay</span>`] : null]);
   ozetDetayYaz('finansalYatirimDetay', [brut > 0 ? ['Servetin', '%' + fmtNumber(toplamYatirim / brut * 100, 1)] : null, ['Kaynak', 'canlı fiyatlar']]);
   ozetDetayYaz('finansalBorcDetay', [brut > 0 ? ['Servete oranı', '%' + fmtNumber(toplamBorc / brut * 100, 1)] : null]);
 
@@ -6738,7 +6750,7 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
 
   legendEl.innerHTML = kategoriler.map(kat => {
     const yuzde = kategoriToplam[kat] / pastaToplam * 100;
-    return `<span class="pl-oge" title="${escapeHtml(kat)} · ₺${fmtNumber(kategoriToplam[kat], 0)}"><i style="background:${VARLIK_KATEGORI_RENK[kat] || '#888'};"></i><span class="pl-ad">${escapeHtml(kat)}</span><b>%${fmtNumber(yuzde,1)}</b></span>`;
+    return `<span class="pl-oge" title="${escapeHtml(kat)} · ₺${fmtNumber(kategoriToplam[kat], 0)}"><i style="background:${VARLIK_KATEGORI_RENK[kat] || '#888'};"></i><span class="pl-ad">${escapeHtml(kat === 'Nakit / Mevduat' ? 'Nakit' : kat)}</span><b>%${fmtNumber(yuzde,1)}</b></span>`;
   }).join('');
 }
 
@@ -9190,10 +9202,17 @@ function hedefYatirimlari(h){
   return yat.filter(y => idler.includes(y.id));
 }
 function hedefElleMi(h){ return h.kaynak === 'elle' || !h.kaynak; }
+// Hedefe bağlı varlıklar (Finansal Durumum › Varlıklarım; ör. Nakit / Mevduat'taki acil durum fonu)
+function hedefVarliklari(h){
+  if(h.kaynak !== 'varlik') return [];
+  const idler = h.varliklar || [];
+  return manuelListeYukle(VARLIK_KEY).filter(v => idler.includes(v.id));
+}
 function hedefBirikim(h){
   if(hedefElleMi(h)) return Number(h.birikmis) || 0;
-  const secili = hedefYatirimlari(h);
-  const tl = secili.reduce((t, y) => { const d = yatirimDegerHesapla(y); return t + (d ? d.tutarTL || 0 : 0); }, 0);
+  const tl = h.kaynak === 'varlik'
+    ? hedefVarliklari(h).reduce((t, v) => t + (Number(v.deger) || 0), 0)
+    : hedefYatirimlari(h).reduce((t, y) => { const d = yatirimDegerHesapla(y); return t + (d ? d.tutarTL || 0 : 0); }, 0);
   if(h.birim === 'USD'){ const k = hedefKur(); return k ? tl / k : 0; }
   return tl;
 }
@@ -9202,14 +9221,58 @@ function hedefFmt(v, birim){ return birim === 'USD' ? '$' + fmtNumber(v, 0) : '�
 function hedefKaynakAd(h){
   if(h.kaynak === 'tum') return 'tüm yatırımlar';
   if(hedefElleMi(h)) return 'elle';
+  if(h.kaynak === 'varlik'){ const v = hedefVarliklari(h); return !v.length ? 'seçili varlık kalmadı' : v.length <= 2 ? v.map(x => x.ad).join(' + ') : v.length + ' varlık'; }
   const y = hedefYatirimlari(h);
   if(!y.length) return 'seçili yatırım kalmadı';
   return y.length <= 3 ? y.map(yatirimEtiket).join(' + ') : y.length + ' yatırım';
 }
+// ---------- Acil durum fonu: kaç aylık zorunlu gideri karşılıyor ----------
+// Aylık zorunlu gider = harcama (Nakit Akışı modeli: son 6 ayın bugünün fiyatına taşınmış medyanı ya da bütçe) + önümüzdeki 3 ayın ortalama kredi taksidi
+function aylikZorunluGider(){
+  try{
+    const M = nakitTahminModeli({}), simdiK = buAyAnahtar();
+    let taksit = 0;
+    for(let i = 1; i <= 3; i++) taksit += ayTaksitleri(ayKaydir(simdiK, i)).reduce((t, x) => t + x.tutar, 0);
+    taksit /= 3;
+    return { harcama: M.tutar || 0, taksit, toplam: (M.tutar || 0) + taksit };
+  }catch(e){ return { harcama: 0, taksit: 0, toplam: 0 }; }
+}
+function hedefAcilMi(h){ return !!h.acil || /acil/i.test(String(h.ad || '')); }   // eski hedefler adından tanınır
+// Acil fon hedeflerinin bugünkü toplamı (TL) ve kaç aylık gidere denk geldiği
+function acilFonDurum(){
+  const l = hedefYukle().filter(hedefAcilMi);
+  if(!l.length) return null;
+  const tl = l.reduce((t, h) => t + (hedefTL(hedefBirikim(h), h.birim) || 0), 0);
+  const g = aylikZorunluGider();
+  const ay = g.toplam > 0 ? tl / g.toplam : null;
+  return { tl, ay, gider: g, renk: ay == null ? 'var(--muted)' : ay < 1 ? 'var(--down)' : ay < 3 ? 'var(--amber)' : 'var(--up)', etiket: ay == null ? '' : ay < 1 ? 'yetersiz' : ay < 3 ? '3 ayın altında' : ay < 6 ? 'yeterli' : 'güçlü' };
+}
+function hedefAcilDegisti(){
+  const c = document.getElementById('hedefAcilInput'), el = document.getElementById('hedefAcilOneri');
+  if(!c || !el) return;
+  if(!c.checked){ el.innerHTML = ''; return; }
+  const ad = document.getElementById('hedefAdInput'); if(ad && !ad.value.trim()) ad.value = 'Acil durum fonu';
+  // Nakit / Mevduat türünde varlık varsa: kaynak kendiliğinden "Varlıklarımdan" ve o varlıklar işaretli
+  const kutu = document.getElementById('hkfKutu');
+  if(kutu && !kutu.querySelector('.hk-varlik-liste input:checked')){
+    const nakit = manuelListeYukle(VARLIK_KEY).filter(v => v.tur === 'Nakit / Mevduat').map(v => v.id);
+    if(nakit.length){
+      kutu.querySelectorAll('.hk-varlik-liste input').forEach(i => { if(nakit.includes(i.value)) i.checked = true; });
+      hedefKaynakMod('hkf', 'varlik');
+    }
+  }
+  const g = aylikZorunluGider(), yuv = v => Math.ceil(v / 5000) * 5000;
+  el.innerHTML = g.toplam ? `Aylık zorunlu giderin ≈ <b>₺${fmtNumber(g.toplam, 0)}</b> (harcama ₺${fmtNumber(g.harcama, 0)} + taksit ₺${fmtNumber(g.taksit, 0)}). Önerilen hedef:
+      ${[3, 6].map(n => `<button type="button" class="bolum-ekle" onclick="document.getElementById('hedefTutarInput').value = ${yuv(g.toplam * n)};">${n} ay · ₺${fmtNumber(yuv(g.toplam * n), 0)}</button>`).join(' ')}
+      <span class="ozet-soluk">Para Varlıklarım'da duruyorsa aşağıdan "Varlıklarımdan"ı seç.</span>`
+    : 'Aylık gideri hesaplamak için Harcama Takibim\'e harcama gir.';
+}
 // ---- Birikim kaynağı seçici (formda ve satırda ⇄ ile): Elle gireceğim | Yatırımlarımdan (otomatik, çoklu seçim)
 function hedefKaynakHtml(pfx, h){
   const yat = manuelListeYukle(YATIRIM_KEY);
-  const mod = h && !hedefElleMi(h) ? 'yatirim' : 'elle';
+  const varl = manuelListeYukle(VARLIK_KEY).slice().sort((a, b) => (b.tur === 'Nakit / Mevduat') - (a.tur === 'Nakit / Mevduat'));   // nakit önce
+  const mod = !h || hedefElleMi(h) ? 'elle' : h.kaynak === 'varlik' ? 'varlik' : 'yatirim';
+  const seciliVar = new Set(h && h.kaynak === 'varlik' ? (h.varliklar || []) : []);
   const secili = new Set(h ? hedefYatirimlari(h).map(y => y.id) : []), tum = h && h.kaynak === 'tum';
   const deger = y => { const d = yatirimDegerHesapla(y); return d ? d.tutarTL || 0 : 0; };
   const gruplar = YATIRIM_KATEGORI_SIRA.map(kat => {
@@ -9221,8 +9284,13 @@ function hedefKaynakHtml(pfx, h){
     <div class="hk-bas"><span>Şu an biriken</span>
       <div class="period-toggle">
         <button type="button" class="period-btn${mod === 'elle' ? ' active' : ''}" data-mod="elle" onclick="hedefKaynakMod('${pfx}', 'elle')">Elle gireceğim</button>
-        <button type="button" class="period-btn${mod === 'yatirim' ? ' active' : ''}" data-mod="yatirim" onclick="hedefKaynakMod('${pfx}', 'yatirim')"${yat.length ? '' : ' disabled title="Önce Yatırımlarım\'a yatırım ekle"'}>Yatırımlarımdan (otomatik)</button>
+        <button type="button" class="period-btn${mod === 'varlik' ? ' active' : ''}" data-mod="varlik" onclick="hedefKaynakMod('${pfx}', 'varlik')"${varl.length ? '' : ' disabled title="Önce Finansal Durumum › Varlıklarım\'a varlık ekle"'} title="Finansal Durumum › Varlıklarım (ör. Nakit / Mevduat)">Varlıklarımdan</button>
+        <button type="button" class="period-btn${mod === 'yatirim' ? ' active' : ''}" data-mod="yatirim" onclick="hedefKaynakMod('${pfx}', 'yatirim')"${yat.length ? '' : ' disabled title="Önce Yatırımlarım\'a yatırım ekle"'}>Yatırımlarımdan</button>
       </div>
+    </div>
+    <div class="hk-var">
+      <div class="hk-liste hk-varlik-liste">${varl.map(v => `<label class="hk-oge"><input type="checkbox" value="${v.id}" data-tl="${Number(v.deger) || 0}"${seciliVar.has(v.id) ? ' checked' : ''} onchange="hedefKaynakToplam('${pfx}')"><span style="text-transform:none;">${escapeHtml(v.ad)} <small style="color:var(--muted-2);">${escapeHtml(v.tur)}</small></span><b>₺${fmtNumber(Number(v.deger) || 0, 0)}</b></label>`).join('')}</div>
+      <div class="hk-toplam" id="${pfx}VarToplam"></div>
     </div>
     <div class="hk-elle"><input type="number" step="any" min="0" id="${pfx}Birikmis" class="ai-input" style="max-width:220px;" placeholder="Şu an biriken tutar (ops.)" value="${h && h.birikmis ? h.birikmis : ''}"></div>
     <div class="hk-yat">
@@ -9241,24 +9309,34 @@ function hedefKaynakMod(pfx, mod){
 }
 function hedefKaynakTumu(pfx){
   const k = document.getElementById(pfx + 'Kutu'), tum = document.getElementById(pfx + 'Tum').checked;
-  k.querySelectorAll('.hk-liste input').forEach(i => { i.checked = tum || i.checked; i.disabled = tum; });
+  k.querySelectorAll('.hk-liste:not(.hk-varlik-liste) input').forEach(i => { i.checked = tum || i.checked; i.disabled = tum; });
   hedefKaynakToplam(pfx);
 }
 function hedefKaynakToplam(pfx){
   const k = document.getElementById(pfx + 'Kutu'), el = document.getElementById(pfx + 'Toplam');
   if(!k || !el) return;
-  const sec = [...k.querySelectorAll('.hk-liste input:checked')];
+  // Varlık seçimi
+  const vEl = document.getElementById(pfx + 'VarToplam');
+  if(vEl){
+    const vs = [...k.querySelectorAll('.hk-varlik-liste input:checked')], vtl = vs.reduce((t, i) => t + (+i.dataset.tl || 0), 0);
+    vEl.innerHTML = vs.length ? `Seçilen ${vs.length} varlık: <b>₺${fmtNumber(vtl, 0)}</b> — Varlıklarım'da tutarı güncelledikçe hedef de güncellenir` : 'Birikime sayılacak varlığı işaretle (ör. Nakit / Mevduat türündeki acil durum fonu)';
+  }
+  const sec = [...k.querySelectorAll('.hk-liste:not(.hk-varlik-liste) input:checked')];
   const tl = sec.reduce((t, i) => t + (+i.dataset.tl || 0), 0), u = _fxRates.USD;
   el.innerHTML = sec.length ? `Seçilen ${sec.length} yatırım: <b>₺${fmtNumber(tl, 0)}</b>${u ? ' · <span style="color:var(--up);">$' + fmtNumber(tl / u, 0) + '</span>' : ''} — değeri canlı fiyatlarla kendiliğinden işler` : 'Birikime sayılacak yatırımları işaretle';
 }
 function hedefKaynakOku(pfx){
   const k = document.getElementById(pfx + 'Kutu');
+  if(k && k.dataset.mod === 'varlik'){
+    const idler = [...k.querySelectorAll('.hk-varlik-liste input:checked')].map(i => i.value);
+    return idler.length ? { kaynak: 'varlik', varliklar: idler } : null;
+  }
   if(!k || k.dataset.mod !== 'yatirim'){
     const v = parseFloat(String((document.getElementById(pfx + 'Birikmis') || {}).value || '').replace(',', '.'));
     return { kaynak: 'elle', birikmis: v >= 0 ? v : 0 };
   }
   if(document.getElementById(pfx + 'Tum').checked) return { kaynak: 'tum' };
-  const idler = [...k.querySelectorAll('.hk-liste input:checked')].map(i => i.value);
+  const idler = [...k.querySelectorAll('.hk-liste:not(.hk-varlik-liste) input:checked')].map(i => i.value);
   return idler.length ? { kaynak: 'yatirim', yatirimlar: idler } : null;
 }
 function hedefFormAc(){
@@ -9328,11 +9406,13 @@ function renderHedef(){
       const renk = c.tamam ? 'var(--up)' : c.gecti ? 'var(--down)' : onde ? 'var(--up)' : 'var(--amber)';
       const durum = c.tamam ? '🎉 hedefe ulaşıldı' : c.gecti ? 'hedef tarihi geçti' : onde ? 'planın önünde' : 'plandan ' + hedefFmt(c.beklenen - c.birikim, h.birim) + ' geride';
       const islem = _hedefIslem.id === h.id ? _hedefIslem.tur : null;
+      const acilAy = hedefAcilMi(h) ? (() => { const g = aylikZorunluGider(); const tl = hedefTL(c.birikim, h.birim) || 0; if(!g.toplam) return ''; const a = tl / g.toplam, rk = a < 1 ? 'var(--down)' : a < 3 ? 'var(--amber)' : 'var(--up)';
+        return ` · <b style="color:${rk};" title="Aylık zorunlu gider ≈ ₺${fmtNumber(g.toplam, 0)} (harcama + kredi taksidi). Hedefin karşıladığı: ${fmtNumber(hedefTL(c.hedef, h.birim) / g.toplam, 1)} ay">🛟 ${fmtNumber(a, 1)} aylık gider</b>`; })() : '';
       const tlNot = h.birim === 'USD' && hedefKur() && c.birikim > 0 ? ` <span class="ozet-soluk">≈ ₺${fmtNumber(c.birikim * hedefKur(), 0)}</span>` : '';
       return `<div class="hedef-satir">
         <div class="hedef-ust">
           <div class="satir-ana"><div class="satir-ad">${escapeHtml(h.ad)}</div>
-            <div class="satir-alt">${ayAdi(h.ay)}${c.tamam || c.gecti ? '' : ' · ' + c.ay + ' ay kaldı · ayda ' + hedefFmt(c.aylik, h.birim) + (h.birim === 'USD' && hedefKur() ? ' (₺' + fmtNumber(c.aylik * hedefKur(), 0) + ')' : '')} · <span style="color:${renk};">${durum}</span> · <span class="ozet-soluk">${hedefElleMi(h) ? 'elle takip' : '↻ ' + escapeHtml(hedefKaynakAd(h))}</span></div></div>
+            <div class="satir-alt">${ayAdi(h.ay)}${c.tamam || c.gecti ? '' : ' · ' + c.ay + ' ay kaldı · ayda ' + hedefFmt(c.aylik, h.birim) + (h.birim === 'USD' && hedefKur() ? ' (₺' + fmtNumber(c.aylik * hedefKur(), 0) + ')' : '')} · <span style="color:${renk};">${durum}</span>${acilAy} · <span class="ozet-soluk">${hedefElleMi(h) ? 'elle takip' : '↻ ' + escapeHtml(hedefKaynakAd(h))}</span></div></div>
           <div class="satir-tutar">${hedefFmt(c.birikim, h.birim)}${tlNot} <small style="font-weight:500;color:var(--muted-2);font-size:11.5px;">/ ${hedefFmt(c.hedef, h.birim)}</small></div>
           <div class="butce-yuzde" style="color:${renk};min-width:46px;">%${fmtNumber(Math.min(999, c.oran * 100), 0)}</div>
           <div class="satir-aksiyon">
@@ -9370,12 +9450,14 @@ function hedefEkle(){
   const kyn = hedefKaynakOku('hkf');
   if(!ad){ showAlertModal('Hedefin adını yaz (ör. Araba, Ev peşinatı).'); return; }
   if(!(hedef > 0)){ showAlertModal('Lütfen geçerli bir hedef tutarı gir.'); return; }
-  if(!kyn){ showAlertModal('Birikime sayılacak en az bir yatırım işaretle ya da "Elle gireceğim"i seç.'); return; }
-  const h = Object.assign({ id: 'hd-' + Date.now(), ad, hedef, birim, ay, birikmis: null, baslangic: bugunISO() }, kyn);
+  if(!kyn){ showAlertModal('Birikime sayılacak en az bir varlık ya da yatırım işaretle, ya da "Elle gireceğim"i seç.'); return; }
+  const acil = !!(document.getElementById('hedefAcilInput') || {}).checked;
+  const h = Object.assign({ id: 'hd-' + Date.now(), ad, hedef, birim, ay, birikmis: null, baslangic: bugunISO() }, acil ? { acil: true } : {}, kyn);
   h.baslangicDeger = Math.round(hedefBirikim(h) * 100) / 100;   // plan çizgisi bugünkü birikimden başlar
   const list = hedefYukle(); list.push(h);
   manuelListeKaydet(HEDEF_KEY, list);
   ['hedefAdInput', 'hedefTutarInput'].forEach(id => { document.getElementById(id).value = ''; });
+  const ac = document.getElementById('hedefAcilInput'); if(ac){ ac.checked = false; hedefAcilDegisti(); }
   document.getElementById('hedefForm').classList.remove('acik');
   renderHedef();
 }
@@ -9395,8 +9477,8 @@ function hedefIslemKaydet(){
     // Yatırımdan elle takibe geçerken: kutudaki (önceki elle) değer kullanılır; kutu boşsa bugünkü değer yazılır.
     // Yatırıma geçerken önceki elle değer saklanır (geri dönülürse kaybolmasın).
     if(kyn.kaynak === 'elle' && !hedefElleMi(h) && !(kyn.birikmis > 0)) kyn.birikmis = Math.round(hedefBirikim(h) * 100) / 100;
-    const degisti = kyn.kaynak !== (h.kaynak || 'elle') || JSON.stringify(kyn.yatirimlar || []) !== JSON.stringify(h.yatirimlar || []);
-    delete h.yatirimlar;
+    const degisti = kyn.kaynak !== (h.kaynak || 'elle') || JSON.stringify(kyn.yatirimlar || []) !== JSON.stringify(h.yatirimlar || []) || JSON.stringify(kyn.varliklar || []) !== JSON.stringify(h.varliklar || []);
+    delete h.yatirimlar; delete h.varliklar;
     Object.assign(h, kyn);
     if(degisti){ h.baslangic = bugunISO(); h.baslangicDeger = Math.round(hedefBirikim(h) * 100) / 100; }   // plan çizgisi kaynağın değiştiği günden başlar
     manuelListeKaydet(HEDEF_KEY, list);
@@ -9423,7 +9505,9 @@ function hedefSil(id){
 function hedefOzetMetni(){
   const list = hedefYukle();
   if(!list.length) return null;
-  return 'Birikim hedefleri: ' + list.map(h => { const c = hedefHesap(h); return h.ad + ' ' + hedefFmt(c.birikim, h.birim) + '/' + hedefFmt(c.hedef, h.birim) + ' (%' + fmtNumber(c.oran * 100, 0) + '), hedef ' + ayAdi(h.ay) + (c.tamam ? ', tamamlandı' : ', ayda ' + hedefFmt(c.aylik, h.birim) + ' gerekli, ' + (c.birikim >= c.beklenen ? 'planın önünde' : 'plandan geride')) + ', ' + hedefKaynakAd(h); }).join('; ');
+  const acil = acilFonDurum();
+  const acilMetin = acil && acil.ay != null ? ' | Acil durum fonu ₺' + fmtNumber(acil.tl, 0) + ' = ' + fmtNumber(acil.ay, 1) + ' aylık zorunlu gider (aylık ≈ ₺' + fmtNumber(acil.gider.toplam, 0) + '; ölçü 3–6 ay)' : '';
+  return acilMetin.replace(/^ \| /, '') + (acilMetin ? ' | ' : '') + 'Birikim hedefleri: ' + list.map(h => { const c = hedefHesap(h); return h.ad + ' ' + hedefFmt(c.birikim, h.birim) + '/' + hedefFmt(c.hedef, h.birim) + ' (%' + fmtNumber(c.oran * 100, 0) + '), hedef ' + ayAdi(h.ay) + (c.tamam ? ', tamamlandı' : ', ayda ' + hedefFmt(c.aylik, h.birim) + ' gerekli, ' + (c.birikim >= c.beklenen ? 'planın önünde' : 'plandan geride')) + ', ' + hedefKaynakAd(h); }).join('; ');
 }
 
 // ---------- Aylık Rapor: seçilen ayın özeti (kurallı) + isteğe bağlı Bay Piyasa yorumu (ft_raporlar_v1: [{ id:'YYYY-MM', metin, model, maliyet, ts }]) ----------
