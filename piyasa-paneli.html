@@ -1846,7 +1846,7 @@
   .harcama-tablo td.hucre:hover{background:#1a212b;}
   .harcama-tablo td.hucre.bos{color:var(--muted-2);}
   .harcama-tablo td.hucre.gelecek{color:#3a4453;}
-  .harcama-tablo td.hucre.elle::after{content:' ✎';font-size:9px;color:var(--amber);}
+  .harcama-tablo td.hucre.bos{cursor:default;}
   .harcama-tablo td.hucre input{width:84px;background:var(--panel-2);border:1px solid var(--amber);border-radius:5px;color:var(--text);font-family:inherit;font-size:12px;padding:3px 5px;text-align:right;}
   .harcama-tablo th.bu-ay{color:var(--amber);}
   .harcama-tablo .ozet-kolon{color:var(--muted);font-weight:600;}
@@ -2657,13 +2657,13 @@
         <span class="bolum-toplam" id="harcamaTabloToplam"></span>
       </div>
       <div class="ist-tablo-kap"><table class="ist-tablo harcama-tablo" id="harcamaTablo"></table></div>
-      <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Bir hücreye tıklayıp o ayın kategori toplamını doğrudan yazabilirsin (Enter kaydeder, boş bırakıp Enter tek tek kayıtların toplamına döner). Elle yazılan toplamlar <b>✎</b> ile işaretlidir.</div>
+      <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Tablo, aşağıdaki harcama kayıtlarından otomatik oluşur; düzenlemek için kaydı ✎ ile değiştir ya da ✕ ile sil. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır.</div>
     </div>
 
     <div class="bolum">
       <div class="bolum-bas">
         <span class="bolum-baslik">Harcama kayıtları</span>
-        <select id="harcamaAy" class="bolum-secim" title="Ay" onchange="_harcamaAy = +this.value; _harcamaHepsi = false; renderHarcama();"></select>
+        <select id="harcamaAy" class="bolum-secim" title="Ay" onchange="_harcamaAy = +this.value; _harcamaHepsi = false; _harcamaKatFiltre = null; renderHarcama();"></select>
         <span class="bolum-toplam" id="harcamaKayitToplam"></span>
         <button class="bolum-ekle" onclick="bolumFormAc('harcamaForm')">+ Ekle</button>
       </div>
@@ -2679,7 +2679,7 @@
       <div id="harcamaKayitlar"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Harcamaları ay bazında tek kalem olarak girersin (ay, kategori, tutar, not — ör. Eylül 2026 · Market · ₺32.000; ayın ilk 10 gününde varsayılan ay bir önceki aydır; aynı ay ve kategorideki kalemler toplanır); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. İstersen bir ayın kategori toplamını tablodan doğrudan da yazabilirsin — o ay ve kategori için elle yazılan toplam esas alınır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Aylık harcamalar grafiğini ₺ TL, $ Dolar ya da gram Altın olarak görebilirsin (seçim bu cihazda hatırlanır). Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Harcamaları ay bazında tek kalem olarak girersin (ay, kategori, tutar, not — ör. Eylül 2026 · Market · ₺32.000; ayın ilk 10 gününde varsayılan ay bir önceki aydır; aynı ay ve kategorideki kalemler toplanır); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. Aylık tablo yalnızca kayıtlardan hesaplanır ve doğrudan düzenlenmez; eski aylık toplamlar (Excel aktarımı, 2025 ve önceden tablodan yazılanlar) listede "aylık toplam" olarak görünür ve diğer kayıtlarla toplanır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Aylık harcamalar grafiğini ₺ TL, $ Dolar ya da gram Altın olarak görebilirsin (seçim bu cihazda hatırlanır). Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: HARCAMA İSTATİSTİKLERİ ================= -->
 
@@ -7265,23 +7265,21 @@ function harcamaKaydet(list){ manuelListeKaydet(HARCAMA_KEY, list); }
 function ayAnahtar(yil, ay){ return yil + '-' + String(ay + 1).padStart(2, '0'); }
 function bugunISO(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 
-// Seçili yılın özet tablosu: hucre[kat][ay] = { tutar, elle, kayitToplam, kayitSayisi }
+// Bir kalemin ayı 'YYYY-MM' (tek kayıt: tarih; eski aylık toplam: ay)
+function harcamaKalemAyi(x){ const a = x.tur === 'aylik' ? String(x.ay || '') : String(x.tarih || '').slice(0, 7); return /^\d{4}-\d\d$/.test(a) ? a : null; }
+// Seçili yılın özet tablosu: hucre[kat][ay] = { tutar, kayitSayisi }
 function harcamaTablosu(yil){
   const list = harcamaYukle();
   const hucre = {};
-  HARCAMA_KATEGORILER.forEach(({ k }) => { hucre[k] = Array.from({ length: 12 }, () => ({ tutar: 0, elle: false, kayitToplam: 0, kayitSayisi: 0 })); });
+  HARCAMA_KATEGORILER.forEach(({ k }) => { hucre[k] = Array.from({ length: 12 }, () => ({ tutar: 0, kayitSayisi: 0 })); });
+  // Tablo yalnızca kalemlerden hesaplanır (elle düzenlenmez). Eski "aylık toplam" kalemleri (Excel aktarımı, 2025, eskiden tablodan yazılanlar)
+  // da birer kalemdir ve TOPLANIR — artık o ayın diğer kalemlerinin yerine geçmez; listede görünür, ✎/✕ ile düzenlenir.
   list.forEach(x => {
     if(!hucre[x.kat]) return;
-    if(x.tur === 'kayit' && String(x.tarih).startsWith(yil + '-')){
-      const h = hucre[x.kat][+x.tarih.slice(5, 7) - 1];
-      h.kayitToplam += Number(x.tutar) || 0; h.kayitSayisi++;
-    }
-  });
-  HARCAMA_KATEGORILER.forEach(({ k }) => hucre[k].forEach(h => { h.tutar = h.kayitToplam; }));
-  list.forEach(x => {
-    if(x.tur === 'aylik' && hucre[x.kat] && String(x.ay).startsWith(yil + '-')){
-      const h = hucre[x.kat][+x.ay.slice(5, 7) - 1];
-      h.tutar = Number(x.tutar) || 0; h.elle = true; h.aktarim = x.kaynak === 'excel';
+    const ay = harcamaKalemAyi(x);
+    if(ay && ay.startsWith(yil + '-')){
+      const h = hucre[x.kat][+ay.slice(5, 7) - 1];
+      h.tutar += Number(x.tutar) || 0; h.kayitSayisi++;
     }
   });
   const ayToplam = Array.from({ length: 12 }, (_, a) => HARCAMA_KATEGORILER.reduce((t, { k }) => t + hucre[k][a].tutar, 0));
@@ -7498,9 +7496,9 @@ function renderHarcama(){
     const gelecekMi = a => buYil && a > simdi.getMonth();
     tablo.innerHTML = `<thead><tr><th>Kategori</th>${AY_KISA.map((a, i) => `<th class="${buYil && i === simdi.getMonth() ? 'bu-ay' : ''}">${a}</th>`).join('')}<th>Ort.</th><th>Toplam</th></tr></thead>
       <tbody>${HARCAMA_KATEGORILER.map(({ k, ad }) => `<tr><td>${escapeHtml(ad)}</td>${T.hucre[k].map((h, a) => {
-        const sinif = ['hucre', h.tutar ? '' : 'bos', gelecekMi(a) ? 'gelecek' : '', h.elle && !h.aktarim ? 'elle' : ''].filter(Boolean).join(' ');
-        const ipucu = h.elle ? `${h.aktarim ? 'Excel’den aktarılan aylık toplam' : 'Elle yazılan toplam'}${h.kayitSayisi ? ' (kayıtların toplamı ₺' + fmtNumber(h.kayitToplam, 0) + ')' : ''} — değiştirmek için tıkla` : (h.kayitSayisi ? h.kayitSayisi + ' kayıt — toplam yazmak için tıkla' : 'Toplam yazmak için tıkla');
-        return `<td class="${sinif}" title="${ipucu}" onclick="harcamaHucreDuzenle(this, '${k}', ${a})">${h.tutar ? fmtNumber(h.tutar, 0) : '—'}</td>`;
+        const sinif = ['hucre', h.tutar ? '' : 'bos', gelecekMi(a) ? 'gelecek' : ''].filter(Boolean).join(' ');
+        const ipucu = h.kayitSayisi ? escapeHtml(ad) + ' · ' + AY_UZUN[a] + ': ' + h.kayitSayisi + ' kalem — kalemleri göstermek için tıkla' : '';
+        return `<td class="${sinif}" title="${ipucu}"${h.kayitSayisi ? ` onclick="harcamaAyKalemleri(${a}, '${k}')"` : ''}>${h.tutar ? fmtNumber(h.tutar, 0) : '—'}</td>`;
       }).join('')}<td class="ozet-kolon">${T.katOrtalama[k] ? fmtNumber(T.katOrtalama[k], 0) : '—'}</td><td class="ozet-kolon">${T.katToplam[k] ? fmtNumber(T.katToplam[k], 0) : '—'}</td></tr>`).join('')}</tbody>
       <tfoot><tr><td>Toplam ₺</td>${T.ayToplam.map(v2 => `<td>${v2 ? fmtNumber(v2, 0) : '—'}</td>`).join('')}<td>${T.ortalama ? fmtNumber(T.ortalama, 0) : '—'}</td><td>${T.yilToplam ? fmtNumber(T.yilToplam, 0) : '—'}</td></tr>
       <tr class="karsilik"><td>Dolar karşılığı $</td>${T.ayUSD.map((u, a) => { const k = _aylikKur[ayAnahtar(_harcamaYil, a)]; return `<td title="${k ? 'O ayın ortalama kuru: ₺' + fmtNumber(k.usd, 2) + ' (' + k.gun + ' iş günü)' : ''}">${u != null ? fmtNumber(u, 0) : (T.ayToplam[a] ? '…' : '—')}</td>`; }).join('')}<td>${T.ortUSD != null ? fmtNumber(T.ortUSD, 0) : '—'}</td><td>${T.yilUSD != null ? fmtNumber(T.yilUSD, 0) : '—'}</td></tr>
@@ -7511,15 +7509,18 @@ function renderHarcama(){
   // ---- Kayıt listesi (seçili ay)
   const aySec = document.getElementById('harcamaAy');
   if(aySec) aySec.innerHTML = `<option value="-1"${_harcamaAy === -1 ? ' selected' : ''}>Tüm yıl</option>` + AY_UZUN.map((a, i) => `<option value="${i}"${i === _harcamaAy ? ' selected' : ''}>${a}</option>`).join('');
-  const kayitlar = list.filter(x => x.tur === 'kayit' && String(x.tarih).startsWith(_harcamaAy === -1 ? _harcamaYil + '-' : ayAnahtar(_harcamaYil, _harcamaAy)))
-    .sort((a, b) => (b.tarih || '').localeCompare(a.tarih || '') || harcamaEklenme(b) - harcamaEklenme(a));   // aynı ayda en son eklenen üstte
+  const kayitlar = list.filter(x => { const a = harcamaKalemAyi(x); return a && a.startsWith(_harcamaAy === -1 ? _harcamaYil + '-' : ayAnahtar(_harcamaYil, _harcamaAy)); })
+    .filter(x => !_harcamaKatFiltre || x.kat === _harcamaKatFiltre)
+    .sort((a, b) => (harcamaKalemAyi(b) || '').localeCompare(harcamaKalemAyi(a) || '') || harcamaEklenme(b) - harcamaEklenme(a));   // aynı ayda en son eklenen üstte
   const kayitEl = document.getElementById('harcamaKayitlar');
   if(kayitEl){
-    const elleNot = _harcamaAy >= 0 ? HARCAMA_KATEGORILER.filter(({ k }) => T.hucre[k][_harcamaAy].elle && T.hucre[k][_harcamaAy].kayitSayisi).map(({ ad }) => ad) : [];
-    kayitEl.innerHTML = (elleNot.length ? `<div class="ozet-not" style="padding:4px 2px;white-space:normal;">✎ ${elleNot.map(escapeHtml).join(', ')} için bu ayın toplamı tablodan elle yazıldı; aşağıdaki kayıtlar o toplama eklenmez.</div>` : '')
+    const filtreNot = _harcamaKatFiltre ? `<div class="ozet-not" style="padding:4px 2px;white-space:normal;">Yalnız <b>${escapeHtml(HARCAMA_KAT_AD[_harcamaKatFiltre] || _harcamaKatFiltre)}</b> gösteriliyor · <a href="#" onclick="_harcamaKatFiltre = null; renderHarcama(); return false;" style="color:var(--amber);">tüm kategoriler</a></div>` : '';
+    kayitEl.innerHTML = filtreNot
       + (kayitlar.length ? kayitlar.slice(0, _harcamaHepsi ? kayitlar.length : HARCAMA_LISTE_ILK).map(x => satirHtml({
           ad: x.not ? String(x.not).split(' — ')[0] : (HARCAMA_KAT_AD[x.kat] || x.kat),
-          alt: (x.kaynak === 'odeme' ? '<span title="Ödeme Takvimi\'ndeki düzenli ödemeden otomatik eklendi" style="color:#6EC3FF;">↻</span> ' : '') + escapeHtml((HARCAMA_KAT_AD[x.kat] || x.kat) + (x.not && x.not.includes(' — ') ? ' · ' + x.not.split(' — ').slice(1).join(' — ') : '')) + ' · ' + AY_UZUN[+x.tarih.slice(5, 7) - 1] + ' ' + x.tarih.slice(0, 4),
+          alt: (x.kaynak === 'odeme' ? '<span title="Ödeme Takvimi\'ndeki düzenli ödemeden otomatik eklendi" style="color:#6EC3FF;">↻</span> ' : '')
+            // Ad kategoriyle aynıysa (notsuz kalem) kategori alt satırda tekrar yazılmaz
+            + escapeHtml([x.not ? (HARCAMA_KAT_AD[x.kat] || x.kat) : null, x.tur === 'aylik' ? 'aylık toplam' + (x.kaynak === 'excel' ? ' (Excel aktarımı)' : '') : null, x.not && x.not.includes(' — ') ? x.not.split(' — ').slice(1).join(' — ') : null, AY_UZUN[+harcamaKalemAyi(x).slice(5, 7) - 1] + ' ' + harcamaKalemAyi(x).slice(0, 4)].filter(Boolean).join(' · ')),
           tutar: '₺' + fmtNumber(x.tutar, 2),
           duzen: { id: 'harcama-edit-' + x.id, ph: 'yeni tutar (₺)', kaydet: `harcamaGuncelle('${x.id}')` },
           sil: { onclick: `harcamaSil('${x.id}')`, baslik: 'Sil', ikon: '✕' },
@@ -7558,7 +7559,7 @@ function addHarcama(){
   document.getElementById('harcamaTutarInput').value = '';
   document.getElementById('harcamaNotInput').value = '';
   // Eklenen harcamanın ayı görünsün; form açık kalır (art arda giriş için), tutar kutusuna odaklanır
-  _harcamaYil = +tarih.slice(0, 4); _harcamaAy = +tarih.slice(5, 7) - 1;
+  _harcamaYil = +tarih.slice(0, 4); _harcamaAy = +tarih.slice(5, 7) - 1; _harcamaKatFiltre = null;
   renderHarcama();
   document.getElementById('harcamaTutarInput').focus();
 }
@@ -7588,33 +7589,13 @@ function harcamaSil(id){
   });
 }
 
-// Tablodaki hücreye tıklayınca: o ayın kategori toplamını yaz (Enter kaydeder, boş Enter elle toplamı kaldırır, Esc vazgeçer)
-function harcamaHucreDuzenle(td, kat, ay){
-  if(td.querySelector('input')) return;
-  const ayK = ayAnahtar(_harcamaYil, ay);
-  const mevcut = harcamaYukle().find(x => x.tur === 'aylik' && x.ay === ayK && x.kat === kat);
-  td.classList.remove('elle');
-  td.innerHTML = `<input type="number" step="0.01" min="0" value="${mevcut ? mevcut.tutar : ''}" placeholder="toplam">`;
-  const inp = td.querySelector('input');
-  inp.focus(); inp.select();
-  let bitti = false;
-  const kaydet = () => {
-    if(bitti) return; bitti = true;
-    const ham = inp.value.trim();
-    const list = harcamaYukle().filter(x => !(x.tur === 'aylik' && x.ay === ayK && x.kat === kat));
-    if(ham !== ''){
-      const t = parseFloat(ham.replace(',', '.'));
-      if(!(t >= 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); renderHarcama(); return; }
-      list.push({ id: 'ay-' + ayK + '-' + kat, tur: 'aylik', ay: ayK, kat, tutar: t });
-    }
-    harcamaKaydet(list);
-    renderHarcama();
-  };
-  inp.addEventListener('keydown', e => {
-    if(e.key === 'Enter'){ e.preventDefault(); kaydet(); }
-    if(e.key === 'Escape'){ bitti = true; renderHarcama(); }
-  });
-  inp.addEventListener('blur', () => { if(!bitti){ bitti = true; renderHarcama(); } });   // odaktan çıkınca vazgeç
+// Tablodaki hücreye tıklayınca: o ayın o kategorideki kalemleri listede gösterilir (tablo düzenlenmez)
+let _harcamaKatFiltre = null;
+function harcamaAyKalemleri(ay, kat){
+  _harcamaAy = ay; _harcamaKatFiltre = kat || null; _harcamaHepsi = true;
+  renderHarcama();
+  const el = document.getElementById('harcamaKayitlar');
+  if(el) el.closest('.bolum').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // Bay Piyasa bağlamı için kısa özet

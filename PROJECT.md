@@ -132,7 +132,8 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 
 - Veri `ft_harcamalar_v1` dizisinde (senkronda id'ye göre birleşir):
   - `{ id:'h-…', tur:'kayit', tarih:'YYYY-MM-01', kat, tutar, not }` — harcama kalemi. Harcamalar **ay bazında tek kalem** girilir (ör. Eylül · Market · ₺32.000): formda gün yerine ay seçilir (son 18 ay; ayın ilk 10 gününde varsayılan önceki ay), listede "Eylül 2026" görünür, aynı ay ve kategorideki kalemler toplanır, aynı ayda en son eklenen üstte
-  - `{ id:'ay-YYYY-MM-kat', tur:'aylik', ay:'YYYY-MM', kat, tutar }` — o ayın kategori toplamı; varsa o ay ve kategori için **kayıtların toplamı yerine** geçer (tabloda ✎ ile işaretli)
+  - `{ id:'ay-YYYY-MM-kat', tur:'aylik', ay:'YYYY-MM', kat, tutar, kaynak? }` — eski aylık toplam kalemi (Excel aktarımı, 2025 kategorisiz, eskiden tablodan yazılanlar). Artık **diğer kalemlerle toplanır** (yerlerine geçmez); listede "aylık toplam" olarak görünür, ✎/✕ ile düzenlenir. Yeni aylık toplam yazılamaz.
+  - **Aylık tablo salt okunurdur** (`harcamaTablosu`: her hücre = o ay ve kategorideki bütün kalemlerin toplamı, `harcamaKalemAyi`). Hücreye tıklamak o ayın o kategorideki kalemlerini listede açar (`harcamaAyKalemleri`, `_harcamaKatFiltre`; ay seçimi ya da yeni kayıt filtreyi kaldırır).
 - Kategoriler (`HARCAMA_KATEGORILER`): market, akaryakıt, araç bakım (`aracbakim`), kişisel, fatura ve aidat, ev giderleri, yeme-içme ve eğlence, sağlık, eğitim, sigorta (`sigorta`), vergi (`vergi`), diğer; ayrıca formda seçilmeyen **Kategorisiz** (`genel`) — kategori ayrımı olmayan eski aylık toplamlar (2025 Mart–Aralık) için.
 - **Dolar ve gram altın karşılığı:** her ayın harcaması o ayın ortalama kuruyla çevrilir (`aylikKurlariGuncelle`: Yahoo günlük USDTRY=X ve GC=F kapanışlarının ay ortalaması; gram = ons × kur ÷ 31,1035). Tablo altında $ ve gr satırları, kartlarda ve grafik ipucunda gösterilir; yıl toplamı $/gr her ayın kendi kuruyla toplanır.
 - **Tüm dönem ortalaması** (`harcamaTumDonem`): bütün yılların tamamlanmış aylarının TL/$/gr ortalaması.
@@ -239,6 +240,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | Harcama Takibim: aylık tablo salt okunur (yalnız kayıtlardan hesaplanır, hücre tıklanınca o ayın kayıtları açılır); eski aylık toplamlar listede görünür ve diğer kayıtlarla toplanır (tablodan yazılan toplamın kayıtları gizlemesi giderildi) |
 | 2026-10-01 | Finansal Durumum: Varlık Dağılımı kartı telefonda tam genişlik, halka solda, açıklama tek sütun ve yüzdeler sağa hizalı (yazı taşması giderildi; 360 px'te de kesilmez) |
 | 2026-10-01 | Harcama Takibim: aylık harcamalar grafiği ₺ TL / $ Dolar / gram Altın olarak seçilebilir (her ay kendi kuruyla); çubuk üstünde ipucu açılmama hatası giderildi |
 | 2026-10-01 | Nakit Akışı tahminleri enflasyon ve satın alma gücüyle: TCMB beklentisi / resmi TÜFE / kişisel / elle enflasyon yolu, harcama bugünün fiyatına taşınıp enflasyonla büyütülür, maaş artışı varsayımı (Ocak / Ocak-Temmuz / yok), "bugünün parasıyla" görünümü |
