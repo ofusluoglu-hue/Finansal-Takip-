@@ -272,6 +272,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | Tarih | Değişiklik |
 |---|---|
 | 2026-09-29 | Worker repoya eklendi; `/td-series` parametreleri URL'ye kodlanıyor; `wrangler.toml` ile CLI deploy; API anahtarları secret'a taşındı; README/PROJECT/RULES ve .gitignore eklendi |
+| 2026-10-01 | Grafik düzeltmesi: ABD hisse/ETF kartlarında (QQQM, VOO, URA, NLR, XLE, REXC, REMX, NVDA ve kullanıcının eklediği semboller) geçmiş Yahoo'dan, yedek Twelve Data; uranyumda UX=F geçmişi olmadığı için eğilim olarak SRUUF (başlıkta not); hızlı kart değişiminde eski cevabın yeni grafiğin üstüne çizilmesi engellendi (`_grafikIstek`) |
 | 2026-10-01 | Kartları düzenle üst çubuğa, saatin yanına taşındı (yalnız Piyasa Özeti'nde; telefonda saatin sağında); saat + düğme boşluğun ortasında, sekme değişince saat kaymaz; dar ekranda durum metni kısalır; ızgaradaki kutu kaldırıldı |
 | 2026-10-01 | Kenar menüsünde gruplar (Varlık ve borç, Harcama ve bütçe, İstatistikler, Planlama, Asistan, Yardım, Yönetim) profil çizgisiyle aynı ince çizgiyle ayrıldı; 6 varyant denendi; menü 1440×900'e sığmaya devam ediyor |
 | 2026-10-01 | Kenar menüsü sıklaştırıldı: masaüstünde menünün tamamı ekrana sığar (1045 → 836 px), laptop ekranında bir kademe daha sık ve gerekirse menü kendi içinde kayar; senkron durumu ve Çıkış tek satırda |
