@@ -2528,7 +2528,8 @@
           </select>
           <select id="yatirimSembolSelect" class="ai-input" style="max-width:260px;min-width:200px;"></select>
           <div id="yatirimAra" style="display:none;flex:1 1 240px;max-width:340px;min-width:200px;"></div>
-          <input type="text" id="yatirimBistAdInput" class="ai-input" style="max-width:160px;min-width:130px;display:none;" placeholder="Hisse kodu (ör. THYAO)" onkeydown="if(event.key==='Enter')addYatirim()">
+          <input type="hidden" id="yatirimBistAdInput">
+          <div id="yatirimBistAra" style="display:none;flex:1 1 240px;max-width:340px;min-width:200px;"></div>
           <input type="number" step="0.000001" id="yatirimAdetInput" class="ai-input" style="max-width:140px;min-width:110px;" placeholder="Adet" onkeydown="if(event.key==='Enter')addYatirim()">
           <input type="number" step="0.01" id="yatirimGramInput" class="ai-input" style="max-width:140px;min-width:110px;display:none;" placeholder="Gram" onkeydown="if(event.key==='Enter')addYatirim()">
           <input type="number" step="0.01" id="yatirimBistTutarInput" class="ai-input" style="max-width:150px;min-width:120px;display:none;" placeholder="Güncel değer (TL)" onkeydown="if(event.key==='Enter')addYatirim()">
@@ -2538,7 +2539,7 @@
       <div id="yatirimListContainer" class="buyuk-harf"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Toplam Yatırım kartındaki Günlük / Haftalık / Aylık değişim, bugünkü adetlerinin 1, 7 ve 30 gün önceki fiyat ve kurla değerine göredir (yalnızca piyasa hareketi; ekleme/çıkarma etkisi yok, BİST sabit sayılır). ABD ETF/hisse ve kripto fiyatları Piyasa Özeti'ndeki canlı kartlardan (ek istek yapılmadan), altın ve gümüş ons fiyatından gram başına hesaplanır ve güncel dolar kuruyla TL'ye çevrilir. BİST hisselerini kod ve adetle eklersin; fiyatlar arka planda 5 dakikada bir Yahoo'dan (≈15 dk gecikmeli) alınır. Eski, elle TL değeri girilmiş BİST kayıtları elle güncellenmeye devam eder. LED: yeşil canlı fiyat, kırmızı son bilinen fiyat. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Toplam Yatırım kartındaki Günlük / Haftalık / Aylık değişim, bugünkü adetlerinin 1, 7 ve 30 gün önceki fiyat ve kurla değerine göredir (yalnızca piyasa hareketi; ekleme/çıkarma etkisi yok, BİST sabit sayılır). ABD ETF/hisse ve kripto fiyatları Piyasa Özeti'ndeki canlı kartlardan (ek istek yapılmadan), altın ve gümüş ons fiyatından gram başına hesaplanır ve güncel dolar kuruyla TL'ye çevrilir. BİST hisselerini şirket adıyla arayıp (ör. Türk Hava Yolları, aselsan, tüpraş) adetle eklersin; fiyatlar arka planda 5 dakikada bir Yahoo'dan (≈15 dk gecikmeli) alınır. Eski, elle TL değeri girilmiş BİST kayıtları elle güncellenmeye devam eder. LED: yeşil canlı fiyat, kırmızı son bilinen fiyat. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: YATIRIMLARIM ================= -->
 
@@ -3184,7 +3185,7 @@
     <details class="kv-bolum" id="kv-piyasa"><summary>📈 Piyasa Özeti <span>fiyatlar ve haberler</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Seçtiğin piyasaların (dolar ve euro kuru, ons altın, Brent petrol, ABD hisse ve ETF'leri, kriptolar…) güncel fiyatını ve günlük değişimini gösterir. Altta Türkçe ve İngilizce güvenilir kaynaklardan haber başlıkları vardır.</p>
       <p><b>Kartları seçme:</b> En üstte saatin yanındaki <b>Kartları düzenle</b> düğmesine bas (yalnız Piyasa Özeti'nde görünür; telefonda saatin sağında). <b>Gösterilenler</b> listesinde ↑ ↓ ile sırayı değiştirir, ✕ ile gizlersin. <b>Hazır kartlardan ekle</b> bölümünden gizlediğin ya da hiç açmadığın kartları geri getirirsin. Seçimin hesabına kaydedilir; telefonda ve bilgisayarda aynı görünür. <b>Varsayılana dön</b> başlangıçtaki seti geri getirir.</p>
-      <p><b>Herhangi bir ABD hissesi, ETF ya da kripto:</b> Aynı penceredeki <b>Hisse, ETF ya da kripto ekle</b> kutusuna şirket adını ya da kodunu yaz (ör. “tesla”, “coca cola”, “nvidia”, “xrp”) — kod bilmene gerek yok, ilk birkaç harf ve küçük yazım hataları yeter. Kutuya tıklayınca yazmadan önce popüler hisseler (Apple, Tesla, Nvidia, TSMC, ASML…) listelenir. Çıkan listeden tıklarsın; kart hemen eklenir ve fiyatı gelir. ABD borsasındaki bütün hisse ve ETF'ler aranabilir; kriptoda en büyük 30 kripto hazırdır, listede olmayan bir coinin kodunu yazarsan panel Binance'te dener. Eklediğin hisse <b>Yatırımlarım</b>'da da seçilebilir.</p>
+      <p><b>Herhangi bir ABD hissesi, ETF ya da kripto:</b> Aynı penceredeki <b>Hisse, ETF ya da kripto ekle</b> kutusuna şirket adını ya da kodunu yaz (ör. “tesla”, “coca cola”, “nvidia”, “xrp”) — kod bilmene gerek yok, ilk birkaç harf ve küçük yazım hataları yeter. Kutuya tıklayınca yazmadan önce popüler hisseler (Apple, Tesla, Nvidia, TSMC, ASML…) listelenir. Çıkan listeden tıklarsın; kart hemen eklenir ve fiyatı gelir. ABD borsasındaki bütün hisse ve ETF'ler ile Borsa İstanbul hisseleri (ör. “aselsan”, “türk hava yolları”; fiyat ₺, 15 dk gecikmeli) aranabilir; kriptoda en büyük 30 kripto hazırdır, listede olmayan bir coinin kodunu yazarsan panel Binance'te dener. Eklediğin hisse <b>Yatırımlarım</b>'da da seçilebilir.</p>
       <p><b>Örnek:</b> Tesla hissen var → Kartları düzenle › kutuya “tesla” yaz › <b>TSLA — Tesla Inc</b>'e tıkla → “TSLA (Tesla Inc)” kartı çıkar. Yatırımlarım'a eklemek için de aynı aramayı orada yaparsın.</p>
       <p><b>Nasıl kullanılır:</b> Hiçbir şey girmen gerekmez. Bir fiyat kutusuna tıklarsan altında o varlığın grafiği açılır; “Günlük / Haftalık” ile aralığı değiştirirsin (son 30 gün / son 12 ay). Uranyum grafiği MetalCharts'tan gerçek U3O8 $/lb fiyatıdır; o kaynağa ulaşılamazsa eğilim olarak Sprott Fiziksel Uranyum Fonu gösterilir ve başlıkta yazar. ETF kutularında ABD seans öncesi, seans ve seans sonrası fiyatları ayrı satırlarda yazar. Fiyatlar dakikada bir yenilenir; sağ üstteki <b>Yenile</b> ile hemen yenileyebilirsin.</p>
       <p><b>Fiyat kutusunun köşesindeki ışık:</b> yeşil = fiyat şu an canlı, kırmızı = kaynağa ulaşılamadı, son bilinen fiyat gösteriliyor.</p>
@@ -3207,7 +3208,7 @@
       <ul class="kv-liste">
         <li><b>ABD ETF &amp; Hisse:</b> arama kutusuna şirket adını yaz (ör. “tesla”, “coca cola”, “vanguard”) ve listeden seç; kodu bilmen gerekmez, kutuya tıklayınca popüler hisseler de çıkar. ABD borsasındaki bütün hisse ve ETF'ler bulunur; Piyasa Özeti'ne kart olarak eklemen gerekmez, fiyatı yine de takip edilir.</li>
         <li><b>Kripto:</b> listeden seç (en büyük 30 kripto: Bitcoin, Ethereum, XRP, Solana, BNB, Dogecoin…). Listede yoksa önce Kartları düzenle'de kodunu arayıp ekle.</li>
-        <li><b>BİST:</b> kodu yaz (ör. TUPRS) ve adedi gir; fiyat 15 dakika gecikmeli gelir.</li>
+        <li><b>BİST:</b> arama kutusuna şirket adını yaz (ör. “türk hava yolları”, “aselsan”, “tüpraş”, “koç”) ve listeden seç, adedi gir. Türkçe karakterle de karaktersiz de bulur (tüpraş = tupras); kodu biliyorsan kodu da yazabilirsin (THYAO). Fiyat 15 dakika gecikmeli gelir.</li>
         <li><b>Emtia:</b> altın ve gümüş gram olarak girilir.</li>
       </ul>
       <p><b>Örnek:</b> Kripto · Bitcoin · 0,0006983 → o anki fiyat $95.000 ve kur ₺48,90 ise değer ≈ ₺3.244.</p>
@@ -3417,7 +3418,7 @@
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
     <details class="kv-bolum kv-sss"><summary>Dövizim ya da altınım var; Yatırımlarım'a mı, Varlıklarım'a mı girmeliyim?</summary><div class="kv-ic"><p><b>Yatırım amacıyla</b> tuttuğun altın, gümüş, ETF, kripto ve hisseleri <b>Yatırımlarım</b>'a gir; portföy puanına ve yatırım/borç oranına katılır. <b>Gerektiğinde harcamak için</b> kenarda duran parayı (acil durum fonu, mevduat) <b>Finansal Durumum › Varlıklarım</b>'a <b>Nakit / Mevduat</b> türüyle gir; ₺, $, € ya da gram altın seçebilirsin. İkisi de net varlığına girer; aynı parayı iki yere girme.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Piyasa Özeti'nde istemediğim kartlar var / takip ettiğim hisse yok.</summary><div class="kv-ic"><p>Piyasa Özeti'nde en üstte saatin yanındaki <b>Kartları düzenle</b>'ye bas. ✕ ile istemediğini gizle, ↑ ↓ ile sırala. Herhangi bir ABD hissesi, ETF ya da kripto için pencerede arama kutusuna adını ya da kodunu yaz (ör. Tesla, TSM, ASML, XRP) ve listeden seç. Eklediğin hisseyi Yatırımlarım'da da seçebilirsin. BİST hisselerini kart olarak değil, doğrudan Yatırımlarım'a kod ve adetle eklersin.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Piyasa Özeti'nde istemediğim kartlar var / takip ettiğim hisse yok.</summary><div class="kv-ic"><p>Piyasa Özeti'nde en üstte saatin yanındaki <b>Kartları düzenle</b>'ye bas. ✕ ile istemediğini gizle, ↑ ↓ ile sırala. Herhangi bir ABD hissesi, ETF ya da kripto için pencerede arama kutusuna adını ya da kodunu yaz (ör. Tesla, TSM, ASML, XRP) ve listeden seç. Eklediğin hisseyi Yatırımlarım'da da seçebilirsin. BİST hisseleri de aynı kutudan aranır (ör. “aselsan”, “türk hava yolları”); kartta fiyat ₺ olarak ve 15 dakika gecikmeli görünür.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Fiyatlar güncellenmiyor ya da ışık kırmızı yanıyor.</summary><div class="kv-ic"><p>Fiyat kaynağına o an ulaşılamamış olabilir; panel son bilinen fiyatı gösterir ve ışık kırmızı yanar. Sağ üstteki <b>Yenile</b>'ye bas ya da bir dakika bekle. BİST fiyatları zaten yaklaşık 15 dakika gecikmelidir; ABD piyasası kapalıyken ETF fiyatı seans dışı fiyatla gösterilir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Evimin ya da arsamın değerini nasıl belirleyeyim?</summary><div class="kv-ic"><p>Panel bu fiyatları internetten çekmez. Yakın çevredeki benzer ilanların ortalamasını ya da bir ekspertiz değerini yaz; yılda bir-iki kez güncellemen yeterli. Gerçekçi olmayan yüksek değerler net varlığını şişirir.</p></div></details>
 
@@ -4394,6 +4395,7 @@ function kartAyarlari(){ return manuelListeYukle(KARTLAR_KEY); }
 function kartOzelCfg(o){
   const sembol = String(o.sembol || '').toUpperCase();
   const ad = o.ad ? ' (' + o.ad + ')' : '';
+  if(o.tur === 'bist') return { key: o.id, label: sembol + ad, source: 'yahoo', symbol: sembol + '.IS', fmt: 'try2', fallback: {}, ozel: true, bist: true };   // TL, ~15 dk gecikmeli
   return o.tur === 'kripto'
     ? { key: o.id, label: sembol + ad, source: 'kripto', bnSymbol: sembol + 'USDT', symbol: null, fmt: 'oto', fallback: {}, ozel: true }
     : { key: o.id, label: sembol + ad, source: 'finnhub', symbol: sembol, fmt: 'usd2', fallback: {}, ozel: true };
@@ -4420,7 +4422,7 @@ function kartGerekliSet(){
   return s;
 }
 function kartGrubu(c){
-  return c.source === 'kripto' ? 'Kripto' : c.source === 'finnhub' ? 'ABD hisse / ETF' : KUR_KARTLARI.includes(c.key) ? 'Döviz' : 'Emtia';
+  return c.source === 'kripto' ? 'Kripto' : c.source === 'finnhub' ? 'ABD hisse / ETF' : c.bist ? 'BİST' : KUR_KARTLARI.includes(c.key) ? 'Döviz' : 'Emtia';
 }
 // Izgarayı seçime göre sırala ve gizle ("Kartları düzenle" üst çubukta, saatin yanında)
 function kartGorunumUygula(){
@@ -4449,7 +4451,7 @@ function kartDuzenAc(){
   ov.addEventListener('click', e => { if(e.target === ov) ov.remove(); });
   document.body.appendChild(ov);
   kartModalCiz();
-  sembolKutusuKur('kdAra', { turler: ['etf', 'kripto'], satirIci: true, ph: 'Ara: Tesla, TSM, ASML, Apple, XRP…', secince: kartAramaSecildi });
+  sembolKutusuKur('kdAra', { turler: ['etf', 'kripto', 'bist'], satirIci: true, ph: 'Ara: Tesla, Apple, Aselsan, Türk Hava Yolları, XRP…', secince: kartAramaSecildi });
   setTimeout(() => { const i = document.querySelector('#kdAra input'); if(i && matchMedia('(min-width:901px)').matches) i.focus(); }, 60);
 }
 async function kartAramaSecildi(oge, inp){
@@ -4562,6 +4564,169 @@ function yahooAdDuzelt(ad){
   for(let i = 0; i < 3; i++) t = t.replace(/,?\s+(Inc\.?|Incorporated|Corporation|Corp\.?|Company|Co\.?|Limited|Ltd\.?|N\.V\.|plc|S\.A\.|AG|SE|New|Class [A-Z])$/i, '').trim();
   return t || String(ad || '');
 }
+// Borsa İstanbul: en çok işlem gören 130 hisse [kod, kısa Türkçe ad, resmi ad]. Her kod Yahoo'da (KOD.IS) fiyatı ve resmi adıyla
+// doğrulandı (2026-10-01). Listede olmayan hisse Yahoo aramasıyla bulunur; kod biliniyorsa doğrudan da denenebilir.
+const BIST_LISTE = [
+  ["THYAO","Türk Hava Yolları","Türk Hava Yollari"],
+  ["ASELS","Aselsan","ASELSAN Elektronik Sanayi ve Ticaret"],
+  ["GARAN","Garanti BBVA","Turkiye Garanti Bankasi"],
+  ["AKBNK","Akbank","Akbank"],
+  ["YKBNK","Yapı Kredi Bankası","Yapi ve Kredi Bankasi"],
+  ["ISCTR","İş Bankası (C)","Türkiye Is Bankasi"],
+  ["HALKB","Halkbank","Türkiye Halk Bankasi"],
+  ["VAKBN","VakıfBank","Türkiye Vakiflar Bankasi"],
+  ["TSKB","TSKB","Türkiye Sinai Kalkinma Bankasi"],
+  ["SKBNK","Şekerbank","Sekerbank"],
+  ["ALBRK","Albaraka Türk","Albaraka Türk Katilim Bankasi"],
+  ["KCHOL","Koç Holding","Koç Holding"],
+  ["SAHOL","Sabancı Holding","Haci Ömer Sabanci Holding"],
+  ["DOHOL","Doğan Holding","Dogan Sirketler Grubu Holding"],
+  ["AGHOL","Anadolu Grubu Holding","AG Anadolu Grubu Holding"],
+  ["ALARK","Alarko Holding","Alarko Holding"],
+  ["TKFEN","Tekfen Holding","Tekfen Holding"],
+  ["ENKAI","Enka İnşaat","Enka Insaat ve Sanayi"],
+  ["TUPRS","Tüpraş","Türkiye Petrol Rafinerileri"],
+  ["PETKM","Petkim","Petkim Petrokimya Holding"],
+  ["EREGL","Ereğli Demir Çelik","Eregli Demir ve Çelik Fabrikalari"],
+  ["KRDMD","Kardemir (D)","Kardemir Karabük Demir Çelik Sanayi Ve Ticaret"],
+  ["ISDMR","İskenderun Demir Çelik","Iskenderun Demir ve Çelik"],
+  ["BIMAS","BİM Mağazalar","BIM Birlesik Magazalar"],
+  ["MGROS","Migros","Migros Ticaret"],
+  ["SOKM","Şok Marketler","Sok Marketler Ticaret"],
+  ["TCELL","Turkcell","Turkcell Iletisim Hizmetleri"],
+  ["TTKOM","Türk Telekom","Türk Telekomünikasyon"],
+  ["SISE","Şişecam","Türkiye Sise Ve Cam Fabrikalari"],
+  ["SASA","Sasa Polyester","Sasa Polyester Sanayi"],
+  ["ASTOR","Astor Enerji","Astor Enerji"],
+  ["FROTO","Ford Otosan","Ford Otomotiv Sanayi"],
+  ["TOASO","Tofaş","Tofas Türk Otomobil Fabrikasi"],
+  ["DOAS","Doğuş Otomotiv","Dogus Otomotiv Servis ve Ticaret"],
+  ["OTKAR","Otokar","Otokar Otomotiv ve Savunma Sanayi"],
+  ["TTRAK","Türk Traktör","Türk Traktör ve Ziraat Makineleri"],
+  ["PGSUS","Pegasus","Pegasus Hava Tasimaciligi"],
+  ["TAVHL","TAV Havalimanları","TAV Havalimanlari Holding"],
+  ["CLEBI","Çelebi Hava Servisi","Çelebi Hava Servisi"],
+  ["HEKTS","Hektaş","Hektas Ticaret"],
+  ["GUBRF","Gübre Fabrikaları","Gübre Fabrikalari Türk"],
+  ["ARCLK","Arçelik","Arçelik"],
+  ["VESTL","Vestel","Vestel Elektronik Sanayi ve Ticaret"],
+  ["VESBE","Vestel Beyaz Eşya","Vestel Beyaz Esya Sanayi ve Ticaret"],
+  ["ULKER","Ülker","Ülker Bisküvi Sanayi"],
+  ["AEFES","Anadolu Efes","Anadolu Efes Biracilik ve Malt Sanayii"],
+  ["CCOLA","Coca-Cola İçecek","Coca-Cola Içecek"],
+  ["TATGD","Tat Gıda","Tat Gida Sanayi"],
+  ["EKGYO","Emlak Konut GYO","Emlak Konut Gayrimenkul Yatirim Ortakligi"],
+  ["ISGYO","İş GYO","Is Gayrimenkul Yatirim Ortakligi"],
+  ["AKSEN","Aksa Enerji","Aksa Enerji Üretim"],
+  ["ENJSA","Enerjisa","Enerjisa Enerji"],
+  ["ODAS","Odaş Elektrik","Odas Elektrik Üretim Sanayi Ticaret"],
+  ["ZOREN","Zorlu Enerji","Zorlu Enerji Elektrik Üretim"],
+  ["AYDEM","Aydem Enerji","Aydem Yenilenebilir Enerji"],
+  ["GWIND","Galata Wind","Galata Wind Enerji"],
+  ["CWENE","CW Enerji","CW Enerji Mühendislik Ticaret ve Sanayi"],
+  ["EUPWR","Europower Enerji","Europower Enerji ve Otomasyon Teknolojileri Sanayi Ticaret"],
+  ["GESAN","Girişim Elektrik","Girisim Elektrik Sanayi Taahhüt ve Ticaret"],
+  ["SMRTG","Smart Güneş","Smart Günes Enerjisi Teknolojileri Arastirma ve Gelistirme Üretim Sanayi ve Ticaret"],
+  ["YEOTK","Yeo Teknoloji","Yeo Teknoloji Enerji Ve Endustri"],
+  ["ALFAS","Alfa Solar","Alfa Solar Enerji Sanayi ve Ticaret"],
+  ["KONTR","Kontrolmatik","Kontrolmatik Teknoloji Enerji Ve Muhendislik"],
+  ["KCAER","Kocaer Çelik","Kocaer Celik Sanayi ve Ticaret"],
+  ["OYAKC","Oyak Çimento","OYAK Çimento Fabrikalari"],
+  ["CIMSA","Çimsa","Çimsa Çimento Sanayi ve Ticaret"],
+  ["AKCNS","Akçansa","Akçansa Çimento Sanayi ve Ticaret"],
+  ["BRSAN","Borusan Boru","Borusan Birlesik Boru Fabrikalari Sanayi ve Ticaret"],
+  ["BRYAT","Borusan Yatırım","Borusan Yatirim ve Pazarlama"],
+  ["AKSA","Aksa Akrilik","Aksa Akrilik Kimya Sanayii"],
+  ["ISMEN","İş Yatırım","Is Yatirim Menkul Degerler"],
+  ["TURSG","Türkiye Sigorta","Türkiye Sigorta"],
+  ["AKGRT","Aksigorta","Aksigorta"],
+  ["ANHYT","Anadolu Hayat","Anadolu Hayat Emeklilik"],
+  ["AGESA","Agesa Hayat Emeklilik","AgeSA Hayat ve Emeklilik"],
+  ["MAVI","Mavi Giyim","Mavi Giyim Sanayi ve Ticaret"],
+  ["BERA","Bera Holding","Bera Holding"],
+  ["LOGO","Logo Yazılım","Logo Yazilim Sanayi ve Ticaret"],
+  ["INDES","İndeks Bilgisayar","Indeks Bilgisayar Sistemleri Mühendislik Sanayi ve Ticaret"],
+  ["NETAS","Netaş","Netas Telekomünikasyon"],
+  ["KAREL","Karel Elektronik","Karel Elektronik Sanayi Ve Ticaret"],
+  ["ARDYZ","ARD Bilişim","Ard Grup Bilisim Teknolojileri"],
+  ["MIATK","Mia Teknoloji","MIA Teknoloji"],
+  ["REEDR","Reeder Teknoloji","Reeder Teknoloji Sanayi ve Ticaret"],
+  ["SDTTR","SDT Uzay ve Savunma","SDT Uzay ve Savunma Teknolojileri"],
+  ["OBAMS","Oba Makarnacılık","Oba Makarnacilik Sanayi ve Ticaret"],
+  ["TABGD","TAB Gıda","Tab Gida Sanayi ve Ticaret"],
+  ["BIOEN","Biotrend Enerji","Biotrend Cevre ve Enerji Yatirimlari"],
+  ["ECILC","Eczacıbaşı İlaç","EIS Eczacibasi Ilaç, Sinai ve Finansal Yatirimlar Sanayi ve Ticaret"],
+  ["SELEC","Selçuk Ecza","Selçuk Ecza Deposu Ticaret ve Sanayi"],
+  ["DEVA","Deva Holding","Deva Holding"],
+  ["LKMNH","Lokman Hekim","Lokman Hekim Engürüsag Saglik, Turizm, Egitim Hizmetleri ve Insaat Taahhüt"],
+  ["MPARK","MLP Sağlık (Medical Park)","MLP Saglik Hizmetleri"],
+  ["KLSER","Kaleseramik","Kaleseramik Canakkale Kalebodur Seramik Sanayi"],
+  ["QUAGR","Qua Granite","QUA Granite Hayal Yapi ve Ürünleri Sanayi Ticaret"],
+  ["EGEEN","Ege Endüstri","Ege Endüstri ve Ticaret"],
+  ["JANTS","Jantsa","Jantsa Jant Sanayi ve Ticaret"],
+  ["BFREN","Bosch Fren","Bosch Fren Sistemleri Sanayi ve Ticaret"],
+  ["KORDS","Kordsa","Kordsa Teknik Tekstil"],
+  ["BTCIM","Batıçim","Batiçim Bati Anadolu Çimento Sanayii"],
+  ["NUHCM","Nuh Çimento","Nuh Çimento Sanayi"],
+  ["GOLTS","Göltaş Çimento","Göltas Göller Bölgesi Cimento Sanayi ve Ticaret"],
+  ["TRGYO","Torunlar GYO","Torunlar Gayrimenkul Yatirim Ortakligi"],
+  ["PENTA","Penta Teknoloji","Penta Teknoloji Urunleri Dagitim Ticaret"],
+  ["ALTNY","Altınay Savunma","Altinay Savunma Teknolojileri"],
+  ["PASEU","Pasifik Eurasia","Pasifik Eurasia Lojistik Dis Ticaret"],
+  ["TUREX","Tureks Turizm","Tureks Turizm Tasimacilik"],
+  ["TRMET","TR Anadolu Metal","TR Anadolu Metal Madencilik Isletmeleri"],
+  ["BINHO","1000 Yatırımlar Holding","1000 Yatirimlar Holding"],
+  ["ENERY","Enerya Enerji","Enerya Enerji"],
+  ["LMKDC","Limak Doğu Anadolu Çimento","Limak Dogu Anadolu Cimento Sanayi ve Ticaret"],
+  ["DSTKF","Destek Faktoring","Destek Finans Faktoring"],
+  ["RALYH","Ral Yatırım Holding","Ral Yatirim Holding"],
+  ["KTLEV","Katılımevim","Katilimevim Tasarruf Finansman"],
+  ["MAGEN","Margün Enerji","Margün Enerji Üretim Sanayi ve Ticaret"],
+  ["CANTE","Çan2 Termik","Çan2 Termik"],
+  ["TUKAS","Tukaş","Tukas Gida Sanayi ve Ticaret"],
+  ["VAKKO","Vakko","Vakko Tekstil ve Hazir Giyim Sanayi Isletmeleri"],
+  ["GENIL","Gen İlaç","Gen Ilac Ve Saglik Urunleri Sanayi Ve Ticaret"],
+  ["KUYAS","Kuyaş Yatırım","Kuyas Yatirim"],
+  ["PSGYO","Pasifik GYO","Pasifik Gayrimenkul Yatirim Ortakligi"],
+  ["ADEL","Adel Kalemcilik","Adel Kalemcilik Ticaret ve Sanayi"],
+  ["AKFYE","Akfen Yenilenebilir","Akfen Yenilenebilir Enerji"],
+  ["AKFGY","Akfen GYO","Akfen Gayrimenkul Yatirim Ortakligi"],
+  ["BAGFS","Bagfaş","Bagfas Bandirma Gubre Fabrikalari"],
+  ["ISFIN","İş Finansal Kiralama","Is Finansal Kiralama"],
+  ["GSRAY","Galatasaray Sportif","Galatasaray Sportif Sinai ve Ticari Yatirimlar"],
+  ["FENER","Fenerbahçe Futbol","Fenerbahçe Futbol"],
+  ["BJKAS","Beşiktaş Futbol","Besiktas Futbol Yatirimlari Sanayi ve Ticaret"],
+  ["TSPOR","Trabzonspor Sportif","Trabzonspor Sportif Yatirim ve Futbol Isletmeciligi Ticaret"],
+];
+// Türkçe karakterden bağımsız karşılaştırma: "tüpraş" = "tupras", "koç" = "koc", "İŞ" = "is"
+function asciiNormal(t){ return String(t || '').toLocaleLowerCase('tr-TR').replace(/ı/g, 'i').replace(/ş/g, 's').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[âàá]/g, 'a').replace(/î/g, 'i').replace(/û/g, 'u').replace(/\s+/g, ' ').trim(); }
+function bistAdi(kod){ const b = BIST_LISTE.find(x => x[0] === kod); return b ? b[1] : ''; }
+async function bistAra(q){
+  const t = asciiNormal(q);
+  const sonuc = [];
+  BIST_LISTE.forEach(([kod, ad, resmi]) => {
+    const k = kod.toLowerCase(), adlar = asciiNormal(ad + ' ' + resmi);
+    const kelimeBasi = adlar.split(/[\s()]+/).some(w => w.startsWith(t)) || adlar.startsWith(t);
+    const puan = k === t ? 4 : k.startsWith(t) ? 3 : kelimeBasi ? 2 : (t.length >= 3 && adlar.includes(t)) ? 1 : 0;
+    if(puan) sonuc.push({ tur: 'bist', sembol: kod, ad, puan });
+  });
+  sonuc.sort((a, b) => b.puan - a.puan);
+  if(sonuc.length < 3 && t.length >= 3){   // listede yoksa Yahoo (Türkçe karakterler sadeleştirilerek)
+    const anahtar = 'bist:' + t;
+    let uzak = _araOnbellek.get(anahtar);
+    if(!uzak){
+      try{
+        const res = await fetchWithFallback('https://query1.finance.yahoo.com/v1/finance/search?q=' + encodeURIComponent(t) + '&quotesCount=15&newsCount=0&listsCount=0&enableFuzzyQuery=true');
+        uzak = ((await res.json()).quotes || []).filter(x => x && x.exchange === 'IST' && x.quoteType === 'EQUITY' && /^[A-Z0-9]{3,6}\.IS$/.test(x.symbol || ''))
+          .map(x => ({ tur: 'bist', sembol: x.symbol.replace(/\.IS$/, ''), ad: yahooAdDuzelt(x.longname || x.shortname || x.symbol).replace(/\s+(A\.S\.|T\.A\.S\.|Anonim (Sirketi|Ortakligi))$/i, '') }));
+        if(uzak.length) _araOnbellek.set(anahtar, uzak);
+      }catch(e){ uzak = []; }
+    }
+    uzak.forEach(x => { if(!sonuc.some(y => y.sembol === x.sembol)) sonuc.push(x); });
+  }
+  if(!sonuc.length && /^[a-z0-9]{3,6}$/.test(t)) sonuc.push({ tur: 'bist', sembol: t.toUpperCase(), ad: 'Bu kodu Borsa İstanbul’da dene', deneme: true });
+  return sonuc;
+}
 // ABD borsaları (Yahoo kodları): Nasdaq, NYSE, NYSE American, NYSE Arca, Cboe — OTC ve yabancı borsalar hariç
 const ABD_BORSA = new Set(['NMS', 'NGM', 'NCM', 'NYQ', 'ASE', 'PCX', 'BTS']);
 // Kod bilmeyen kullanıcı için: kutuya tıklayınca, yazmadan önce
@@ -4597,6 +4762,7 @@ async function abdHisseAra(q){
 async function sembolAra(q, turler){
   const t = _araNormal(q.trim());
   if(!t) return [];
+  if(turler.length === 1 && turler[0] === 'bist') return (await bistAra(q)).slice(0, 20);
   const sonuc = [];
   const katalog = CARDS.filter(c => (turler.includes('etf') && c.source === 'finnhub') || (turler.includes('kripto') && c.source === 'kripto'));
   katalog.forEach(c => {
@@ -4618,6 +4784,12 @@ async function sembolAra(q, turler){
     });
   }
   zayif.forEach(x => { if(!sonuc.some(y => y.sembol === x.sembol && y.tur === x.tur)) sonuc.push(x); });
+  if(turler.includes('bist')){   // kart düzenleyicide BİST hisseleri: güçlü eşleşmeler öne
+    const b = (await bistAra(q)).filter(x => !x.deneme);
+    const one = b.filter(x => x.puan >= 3), arka = b.filter(x => !(x.puan >= 3));
+    sonuc.unshift(...one.slice(0, 5));
+    sonuc.push(...arka.slice(0, 6));
+  }
   // Hiçbir şey bulunamadıysa: Binance'te bu sembolle kripto var mı diye dene (listede olmayan bir coin)
   if(turler.includes('kripto') && !sonuc.length && /^[a-z0-9]{2,10}$/.test(t)){
     sonuc.push({ tur: 'kripto', sembol: q.trim().toUpperCase(), ad: 'Binance’te ara', yeni: true });
@@ -4639,7 +4811,7 @@ function sembolKutusuKur(kapId, { turler, ph, secince, satirIci }){
     if(bilgi){ liste.innerHTML = `<div class="sembol-bilgi">${bilgi}</div>`; liste.hidden = false; return; }
     if(!ogeler.length){ liste.innerHTML = `<div class="sembol-bilgi">Sonuç yok — sembolü dene (ör. TSLA)</div>`; liste.hidden = !inp.value.trim(); return; }
     liste.innerHTML = (populer ? '<div class="sembol-bilgi">Popüler hisseler — ya da şirket adını yaz (ör. tesla, coca cola)</div>' : '') + ogeler.map((o, i) => `<div class="sembol-oge${i === aktif ? ' aktif' : ''}" role="option" data-i="${i}">
-      <b>${escapeHtml(o.sembol)}</b><span class="sembol-ad">${escapeHtml(o.ad)}</span><small>${o.tur === 'kripto' ? 'Kripto' : (o.tip && /ETP|ETF/i.test(o.tip) ? 'ETF' : 'ABD hisse')}</small></div>`).join('');
+      <b>${escapeHtml(o.sembol)}</b><span class="sembol-ad">${escapeHtml(o.ad)}</span><small>${o.tur === 'kripto' ? 'Kripto' : o.tur === 'bist' ? 'BİST' : (o.tip && /ETP|ETF/i.test(o.tip) ? 'ETF' : 'ABD hisse')}</small></div>`).join('');
     liste.hidden = false;
   };
   const sec = i => { const o = ogeler[i]; if(!o) return; liste.hidden = true; inp.value = o.sembol + ' — ' + o.ad; secince(o, inp); };
@@ -4671,18 +4843,20 @@ function sembolKutusuKur(kapId, { turler, ph, secince, satirIci }){
 async function ozelKartHazirla(oge, goster){
   if(oge.key) return CARDS.find(c => c.key === oge.key);
   const sembol = String(oge.sembol || '').toUpperCase();
-  const id = 'oz-' + (oge.tur === 'kripto' ? 'k-' : '') + sembol.toLowerCase().replace(/[^a-z0-9]/g, '_');   // BRK.B → oz-brk_b
-  const var_ = CARDS.find(c => c.key === id || (oge.tur !== 'kripto' && c.source === 'finnhub' && c.symbol === sembol)); if(var_) return var_;
+  const id = 'oz-' + (oge.tur === 'kripto' ? 'k-' : oge.tur === 'bist' ? 'b-' : '') + sembol.toLowerCase().replace(/[^a-z0-9]/g, '_');   // BRK.B → oz-brk_b, THYAO → oz-b-thyao
+  const var_ = CARDS.find(c => c.key === id || (oge.tur === 'etf' && c.source === 'finnhub' && c.symbol === sembol)); if(var_) return var_;
   const o = { id, tur: oge.tur, sembol, ad: oge.tur === 'kripto' ? undefined : (oge.ad || undefined), t: Date.now() };
+  if(oge.deneme) o.ad = undefined;
   const c = kartOzelCfg(o);
   let f = null;
-  try{ f = oge.tur === 'kripto' ? (await fetchBinanceTicker([c.bnSymbol]))[c.bnSymbol] : await fetchEtfHibrit(sembol); }catch(e){ f = null; }
-  if(!f || !isFinite(f.price)) throw new Error(sembol + (oge.tur === 'kripto' ? ' Binance’te dolar karşılığıyla işlem görmüyor.' : ' için fiyat alınamadı (ABD borsasında işlem görmüyor olabilir).'));
+  try{ f = oge.tur === 'kripto' ? (await fetchBinanceTicker([c.bnSymbol]))[c.bnSymbol] : oge.tur === 'bist' ? await fetchYahoo(c.symbol) : await fetchEtfHibrit(sembol); }catch(e){ f = null; }
+  if(!f || !isFinite(f.price) || !(f.price > 0)) throw new Error(sembol + (oge.tur === 'kripto' ? ' Binance’te dolar karşılığıyla işlem görmüyor.' : oge.tur === 'bist' ? ' Borsa İstanbul’da bulunamadı ya da fiyatı şu an alınamadı.' : ' için fiyat alınamadı (ABD borsasında işlem görmüyor olabilir).'));
   CARDS.push(c);
   YATIRIM_LABELS[c.key] = c.label;
   grid.appendChild(kartElemanOlustur(c));
   kartAyarKaydet(goster ? gorunenKartlar().concat([c.key]) : gorunenKartlar(), o);
   if(oge.tur === 'kripto') renderCard(c, f.price, f.chgPct, false, { seanslar: kartEkSatirlari(c, f.price, f.acilis, f.dusuk, f.yuksek) });
+  else if(oge.tur === 'bist') renderCard(c, f.price, f.chgPct, false, Object.assign({}, yahooNotMeta(c, f.ts), { seanslar: kartEkSatirlari(c, f.price, f.onceki, f.dusuk, f.yuksek) }));
   else renderCard(c, f.price, f.chgPct, false, { seans: f.seans, kapanis: f.kapanis, seanslar: f.seanslar });
   kartGorunumUygula();
   return c;
@@ -4820,7 +4994,8 @@ function renderCard(cfg, price, chgPct, stale, meta){
     case 'usd0': valueStr = fmtNumber(price, 2); break;
     case 'usd2': valueStr = fmtNumber(price, 2); break;
     case 'try4': valueStr = fmtNumber(price, 4); break;   // TL kurları saatte birkaç binde oynar: 2 ondalıkta "donmuş" görünür
-    case 'oto': valueStr = fmtNumber(price, price >= 1 ? 2 : price >= 0.01 ? 4 : 8); break;   // kullanıcının eklediği kripto (ör. 0,00001234)
+    case 'oto': valueStr = fmtNumber(price, price >= 1 ? 2 : price >= 0.01 ? 4 : 8); break;
+    case 'try2': valueStr = '₺' + fmtNumber(price, 2); break;   // BİST hissesi (TL)   // kullanıcının eklediği kripto (ör. 0,00001234)
     default: valueStr = fmtNumber(price, 2);
   }
   valEl.textContent = valueStr;
@@ -7371,6 +7546,7 @@ function yatirimTurDegisti(){
 
   sembolSelect.style.display = 'none';
   document.getElementById('yatirimAra').style.display = 'none';
+  document.getElementById('yatirimBistAra').style.display = 'none';
   adetInput.style.display = 'none';
   gramInput.style.display = 'none';
   bistAdInput.style.display = 'none';
@@ -7381,7 +7557,10 @@ function yatirimTurDegisti(){
     sembolSelect.innerHTML = EMTIA_OPTIONS.map(o => `<option value="${o.key}">${escapeHtml(o.label)}</option>`).join('');
     gramInput.style.display = '';
   } else if(tur === 'bist'){
-    bistAdInput.style.display = '';
+    // BİST: şirket adıyla arama (Türk Hava Yolları, aselsan, tüpraş…); seçilen kod gizli alana yazılır
+    const ara = document.getElementById('yatirimBistAra');
+    ara.style.display = '';
+    if(!ara.querySelector('input')) sembolKutusuKur('yatirimBistAra', { turler: ['bist'], ph: 'BİST hissesi ara: Türk Hava Yolları, Aselsan…', secince: o => { bistAdInput.value = o ? o.sembol : ''; bistAdInput.dataset.isim = o && !o.deneme ? o.ad : ''; if(o) document.getElementById('yatirimAdetInput').focus(); } });
     adetInput.style.display = '';   // BİST: hisse kodu + adet; fiyat arka planda Yahoo'dan (KOD.IS)
   } else if(tur === 'etf'){
     // ABD hisse/ETF: binlerce sembol → arama kutusu (Tesla, TSM, ASML…)
@@ -7410,7 +7589,7 @@ async function addYatirim(){
   } else if(tur === 'bist'){
     const kod = istNormalize(document.getElementById('yatirimBistAdInput').value).replace(/\.IS$/, '');
     const adet = parseFloat(document.getElementById('yatirimAdetInput').value);
-    if(!/^[A-Z0-9]{3,6}$/.test(kod)){ showAlertModal('Lütfen geçerli bir BİST hisse kodu yaz (ör. THYAO).'); return; }
+    if(!/^[A-Z0-9]{3,6}$/.test(kod)){ showAlertModal('Önce listeden bir hisse seç: kutuya şirket adını ya da kodunu yaz (ör. Türk Hava Yolları, aselsan), çıkan listeden tıkla.'); const i = document.querySelector('#yatirimBistAra input'); if(i) i.focus(); return; }
     if(isNaN(adet) || adet <= 0){ showAlertModal('Lütfen geçerli bir adet gir.'); return; }
     bistHisseEkle(kod, adet);   // kod Yahoo'da doğrulanır, fiyat alınır, sonra eklenir
     return;
@@ -7457,9 +7636,11 @@ async function bistHisseEkle(kod, adet){
     if(!(f.price > 0)) throw new Error('fiyat yok');
     _lastGoodValues['bist:' + kod] = { price: f.price, chgPct: f.chgPct, ts: f.ts || Date.now() };
     const list = manuelListeYukle(YATIRIM_KEY);
-    list.push({ id: 'y-' + Date.now(), tur: 'bist', ad: kod, kod, miktar: adet, tarih: new Date().toISOString() });
+    const isim = document.getElementById('yatirimBistAdInput').dataset.isim || bistAdi(kod);
+    list.push(Object.assign({ id: 'y-' + Date.now(), tur: 'bist', ad: kod, kod, miktar: adet, tarih: new Date().toISOString() }, isim ? { isim } : {}));
     manuelListeKaydet(YATIRIM_KEY, list);
     document.getElementById('yatirimBistAdInput').value = '';
+    { const i = document.querySelector('#yatirimBistAra input'); if(i) i.value = ''; }
     document.getElementById('yatirimAdetInput').value = '';
     document.getElementById('yatirimForm').classList.remove('acik');
     _perfGecmis.t = 0;   // performans serilerine yeni hisse eklensin
@@ -7644,7 +7825,7 @@ function yatirimDegerHesapla(item){
 
 function yatirimEtiket(item){
   if(item.tur === 'emtia') return EMTIA_AD[item.sembol] || 'Altın';
-  if(item.tur === 'bist') return item.ad;
+  if(item.tur === 'bist'){ const isim = item.isim || (item.kod ? bistAdi(item.kod) : ''); return isim ? item.ad + ' (' + isim + ')' : item.ad; }   // kod (şirket adı)
   return YATIRIM_LABELS[item.sembol] || item.sembol;
 }
 
