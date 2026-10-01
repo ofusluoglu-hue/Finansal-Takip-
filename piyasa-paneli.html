@@ -2285,13 +2285,16 @@
       </div>
       <div class="bolum-form" id="varlikForm">
         <div class="loan-add-row">
-          <select id="varlikTurSelect" class="ai-input" style="max-width:150px;min-width:130px;">
+          <select id="varlikTurSelect" class="ai-input" style="max-width:150px;min-width:130px;" onchange="varlikFormTur()">
             <option value="Konut">Konut</option>
             <option value="Otomobil">Otomobil</option>
             <option value="Arsa">Arsa</option>
             <option value="Dükkan">Dükkan</option>
             <option value="Nakit / Mevduat">Nakit / Mevduat</option>
             <option value="Diğer">Diğer</option>
+          </select>
+          <select id="varlikBirimSelect" class="ai-input" style="max-width:140px;min-width:120px;display:none;" onchange="varlikFormTur()" title="Nakit / mevduatı hangi birimde tutuyorsun">
+            <option value="TL">₺ TL</option><option value="USD">$ Dolar</option><option value="EUR">€ Euro</option><option value="ALTIN">Gram altın</option>
           </select>
           <input type="text" id="varlikAdInput" class="ai-input" style="max-width:240px;min-width:160px;" placeholder="Ad (ör. Gaziosmanpaşa Dairesi)">
           <input type="number" step="0.01" id="varlikDegerInput" class="ai-input" style="max-width:170px;min-width:130px;" placeholder="Değer (TL)" onkeydown="if(event.key==='Enter')addVarlik()">
@@ -2301,7 +2304,7 @@
       <div id="varlikListContainer"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Konut, otomobil, arsa, dükkan gibi varlıklar için canlı fiyat çekilmez; girdiğin güncel değer esas alınır, ✎ ile güncellersin. Net varlık = varlıklar + yatırımlar − toplam borç. Satırdaki LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Nakit / Mevduat türünde varlığı ₺, $, € ya da gram altın olarak tutabilirsin: miktarı girersin, TL karşılığı güncel kur ya da gram 24 ayar altın fiyatıyla (ons ÷ 31,1035 × kur) canlı hesaplanır (LED yeşil: güncel fiyat, kırmızı: son bilinen). Konut, otomobil, arsa, dükkan gibi varlıklar için canlı fiyat çekilmez; girdiğin güncel değer esas alınır, ✎ ile güncellersin. Net varlık = varlıklar + yatırımlar − toplam borç. Satırdaki LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: GÜNCEL FİNANSAL DURUMUM ================= -->
 
@@ -4745,7 +4748,7 @@ function istPuanlariHesapla(){
 
   // 3) Borç karşılama: yatırımlar ÷ toplam borç
   const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
-  const varlik = manuelListeYukle(VARLIK_KEY).reduce((t, v) => t + (Number(v.deger) || 0), 0);
+  const varlik = manuelListeYukle(VARLIK_KEY).reduce((t, v) => t + varlikDegerTL(v), 0);
   if(gruplar.length){
     sonuc.borc = {
       borc, yatirim: tumTl, varlik,
@@ -5064,10 +5067,10 @@ function bpSnapshotOlustur(paylas, haber){
 
     // Varlıklar
     const vList = manuelListeYukle(VARLIK_KEY);
-    const vToplam = vList.reduce((t, x) => t + (Number(x.deger) || 0), 0);
+    const vToplam = vList.reduce((t, x) => t + varlikDegerTL(x), 0);
     s.push('Varlıklar (toplam ₺' + fmtNumber(vToplam, 0) + '):');
     if(!vList.length) s.push('- (varlık girilmemiş)');
-    vList.forEach(v => s.push('- ' + v.tur + ' | ' + v.ad + ' | ₺' + fmtNumber(v.deger, 0)));
+    vList.forEach(v => s.push('- ' + v.tur + ' | ' + v.ad + ' | ₺' + fmtNumber(varlikDegerTL(v), 0) + (v.birim && v.birim !== 'TL' ? ' (' + varlikMiktarStr(v) + ')' : '')));
 
     // Borçlar
     s.push('Borçlar:');
@@ -6583,18 +6586,55 @@ function renderYatirim(){
 
 // ---------- Varlıklarım (Konut/Otomobil/Arsa/Dükkan vb.) ----------
 const VARLIK_KEY = 'ft_varliklarim_v1';
+// Nakit / Mevduat varlığı dövizde ya da altında tutulabilir: { birim:'USD'|'EUR'|'ALTIN', miktar, deger (girildiği andaki TL karşılığı — yalnız yedek) }
+const VARLIK_BIRIM = { TL: { ad: '₺ TL', kisa: '₺' }, USD: { ad: '$ Dolar', kisa: '$' }, EUR: { ad: '€ Euro', kisa: '€' }, ALTIN: { ad: 'Gram altın', kisa: 'gr' } };
+const GRAM_ALTIN_SON_KEY = 'ft_gram_altin_son_v1';   // yalnız bu cihazda: son bilinen gram altın TL fiyatı (fiyat gelmeden açılışta)
+function varlikBirimFiyat(birim){
+  if(birim === 'USD' || birim === 'EUR') return { fiyat: _fxRates[birim] || null, canli: !!(_fxRatesLive && _fxRatesLive[birim]) };
+  if(birim === 'ALTIN'){
+    const g = typeof gramAltinTL === 'function' ? gramAltinTL() : null;
+    if(g){ try{ localStorage.setItem(GRAM_ALTIN_SON_KEY, String(Math.round(g * 100) / 100)); }catch(e){ /* yok */ } return { fiyat: g, canli: true }; }
+    let son = null; try{ son = parseFloat(localStorage.getItem(GRAM_ALTIN_SON_KEY)); }catch(e){ /* yok */ }
+    return { fiyat: son > 0 ? son : null, canli: false };
+  }
+  return { fiyat: 1, canli: true };
+}
+// Varlığın bugünkü TL değeri (dövizli/altın ise güncel kurla; kur yoksa girildiği andaki TL karşılığı)
+function varlikDeger(v){
+  const b = v && v.birim && v.birim !== 'TL' ? v.birim : null;
+  if(!b) return { tl: Number(v && v.deger) || 0, canli: true, fiyat: null, birim: 'TL' };
+  const f = varlikBirimFiyat(b), m = Number(v.miktar) || 0;
+  return f.fiyat ? { tl: m * f.fiyat, canli: f.canli, fiyat: f.fiyat, birim: b, miktar: m } : { tl: Number(v.deger) || 0, canli: false, fiyat: null, birim: b, miktar: m };
+}
+function varlikDegerTL(v){ return varlikDeger(v).tl; }
+function varlikMiktarStr(v){ const b = v.birim; return b === 'ALTIN' ? fmtNumber(v.miktar, v.miktar < 100 ? 2 : 0) + ' gr altın' : b === 'USD' ? '$' + fmtNumber(v.miktar, 0) : b === 'EUR' ? '€' + fmtNumber(v.miktar, 0) : ''; }
+function varlikFormTur(){
+  const tur = document.getElementById('varlikTurSelect').value, b = document.getElementById('varlikBirimSelect'), d = document.getElementById('varlikDegerInput');
+  if(!b || !d) return;
+  const nakit = tur === 'Nakit / Mevduat';
+  b.style.display = nakit ? '' : 'none';
+  if(!nakit) b.value = 'TL';
+  d.placeholder = b.value === 'USD' ? 'Miktar ($)' : b.value === 'EUR' ? 'Miktar (€)' : b.value === 'ALTIN' ? 'Miktar (gram)' : 'Değer (TL)';
+}
 
 function addVarlik(){
   const tur = document.getElementById('varlikTurSelect').value;
   const adInput = document.getElementById('varlikAdInput');
   const degerInput = document.getElementById('varlikDegerInput');
   const ad = adInput.value.trim();
-  const deger = parseFloat(degerInput.value);
+  const deger = parseFloat(String(degerInput.value).replace(',', '.'));
+  const bEl = document.getElementById('varlikBirimSelect');
+  const birim = tur === 'Nakit / Mevduat' && bEl ? bEl.value : 'TL';
 
   if(!ad){ showAlertModal('Lütfen varlığın adını yaz.'); return; }
-  if(isNaN(deger) || deger < 0){ showAlertModal('Lütfen geçerli bir değer gir.'); return; }
+  if(isNaN(deger) || deger < 0){ showAlertModal('Lütfen geçerli bir ' + (birim === 'TL' ? 'değer' : 'miktar') + ' gir.'); return; }
 
   const list = manuelListeYukle(VARLIK_KEY);
+  if(birim !== 'TL'){
+    const f = varlikBirimFiyat(birim);
+    if(!f.fiyat){ showAlertModal((birim === 'ALTIN' ? 'Gram altın fiyatı' : 'Kur') + ' henüz alınamadı; birkaç saniye sonra tekrar dene.'); return; }
+    list.push({ id: 'v-' + Date.now(), tur, ad, birim, miktar: deger, deger: Math.round(deger * f.fiyat), tarih: new Date().toISOString() });
+  } else
   list.push({ id: 'v-' + Date.now(), tur, ad, deger, tarih: new Date().toISOString() });
   manuelListeKaydet(VARLIK_KEY, list);
 
@@ -6617,9 +6657,14 @@ function guncelleVarlik(id){
   if(!item) return;
 
   const input = document.getElementById('varlik-edit-' + id);
-  const val = parseFloat(input.value);
+  const val = parseFloat(String(input.value).replace(',', '.'));
   if(isNaN(val) || val < 0){ showAlertModal('Lütfen geçerli bir değer gir.'); return; }
 
+  if(item.birim && item.birim !== 'TL'){   // dövizli/altın: yeni miktar; TL yedeği o anki fiyatla
+    const f = varlikBirimFiyat(item.birim);
+    item.miktar = val;
+    if(f.fiyat) item.deger = Math.round(val * f.fiyat);
+  } else
   item.deger = val;
   item.tarih = new Date().toISOString();
   manuelListeKaydet(VARLIK_KEY, list);
@@ -6629,18 +6674,21 @@ function guncelleVarlik(id){
 function renderVarlik(){
   const container = document.getElementById('varlikListContainer');
   const list = manuelListeYukle(VARLIK_KEY);
-  const toplam = list.reduce((s, item) => s + (Number(item.deger) || 0), 0);
+  const toplam = list.reduce((s, item) => s + varlikDegerTL(item), 0);
 
   container.innerHTML = list.length
-    ? list.map(item => satirHtml({
-        led: ledRengi(item.tarih),
+    ? list.map(item => {
+        const d = varlikDeger(item), dovizli = d.birim !== 'TL';
+        const birimRenk = d.birim === 'USD' ? 'var(--up)' : d.birim === 'ALTIN' ? '#F2C94C' : d.birim === 'EUR' ? '#6EC3FF' : '';
+        return satirHtml({
+        led: dovizli ? (d.canli ? 'green' : 'red') : ledRengi(item.tarih),
         ad: item.ad,
-        alt: escapeHtml(item.tur) + ' · Güncelleme ' + tarihSaatStr(item.tarih),
-        tutar: '₺' + fmtNumber(item.deger, 0),
+        alt: escapeHtml(item.tur) + (dovizli ? ` · <b style="color:${birimRenk};">${escapeHtml(varlikMiktarStr(item))}</b> · ${d.fiyat ? (d.birim === 'ALTIN' ? 'gram ₺' + fmtNumber(d.fiyat, 0) : 'kur ₺' + fmtNumber(d.fiyat, 4)) + (d.canli ? ' (güncel)' : ' (son bilinen)') : 'kur bekleniyor'}` : '') + ' · Güncelleme ' + tarihSaatStr(item.tarih),
+        tutar: '₺' + fmtNumber(d.tl, 0),
         renk: VARLIK_KATEGORI_RENK[item.tur] || 'var(--up)',
-        duzen: { id: 'varlik-edit-' + item.id, ph: 'yeni değer (₺)', kaydet: `guncelleVarlik('${item.id}')` },
+        duzen: { id: 'varlik-edit-' + item.id, ph: dovizli ? 'yeni miktar (' + VARLIK_BIRIM[d.birim].kisa + ')' : 'yeni değer (₺)', kaydet: `guncelleVarlik('${item.id}')` },
         sil: { onclick: `deleteVarlik('${item.id}')`, baslik: 'Sil', ikon: '✕' },
-      })).join('')
+      }); }).join('')
     : '<div class="bos-not">Henüz varlık eklenmedi — sağ üstteki + Ekle ile ekleyebilirsin.</div>';
 
   document.getElementById('varlikToplamDeger').textContent = list.length ? '₺' + fmtNumber(toplam, 0) : '';
@@ -6734,7 +6782,7 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
 
   const kategoriToplam = {};
   (varlikListesi || []).forEach(item => {
-    kategoriToplam[item.tur] = (kategoriToplam[item.tur] || 0) + (Number(item.deger) || 0);
+    kategoriToplam[item.tur] = (kategoriToplam[item.tur] || 0) + varlikDegerTL(item);
   });
   if(toplamYatirim > 0) kategoriToplam['Yatırımlar'] = toplamYatirim;
   const kategoriler = Object.keys(kategoriToplam).filter(k => kategoriToplam[k] > 0);
@@ -9006,7 +9054,7 @@ function netBirimSec(b){ _netBirim = b; renderNetGecmis(); }
 function netGecmisYukle(){ return manuelListeYukle(NET_GECMIS_KEY).filter(x => x && /^\d{4}-\d\d-\d\d$/.test(x.id)).sort((a, b) => a.id.localeCompare(b.id)); }
 // Finansal Durumum'daki hesabın aynısı
 function netDurum(){
-  const varlik = manuelListeYukle(VARLIK_KEY).reduce((s, x) => s + (Number(x.deger) || 0), 0);
+  const varlik = manuelListeYukle(VARLIK_KEY).reduce((s, x) => s + varlikDegerTL(x), 0);
   const yatirim = _toplamYatirimTL || 0;
   const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
   return { varlik, yatirim, borc, net: varlik + yatirim - borc };
@@ -9211,7 +9259,7 @@ function hedefVarliklari(h){
 function hedefBirikim(h){
   if(hedefElleMi(h)) return Number(h.birikmis) || 0;
   const tl = h.kaynak === 'varlik'
-    ? hedefVarliklari(h).reduce((t, v) => t + (Number(v.deger) || 0), 0)
+    ? hedefVarliklari(h).reduce((t, v) => t + varlikDegerTL(v), 0)
     : hedefYatirimlari(h).reduce((t, y) => { const d = yatirimDegerHesapla(y); return t + (d ? d.tutarTL || 0 : 0); }, 0);
   if(h.birim === 'USD'){ const k = hedefKur(); return k ? tl / k : 0; }
   return tl;
@@ -9255,7 +9303,9 @@ function hedefAcilDegisti(){
   // Nakit / Mevduat türünde varlık varsa: kaynak kendiliğinden "Varlıklarımdan" ve o varlıklar işaretli
   const kutu = document.getElementById('hkfKutu');
   if(kutu && !kutu.querySelector('.hk-varlik-liste input:checked')){
-    const nakit = manuelListeYukle(VARLIK_KEY).filter(v => v.tur === 'Nakit / Mevduat').map(v => v.id);
+    const nakitl = manuelListeYukle(VARLIK_KEY).filter(v => v.tur === 'Nakit / Mevduat');
+    const adiAcil = nakitl.filter(v => /acil/i.test(v.ad || ''));   // adında "acil" geçen varsa yalnız o
+    const nakit = (adiAcil.length ? adiAcil : nakitl).map(v => v.id);
     if(nakit.length){
       kutu.querySelectorAll('.hk-varlik-liste input').forEach(i => { if(nakit.includes(i.value)) i.checked = true; });
       hedefKaynakMod('hkf', 'varlik');
@@ -9289,7 +9339,7 @@ function hedefKaynakHtml(pfx, h){
       </div>
     </div>
     <div class="hk-var">
-      <div class="hk-liste hk-varlik-liste">${varl.map(v => `<label class="hk-oge"><input type="checkbox" value="${v.id}" data-tl="${Number(v.deger) || 0}"${seciliVar.has(v.id) ? ' checked' : ''} onchange="hedefKaynakToplam('${pfx}')"><span style="text-transform:none;">${escapeHtml(v.ad)} <small style="color:var(--muted-2);">${escapeHtml(v.tur)}</small></span><b>₺${fmtNumber(Number(v.deger) || 0, 0)}</b></label>`).join('')}</div>
+      <div class="hk-liste hk-varlik-liste">${varl.map(v => `<label class="hk-oge"><input type="checkbox" value="${v.id}" data-tl="${varlikDegerTL(v)}"${seciliVar.has(v.id) ? ' checked' : ''} onchange="hedefKaynakToplam('${pfx}')"><span style="text-transform:none;">${escapeHtml(v.ad)} <small style="color:var(--muted-2);">${escapeHtml(v.birim && v.birim !== 'TL' ? varlikMiktarStr(v) : v.tur)}</small></span><b>₺${fmtNumber(varlikDegerTL(v), 0)}</b></label>`).join('')}</div>
       <div class="hk-toplam" id="${pfx}VarToplam"></div>
     </div>
     <div class="hk-elle"><input type="number" step="any" min="0" id="${pfx}Birikmis" class="ai-input" style="max-width:220px;" placeholder="Şu an biriken tutar (ops.)" value="${h && h.birikmis ? h.birikmis : ''}"></div>
@@ -9714,6 +9764,7 @@ function switchTab(tabId){
   }
   if(tabId === 'ai' && typeof bpTabAcildi === 'function') bpTabAcildi();
   if(tabId === 'harcama'){ renderHarcama(); aylikKurlariGuncelle(); }   // grafik görünür genişlikle çizilsin; eksik aylık kurlar çekilsin
+  if(tabId === 'finansal' && typeof renderVarlik === 'function') renderVarlik();   // acil fon göstergesi gibi başka sayfalara bağlı satırlar güncel olsun
   if(tabId === 'butce') renderButce();
   if(tabId === 'nakitakis'){ _nakitAy = null; renderNakitAkis(); }   // her açılışta içinde bulunulan ay
   if(tabId === 'borcplan') renderBorcPlan();
