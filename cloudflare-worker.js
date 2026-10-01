@@ -9,11 +9,12 @@
 //   Uç noktalar:
 //     /auth/login (POST) · /auth/logout (POST) · /auth/me (GET) · /auth/sifre (POST, kendi şifresini değiştirir)
 //     /auth/profil (POST: ad, fotoğraf, tercihler) · /auth/cikis-diger (POST: diğer cihazlardaki oturumları kapatır)
+//     /auth/ai-anahtar (POST: kullanıcının Anthropic anahtarını doğrulayıp şifreli saklar · DELETE: siler)
 //     /admin/kullanicilar (GET, POST) · /admin/kullanicilar/:id/sifre (POST) · /admin/kullanicilar/:id/durum (POST)
 //     /admin/kullanicilar/:id (DELETE)                                   — yalnız yönetici
 //     /data (GET), /data/:anahtar (PUT)    -> kullanıcının verileri (cihazlar arası senkron)
 //     /proxy?url=...                       -> CORS proxy (Yahoo, FRED, Google News, haber RSS'leri; 60 sn önbellek)
-//     /ai, /extract-loan                   -> Anthropic geçidi (şimdilik yalnız yönetici; diğerleri kendi anahtarıyla — sonraki aşama)
+//     /ai, /extract-loan                   -> Anthropic geçidi (yönetici: sunucunun anahtarı; diğer kullanıcılar: kendi kayıtlı anahtarı)
 //     /td, /td-series, /fh                 -> Twelve Data / Finnhub geçitleri (ortak kota için 60 sn önbellek)
 //     /fh-ara?q=                           -> ABD hisse/ETF sembol araması (Finnhub, 1 gün önbellek)
 //     /uranyum                             -> uranyum fiyatı
@@ -22,7 +23,8 @@
 //
 // KURULUM (Cloudflare panelinde):
 //   A) D1 veritabanı: finansal-takip  →  Worker > Settings > Bindings > D1 (Variable name: DB)
-//   B) Secrets: ANTHROPIC_API_KEY, TWELVEDATA_API_KEY, FINNHUB_API_KEY
+//   B) Secrets: ANTHROPIC_API_KEY, TWELVEDATA_API_KEY, FINNHUB_API_KEY, AI_ANAHTAR_SIFRE (32 bayt rastgele, base64: kullanıcıların
+//      Anthropic anahtarlarını şifreler — değişirse kayıtlı anahtarlar çözülemez, kullanıcılar yeniden girer)
 //      İlk yönetici hesabı: LOGIN_USER (e-posta) + ACCESS_TOKEN (şifre). Kullanıcı tablosu boşsa ilk istekte bu
 //      bilgilerle yönetici açılır ve eski tek kullanıcılı veriler (kv tablosu) bu hesaba kopyalanır. Sonrasında
 //      ACCESS_TOKEN yalnızca geçiş süresince eski panelin çalışması için kullanılır.
@@ -55,7 +57,8 @@ function kullaniciCikti(u, ek) {
   let ayar = {};
   try { ayar = JSON.parse(u.ayar || '{}') || {}; } catch { ayar = {}; }
   return Object.assign({ id: u.id, email: u.email, ad: u.ad, rol: u.role, sifreDegismeli: !!u.must_change, foto: u.foto || null, ayar,
-    olusturma: u.created_at || null, sonGiris: u.last_login || null }, ek || {});
+    olusturma: u.created_at || null, sonGiris: u.last_login || null,
+    aiAnahtar: u.ai_anahtar ? { var: true, ipucu: u.ai_ipucu || null, eklendi: u.ai_eklendi || null } : { var: false } }, ek || {});   // anahtarın kendisi asla
 }
 
 function corsBasliklari(request, env) {
@@ -159,6 +162,22 @@ async function yeniSifreKaydi(sifre) {
   const tuz = b64(crypto.getRandomValues(new Uint8Array(16)));
   return { pass_salt: tuz, pass_iter: SIFRE_ITER, pass_hash: await sifreOzeti(sifre, tuz, SIFRE_ITER) };
 }
+// ---------- Kullanıcı Anthropic anahtarı: AES-GCM, ek doğrulama verisi kullanıcı kimliği (başka hesaba kopyalanan şifreli metin çözülmez) ----------
+async function aiSifreAnahtari(env) {
+  if (!env.AI_ANAHTAR_SIFRE) throw new Error('AI_ANAHTAR_SIFRE tanımlı değil');
+  const ham = Uint8Array.from(atob(env.AI_ANAHTAR_SIFRE.trim()), c => c.charCodeAt(0));
+  return crypto.subtle.importKey('raw', ham, 'AES-GCM', false, ['encrypt', 'decrypt']);
+}
+async function aiSifrele(env, metin, kullaniciId) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: new TextEncoder().encode(kullaniciId) }, await aiSifreAnahtari(env), new TextEncoder().encode(metin));
+  return b64(iv) + '.' + b64(ct);
+}
+async function aiCoz(env, kayit, kullaniciId) {
+  const [iv, ct] = String(kayit).split('.').map(x => Uint8Array.from(atob(x), c => c.charCodeAt(0)));
+  const acik = await crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData: new TextEncoder().encode(kullaniciId) }, await aiSifreAnahtari(env), ct);
+  return new TextDecoder().decode(acik);
+}
 const epostaNormal = e => String(e || '').trim().toLocaleLowerCase('tr-TR');
 const epostaGecerli = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 200;
 
@@ -182,6 +201,9 @@ async function semaHazirla(env) {
   const var_ = new Set((sutunlar || []).map(x => x.name));
   if (!var_.has('foto')) await env.DB.prepare('ALTER TABLE users ADD COLUMN foto TEXT').run();
   if (!var_.has('ayar')) await env.DB.prepare('ALTER TABLE users ADD COLUMN ayar TEXT').run();
+  if (!var_.has('ai_anahtar')) await env.DB.prepare('ALTER TABLE users ADD COLUMN ai_anahtar TEXT').run();
+  if (!var_.has('ai_ipucu')) await env.DB.prepare('ALTER TABLE users ADD COLUMN ai_ipucu TEXT').run();
+  if (!var_.has('ai_eklendi')) await env.DB.prepare('ALTER TABLE users ADD COLUMN ai_eklendi INTEGER').run();
   // Kullanıcı tablosu boşsa: ilk yöneticiyi LOGIN_USER + ACCESS_TOKEN ile aç, eski verileri ona kopyala (bir kez)
   const say = await env.DB.prepare('SELECT COUNT(*) AS n FROM users').first();
   if (!say || !say.n) {
@@ -342,6 +364,34 @@ export default {
       }
       if (!alanlar.length) return json({ error: 'değişiklik yok' }, 400);
       await env.DB.prepare('UPDATE users SET ' + alanlar.join(', ') + ' WHERE id = ?').bind(...degerler, ben.id).run();
+      const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(ben.id).first();
+      return json({ ok: true, kullanici: kullaniciCikti(u) });
+    }
+
+    if (url.pathname === '/auth/ai-anahtar') {
+      if (request.method === 'DELETE') {
+        await env.DB.prepare('UPDATE users SET ai_anahtar = NULL, ai_ipucu = NULL, ai_eklendi = NULL WHERE id = ?').bind(ben.id).run();
+        const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(ben.id).first();
+        return json({ ok: true, kullanici: kullaniciCikti(u) });
+      }
+      if (request.method !== 'POST') return json({ error: 'desteklenmeyen istek' }, 405);
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      const anahtar = String(g.anahtar || '').trim();
+      if (!/^sk-ant-[A-Za-z0-9_-]{20,200}$/.test(anahtar)) return json({ error: 'Bu bir Anthropic API anahtarına benzemiyor (sk-ant- ile başlamalı).' }, 400);
+      // Anthropic'e ücretsiz bir istekle doğrula (model listesi; jeton harcamaz)
+      let durum = 0, mesaj = '';
+      try {
+        const t = await fetch('https://api.anthropic.com/v1/models?limit=1', { headers: { 'x-api-key': anahtar, 'anthropic-version': '2023-06-01' } });
+        durum = t.status;
+        if (!t.ok) { const d = await t.json().catch(() => ({})); mesaj = (d.error && d.error.message) || ''; }
+      } catch (e) { return json({ error: 'Anthropic’e ulaşılamadı, biraz sonra tekrar dene.' }, 502); }
+      if (durum === 401) return json({ error: 'Anthropic bu anahtarı tanımadı. Doğru kopyaladığından ve iptal edilmediğinden emin ol.' }, 400);
+      if (durum === 403) return json({ error: 'Bu anahtarın yetkisi yok' + (mesaj ? ' (' + mesaj + ')' : '') + '.' }, 400);
+      if (durum !== 200) return json({ error: 'Anahtar doğrulanamadı (Anthropic: ' + (mesaj || 'HTTP ' + durum) + ').' }, 400);
+      let sifreli;
+      try { sifreli = await aiSifrele(env, anahtar, ben.id); } catch (e) { return json({ error: 'Sunucu ayarı eksik (AI_ANAHTAR_SIFRE).' }, 503); }
+      const ipucu = anahtar.slice(0, 7) + '…' + anahtar.slice(-4);
+      await env.DB.prepare('UPDATE users SET ai_anahtar = ?, ai_ipucu = ?, ai_eklendi = ? WHERE id = ?').bind(sifreli, ipucu, Date.now(), ben.id).run();
       const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(ben.id).first();
       return json({ ok: true, kullanici: kullaniciCikti(u) });
     }
@@ -540,12 +590,20 @@ export default {
     // ---------- AI GEÇİDİ ----------
     if (url.pathname === '/ai' || url.pathname === '/extract-loan') {
       if (request.method !== 'POST') return json({ error: 'POST bekleniyor' }, 405);
-      // Şimdilik yalnız yönetici (sunucunun anahtarı). Diğer kullanıcılar sonraki aşamada kendi Anthropic anahtarıyla.
-      if (!yonetici) {
-        const m = 'Bay Piyasa ve PDF okuma için hesabına kendi Anthropic API anahtarını eklemen gerekecek — bu ayar yakında geliyor. Krediyi şimdilik elle ekleyebilirsin.';
-        return json(url.pathname === '/ai' ? { error: { message: m }, kod: 'anahtar_gerekli' } : { error: m, kod: 'anahtar_gerekli' }, 403);
+      // Yönetici: sunucunun anahtarı. Diğer kullanıcılar: Profilim'de kaydettikleri kendi anahtarı (ücret onların Anthropic hesabından)
+      const hataVer = (m, kod, st) => json(url.pathname === '/ai' ? { error: { message: m }, kod } : { error: m, kod }, st);
+      let apiAnahtari;
+      if (yonetici) {
+        apiAnahtari = env.ANTHROPIC_API_KEY;
+        if (!apiAnahtari) return json({ error: 'ANTHROPIC_API_KEY tanımlı değil (Worker > Settings > Variables and Secrets)' }, 500);
+      } else {
+        const k = await env.DB.prepare('SELECT ai_anahtar FROM users WHERE id = ?').bind(ben.id).first();
+        if (!k || !k.ai_anahtar) return hataVer('Bay Piyasa için Profilim › Bay Piyasa bölümünden kendi Anthropic API anahtarını ekle.', 'anahtar_gerekli', 403);
+        try { apiAnahtari = await aiCoz(env, k.ai_anahtar, ben.id); }
+        catch (e) { return hataVer('Kayıtlı anahtarın okunamadı; Profilim › Bay Piyasa bölümünden yeniden ekle.', 'anahtar_gerekli', 403); }
       }
-      if (!env.ANTHROPIC_API_KEY) return json({ error: 'ANTHROPIC_API_KEY tanımlı değil (Worker > Settings > Variables and Secrets)' }, 500);
+      // Kullanıcının anahtarı Anthropic'te reddedilirse 401 yerine 400 (401 panelde "oturum bitti" sayılır)
+      const anahtarHatasi = st => !yonetici && (st === 401 || st === 403);
       let payload;
       try { payload = await request.json(); } catch { return json({ error: 'geçersiz JSON' }, 400); }
 
@@ -559,9 +617,10 @@ export default {
         try {
           const upstream = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+            headers: { 'Content-Type': 'application/json', 'x-api-key': apiAnahtari, 'anthropic-version': '2023-06-01' },
             body: JSON.stringify(body),
           });
+          if (anahtarHatasi(upstream.status)) return hataVer('Anthropic anahtarın reddedildi (geçersiz, iptal edilmiş ya da bakiyesi yok). Profilim › Bay Piyasa’dan kontrol et.', 'anahtar_gecersiz', 400);
           return json(await upstream.json(), upstream.status);
         } catch (e) {
           return json({ error: 'AI isteği başarısız: ' + e.message }, 502);
@@ -573,7 +632,7 @@ export default {
       try {
         const upstream = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+          headers: { 'Content-Type': 'application/json', 'x-api-key': apiAnahtari, 'anthropic-version': '2023-06-01' },
           body: JSON.stringify({
             model: 'claude-sonnet-5',
             max_tokens: 4000,
@@ -587,8 +646,9 @@ export default {
             }],
           }),
         });
+        if (anahtarHatasi(upstream.status)) return hataVer('Anthropic anahtarın reddedildi (geçersiz, iptal edilmiş ya da bakiyesi yok). Profilim › Bay Piyasa’dan kontrol et.', 'anahtar_gecersiz', 400);
         const data = await upstream.json();
-        if (!upstream.ok) return json({ error: 'Anthropic API hatası', detail: data }, upstream.status);
+        if (!upstream.ok) return json({ error: 'Anthropic API hatası', detail: data }, upstream.status === 401 ? 502 : upstream.status);
         const textBlock = (data.content || []).find(b => b.type === 'text');
         const rawText = textBlock ? textBlock.text : '';
         let extracted;

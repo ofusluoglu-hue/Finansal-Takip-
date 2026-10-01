@@ -490,7 +490,7 @@
     animation:ledBlink 1.6s ease-in-out infinite;
   }
   @media (max-width:900px){
-    .app-bar{grid-template-columns:1fr;justify-items:start;gap:8px;}
+    .app-bar{grid-template-columns:1fr;justify-items:start;gap:8px;position:static;}   /* telefonda başlık bloğu 3 satır: yapışık kalırsa ekranın ~%40'ını kaplar */
     .kart-duzen-btn.gizli{display:none;}
     .app-bar .status{justify-self:start;}
   }
@@ -1743,6 +1743,16 @@
   .pf-satir > div{min-width:0;flex:1 1 220px;}
   .pf-baslik{font-size:13.5px;font-weight:600;color:var(--text);}
   .pf-cikis:hover{color:var(--down);border-color:var(--down);}
+  .pf-dugmeler{display:flex;gap:6px;flex-wrap:wrap;}
+  .pf-anahtar{font-family:ui-monospace,'Courier New',monospace;font-size:12.5px;color:var(--muted);font-weight:600;}
+  .pf-yardim{margin:4px 0 12px;font-size:12.5px;color:var(--muted);}
+  .pf-yardim summary{cursor:pointer;color:var(--amber);font-weight:600;padding:4px 0;}
+  .pf-yardim ol{margin:6px 0 6px 18px;padding:0;line-height:1.7;}
+  .pf-yardim p{margin:6px 0 0;line-height:1.55;}
+  .pf-yardim a{color:var(--amber);}
+  .bp-anahtar-not{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .bp-anahtar-not > div{flex:1 1 320px;min-width:0;}
+  .bp-anahtar-not[hidden]{display:none;}
   .pf-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--panel-2);border:1px solid var(--up);color:var(--text);padding:9px 16px;border-radius:10px;font-size:13px;z-index:10001;box-shadow:0 8px 24px rgba(0,0,0,.45);max-width:calc(100vw - 32px);}
   .diger-profil{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--panel-2);cursor:pointer;min-width:0;}
   .diger-profil .profil-ok{font-size:12px;font-weight:600;color:var(--amber);}
@@ -3218,7 +3228,7 @@
 
     <details class="kv-bolum" id="kv-borclar"><summary>💳 Borçlarım <span>krediler, kartlar, KMH, elden borç</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Bütün borçlarının bugünkü toplamını gösterir. Kredi ve KMH borcu her gün işleyen faizle canlı hesaplanır.</p>
-      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; şimdilik yalnız yönetici hesabında) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca ✓'ye bas.</p>
+      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; Profilim'de Anthropic anahtarın kayıtlı olmalı) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca ✓'ye bas.</p>
       <p><b>Kredi Kartlarım:</b> Kartın bugünkü toplam borcunu yaz; ekstre gelince ✎ ile güncelle.</p>
       <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki ⚙ ile de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
       <p><b>Elden Nakit Borçlar:</b> Birinden aldığın borcu TL, dolar ya da euro olarak gir. Dövizliyse TL karşılığı güncel kurla hesaplanır; kur canlıyken ışık yeşil yanar.</p>
@@ -3310,7 +3320,7 @@
       <p><b>Gizlilik:</b> Rakamların yalnızca <b>“Portföyümü paylaş”</b> açıksa gönderilir. Kapalıyken yalnız piyasa ve haber verisini bilir.</p>
       <p><b>Maliyet:</b> Her cevabın küçük bir ücreti vardır; ekranda yazar. <b>Günlük limit</b> (varsayılan $0,50) dolunca durur. Model seçimiyle hız ve fiyatı ayarlarsın; günlük kullanım için Sonnet yeterli.</p>
       <p><b>Örnek soru:</b> “KMH'yi mi kapatayım yoksa ihtiyaç kredime ek ödeme mi yapayım?”</p>
-      <p><b>Kimde çalışır:</b> Şimdilik yalnız yönetici hesabında. Diğer hesaplarda sayfanın üstünde “Bay Piyasa şimdilik kapalı” yazar; kendi Anthropic API anahtarını hesabına ekleyebileceğin ayar yakında gelecek. Panelin geri kalanı Bay Piyasa olmadan da tamamen çalışır.</p>
+      <p><b>Kurulum (bir kez):</b> Bay Piyasa, Anthropic'in Claude yapay zekâsını kullanır; kendi <b>Anthropic API anahtarını</b> eklemen gerekir. Bay Piyasa sayfasındaki <b>Anahtarını ekle</b>'ye ya da <b>Profilim › Bay Piyasa (yapay zekâ)</b>'ya git, anahtarı yapıştır ve <b>Kaydet ve doğrula</b>'ya bas. Anahtar Anthropic'te doğrulanır, şifreli saklanır, bir daha tamamı gösterilmez. Anahtarı almak için: console.anthropic.com'da hesap aç → Billing'den kredi yükle (ör. $5) → API Keys › Create Key. Ücret kullandıkça senin Anthropic hesabından düşer. Aynı anahtar haber başlığı çevirisi, kredi PDF'i okuma ve Aylık Rapor yorumu için de kullanılır. Yönetici hesabında sunucunun anahtarı kullanılır.</p>
       <p class="kv-ipucu">💡 Cevaplar yatırım tavsiyesi değildir; senaryo ve olasılık dilinde düşünmene yardım eder.</p>
       <button class="bolum-ekle" onclick="switchTab('ai')">Bay Piyasa'ya git →</button>
     </div></details>
@@ -3330,6 +3340,7 @@
         <li><b>📷 Fotoğraf yükle:</b> telefon ya da bilgisayardan bir fotoğraf seç; kare olarak ortadan kırpılır ve küçültülür. <b>Kaldır</b> ile silersin; yerine adının baş harfleri görünür (ör. “Ayşe Yılmaz” → AY).</li>
         <li><b>Ad soyad:</b> yaz ve <b>Kaydet</b>. Menüde e-postan yerine adın görünür.</li>
         <li><b>Açılış sayfası:</b> panel açılınca ilk hangi sayfanın geleceğini seç (ör. her gün harcama giriyorsan Harcama Takibim).</li>
+        <li><b>Bay Piyasa (yapay zekâ):</b> kendi Anthropic API anahtarını ekle, değiştir ya da kaldır. Anahtar doğrulanır ve şifreli saklanır; yönetici hesabında gerekmez.</li>
         <li><b>Güvenlik:</b> 🔑 <b>Şifremi değiştir</b> (mevcut şifre + en az 8 karakterlik yeni şifre; diğer cihazlardaki oturumlar kapanır), <b>Diğer cihazlardan çıkış yap</b> (ör. iş bilgisayarında açık unuttuysan) ve bu cihazdan <b>Çıkış yap</b>. Kaç cihazda açık olduğun da yazar.</li>
       </ul>
       <p>Profil bilgilerin hesabında saklanır; bütün cihazlarında aynı görünür.</p>
@@ -3442,7 +3453,8 @@
     <details class="kv-bolum kv-sss"><summary>İlk girişte neden şifremi değiştirmem isteniyor?</summary><div class="kv-ic"><p>Hesabın yönetici tarafından <b>geçici</b> bir şifreyle açıldı. Bu şifreyi başkası da bildiği için panel, devam etmeden önce yalnızca senin bildiğin bir şifre belirlemeni ister.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bir arkadaşım ya da eşim de paneli kullanabilir mi?</summary><div class="kv-ic"><p>Evet, ama kendi hesabıyla. Hesapları yönetici açar; ondan iste. Herkesin verisi ayrıdır, kimse diğerinin harcamasını ya da borcunu göremez. Aynı bilgisayarı kullanıyorsanız işin bitince <b>Çıkış yap</b>.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bay Piyasa verilerimi görüyor mu?</summary><div class="kv-ic"><p>Yalnızca Bay Piyasa sayfasındaki <b>“Portföyümü paylaş”</b> açıksa portföy, borç, harcama ve hedef <b>rakamların</b> gönderilir; isim ya da e-posta gönderilmez. Kapalıyken yalnızca piyasa ve haber verisini bilir. Aylık Rapor yorumu da aynı izni ister.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Bay Piyasa sayfasında “şimdilik kapalı” yazıyor.</summary><div class="kv-ic"><p>Bay Piyasa yapay zekâ kullanır ve her sorunun ücreti vardır; şimdilik yalnızca yönetici hesabında çalışır. Kendi Anthropic API anahtarını hesabına ekleyebileceğin ayar yakında gelecek. Bu arada haber başlıkları İngilizce kalabilir ve kredi PDF'ini okutamazsın; krediyi Excel şablonuyla eklersin. Diğer her şey çalışır.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bay Piyasa “Anthropic API anahtarın gerekiyor” diyor.</summary><div class="kv-ic"><p>Bay Piyasa yapay zekâ kullanır ve her cevabın küçük bir ücreti vardır; bu ücret senin Anthropic hesabından düşsün diye kendi anahtarını eklersin. <b>Anahtarını ekle</b>'ye bas (ya da Profilim › Bay Piyasa), anahtarı yapıştır, <b>Kaydet ve doğrula</b>. Anahtarın yoksa: console.anthropic.com'da hesap aç → Billing'den kredi yükle (ör. $5) → API Keys › Create Key → “sk-ant-” ile başlayan metni kopyala. Anahtar eklenene kadar haber başlıkları İngilizce kalabilir ve kredi PDF'ini okutamazsın (Excel şablonuyla eklersin); diğer her şey çalışır.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Anthropic anahtarım güvende mi? Ne kadar tutar?</summary><div class="kv-ic"><p>Anahtar kaydedilmeden önce Anthropic'te doğrulanır, sunucuda <b>şifreli</b> saklanır ve yalnızca senin hesabının isteklerinde çözülür; panelde sana bile tamamı bir daha gösterilmez (yalnızca baş ve son harfleri), yönetici de göremez. Ücret kullandıkça Anthropic hesabından düşer: kısa bir soru genelde $0,01'in altındadır, her cevabın ücreti altında yazar ve Bay Piyasa sayfasındaki <b>günlük limit</b> (varsayılan $0,50) dolunca durur. Anahtarı Profilim'den istediğin an kaldırabilir ya da Anthropic'te iptal edebilirsin.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bay Piyasa ne kadar tutar?</summary><div class="kv-ic"><p>Her cevabın küçük bir ücreti vardır; cevabın altında yazar. Bay Piyasa sayfasındaki <b>günlük limit</b> (varsayılan $0,50) dolunca o gün durur; limiti oradan değiştirebilirsin. Aylık Rapor yorumu o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</p></div></details>
 
     <div class="footnote"><b>Not:</b> Aradığın sorunun cevabı yoksa Bay Piyasa'ya sorabilir ya da Kullanım Kılavuzu'nda ilgili sayfanın bölümüne bakabilirsin.</div>
@@ -3495,6 +3507,34 @@
       <div class="pf-satir">
         <div><div class="pf-baslik">Piyasa Özeti kartları</div><div class="ku-ipucu" style="margin:2px 0 0;">Hangi fiyat kartlarını, hangi sırayla göreceğin.</div></div>
         <button class="bolum-ekle" onclick="switchTab('gunluk'); kartDuzenAc();">⚙ Kartları düzenle</button>
+      </div>
+    </div>
+
+    <div class="bolum" id="pfAiBolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Bay Piyasa (yapay zekâ)</span><span class="bolum-toplam" id="pfAiDurum"></span></div>
+      <div id="pfAiYonetici" class="ku-ipucu" style="margin:2px 0 12px;" hidden>Yönetici hesabında sunucunun anahtarı kullanılır; ayrıca anahtar eklemen gerekmez.</div>
+      <div id="pfAiKullanici">
+        <div class="pf-satir" id="pfAiKayitli" hidden>
+          <div><div class="pf-baslik">Kayıtlı anahtar: <span id="pfAiIpucu" class="pf-anahtar"></span></div><div class="ku-ipucu" style="margin:2px 0 0;" id="pfAiTarih"></div></div>
+          <div class="pf-dugmeler"><button class="bolum-ekle" onclick="aiAnahtarDegistir()">Değiştir</button><button class="bolum-ekle pf-cikis" onclick="aiAnahtarKaldir()">Kaldır</button></div>
+        </div>
+        <div id="pfAiForm">
+          <label class="giris-etiket" for="pfAiAnahtar">Anthropic API anahtarı</label>
+          <div class="loan-add-row">
+            <input type="password" id="pfAiAnahtar" class="ai-input" style="max-width:380px;min-width:220px;" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') aiAnahtarKaydet()">
+            <button class="ai-btn" id="pfAiKaydetBtn" onclick="aiAnahtarKaydet()">Kaydet ve doğrula</button>
+          </div>
+          <div class="giris-mesaj" id="pfAiMesaj" role="alert"></div>
+        </div>
+        <details class="pf-yardim">
+          <summary>Anahtarı nasıl alırım? Ne kadar tutar?</summary>
+          <ol>
+            <li><a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>'da ücretsiz hesap aç.</li>
+            <li><b>Billing</b> bölümünden kredi yükle (ön ödemeli; ör. $5 aylarca yeter).</li>
+            <li><b>API Keys › Create Key</b> ile anahtar oluştur, “sk-ant-” ile başlayan metni kopyala ve buraya yapıştır.</li>
+          </ol>
+          <p>Ücret, kullandıkça senin Anthropic hesabından düşer; panele ya da yöneticine ödeme yapılmaz. Kısa bir soru genelde $0,01'in altında tutar; Bay Piyasa sayfasında her cevabın ücreti yazar ve <b>günlük limit</b> (varsayılan $0,50) dolunca durur. Anahtar, kaydedilmeden önce Anthropic'te doğrulanır; sunucuda şifreli saklanır, sana bile tamamı bir daha gösterilmez (yalnızca baş ve son harfleri). İstediğin an buradan kaldırabilir ya da Anthropic'te iptal edebilirsin.</p>
+        </details>
       </div>
     </div>
 
@@ -3563,7 +3603,7 @@
       <div id="kuListe"><div class="bos-not">Yükleniyor…</div></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Bu sayfayı yalnızca yönetici görür. Her hesabın verisi ayrıdır; kimse başkasının verisini göremez — sen de (liste yalnızca kayıt sayısını ve boyutunu gösterir). 🔑 geçici şifre verir ve o kişinin tüm cihazlardaki oturumunu kapatır; ⏸ hesabı silmeden girişini kapatır; ✕ hesabı ve tüm verisini kalıcı olarak siler. Bay Piyasa ve PDF okuma şimdilik yalnızca yönetici hesabında çalışır.</div>
+    <div class="footnote"><b>Not:</b> Bu sayfayı yalnızca yönetici görür. Her hesabın verisi ayrıdır; kimse başkasının verisini göremez — sen de (liste yalnızca kayıt sayısını ve boyutunu gösterir). 🔑 geçici şifre verir ve o kişinin tüm cihazlardaki oturumunu kapatır; ⏸ hesabı silmeden girişini kapatır; ✕ hesabı ve tüm verisini kalıcı olarak siler. Bay Piyasa ve PDF okuma diğer hesaplarda kişinin kendi Anthropic anahtarıyla çalışır (Profilim'de ekler; ücret onun hesabından düşer); yönetici hesabı sunucunun anahtarını kullanır.</div>
   </div>
   <!-- ================= /TAB: KULLANICILAR ================= -->
 
@@ -3751,8 +3791,9 @@
   <div class="tab-panel" id="tab-ai">
     <div class="page-head"><h1>Bay Piyasa</h1></div>
 
-    <div class="ai-setup" id="bpAnahtarNot" hidden>
-      <b>🔑 Bay Piyasa şimdilik kapalı.</b> Bay Piyasa yapay zekâ kullanır ve her soru küçük bir ücrete tabidir. Hesabına kendi Anthropic API anahtarını ekleyebileceğin ayar yakında gelecek; o zamana kadar sorular cevaplanamaz. Panelin geri kalanı (takip, plan, rapor) tamamen çalışır.
+    <div class="ai-setup bp-anahtar-not" id="bpAnahtarNot" hidden>
+      <div><b>🔑 Bay Piyasa için Anthropic API anahtarın gerekiyor.</b> Bay Piyasa, Anthropic'in Claude yapay zekâsını kullanır; her cevabın küçük bir ücreti senin Anthropic hesabından düşer (günlük limiti buradan sen belirlersin). Anahtarını bir kez eklemen yeter; şifreli saklanır ve kimseye gösterilmez. Panelin geri kalanı anahtarsız da tamamen çalışır.</div>
+      <button class="ai-btn" onclick="aiAnahtarAc()">Anahtarını ekle →</button>
     </div>
     <div class="ai-setup" id="aiSetup">
       <b>⚙ Kurulum gerekiyor.</b> Bay Piyasa'nın çalışması için dosyada <code>MY_WORKER</code> adresini kendi Cloudflare Worker adresinle tanımlaman gerekiyor. API anahtarı Worker'ın içinde saklanır, bu sayfada görünmez.
@@ -3948,7 +3989,7 @@ function hesapArayuzu(){
   document.querySelectorAll('.nav-yonetim').forEach(el => { el.hidden = !benYonetici(); });
   if(typeof kartGorunumUygula === 'function' && document.querySelector('#grid > .card')) kartGorunumUygula();   // varsayılan kart seti role bağlı
   const bpNot = document.getElementById('bpAnahtarNot');
-  if(bpNot) bpNot.hidden = !k || benYonetici();
+  if(bpNot) bpNot.hidden = !k || aiKullanilabilir();
   if(k && k.sifreDegismeli && !document.getElementById('sifreModal')){
     sifreDegistirAc('Hesabın yönetici tarafından geçici bir şifreyle açıldı. Devam etmeden önce kendine ait bir şifre belirle.');
   }
@@ -4053,9 +4094,61 @@ function acilisSecenekleri(){
   return [...document.querySelectorAll('#navPanel > .nav-item[data-tab]')].filter(el => !el.hidden)
     .map(el => ({ tab: el.dataset.tab, ad: (el.querySelector('span') ? el.querySelector('span').firstChild.textContent.trim() : el.dataset.tab) }));
 }
+// ---------- Bay Piyasa: kullanıcının kendi Anthropic anahtarı (yönetici sunucu anahtarını kullanır) ----------
+function aiKullanilabilir(){ const k = kullaniciBilgi(); return !!k && (k.rol === 'admin' || !!(k.aiAnahtar && k.aiAnahtar.var)); }
+function aiAnahtarAc(){
+  switchTab('profil');
+  setTimeout(() => {
+    const b = document.getElementById('pfAiBolum'); if(b) b.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const i = document.getElementById('pfAiAnahtar'); if(i && i.offsetParent) i.focus();
+  }, 150);
+}
+function aiAnahtarDegistir(){ document.getElementById('pfAiForm').hidden = false; document.getElementById('pfAiAnahtar').focus(); }
+async function aiAnahtarKaydet(){
+  const inp = document.getElementById('pfAiAnahtar'), msj = document.getElementById('pfAiMesaj'), btn = document.getElementById('pfAiKaydetBtn');
+  const anahtar = inp.value.trim();
+  msj.style.color = ''; msj.textContent = '';
+  if(!anahtar){ msj.textContent = 'Anahtarı yapıştır.'; inp.focus(); return; }
+  if(!/^sk-ant-/.test(anahtar)){ msj.textContent = 'Anthropic anahtarları “sk-ant-” ile başlar. Doğru metni kopyaladığından emin ol.'; return; }
+  btn.disabled = true; btn.textContent = 'Doğrulanıyor…';
+  try{
+    const res = await fetch(MY_WORKER + '/auth/ai-anahtar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ anahtar }) });
+    if(!res.ok){ msj.textContent = await sunucuHata(res); return; }
+    inp.value = '';
+    kullaniciGuncelle((await res.json()).kullanici);
+    kisaBildirim('Anahtar doğrulandı ve kaydedildi — Bay Piyasa hazır');
+  }catch(e){ msj.textContent = 'Sunucuya ulaşılamadı. İnternetini kontrol et.'; }
+  finally{ btn.disabled = false; btn.textContent = 'Kaydet ve doğrula'; }
+}
+function aiAnahtarKaldir(){
+  showConfirmModal('Kayıtlı Anthropic anahtarın silinsin mi? Bay Piyasa, yeni anahtar ekleyene kadar çalışmaz. (Anahtar Anthropic hesabında iptal edilmez; istersen orada da iptal et.)', async () => {
+    try{
+      const res = await fetch(MY_WORKER + '/auth/ai-anahtar', { method: 'DELETE' });
+      if(!res.ok){ showAlertModal('Silinemedi: ' + await sunucuHata(res)); return; }
+      kullaniciGuncelle((await res.json()).kullanici);
+      kisaBildirim('Anahtar silindi');
+    }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); }
+  });
+}
+function renderAiBolum(k){
+  const yon = k.rol === 'admin', a = k.aiAnahtar || { var: false };
+  document.getElementById('pfAiYonetici').hidden = !yon;
+  document.getElementById('pfAiKullanici').hidden = yon;
+  const durum = document.getElementById('pfAiDurum');
+  durum.textContent = yon ? 'Sunucu anahtarı' : a.var ? 'Açık' : 'Anahtar yok';
+  durum.style.color = yon || a.var ? 'var(--up)' : 'var(--amber)';
+  if(yon) return;
+  document.getElementById('pfAiKayitli').hidden = !a.var;
+  document.getElementById('pfAiForm').hidden = a.var;
+  if(a.var){
+    document.getElementById('pfAiIpucu').textContent = a.ipucu || 'sk-ant-…';
+    document.getElementById('pfAiTarih').textContent = a.eklendi ? 'Eklendi: ' + kisaTarihSaat(new Date(a.eklendi)) + ' · şifreli saklanıyor' : 'Şifreli saklanıyor';
+  }
+}
 function renderProfil(){
   const k = kullaniciBilgi();
   if(!k) return;
+  renderAiBolum(k);
   document.getElementById('pfAvatar').outerHTML = avatarHtml(k, 'buyuk', 'pfAvatar');
   document.getElementById('pfAdBaslik').textContent = gorunenAd(k);
   document.getElementById('pfEpostaBaslik').textContent = k.email;
@@ -6008,7 +6101,7 @@ async function haberleriCevir(){
   });
   if(!bekleyen.length) return;
   if(typeof bpBugunHarcama === 'function' && bpBugunHarcama() >= bp.ayar.limit) return;   // günlük limit doluysa çevirme
-  if(kullaniciBilgi() && !benYonetici()) return;   // AI şimdilik yalnız yönetici hesabında (başlıklar aslıyla kalır)
+  if(kullaniciBilgi() && !aiKullanilabilir()) return;   // anahtarı olmayan kullanıcıda çeviri yapılmaz (başlıklar aslıyla kalır)
 
   _ceviriDevam = true;
   try{
@@ -6850,6 +6943,10 @@ async function bpGonder(metinParam, opsiyon){
   const metin = (metinParam != null ? metinParam : girdi.value).trim();
   if(!metin && !bpEk) return;
   if(AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){ showAlertModal('AI uç noktası tanımlı değil.'); return; }
+  if(kullaniciBilgi() && !aiKullanilabilir()){
+    showConfirmModal('Bay Piyasa için önce Anthropic API anahtarını eklemen gerekiyor. Profilim’e gidip şimdi ekleyelim mi?', aiAnahtarAc);
+    return;
+  }
   if(bpBugunHarcama() >= bp.ayar.limit){
     showAlertModal('Bugünkü limit (' + bpPara(bp.ayar.limit) + ') doldu. Devam etmek için üstteki limiti artırabilirsin.');
     return;

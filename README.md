@@ -24,7 +24,7 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 | **Aylık Rapor** | Seçilen ayın özeti: harcama (önceki ay ve 6 ay ortalamasına göre), bütçe uyumu, ay sonu kalan, kredi anaparasındaki azalış, net varlık değişimi; kurallı "öne çıkanlar"; isteğe bağlı Bay Piyasa yorumu (ay başına kaydedilir); yazdır / PDF |
 | **Kullanım Kılavuzu** | Yardım › Kullanım Kılavuzu: ilk kurulum adımları, her sayfanın ne işe yaradığı ve nasıl kullanıldığı (örneklerle), terimler sözlüğü, aranabilir |
 | **Sık Sorulan Sorular** | Yardım › SSS: konulara göre gruplanmış kısa cevaplar (harcama, borç ve kart, gelir ve tahmin, varlık, acil fon, hesap ve güvenlik), aranabilir |
-| **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması). Şimdilik yalnızca yönetici hesabında; diğer kullanıcılar için kendi API anahtarı ayarı planlanıyor |
+| **Bay Piyasa** | Panel verilerini bilen Claude tabanlı sohbet asistanı (model seçimi, maliyet takibi, isteğe bağlı web araması). Yönetici sunucunun anahtarını kullanır; diğer kullanıcılar Profilim'de kendi Anthropic API anahtarını ekler (doğrulanır, AES-GCM ile şifreli saklanır, ücret kendi hesabından düşer) |
 | **Profilim** | Menünün en üstünde fotoğraf (ya da baş harfler), ad soyad ve e-posta; tıklayınca profil sayfası: fotoğraf yükleme/kaldırma (kare kırpılır, küçültülür), ad soyad, açılış sayfası tercihi, kart düzenleme kısayolu, şifre değiştirme, açık oturum sayısı, diğer cihazlardan çıkış, çıkış. Bilgiler hesapta saklanır |
 | **Kullanıcılar** | Yalnız yönetici: hesap açma (geçici şifre üretip kopyalama), geçici şifre verme, girişi kapatma/açma, hesabı ve verisini silme; hesap başına son giriş, kayıt sayısı ve veri boyutu (verinin kendisi görünmez) |
 
@@ -69,7 +69,7 @@ npx.cmd wrangler deploy
 > Windows PowerShell'de `npx` yerine `npx.cmd` kullanın (script çalıştırma kısıtlaması).
 
 ### Gerekli secret'lar (Cloudflare)
-`ANTHROPIC_API_KEY`, `TWELVEDATA_API_KEY`, `FINNHUB_API_KEY`, `metalcharts` (MetalCharts API anahtarı; uranyum grafiği için): hepsi **Secret** türünde. İlk yönetici hesabı için `LOGIN_USER` (e-posta) ve `ACCESS_TOKEN` (ilk şifre): kullanıcı tablosu boşsa ilk istekte bu bilgilerle yönetici hesabı açılır ve eski tek kullanıcılı veriler bu hesaba kopyalanır; sonrasında `ACCESS_TOKEN` yalnızca eski sürüm panellerin geçişi için kullanılır. İsteğe bağlı: `ALLOWED_ORIGIN` (virgülle birden fazla site adresi).
+`ANTHROPIC_API_KEY`, `TWELVEDATA_API_KEY`, `FINNHUB_API_KEY`, `metalcharts` (MetalCharts API anahtarı; uranyum grafiği için), `AI_ANAHTAR_SIFRE` (kullanıcıların Anthropic anahtarlarını şifreleyen 32 baytlık rastgele anahtar; değişirse kayıtlı anahtarlar yeniden girilir): hepsi **Secret** türünde. İlk yönetici hesabı için `LOGIN_USER` (e-posta) ve `ACCESS_TOKEN` (ilk şifre): kullanıcı tablosu boşsa ilk istekte bu bilgilerle yönetici hesabı açılır ve eski tek kullanıcılı veriler bu hesaba kopyalanır; sonrasında `ACCESS_TOKEN` yalnızca eski sürüm panellerin geçişi için kullanılır. İsteğe bağlı: `ALLOWED_ORIGIN` (virgülle birden fazla site adresi).
 
 ## Güvenlik
 
