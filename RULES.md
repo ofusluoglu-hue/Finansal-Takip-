@@ -29,6 +29,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 6. Yeni ekranlar ortak tasarım dilini kullanır: üstte özet için `.ozet-kart` (kenar rengi anlam taşır: yeşil iyi/varlık, sarı orta/süren, kırmızı zayıf/borç/gider), bölüm için `.bolum` + `bolumFormAc` (başlığın sağında toplam ya da puan), liste için `satirHtml()`, tablo için `.ist-tablo`, dağılım için `istHbar`, başlıkta seçim için `.bolum-secim`. Sayfanın en üstüne ayrı filtre satırı konmaz. Açıklama metinleri sayfa sonundaki tek **Not** satırına yazılır.
 7. Varlık/yatırım listeleri `.bolum.cerceve-varlik` (yeşil sol çizgi), borç listeleri `.bolum.cerceve-borc` (kırmızı sol çizgi) ile çerçevelenir; çerçevenin tamamı renklendirilmez.
 7b. Piyasa Özeti'ne yeni hazır kart `CARDS`'a eklenir; kimsenin görünümünü kendiliğinden değiştirmez (kayıtlı seçimi olan kullanıcıda "Hazır kartlardan ekle"de çıkar). Varsayılan set (`VARSAYILAN_KARTLAR`) kısa tutulur; fiyat isteği yalnız gereken kartlar için yapılır (`kartGerekliSet`).
+7c. Kenar menüsüne öğe eklerken 1440×900'de menünün tamamının kaydırmadan görünmesi korunur (öğe yüksekliği ve grup aralıkları büyütülmez); kısa ekran için ayrı kural (`max-height:880px`) ve menü içi kaydırma vardır.
 8. Yeni sayfa menüye kendi grubunun altına eklenir; telefondaki alt çubukta yalnızca `data-alt` işaretli 6 sayfa durur, diğerleri kendiliğinden **Diğer** menüsüne düşer (alt çubuğa yeni sayfa eklenmez).
 9. Native `confirm`/`alert` yerine panelin kendi pencereleri kullanılır: `showConfirmModal` (onay) ve `showAlertModal` (uyarı).
 
