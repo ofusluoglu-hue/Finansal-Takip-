@@ -57,6 +57,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 3. Yapay zekâ çağıran her yeni özellik Bay Piyasa'daki **günlük harcama limitine** (`bp.ayar.limit`) uyar; limit dolduysa istek gönderilmez (haber çevirisindeki `bpBugunHarcama()` kontrolü gibi).
 4c. Periyodik istekler (fiyat, haber, senkron) yalnız sekme görünürken çalışır (`document.visibilityState`); yeni bir periyodik iş eklerken de bu kural uygulanır.
 4b. Kotalı dış servisler (ör. MetalCharts: ayda 200 istek) Worker'da D1 `onbellek` tablosuyla önbelleklenir ve hata durumu da önbelleklenir; istemci isteği sayısı kotayı belirlemez. Ücretsiz katmanın atıf şartı (görünür kaynak bağlantısı) kaldırılmaz.
+4d. Yapay zekâya verilen her analiz görevi kendi uzmanlık talimatıyla ("skill": ör. `RAPOR_SISTEM`) ve yapılandırılmış veri dosyasıyla gönderilir: veri dosyası eksikleri açıkça yazar ("GİRİLMEMİŞ", "hesaplanamaz"), sıfırla eksik veri karıştırılmaz; talimat rakam uydurmayı yasaklar ve çıktı biçimini sabitler.
 4. Ucuz işler (çeviri, kısa özet) için Haiku, belge okuma gibi doğruluk isteyen işler için Sonnet kullanılır; daha pahalı modeller yalnızca kullanıcı seçerse devreye girer.
 
 ## Git ve deploy

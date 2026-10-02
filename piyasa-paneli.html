@@ -3381,7 +3381,8 @@
 
     <details class="kv-bolum" id="kv-rapor"><summary>📄 Aylık Rapor <span>ayın özeti tek sayfada</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Seçtiğin ayın harcamasını (önceki aya ve son 6 aya göre), bütçe uyumunu, ay sonu kalanı, kredi anaparasındaki azalışı ve net varlık değişimini tek sayfada özetler. “Öne çıkanlar” kendiliğinden yazılır ve ücretsizdir.</p>
-      <p><b>Bay Piyasa yorumu:</b> <b>“Bay Piyasa yorumlasın”</b>a basarsan rakamlara bakıp gelecek ay için 3 somut öneri yazar. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</p>
+      <p><b>Bay Piyasa yorumu:</b> <b>“Bay Piyasa yorumlasın”</b>a basarsan bir kişisel finans danışmanı gibi ayın bütün rakamlarına bakar: harcama (enflasyondan arındırılmış), gelir ve tasarruf oranı, kredi taksitlerinin gelire oranı, kart/KMH borçlarının vergiler dahil gerçek faizi, net varlığın ay sonu değişimi (TL, dolar, altın), yatırım dağılımı, acil fon ve gelecek ay. Sonuçta bir <b>finansal sağlık tablosu</b> ve rakamlı bir <b>gelecek ay planı</b> yazar; eksik veri varsa (ör. gelir girilmemişse) uydurmaz, söyler. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez, <b>↻ Yeniden yorumla</b> ile tazelersin.</p>
+      <p class="kv-ipucu">💡 Rapor ne kadar eksiksizse yorum o kadar isabetli olur: Nakit Akışı'nda gelirini, Borç Kapatma Planı'nda faizli kartlarını, Birikim Hedefleri'nde acil durum fonunu tanımla.</p>
       <p><b>Yazdır / PDF:</b> Raporu yazdırabilir ya da PDF olarak kaydedebilirsin.</p>
       <button class="bolum-ekle" onclick="switchTab('rapor')">Aylık Rapor'a git →</button>
     </div></details>
@@ -11565,7 +11566,14 @@ function raporOneCikanlar(R){
   }
   if(R.gelirVar && R.N.gelir.toplam && !R.N.harcamaYok){ const o = R.N.net / R.N.gelir.toplam; m.push({ ton: o >= 0.2 ? 'iyi' : o < 0 ? 'kotu' : 'notr', t: `Ay sonunda <b>${R.N.net < 0 ? '−₺' : '₺'}${fmtNumber(Math.abs(R.N.net), 0)}</b> ${R.N.net < 0 ? 'açık' : 'kaldı'} (tasarruf oranı ${o < 0 ? '−' : ''}%${fmtNumber(Math.abs(o) * 100, 0)}).` }); }
   if(R.anaparaAzalis > 1) m.push({ ton: 'iyi', t: `Kredilerin anaparası <b>₺${fmtNumber(R.anaparaAzalis, 0)}</b> azaldı (${R.taksitler.length} taksit, toplam ₺${fmtNumber(R.taksitler.reduce((t, x) => t + x.tutar, 0), 0)}; farkı faiz ve vergi).` });
-  if(R.ngIlk && R.ngSon && R.ngIlk !== R.ngSon){ const f = R.ngSon.net - R.ngIlk.net; m.push({ ton: f >= 0 ? 'iyi' : 'kotu', t: `Net varlık ay içinde <b>${isaretliTL(f)}</b> değişti (${+R.ngIlk.id.slice(8)}–${+R.ngSon.id.slice(8)}. günler).` }); }
+  const S = raporSaglik(R);
+  // Reel değişim: harcama artışı enflasyondan arındırılmış
+  if(S.reel != null) m.push({ ton: S.reel > 3 ? 'kotu' : S.reel < -3 ? 'iyi' : 'notr', t: `Enflasyondan arındırınca (aylık TÜFE %${fmtNumber(S.tufe, 2)}) harcama gerçekte <b>${S.reel >= 0 ? '%' + fmtNumber(S.reel, 1) + ' arttı' : '%' + fmtNumber(-S.reel, 1) + ' azaldı'}</b>.` });
+  if(S.borcServis != null && S.borcServis > 0) m.push({ ton: S.borcServis < 0.2 ? 'iyi' : S.borcServis <= 0.35 ? 'notr' : 'kotu', t: `Gelirinin <b>%${fmtNumber(S.borcServis * 100, 0)}</b>'i kredi taksidine gidiyor (borç servis oranı; %35 üstü riskli).` });
+  if(S.pahali.length) m.push({ ton: 'kotu', t: `Faiz işleyen borçların aylık faiz maliyeti ≈ <b>₺${fmtNumber(S.faizMaliyeti, 0)}</b>; en pahalısı ${escapeHtml(S.pahali[0].ad)} (vergilerle yıllık ≈ %${fmtNumber(S.pahali[0].yillik, 0)}).` });
+  if(S.acil && S.acil.ay != null) m.push({ ton: S.acil.ay < 1 ? 'kotu' : S.acil.ay < 3 ? 'notr' : 'iyi', t: `Acil durum fonu <b>${fmtNumber(S.acil.ay, 1)} aylık</b> zorunlu gideri karşılıyor (ölçü 3–6 ay).` });
+  if(S.netDegisim != null) m.push({ ton: S.netDegisim >= 0 ? 'iyi' : 'kotu', t: `Net varlık önceki ay sonuna göre <b>${isaretliTL(S.netDegisim)}</b>${S.dolarDegisim != null ? ' (dolar bazında ' + (S.dolarDegisim >= 0 ? '+' : '−') + '$' + fmtNumber(Math.abs(S.dolarDegisim), 0) + ')' : ''}.` });
+  else if(R.ngIlk && R.ngSon && R.ngIlk !== R.ngSon){ const f = R.ngSon.net - R.ngIlk.net; m.push({ ton: f >= 0 ? 'iyi' : 'kotu', t: `Net varlık ay içinde <b>${isaretliTL(f)}</b> değişti (${+R.ngIlk.id.slice(8)}–${+R.ngSon.id.slice(8)}. günler).` }); }
   return m;
 }
 
@@ -11618,21 +11626,152 @@ function renderRapor(){
   const yEl = document.getElementById('raporYorum'), btn = document.getElementById('raporYorumBtn');
   if(yEl) yEl.innerHTML = _raporMesgul ? '<div class="bos-not">Bay Piyasa raporu okuyor…</div>'
     : kayit ? `<div class="bp-md rapor-yorum">${bpMd(kayit.metin)}</div><div class="ozet-not" style="margin-top:6px;">${escapeHtml((BP_FIYAT[kayit.model] || {}).ad || kayit.model)} · ${new Date(kayit.ts).toLocaleString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} · ${bpPara(kayit.maliyet || 0)}</div>`
-    : '<div class="bos-not">Bay Piyasa bu raporu okuyup rakamlarla 3 somut öneri yazabilir. Yorum bu ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</div>';
+    : '<div class="bos-not">Bay Piyasa, bir kişisel finans danışmanı gibi bu ayın tüm rakamlarına (harcama, gelir, borç ve faiz maliyeti, net varlık, yatırımlar, acil fon, gelecek ay) bakıp finansal sağlık tablosu ve rakamlı bir gelecek ay planı yazar. Yorum bu ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</div>';
   if(btn){ btn.disabled = _raporMesgul || !R.A.toplam; btn.textContent = _raporMesgul ? 'Yazıyor…' : kayit ? '↻ Yeniden yorumla' : '✨ Bay Piyasa yorumlasın'; }
 }
 
-// Yapay zekâya giden rapor metni (yalnızca rakamlar; kişisel bilgi yok)
+// ---------- Aylık rapor "uzmanlık paketi": kişisel finans danışmanı talimatı (Türkiye koşulları) ----------
+// Sohbetteki Bay Piyasa (piyasa yorumcusu) değil; ay sonu raporu için ayrı bir danışman çerçevesi.
+const RAPOR_SISTEM = `Sen "Bay Piyasa"sın; bu görevde Türkiye'de çalışan deneyimli bir **kişisel finans danışmanı** gibi bir aylık rapor yazıyorsun. Okuyucu finans uzmanı değil; sade Türkçe, "sen" diliyle, kısa cümlelerle yaz.
+
+## Kesin kurallar
+- Yalnızca <finans_dosyasi> içindeki rakamları kullan. Rakam uydurma, tahmin edilmiş bir veriyi gerçekmiş gibi sunma. Bir hesap yaparsan kısaca göster (ör. "₺4.000 × %5,5 ≈ ₺220/ay").
+- "VERİ DURUMU" bölümünde eksik olarak işaretlenen konularda yorum yapma; eksikliği ve nasıl tamamlanacağını tek cümleyle söyle.
+- Genel geçer öğüt yazma ("bütçe yapmalısın", "tasarruf önemlidir" gibi). Her öneri bu kişinin rakamlarına dayanmalı.
+- Belirli bir hisse, coin ya da fon için al/sat tavsiyesi verme; dağılım ve risk düzeyinde konuş.
+- Para birimi: ₺ binlik ayraç noktayla (₺12.500). Yüzde: %12,5.
+
+## Değerlendirme çerçeveleri (Türkiye koşulları)
+1. **Tasarruf oranı** = ay sonu kalan ÷ gelir. %20 ve üstü iyi, %10–20 orta, %0–10 zayıf, negatif = açık (birikimden ya da borçla kapanıyor).
+2. **Borç servis oranı** = kredi taksitleri ÷ gelir. %20 altı rahat, %20–35 dikkat, %35 üstü riskli (gelir şoku olursa ödeme zorlaşır). Kart asgari ödemeleri buna dahil değilse belirt.
+3. **Pahalı borç önce**: KMH ve faizli kart borcunda faiz KKDF %15 + BSMV %15 ile birlikte işler; dosyadaki "aylık etkin faiz" bunu içerir. Yıllık bileşik etkin oran genellikle %60–100+'dır ve neredeyse hiçbir güvenli yatırım bunu geçemez → fazla nakit önce en pahalı borca (çığ yöntemi). Aylık faiz maliyetini ₺ olarak söyle.
+4. **Acil durum fonu** = ihtiyaç halinde hemen kullanılabilecek para ÷ aylık zorunlu gider (harcama + taksit). 1 ayın altı kritik, 1–3 zayıf, 3–6 yeterli. Acil fon 3 ayın altındayken riskli yatırımı artırmayı önerme; önce fon.
+5. **Reel bakış**: Türkiye'de enflasyon yüksek. Harcama artışını aylık TÜFE ile kıyasla (nominal %8 artış, %2 aylık enflasyonda reel ≈ %6 artış demektir). Net varlık değişimini TL'nin yanında dolar ve gram altın bazında da yorumla: TL'de artış, dolar/altında düşüşse servet gerçekte erimiş olabilir.
+6. **Harcama**: kategori payı ve 6 ay ortalamasından sapma. Tek seferlik büyük harcamayı (ortalamanın ~2 katı) kalıcı artıştan ayır. Bütçeyi aşan kategorilere odaklan; en büyük 2–3 kategori dışındaki küçük kalemlerle vakit kaybetme.
+7. **Yatırım dağılımı**: tek varlık %30'u aşıyorsa yoğunlaşma; dolar bazlı pay TL değer kaybına karşı korur; BİST TL bazlıdır. Yatırımlar pahalı borcun faizinden azsa önce borç.
+8. **Gelecek ay**: beklenen gelir − taksit − sabit ödemeler − tahmini harcama. Açık bekleniyorsa önceden uyar ve hangi kalemden ne kadar kısılacağını söyle.
+
+## Öncelik sırası (öneriler bu sırayla)
+1) Açık / negatif nakit akışı ve acil fon → 2) pahalı borç (KMH, faizli kart) → 3) bütçeyi aşan büyük kategoriler → 4) birikim hedefleri → 5) yatırım dağılımı.
+
+## Çıktı biçimi (Markdown, başlıklar "## ")
+## Kısa özet
+2–3 cümle: ayın hikâyesi, en önemli 2–3 rakam (reel değişim dahil).
+## Finansal sağlık
+Tablo: | Gösterge | Bu ay | Ölçü | Durum | — satırlar: Tasarruf oranı, Borç servis oranı, Acil fon (ay), Net varlık değişimi (₺ ve $), Pahalı borcun aylık faizi. Durum: ✅ iyi · ⚠️ dikkat · 🔴 riskli · — veri yok.
+## Öne çıkanlar
+3–5 madde; iyi giden en az bir şey dahil. Her madde rakamlı ve "neden önemli" ile.
+## Gelecek ay planı
+3–5 numaralı madde. Her madde: **ne yapılacak** — ne kadar (₺) — neden — beklenen etki (₺/ay, faiz tasarrufu ya da hedefe yaklaşma). Uygulanabilir ve ölçülebilir olsun.
+## Dikkat
+Yalnızca gerçek bir risk ya da eksik veri varsa 1–2 madde; yoksa bu bölümü yazma.
+
+Toplam 350–600 kelime. Süsleme, giriş ve kapanış cümlesi yazma.`;
+
+// Raporun finansal sağlık göstergeleri (sayfada ve yapay zekâ dosyasında aynı rakamlar)
+function raporSaglik(R){
+  const gelir = R.gelirVar ? R.N.gelir.toplam : 0;
+  const aySonu = isoGun(new Date(+R.ayK.slice(0, 4), +R.ayK.slice(5, 7), 0)), oncekiSonu = isoGun(new Date(+R.ayK.slice(0, 4), +R.ayK.slice(5, 7) - 1, 0));
+  const ng = netGecmisYukle();
+  const sonKayit = [...ng].reverse().find(x => x.id <= aySonu && x.id > oncekiSonu) || null;
+  const oncekiKayit = [...ng].reverse().find(x => x.id <= oncekiSonu) || null;
+  const dolar = x => x && x.usd ? x.net / x.usd : null, altin = x => x && x.gram ? x.net / x.gram : null;
+  const tufe = ENFLASYON_VERI.tufe.aylik;
+  const nominal = R.A.toplam && R.onceki.toplam ? (R.A.toplam / R.onceki.toplam - 1) * 100 : null;
+  const pahali = planBorclari().filter(d => d.oran > 0).map(d => ({ ad: d.ad, tur: d.tur, bakiye: d.bakiye, aylik: d.oran * 100, yillik: (Math.pow(1 + d.oran, 12) - 1) * 100, maliyet: d.bakiye * d.oran }))
+    .sort((a, b) => b.aylik - a.aylik);
+  let acil = null; try{ acil = acilFonDurum(); }catch(e){ /* hedef yok */ }
+  return {
+    gelir, tasarruf: gelir > 0 && !R.N.harcamaYok ? R.N.net / gelir : null,
+    borcServis: gelir > 0 && R.N.taksit > 0 ? R.N.taksit / gelir : (R.N.taksit > 0 ? null : 0),
+    acil, pahali, faizMaliyeti: pahali.reduce((t, d) => t + d.maliyet, 0),
+    reel: nominal == null ? null : ((1 + nominal / 100) / (1 + tufe / 100) - 1) * 100, nominal, tufe,
+    sonKayit, oncekiKayit, aySonuMu: !!(sonKayit && sonKayit.id === aySonu),
+    netDegisim: sonKayit && oncekiKayit ? sonKayit.net - oncekiKayit.net : null,
+    dolarDegisim: dolar(sonKayit) != null && dolar(oncekiKayit) != null ? dolar(sonKayit) - dolar(oncekiKayit) : null,
+    altinDegisim: altin(sonKayit) != null && altin(oncekiKayit) != null ? altin(sonKayit) - altin(oncekiKayit) : null,
+  };
+}
+
+// Yapay zekâya giden "finans dosyası" (yalnızca rakamlar ve kategori adları; isim, e-posta, banka hesap bilgisi yok)
 function raporMetni(R){
-  const s = [ayAdi(R.ayK) + ' aylık finans raporu'];
-  s.push('Harcama ₺' + fmtNumber(R.A.toplam, 0) + (R.onceki.toplam ? ', önceki ay ₺' + fmtNumber(R.onceki.toplam, 0) : '') + (R.ort ? ', son ' + R.gecmisSay + ' ay ortalaması ₺' + fmtNumber(R.ort, 0) : ''));
-  if(R.katlar.length) s.push('Kategoriler (bu ay / önceki ay / 6 ay ort.): ' + R.katlar.map(k => k.ad + ' ₺' + fmtNumber(k.t, 0) + ' / ₺' + fmtNumber(k.onceki, 0) + (k.ort ? ' / ₺' + fmtNumber(k.ort, 0) : '')).join('; '));
-  if(R.limitVar) s.push('Aylık bütçe ₺' + fmtNumber(R.butceToplam, 0) + '; aşan kategoriler: ' + (R.asanlar.map(x => x.ad + ' ₺' + fmtNumber(x.t, 0) + '/₺' + fmtNumber(x.l, 0)).join(', ') || 'yok'));
-  if(R.gelirVar) s.push('Gelir ₺' + fmtNumber(R.N.gelir.toplam, 0) + ', kredi taksitleri ₺' + fmtNumber(R.N.taksit, 0) + ', ay sonu kalan ₺' + fmtNumber(R.N.net, 0));
-  else if(R.N.taksit) s.push('Kredi taksitleri ₺' + fmtNumber(R.N.taksit, 0) + ' (gelir girilmemiş)');
-  if(R.anaparaAzalis > 1) s.push('Kredi anaparası ₺' + fmtNumber(R.anaparaAzalis, 0) + ' azaldı');
-  try{ const b = borcPlanOzetMetni(); if(b) s.push(b); }catch(e){ /* yok */ }
-  try{ const h = hedefOzetMetni(); if(h) s.push(h); }catch(e){ /* yok */ }
+  const S = raporSaglik(R), tl = v => '₺' + fmtNumber(v, 0), yz = v => (v < 0 ? '−%' : '%') + fmtNumber(Math.abs(v), 1);
+  const simdiK = buAyAnahtar(), suren = R.ayK === simdiK, onb = {}, s = [];
+  const harcamaKayit = harcamaYukle().filter(x => harcamaKalemAyi(x) === R.ayK).length;
+  s.push(`# ${ayAdi(R.ayK)} — kişisel finans dosyası`);
+  // Veri durumu: eksikler açıkça
+  const eksik = [];
+  if(!R.A.toplam) eksik.push('bu ay harcama girilmemiş');
+  if(!R.gelirVar) eksik.push('gelir girilmemiş (tasarruf ve borç servis oranı hesaplanamaz)');
+  if(!R.limitVar) eksik.push('bütçe sınırı konmamış');
+  if(!S.sonKayit) eksik.push('bu ay için net varlık kaydı yok');
+  s.push('\n## VERİ DURUMU');
+  s.push(`- Dönem: ${ayAdi(R.ayK)}${suren ? ' (AY SÜRÜYOR: bugün ayın ' + new Date().getDate() + '. günü; rakamlar kısmi)' : ' (tamamlanmış ay)'}`);
+  s.push(`- Bu ayın harcama kaydı: ${harcamaKayit}; harcama girilen önceki ay sayısı (6 ay ortalaması için): ${R.gecmisSay}`);
+  s.push('- Eksikler: ' + (eksik.join('; ') || 'yok'));
+  // Gelir-gider
+  s.push('\n## GELİR VE NAKİT AKIŞI');
+  if(R.gelirVar) s.push(`- Gelir ${tl(R.N.gelir.toplam)} (düzenli ${tl(R.N.gelir.duzenli || 0)}, tek seferlik ${tl(R.N.gelir.tek || 0)})`);
+  s.push(`- Harcama ${tl(R.A.toplam)} · kredi taksitleri ${tl(R.N.taksit)}${R.gelirVar ? ' · ay sonu kalan ' + (R.N.net < 0 ? '−' : '') + tl(Math.abs(R.N.net)) : ''}`);
+  if(S.tasarruf != null) s.push(`- Tasarruf oranı ${S.tasarruf < 0 ? '−' : ''}${yz(Math.abs(S.tasarruf * 100))}`);
+  if(S.borcServis != null && R.gelirVar) s.push(`- Borç servis oranı (taksit ÷ gelir) ${yz(S.borcServis * 100)} (kart asgari ödemeleri dahil değil)`);
+  // Son 3 ayın tasarruf oranı (gelir varsa)
+  if(R.gelirVar){
+    const gel = gelirYukle(), son3 = [];
+    for(let i = 1; i <= 3; i++){ const k = ayKaydir(R.ayK, -i), n = nakitAyi(onb, k, gel, harcamaTahmini(onb)); if(n.gelir.toplam > 0 && !n.harcamaYok) son3.push(ayAdi(k) + ' ' + yz(n.net / n.gelir.toplam * 100)); }
+    if(son3.length) s.push('- Önceki ayların tasarruf oranı: ' + son3.join(', '));
+  }
+  // Harcama
+  s.push('\n## HARCAMA');
+  if(!R.A.toplam) s.push(`- Bu ay harcama GİRİLMEMİŞ (sıfır harcama değil; yorum yapma)${R.onceki.toplam ? ' · önceki ay ' + tl(R.onceki.toplam) : ''}${R.ort ? ' · son ' + R.gecmisSay + ' ay ortalaması ' + tl(R.ort) : ''}`);
+  else s.push(`- Toplam ${tl(R.A.toplam)}${R.onceki.toplam ? ' · önceki ay ' + tl(R.onceki.toplam) + ' (nominal ' + (S.nominal >= 0 ? '+' : '−') + yz(Math.abs(S.nominal)) + ', aylık TÜFE %' + fmtNumber(S.tufe, 2) + ' ile reel ' + (S.reel >= 0 ? '+' : '−') + yz(Math.abs(S.reel)) + ')' : ''}${R.ort ? ' · son ' + R.gecmisSay + ' ay ortalaması ' + tl(R.ort) : ''}`);
+  if(R.A.toplam && R.katlar.length) s.push('- Kategoriler (bu ay | pay | önceki ay | 6 ay ort.): ' + R.katlar.map(k => `${k.ad} ${tl(k.t)} | ${yz(R.A.toplam ? k.t / R.A.toplam * 100 : 0)} | ${tl(k.onceki)} | ${k.ort ? tl(k.ort) : '—'}`).join('; '));
+  if(R.limitVar && R.A.toplam) s.push(`- Bütçe toplamı ${tl(R.butceToplam)} · kullanılan ${yz(R.A.toplam / R.butceToplam * 100)} · aşan: ` + (R.asanlar.map(x => `${x.ad} ${tl(x.t)}/${tl(x.l)} (+${tl(x.t - x.l)})`).join(', ') || 'yok'));
+  // Net varlık
+  s.push('\n## NET VARLIK');
+  if(S.sonKayit){
+    const k = S.sonKayit;
+    s.push(`- ${k.id}${S.aySonuMu ? ' (ay sonu)' : ' (ayın son kaydı)'}: net ${tl(k.net)} = varlıklar ${tl(k.varlik)} + yatırımlar ${tl(k.yatirim)} − borç ${tl(k.borc)}${k.usd ? ' · ≈ $' + fmtNumber(k.net / k.usd, 0) : ''}${k.gram ? ' · ≈ ' + fmtNumber(k.net / k.gram, 0) + ' gr altın' : ''}`);
+    if(S.oncekiKayit) s.push(`- Önceki ay sonuna göre: ${isaretliTL(S.netDegisim)}${S.dolarDegisim != null ? ' · dolar bazında ' + (S.dolarDegisim >= 0 ? '+' : '−') + '$' + fmtNumber(Math.abs(S.dolarDegisim), 0) : ''}${S.altinDegisim != null ? ' · altın bazında ' + (S.altinDegisim >= 0 ? '+' : '−') + fmtNumber(Math.abs(S.altinDegisim), 0) + ' gr' : ''}`);
+    if(S.sonKayit.usd && S.oncekiKayit && S.oncekiKayit.usd) s.push(`- Dolar/TL: ${fmtNumber(S.oncekiKayit.usd, 2)} → ${fmtNumber(S.sonKayit.usd, 2)} (${(S.sonKayit.usd / S.oncekiKayit.usd - 1) >= 0 ? '+' : '−'}${yz(Math.abs(S.sonKayit.usd / S.oncekiKayit.usd - 1) * 100)})`);
+  } else s.push('- Kayıt yok');
+  // Yatırımlar (bugünkü durum)
+  try{
+    const H = istPuanlariHesapla();
+    if(H.gruplar.length){
+      const kat = {}; H.gruplar.forEach(g => { kat[g.tur] = (kat[g.tur] || 0) + g.tl; });
+      s.push('\n## YATIRIMLAR (bugün)');
+      s.push(`- Toplam ${tl(H.tumTl)} · ` + Object.keys(kat).map(k => `${YATIRIM_KATEGORI_BASLIK[k] || k} ${yz(kat[k] / H.tumTl * 100)}`).join(', '));
+      if(H.ces) s.push(`- En büyük pozisyon ${H.ces.enBuyuk.kod} ${yz(H.ces.enBuyukPay)} · etkin varlık sayısı ${fmtNumber(H.ces.neff, 1)}`);
+      if(H.dov) s.push(`- Dolar bazlı pay ${yz(H.dov.dolarPay)}`);
+    }
+  }catch(e){ /* yatırım yok */ }
+  // Borçlar
+  s.push('\n## BORÇLAR (bugün)');
+  const bt = _bTotals || {};
+  s.push(`- Toplam ${tl((bt.loans || 0) + (bt.kk || 0) + (bt.kmh || 0) + (bt.nakit || 0))}: krediler ${tl(bt.loans || 0)}, kartlar ${tl(bt.kk || 0)}, KMH ${tl(bt.kmh || 0)}, elden ${tl(bt.nakit || 0)}`);
+  if(S.pahali.length) s.push('- Faiz işleyen borçlar (aylık etkin faiz vergiler dahil | yıllık bileşik | aylık faiz maliyeti): ' + S.pahali.map(d => `${d.ad} ${tl(d.bakiye)} | %${fmtNumber(d.aylik, 2)} | %${fmtNumber(d.yillik, 0)} | ${tl(d.maliyet)}`).join('; ') + ` · toplam aylık faiz ≈ ${tl(S.faizMaliyeti)}`);
+  const kartlar = manuelListeYukle(KK_KARTLARI_KEY).filter(k => Number(k.tutar) > 1);
+  if(kartlar.length) s.push('- Kart bakiyeleri: ' + kartlar.map(k => tl(Number(k.tutar))).join(', ') + ' (faizli olarak işaretlenmeyenler her ay tamamı ödeniyor kabul edilir)');
+  if(R.anaparaAzalis > 1) s.push(`- Bu ay kredi anaparası ${tl(R.anaparaAzalis)} azaldı`);
+  try{ const b = borcPlanOzetMetni(); if(b) s.push('- ' + b); }catch(e){ /* yok */ }
+  // Acil fon ve hedefler
+  s.push('\n## ACİL FON VE HEDEFLER');
+  if(S.acil && S.acil.ay != null) s.push(`- Acil fon ${tl(S.acil.tl)} = ${fmtNumber(S.acil.ay, 1)} aylık zorunlu gider (aylık ≈ ${tl(S.acil.gider.toplam)})`);
+  else s.push('- Acil durum fonu tanımlanmamış (Birikim Hedefleri\'nde "acil durum fonu" işaretli hedef yok)');
+  try{ const h = hedefOzetMetni(); if(h) s.push('- ' + h); }catch(e){ /* yok */ }
+  // Gelecek ay
+  const sonraki = ayKaydir(R.ayK, 1);
+  if(sonraki >= simdiK){
+    const gel = gelirYukle(), N2 = nakitAyi(onb, sonraki, gel, harcamaTahmini(onb));
+    let sabit = 0;
+    try{ const d = new Date(+sonraki.slice(0, 4), +sonraki.slice(5, 7) - 1, 1); sabit = odemeOlaylari(d, new Date(d.getFullYear(), d.getMonth() + 1, 0)).filter(o => o.tur !== 'kredi').reduce((t, o) => t + (o.tutar || 0), 0); }catch(e){ /* yok */ }
+    s.push(`\n## GELECEK AY (${ayAdi(sonraki)}, tahmin)`);
+    s.push(`- ${N2.gelir.toplam > 0 ? 'Beklenen gelir ' + tl(N2.gelir.toplam) : 'Gelir girilmediği için ay sonu kalan hesaplanamaz'} · kredi taksitleri ${tl(N2.taksit)} · takvimdeki diğer ödemeler (kart, fatura, abonelik) ${tl(sabit)} · tahmini harcama ${tl(N2.harcama)} (enflasyona göre)${N2.gelir.toplam > 0 ? ' · beklenen kalan ' + (N2.net < 0 ? '−' : '') + tl(Math.abs(N2.net)) : ' · toplam zorunlu çıkış ≈ ' + tl(N2.taksit + sabit + N2.harcama)}`);
+  }
+  // Makro
+  s.push('\n## MAKRO');
+  s.push(`- TÜFE (${ENFLASYON_VERI.tufe.ay}): yıllık %${fmtNumber(ENFLASYON_VERI.tufe.yillik, 2)}, aylık %${fmtNumber(ENFLASYON_VERI.tufe.aylik, 2)} · TCMB piyasa beklentisi 12 ay sonrası %${fmtNumber(ENFLASYON_VERI.pka.ay12, 2)}`);
   return s.join('\n');
 }
 function raporYorumla(){
@@ -11642,13 +11781,14 @@ function raporYorumla(){
     const ayK = _raporAy, R = raporVerisi(ayK);
     _raporMesgul = true; renderRapor();
     try{
-      const model = bp.ayar.model;
+      // Rapor danışmanlık işi: Haiku seçiliyse bile en az Sonnet (rakam üzerinden akıl yürütme kalitesi için)
+      const model = /haiku/i.test(bp.ayar.model) ? 'claude-sonnet-5' : bp.ayar.model;
       const res = await fetch(AI_ENDPOINT, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model, max_tokens: 1200,
-          system: [{ type: 'text', text: BP_SISTEM, cache_control: { type: 'ephemeral' } }],
-          messages: [{ role: 'user', content: '<aylik_rapor>\n' + raporMetni(R) + '\n</aylik_rapor>\n\nBu aylık raporu yorumla. Yapı: (1) "Ay nasıl geçti": 2-3 cümle, rakamlarla; (2) "Öneriler": gelecek ay için rakamlı, uygulanabilir 3 madde (hangi kategoride ne kadar azaltma, borç/hedef için ne kadar ayırma gibi). Kısa tut; başlıkları "## " ile yaz.' }],
+          model, max_tokens: 3000,
+          system: [{ type: 'text', text: RAPOR_SISTEM, cache_control: { type: 'ephemeral' } }],
+          messages: [{ role: 'user', content: '<finans_dosyasi>\n' + raporMetni(R) + '\n</finans_dosyasi>\n\nBu dosyaya göre aylık raporumu yaz.' }],
         }),
       });
       let data = null; try{ data = await res.json(); }catch(e){ /* JSON değil */ }
