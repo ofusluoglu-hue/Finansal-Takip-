@@ -2041,6 +2041,8 @@
   .bolum.cerceve-varlik > .bolum-bas, .bolum.cerceve-borc > .bolum-bas{border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:2px;}
   .bolum.cerceve-varlik > .bolum-bas .bolum-toplam::before, .bolum.cerceve-borc > .bolum-bas .bolum-toplam::before{content:'Toplam';font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-2);margin-right:8px;vertical-align:1px;}
   .bolum.cerceve-varlik > .bolum-bas .bolum-toplam:empty::before, .bolum.cerceve-borc > .bolum-bas .bolum-toplam:empty::before{content:none;}
+  /* Başlık toplamları beyaz (Varlıklarım, Yatırımlarım › Portföyüm ve türler, Borçlarım): renk satırlarda kalır, toplam satırlardan ayrışır */
+  .bolum.cerceve-varlik > .bolum-bas .bolum-toplam, .bolum.cerceve-borc > .bolum-bas .bolum-toplam, .portfoy-bas .bolum-toplam{color:var(--text) !important;}
   /* Çerçeve başlığında "N kalem · %…" açıklaması: telefonda başlığın altına iner (başlık kesilmesin) */
   @media (max-width:640px){
     .bolum-bas.aciklamali{flex-wrap:wrap;row-gap:0;}
