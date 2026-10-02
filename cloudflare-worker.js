@@ -47,13 +47,15 @@ const KILIT_ESIK = 8;                // 15 dk içinde bu kadar yanlış deneme �
 const KILIT_PENCERE_MS = 15 * 60 * 1000;
 // Bay Piyasa web araması yalnız bu kaynaklarda yapılır (alt alan adları dahil). Katmanlar: resmî/birincil · haber ajansı ve
 // köklü finans basını · piyasa verisi · kripto. Forum, sosyal medya ve anonim bloglar bilerek dışarıda.
+// Anthropic'in tarayıcısını engelleyen siteler listeye konamaz (liste bütünüyle reddedilir); 2026-10-02 günlüğüne göre
+// reuters.com, bbc.com, ft.com, wsj.com, apnews.com, marketwatch.com, barrons.com, economist.com bu yüzden çıkarıldı.
 const GUVENILIR_KAYNAKLAR = [
   // Türkiye resmî / birincil
   'kap.org.tr', 'tcmb.gov.tr', 'tuik.gov.tr', 'borsaistanbul.com', 'spk.gov.tr', 'bddk.org.tr', 'hmb.gov.tr', 'resmigazete.gov.tr',
   // Küresel resmî / birincil
   'federalreserve.gov', 'ecb.europa.eu', 'sec.gov', 'treasury.gov', 'bls.gov', 'bea.gov', 'imf.org', 'worldbank.org', 'oecd.org', 'eia.gov', 'opec.org', 'cmegroup.com',
   // Haber ajansları ve finans basını
-  'reuters.com', 'bloomberg.com', 'apnews.com', 'bbc.com', 'ft.com', 'wsj.com', 'cnbc.com', 'marketwatch.com', 'economist.com', 'barrons.com', 'nikkei.com',
+  'bloomberg.com', 'cnbc.com', 'nikkei.com',
   'aa.com.tr', 'bloomberght.com', 'dunya.com', 'ekonomim.com', 'foreks.com',
   // Piyasa verisi ve grafik
   'investing.com', 'tradingview.com', 'finance.yahoo.com', 'morningstar.com', 'kitco.com',
@@ -779,12 +781,20 @@ export default {
           let upstream = await gonder(body), kisit = body.tools ? 'uygulandi' : null;
           // Güvence (kademeli): arama aracı reddedilirse önce konum çıkarılır (kaynak listesi korunur), o da olmazsa liste kaldırılır.
           // Her adım günlüğe yazılır (wrangler tail) ve cevaba `_kaynakKisiti` eklenir; panel kısıt kalktıysa bunu gösterir.
+          const hataMetni = async () => upstream.status === 400 && body.tools ? JSON.stringify(await upstream.clone().json().catch(() => ({}))).toLowerCase() : '';
           const reddedildi = async () => {
-            if (upstream.status !== 400 || !body.tools) return false;
-            const m = JSON.stringify(await upstream.clone().json().catch(() => ({}))).toLowerCase();
+            const m = await hataMetni(); if (!m) return false;
             console.log('ai web_search 400:', m.slice(0, 400));
             return /allowed_domains|user_location|domain|tool|web_search/.test(m);
           };
+          // 1) Tarayıcıyı engelleyen site varsa: yalnız onları ayıkla, kalan güvenilir listeyle devam et (listeyi atma)
+          const engelli = (await hataMetni()).match(/not accessible to our user agent: \[([^\]]*)\]/);
+          if (engelli) {
+            const cikar = new Set([...engelli[1].matchAll(/'([^']+)'/g)].map(x => x[1]));
+            console.log('ai web_search erişilemeyen kaynaklar ayıklandı:', [...cikar].join(', '));
+            body.tools = [{ ...body.tools[0], allowed_domains: body.tools[0].allowed_domains.filter(d => !cikar.has(d)) }]; kisit = 'uygulandi-ayiklandi';
+            upstream = await gonder(body);
+          }
           if (await reddedildi()) {
             const { user_location, ...konumsuz } = body.tools[0];
             body.tools = [konumsuz]; kisit = 'uygulandi-konumsuz';
