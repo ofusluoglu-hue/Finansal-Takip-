@@ -11774,10 +11774,15 @@ function raporMetni(R){
   // Acil fon ve hedefler
   s.push('\n## ACİL FON VE HEDEFLER');
   if(S.acil && S.acil.ay != null){
-    // dolar ya da altınla tutulan fonun kendi birimindeki tutarı da yazılır (TL karşılığı kurla değişir)
-    const usdHedef = hedefYukle().filter(hedefAcilMi).filter(h => h.birim === 'USD');
-    const usd = usdHedef.reduce((t, h) => t + hedefBirikim(h), 0);
-    s.push(`- Acil durum fonu ${tl(S.acil.tl)}${usd > 0 ? ' (≈ $' + fmtNumber(usd, 0) + ', dolar bazlı)' : ''} = ${fmtNumber(S.acil.ay, 1)} aylık zorunlu gider (aylık ≈ ${tl(S.acil.gider.toplam)}: harcama ${tl(S.acil.gider.harcama)} + taksit ${tl(S.acil.gider.taksit)}; ölçü 3–6 ay)`);
+    // Her acil fon hedefi: kendi birimindeki hedef ve birikim, kaynağı (birikim 0 iken "fon yok" değil "henüz biriktirilmemiş / kaynak boş" denir)
+    hedefYukle().filter(hedefAcilMi).forEach(h => {
+      const bir = hedefBirikim(h), hdf = Number(h.hedef) || 0, hTl = hedefTL(hdf, h.birim);
+      s.push(`- Acil durum fonu hedefi "${h.ad}": hedef ${hedefFmt(hdf, h.birim)}${h.birim === 'USD' && hTl ? ' (≈ ' + tl(hTl) + ')' : ''}, biriken ${hedefFmt(bir, h.birim)} (kaynak: ${hedefKaynakAd(h)})`
+        + (hdf > 0 ? ` → hedefin %${fmtNumber(Math.min(100, bir / hdf * 100), 0)}'i` : '')
+        + (hTl && S.acil.gider.toplam > 0 ? `; hedef tamamlanınca ${fmtNumber(hTl / S.acil.gider.toplam, 1)} aylık gideri karşılar` : '')
+        + (bir <= 0 ? '. DİKKAT: birikim alanı boş/0 — hedef var ama karşılığında para gösterilmemiş; "fonun yok" deme, birikimi girmesini ya da varlığı bağlamasını öner' : ''));
+    });
+    s.push(`- Şu anki acil fon toplamı ${tl(S.acil.tl)} = ${fmtNumber(S.acil.ay, 1)} aylık zorunlu gider (aylık ≈ ${tl(S.acil.gider.toplam)}: harcama ${tl(S.acil.gider.harcama)} + taksit ${tl(S.acil.gider.taksit)}; ölçü 3–6 ay)`);
   } else s.push('- Acil durum fonu tanımlanmamış (Birikim Hedefleri\'nde "acil durum fonu" işaretli hedef yok)');
   // hedef özetinin baştaki acil fon cümlesi yukarıda var; yalnız hedef listesi
   try{ const h = hedefOzetMetni(); if(h) s.push('- ' + h.slice(Math.max(0, h.indexOf('Birikim hedefleri:')))); }catch(e){ /* yok */ }
@@ -11804,19 +11809,30 @@ function raporYorumla(){
     try{
       // Rapor danışmanlık işi: Haiku seçiliyse bile en az Sonnet (rakam üzerinden akıl yürütme kalitesi için)
       const model = /haiku/i.test(bp.ayar.model) ? 'claude-sonnet-5' : bp.ayar.model;
-      const res = await fetch(AI_ENDPOINT, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model, max_tokens: 3000,
-          system: [{ type: 'text', text: RAPOR_SISTEM, cache_control: { type: 'ephemeral' } }],
-          messages: [{ role: 'user', content: '<finans_dosyasi>\n' + raporMetni(R) + '\n</finans_dosyasi>\n\nBu dosyaya göre aylık raporumu yaz.' }],
-        }),
-      });
-      let data = null; try{ data = await res.json(); }catch(e){ /* JSON değil */ }
-      if(!res.ok || !data) throw new Error('İstek başarısız (' + res.status + ')' + (data && data.error ? ': ' + (data.error.message || data.error) : ''));
-      const metin = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+      // Bütçe geniş: model yazmadan önce düşünür ve düşünme de max_tokens'tan harcar (3000'de rapor yarıda kesiliyordu).
+      // Yine de sınırda kesilirse en fazla 2 kez "kaldığın yerden devam et" denir; parçalar birleştirilir.
+      const ilkMesaj = { role: 'user', content: '<finans_dosyasi>\n' + raporMetni(R) + '\n</finans_dosyasi>\n\nBu dosyaya göre aylık raporumu eksiksiz yaz.' };
+      const iste = async messages => {
+        const res = await fetch(AI_ENDPOINT, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model, max_tokens: 12000, system: [{ type: 'text', text: RAPOR_SISTEM, cache_control: { type: 'ephemeral' } }], messages }),
+        });
+        let data = null; try{ data = await res.json(); }catch(e){ /* JSON değil */ }
+        if(!res.ok || !data) throw new Error('İstek başarısız (' + res.status + ')' + (data && data.error ? ': ' + (data.error.message || data.error) : ''));
+        return data;
+      };
+      let metin = '', maliyet = 0, kesik = false;
+      for(let tur = 0; tur < 3; tur++){
+        const data = await iste(tur === 0 ? [ilkMesaj] : [ilkMesaj, { role: 'assistant', content: metin }, { role: 'user', content: 'Rapor uzunluk sınırında kesildi. Tam kaldığın yerden (yarım kalan kelime ya da cümleden) devam et; önceki kısmı tekrar etme, yeni giriş yazma.' }]);
+        maliyet += bpMaliyet(model, data.usage);
+        const parca = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+        metin = tur === 0 ? parca : metin + parca;
+        kesik = data.stop_reason === 'max_tokens';
+        if(!kesik || !parca.trim()) break;
+      }
+      metin = metin.trim();
       if(!metin) throw new Error('Boş yanıt döndü');
-      const maliyet = bpMaliyet(model, data.usage);
+      if(kesik) metin += '\n\n*(Rapor uzunluk sınırında kesildi; "Yeniden yorumla" ile tekrar deneyebilirsin.)*';
       bpHarcamaEkle(maliyet); bpKaydet(); bpRenderMeter();
       const list = raporYukle().filter(x => x.id !== ayK);
       list.push({ id: ayK, metin, model, maliyet: Math.round(maliyet * 10000) / 10000, ts: Date.now() });

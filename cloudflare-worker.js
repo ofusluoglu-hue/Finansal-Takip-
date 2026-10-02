@@ -610,8 +610,9 @@ export default {
       if (url.pathname === '/ai') {
         const ALLOWED_MODELS = ['claude-haiku-4-5-20251001', 'claude-sonnet-5', 'claude-opus-5-5', 'claude-fable-5-1'];
         const model = ALLOWED_MODELS.includes(payload.model) ? payload.model : 'claude-sonnet-5';
-        // Cevap uzunluğu istemciden gelir (en fazla 4000). Web araması ARAMA BAŞINA $0,01 ücretlidir; yalnız istenirse.
-        const maxTokens = Math.min(Math.max(parseInt(payload.max_tokens, 10) || 2500, 200), 4000);
+        // Cevap uzunluğu istemciden gelir (en fazla 16000: yeni modeller yazmadan önce düşünür, düşünme de bu bütçeden harcar;
+        // ücret yalnız gerçekten üretilen token kadardır). Web araması ARAMA BAŞINA $0,01 ücretlidir; yalnız istenirse.
+        const maxTokens = Math.min(Math.max(parseInt(payload.max_tokens, 10) || 2500, 200), 16000);
         const body = { model, max_tokens: maxTokens, system: payload.system || '', messages: payload.messages || [] };
         if (payload.webSearch === true) body.tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }];
         try {
