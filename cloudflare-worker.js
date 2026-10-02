@@ -208,6 +208,8 @@ async function semaHazirla(env) {
   if (!var_.has('ai_anahtar')) await env.DB.prepare('ALTER TABLE users ADD COLUMN ai_anahtar TEXT').run();
   if (!var_.has('ai_ipucu')) await env.DB.prepare('ALTER TABLE users ADD COLUMN ai_ipucu TEXT').run();
   if (!var_.has('ai_eklendi')) await env.DB.prepare('ALTER TABLE users ADD COLUMN ai_eklendi INTEGER').run();
+  const { results: msSut } = await env.DB.prepare("SELECT name FROM pragma_table_info('mesajlar')").all();
+  if (!(msSut || []).some(x => x.name === 'gonderen_sildi')) await env.DB.prepare('ALTER TABLE mesajlar ADD COLUMN gonderen_sildi INTEGER').run();   // gönderen kendi "Gönderilen" listesinden kaldırdı
   // Kullanıcı tablosu boşsa: ilk yöneticiyi LOGIN_USER + ACCESS_TOKEN ile aç, eski verileri ona kopyala (bir kez)
   const say = await env.DB.prepare('SELECT COUNT(*) AS n FROM users').first();
   if (!say || !say.n) {
@@ -456,7 +458,7 @@ export default {
       const { results: gr } = await env.DB.prepare(
         "SELECT m.id, m.baslik, m.metin, m.ts, m.alici, u.ad AS a_ad, u.email AS a_email, "
         + "(SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan "
-        + "FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.gonderen = ? ORDER BY m.ts DESC LIMIT 50"
+        + "FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.gonderen = ? AND m.gonderen_sildi IS NULL ORDER BY m.ts DESC LIMIT 50"
       ).bind(ben.id).all();
       const gonderilen = (gr || []).map(m => ({
         id: m.id, baslik: m.baslik, metin: m.metin, ts: m.ts, okuyan: m.okuyan,
@@ -498,6 +500,19 @@ export default {
       }
       return json({ ok: true });
     }
+    // POST /mesajlar/sil {gelen:[…], giden:[…]}: gelenler yalnız kendi kutusundan, gidenler yalnız kendi "Gönderilen" listesinden kalkar
+    if (url.pathname === '/mesajlar/sil' && request.method === 'POST') {
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      const temiz = l => (Array.isArray(l) ? l : []).map(String).filter(x => /^ms_[\w-]{6,40}$/.test(x)).slice(0, 100);
+      const gelen = temiz(g.gelen), giden = temiz(g.giden), simdi = Date.now(), isler = [];
+      if (gelen.length) isler.push(env.DB.prepare(
+        'INSERT INTO mesaj_durum (mesaj_id, user_id, okundu, silindi) SELECT m.id, ?, ?, ? FROM mesajlar m WHERE ' + gelenKosul + ' AND m.id IN (' + gelen.map(() => '?').join(',') + ')'
+        + ' ON CONFLICT (mesaj_id, user_id) DO UPDATE SET silindi = excluded.silindi, okundu = COALESCE(mesaj_durum.okundu, excluded.okundu)'
+      ).bind(ben.id, simdi, simdi, ...gelenBag, ...gelen));
+      if (giden.length) isler.push(env.DB.prepare('UPDATE mesajlar SET gonderen_sildi = ? WHERE gonderen = ? AND id IN (' + giden.map(() => '?').join(',') + ')').bind(simdi, ben.id, ...giden));
+      if (isler.length) await env.DB.batch(isler);
+      return json({ ok: true, silinen: gelen.length + giden.length });
+    }
     if (url.pathname.startsWith('/mesajlar/') && request.method === 'DELETE') {
       const id = decodeURIComponent(url.pathname.slice('/mesajlar/'.length));
       const m = await env.DB.prepare('SELECT m.id FROM mesajlar m WHERE m.id = ? AND ' + gelenKosul).bind(id, ...gelenBag).first();
@@ -514,7 +529,7 @@ export default {
       if (!yonetici) return json({ error: 'yetki yok' }, 403);
       if (url.pathname === '/admin/mesajlar' && request.method === 'GET') {
         const { results } = await env.DB.prepare(
-          "SELECT m.id, m.alici, m.baslik, m.metin, m.ts, u.email AS alici_email, u.ad AS alici_ad, (SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.alici != '@yonetici' ORDER BY m.ts DESC LIMIT 100"
+          "SELECT m.id, m.alici, m.baslik, m.metin, m.ts, u.email AS alici_email, u.ad AS alici_ad, (SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.alici != '@yonetici' AND m.gonderen_sildi IS NULL ORDER BY m.ts DESC LIMIT 100"
         ).all();
         const herkes = await env.DB.prepare('SELECT COUNT(*) AS n FROM users WHERE disabled = 0 AND id != ?').bind(ben.id).first();
         return json({ mesajlar: results || [], herkesSayisi: herkes ? herkes.n : 0 });
