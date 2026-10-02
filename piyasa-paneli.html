@@ -3941,6 +3941,7 @@
       <p><b>Gizlilik:</b> Rakamların yalnızca <b>“Portföyümü paylaş”</b> açıksa gönderilir. Kapalıyken yalnız piyasa ve haber verisini bilir.</p>
       <p><b>Maliyet:</b> Her cevabın küçük bir ücreti vardır; ekranda yazar. <b>Günlük limit</b> (varsayılan $0,50) dolunca durur. Model seçimiyle hız ve fiyatı ayarlarsın; günlük kullanım için Sonnet yeterli.</p>
       <p><b>Örnek soru:</b> “KMH'yi mi kapatayım yoksa ihtiyaç kredime ek ödeme mi yapayım?”</p>
+      <p><b>Hazır sorular:</b> Boş sohbette dört öneri çıkar: Bitcoin için bugünkü piyasa öngörüsü, altın ve dolar, ABD borsasında bugün önemli olanlar ve <b>BİST'teki hisselerinle ilgili bugünkü KAP haberleri</b>. KAP sorusu Yatırımlarım'daki BİST hisselerini kullanır ve web'de arar (arama başına yaklaşık $0,01); bunun için onay ister, gerekiyorsa “Portföyümü paylaş”ı açar.</p>
       <p><b>Kurulum (bir kez):</b> Bay Piyasa, Anthropic'in Claude yapay zekâsını kullanır; kendi <b>Anthropic API anahtarını</b> eklemen gerekir. Bay Piyasa sayfasındaki <b>Anahtarını ekle</b>'ye ya da <b>Profilim › Bay Piyasa (yapay zekâ)</b>'ya git, anahtarı yapıştır ve <b>Kaydet ve doğrula</b>'ya bas. Anahtar Anthropic'te doğrulanır, şifreli saklanır, bir daha tamamı gösterilmez. Anahtarı almak için: console.anthropic.com'da hesap aç → Billing'den kredi yükle (ör. $5) → API Keys › Create Key. Ücret kullandıkça senin Anthropic hesabından düşer. Aynı anahtar haber başlığı çevirisi, kredi PDF'i okuma ve Aylık Rapor yorumu için de kullanılır. Yönetici hesabında sunucunun anahtarı kullanılır.</p>
       <p class="kv-ipucu">💡 Cevaplar yatırım tavsiyesi değildir; senaryo ve olasılık dilinde düşünmene yardım eder.</p>
       <button class="bolum-ekle" onclick="switchTab('ai')">Bay Piyasa'ya git →</button>
@@ -7795,9 +7796,10 @@ function bpRenderThread(yaziyor){
       <h2>Merhaba, ben Bay Piyasa</h2>
       <p>Piyasayı, haberleri ${paylas ? 've senin portföyünü ' : ''}bilen sohbet asistanınım. ${paylas ? '' : 'Portföyünü görmemi istersen üstteki <b>Portföyümü paylaş</b> anahtarını aç. '}Bir şey sor ya da aşağıdan hazır bir rapor seç.</p>
       <div class="bp-orneks">
-        <button class="bp-chip" onclick="bpGonder('Bitcoin bugün neden düşüyor, ne bekliyorsun?')">Bitcoin bugün neden düşüyor?</button>
+        <button class="bp-chip" onclick="bpGonder('Bitcoin için bugünkü piyasa öngörün nedir? Son fiyat hareketini, izlenen önemli seviyeleri ve haber akışını değerlendir; yatırım tavsiyesi vermeden olası senaryoları (yükseliş / düşüş / yatay) kısaca anlat.', { haber: true })">Bitcoin için bugün piyasa öngörün nedir?</button>
         <button class="bp-chip" onclick="bpGonder('Altın ve dolar şu an ne söylüyor, nelere dikkat etmeliyim?')">Altın ve dolar ne söylüyor?</button>
         <button class="bp-chip" onclick="bpGonder('ABD borsası açılmadan önce bugün neler önemli?')">Bugün ABD borsasında ne önemli?</button>
+        <button class="bp-chip" onclick="bpKapSor()">BİST'teki hisselerimle ilgili bugün KAP haberleri ve gelişmeler neler?</button>
       </div></div>`;
     return;
   }
@@ -7856,6 +7858,21 @@ function bpKopyala(i, btn){
   }catch(e){ /* pano erişimi yok */ }
 }
 
+// Hazır soru: portföydeki BİST hisseleri için KAP bildirimleri ve gelişmeler (web araması gerekir, portföy paylaşımı ister)
+function bpKapSor(){
+  if(bpMesgul) return;
+  const kodlar = [...new Set(manuelListeYukle(YATIRIM_KEY).filter(y => y.tur === 'bist').map(y => String(y.kod || y.ad || '').toUpperCase().trim()).filter(Boolean))];
+  if(!kodlar.length){ showAlertModal("Yatırımlarım'da BİST hissesi yok. Önce hisselerini Yatırımlarım › BİST bölümüne ekle; sonra KAP haberlerini sorabilirsin."); return; }
+  const soru = `Portföyümdeki BİST hisseleri (${kodlar.join(', ')}) için bugünkü ve son günlerdeki KAP bildirimlerini (özel durum açıklaması, temettü, sermaye artırımı, geri alım, finansal tablo, yeni iş ilişkisi vb.) ve önemli gelişmeleri web'de araştır. Her hisse için kısa madde yaz: ne oldu, tarihi, hisseye olası etkisi. Kaynak olarak öncelikle KAP (kap.org.tr) ve güvenilir haber sitelerini kullan, kaynağı belirt; yeni bildirim bulamadığın hisse için "son günlerde yeni bildirim bulunamadı" yaz. Yatırım tavsiyesi verme.`;
+  const gonder = () => bpGonder(soru, { ara: true, haber: true });
+  const not = "Bu soru için Bay Piyasa web'de arama yapar (arama başına yaklaşık $0,01, en fazla 3 arama) ve portföyündeki hisse kodlarını (" + kodlar.join(', ') + ") kullanır.";
+  if(!bp.ayar.paylas){
+    showConfirmModal(not + " Portföy rakamların da Anthropic API'sine gönderilir (isim/e-posta gönderilmez). Devam edelim mi?", () => { bp.ayar.paylas = true; bpKaydet(); bpRenderAyar(); gonder(); });
+    return;
+  }
+  showConfirmModal(not + ' Devam edelim mi?', gonder);
+}
+
 function bpRaporCalistir(id){
   const r = BP_RAPORLAR.find(x => x.id === id);
   if(!r || bpMesgul) return;
@@ -7909,7 +7926,7 @@ async function bpGonder(metinParam, opsiyon){
       body: JSON.stringify({
         model,
         max_tokens: 2500,
-        webSearch: !!bp.ayar.ara,
+        webSearch: !!bp.ayar.ara || !!opsiyon.ara,   // bazı hazır sorular (KAP) bu mesaj için aramayı kendisi açar
         system: [
           { type:'text', text: BP_SISTEM, cache_control: { type:'ephemeral' } },
           { type:'text', text: chat.snapshot.text },
