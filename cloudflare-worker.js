@@ -195,6 +195,10 @@ async function semaHazirla(env) {
     env.DB.prepare('CREATE TABLE IF NOT EXISTS ukv (user_id TEXT NOT NULL, key TEXT NOT NULL, value TEXT NOT NULL, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, key))'),
     env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_ukv_user_time ON ukv (user_id, updated_at)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS onbellek (k TEXT PRIMARY KEY, v TEXT NOT NULL, ts INTEGER NOT NULL)'),   // kotalı dış servis cevapları
+    // Mesaj kutusu: yöneticiden kullanıcıya (alici = kullanıcı kimliği ya da '*' = herkes); okundu/silindi kullanıcı başına
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS mesajlar (id TEXT PRIMARY KEY, alici TEXT NOT NULL, gonderen TEXT, baslik TEXT NOT NULL, metin TEXT NOT NULL, ts INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_mesajlar_alici ON mesajlar (alici, ts)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS mesaj_durum (mesaj_id TEXT NOT NULL, user_id TEXT NOT NULL, okundu INTEGER, silindi INTEGER, PRIMARY KEY (mesaj_id, user_id))'),
   ]);
   // Sonradan eklenen sütunlar (profil fotoğrafı, tercihler)
   const { results: sutunlar } = await env.DB.prepare("SELECT name FROM pragma_table_info('users')").all();
@@ -427,6 +431,74 @@ export default {
     }
 
     // ---------- YÖNETİM: kullanıcılar (yalnız yönetici) ----------
+    // ---------- MESAJ KUTUSU (kullanıcı) ----------
+    // GET /mesajlar · POST /mesajlar/okundu {ids:[…]} ya da {hepsi:true} · DELETE /mesajlar/<id> (yalnız kendi kutusundan kaldırır)
+    if (url.pathname === '/mesajlar' && request.method === 'GET') {
+      const { results } = await env.DB.prepare(
+        "SELECT m.id, m.baslik, m.metin, m.ts, m.alici, d.okundu, g.ad AS gonderen_ad FROM mesajlar m LEFT JOIN mesaj_durum d ON d.mesaj_id = m.id AND d.user_id = ? LEFT JOIN users g ON g.id = m.gonderen "
+        + "WHERE (m.alici = ? OR m.alici = '*') AND (m.gonderen IS NULL OR m.gonderen != ?) AND d.silindi IS NULL ORDER BY m.ts DESC LIMIT 100"
+      ).bind(ben.id, ben.id, ben.id).all();
+      const mesajlar = (results || []).map(m => ({ id: m.id, baslik: m.baslik, metin: m.metin, ts: m.ts, herkese: m.alici === '*', okundu: !!m.okundu, gonderen: m.gonderen_ad || 'Yönetici' }));
+      return json({ mesajlar, okunmamis: mesajlar.filter(m => !m.okundu).length });
+    }
+    if (url.pathname === '/mesajlar/okundu' && request.method === 'POST') {
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      const simdi = Date.now(), gorunur = "(alici = ? OR alici = '*')";
+      const ust = 'INSERT INTO mesaj_durum (mesaj_id, user_id, okundu) SELECT id, ?, ? FROM mesajlar WHERE ' + gorunur;
+      const son = ' ON CONFLICT (mesaj_id, user_id) DO UPDATE SET okundu = COALESCE(mesaj_durum.okundu, excluded.okundu)';
+      if (g.hepsi) await env.DB.prepare(ust + son).bind(ben.id, simdi, ben.id).run();
+      else {
+        const ids = (Array.isArray(g.ids) ? g.ids : []).map(String).filter(x => /^ms_[\w-]{6,40}$/.test(x)).slice(0, 100);
+        if (!ids.length) return json({ ok: true });
+        await env.DB.prepare(ust + ' AND id IN (' + ids.map(() => '?').join(',') + ')' + son).bind(ben.id, simdi, ben.id, ...ids).run();
+      }
+      return json({ ok: true });
+    }
+    if (url.pathname.startsWith('/mesajlar/') && request.method === 'DELETE') {
+      const id = decodeURIComponent(url.pathname.slice('/mesajlar/'.length));
+      const m = await env.DB.prepare("SELECT id FROM mesajlar WHERE id = ? AND (alici = ? OR alici = '*')").bind(id, ben.id).first();
+      if (!m) return json({ error: 'mesaj bulunamadı' }, 404);
+      const simdi = Date.now();
+      await env.DB.prepare('INSERT INTO mesaj_durum (mesaj_id, user_id, okundu, silindi) VALUES (?, ?, ?, ?) ON CONFLICT (mesaj_id, user_id) DO UPDATE SET silindi = excluded.silindi, okundu = COALESCE(mesaj_durum.okundu, excluded.okundu)')
+        .bind(id, ben.id, simdi, simdi).run();
+      return json({ ok: true });
+    }
+
+    // ---------- MESAJ GÖNDERME (yönetici) ----------
+    // GET /admin/mesajlar (gönderilenler + kaç kişi okudu) · POST /admin/mesajlar {alici, baslik, metin} · DELETE /admin/mesajlar/<id> (herkesten geri alır)
+    if (url.pathname === '/admin/mesajlar' || url.pathname.startsWith('/admin/mesajlar/')) {
+      if (!yonetici) return json({ error: 'yetki yok' }, 403);
+      if (url.pathname === '/admin/mesajlar' && request.method === 'GET') {
+        const { results } = await env.DB.prepare(
+          "SELECT m.id, m.alici, m.baslik, m.metin, m.ts, u.email AS alici_email, u.ad AS alici_ad, (SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan FROM mesajlar m LEFT JOIN users u ON u.id = m.alici ORDER BY m.ts DESC LIMIT 100"
+        ).all();
+        const herkes = await env.DB.prepare('SELECT COUNT(*) AS n FROM users WHERE disabled = 0 AND id != ?').bind(ben.id).first();
+        return json({ mesajlar: results || [], herkesSayisi: herkes ? herkes.n : 0 });
+      }
+      if (url.pathname === '/admin/mesajlar' && request.method === 'POST') {
+        let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+        const alici = String(g.alici || ''), baslik = String(g.baslik || '').trim().slice(0, 120), metin = String(g.metin || '').trim().slice(0, 4000);
+        if (!baslik) return json({ error: 'konu yaz' }, 400);
+        if (!metin) return json({ error: 'mesajı yaz' }, 400);
+        if (alici !== '*') {
+          const u = await env.DB.prepare('SELECT id FROM users WHERE id = ?').bind(alici).first();
+          if (!u) return json({ error: 'alıcı bulunamadı' }, 404);
+        }
+        const id = 'ms_' + b64url(crypto.getRandomValues(new Uint8Array(9)));
+        await env.DB.prepare('INSERT INTO mesajlar (id, alici, gonderen, baslik, metin, ts) VALUES (?, ?, ?, ?, ?, ?)').bind(id, alici, ben.id, baslik, metin, Date.now()).run();
+        return json({ ok: true, id });
+      }
+      if (url.pathname.startsWith('/admin/mesajlar/') && request.method === 'DELETE') {
+        const id = decodeURIComponent(url.pathname.slice('/admin/mesajlar/'.length));
+        await env.DB.batch([
+          env.DB.prepare('DELETE FROM mesaj_durum WHERE mesaj_id = ?').bind(id),
+          env.DB.prepare('DELETE FROM mesajlar WHERE id = ?').bind(id),
+        ]);
+        return json({ ok: true });
+      }
+      return json({ error: 'desteklenmeyen istek' }, 405);
+    }
+
     if (url.pathname === '/admin/kullanicilar' || url.pathname.startsWith('/admin/kullanicilar/')) {
       if (!yonetici) return json({ error: 'yetki yok' }, 403);
       const parca = url.pathname.split('/').filter(Boolean);   // ['admin','kullanicilar', id?, eylem?]
@@ -478,6 +550,8 @@ export default {
           await env.DB.batch([
             env.DB.prepare('DELETE FROM ukv WHERE user_id = ?').bind(hedef.id),
             env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(hedef.id),
+            env.DB.prepare('DELETE FROM mesaj_durum WHERE user_id = ? OR mesaj_id IN (SELECT id FROM mesajlar WHERE alici = ?)').bind(hedef.id, hedef.id),
+            env.DB.prepare('DELETE FROM mesajlar WHERE alici = ?').bind(hedef.id),
             env.DB.prepare('DELETE FROM users WHERE id = ?').bind(hedef.id),
           ]);
           return json({ ok: true });
