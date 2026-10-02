@@ -2088,9 +2088,21 @@
   .rapor-yorum-kimlik{display:flex;flex-direction:column;min-width:0;flex:1 1 auto;}
   .rapor-yorum-alt{font-size:12px;color:var(--muted-2);}
   /* Yorumu aç/kapa: varsayılan açık; kapalıyken başlık altı ayraç da kalkar */
-  .rapor-katla{flex:0 0 auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:15px;line-height:1;cursor:pointer;transition:transform .2s,color .15s;}
-  .rapor-katla:hover{color:var(--text);border-color:var(--muted-2);}
-  .bolum.yorum-kapali .rapor-katla{transform:rotate(-90deg);}
+  /* Aç/kapa oku: "Yeniden yorumla"nın solunda, amber ve nabız gibi yanıp söner (üstüne gelince durur; hareket azaltma tercihinde sabit) */
+  .rapor-katla{flex:0 0 auto;margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:10px;border:1.5px solid var(--amber);background:var(--amber);color:#14161c;cursor:pointer;animation:rapor-katla-nabiz 1.4s ease-in-out infinite;}
+  .rapor-katla svg{transition:transform .25s;animation:rapor-katla-zipla 1.4s ease-in-out infinite;}
+  .rapor-katla:hover,.rapor-katla:hover svg{animation:none;}
+  .rapor-katla:hover{background:var(--amber);color:#14161c;}
+  .bolum.yorum-kapali .rapor-katla svg{transform:rotate(-90deg);}
+  /* dolu amber ↔ boş çerçeve arası yanıp söner, etrafa halka yayılır; ok yönünde hafifçe "zıplar" */
+  @keyframes rapor-katla-nabiz{
+    0%,100%{background:var(--amber);color:#14161c;box-shadow:0 0 0 0 rgba(231,168,59,.75);}
+    55%{background:rgba(231,168,59,.06);color:var(--amber);box-shadow:0 0 0 10px rgba(231,168,59,0);}
+  }
+  @keyframes rapor-katla-zipla{ 0%,100%{translate:0 0;} 55%{translate:0 3px;} }
+  .bolum.yorum-kapali .rapor-katla svg{animation-name:rapor-katla-zipla-yan;}
+  @keyframes rapor-katla-zipla-yan{ 0%,100%{translate:0 0;} 55%{translate:3px 0;} }
+  @media (prefers-reduced-motion:reduce){ .rapor-katla,.rapor-katla svg{animation:none !important;} }
   .bolum.yorum-kapali #raporYorum{display:none;}
   .bolum.yorum-kapali .rapor-yorum-bas{border-bottom:none;padding-bottom:4px;}
   @media (max-width:640px){
@@ -3400,7 +3412,7 @@
 
     <details class="kv-bolum" id="kv-rapor"><summary>📄 Aylık Rapor <span>ayın özeti tek sayfada</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Seçtiğin ayın harcamasını (önceki aya ve son 6 aya göre), bütçe uyumunu, ay sonu kalanı, kredi anaparasındaki azalışı ve net varlık değişimini tek sayfada özetler. “Öne Çıkan Gelişmeler” kendiliğinden yazılır ve ücretsizdir.</p>
-      <p><b>Bay Piyasa yorumu:</b> Özet kutularının hemen altındadır, “Öne Çıkan Gelişmeler” ondan sonra gelir. Başlığın sağındaki küçük <b>▾</b> okuyla yorumu kapatıp açabilirsin; varsayılan açıktır, kapattıysan bu cihazda kapalı kalır. <b>“Bay Piyasa yorumlasın”</b>a basarsan bir kişisel finans danışmanı gibi ayın bütün rakamlarına bakar: harcama (enflasyondan arındırılmış), gelir ve tasarruf oranı, kredi taksitlerinin gelire oranı, kart/KMH borçlarının vergiler dahil gerçek faizi, net varlığın ay sonu değişimi (TL, dolar, altın), yatırım dağılımı, acil fon ve gelecek ay. Sonuçta bir <b>finansal sağlık tablosu</b> ve rakamlı bir <b>gelecek ay planı</b> yazar; eksik veri varsa (ör. gelir girilmemişse) uydurmaz, söyler. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez, <b>↻ Yeniden yorumla</b> ile tazelersin.</p>
+      <p><b>Bay Piyasa yorumu:</b> Özet kutularının hemen altındadır, “Öne Çıkan Gelişmeler” ondan sonra gelir. “Yeniden yorumla” düğmesinin solundaki yanıp sönen sarı okla yorumu kapatıp açabilirsin; varsayılan açıktır, kapattıysan bu cihazda kapalı kalır. <b>“Bay Piyasa yorumlasın”</b>a basarsan bir kişisel finans danışmanı gibi ayın bütün rakamlarına bakar: harcama (enflasyondan arındırılmış), gelir ve tasarruf oranı, kredi taksitlerinin gelire oranı, kart/KMH borçlarının vergiler dahil gerçek faizi, net varlığın ay sonu değişimi (TL, dolar, altın), yatırım dağılımı, acil fon ve gelecek ay. Sonuçta bir <b>finansal sağlık tablosu</b> ve rakamlı bir <b>gelecek ay planı</b> yazar; eksik veri varsa (ör. gelir girilmemişse) uydurmaz, söyler. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez, <b>↻ Yeniden yorumla</b> ile tazelersin.</p>
       <p class="kv-ipucu">💡 Rapor ne kadar eksiksizse yorum o kadar isabetli olur: Nakit Akışı'nda gelirini, Borç Kapatma Planı'nda faizli kartlarını, Birikim Hedefleri'nde acil durum fonunu tanımla.</p>
       <p><b>Yazdır / PDF:</b> Raporu yazdırabilir ya da PDF olarak kaydedebilirsin.</p>
       <button class="bolum-ekle" onclick="switchTab('rapor')">Aylık Rapor'a git →</button>
@@ -3775,8 +3787,8 @@
           <span class="bolum-baslik">Bay Piyasa'nın yorumu</span>
           <span class="rapor-yorum-alt" id="raporYorumAlt">Kişisel finans danışmanın</span>
         </div>
-        <button class="bolum-ekle" id="raporYorumBtn" style="margin-left:auto;" onclick="raporYorumla()">✨ Bay Piyasa yorumlasın</button>
-        <button class="rapor-katla" id="raporKatlaBtn" type="button" onclick="raporYorumKatla()" aria-expanded="true" title="Yorumu gizle" aria-label="Yorumu gizle">▾</button>
+        <button class="rapor-katla" id="raporKatlaBtn" type="button" onclick="raporYorumKatla()" aria-expanded="true" title="Yorumu gizle" aria-label="Yorumu gizle"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <button class="bolum-ekle" id="raporYorumBtn" onclick="raporYorumla()">✨ Bay Piyasa yorumlasın</button>
       </div>
       <div id="raporYorum" style="padding-bottom:8px;"></div>
     </div>
