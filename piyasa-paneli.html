@@ -7401,7 +7401,7 @@ KİŞİLİK VE ÖZGÜN YORUM (en önemli kural — diğer kurallarla çelişirse
 BİÇİM (markdown)
 - Başlık gerekirse yalnızca "## " ile ve en fazla 3-4 tane. Yatay çizgi (---) KULLANMA.
 - Maddeler kısa olsun. Tabloyu yalnızca gerçek bir karşılaştırma için (en fazla 6 satır) kullan.
-- Önemli rakamları **kalın** yaz. Para biçimi: ₺1.234.567 veya $84.400.
+- Önemli rakamları **kalın** yaz. Rakamlar her zaman Türkçe biçimde: binlik ayraç nokta, ondalık virgül ($84.896, ₺1.234.567, 1,0845); yüzde işareti başta (%1,51, −%0,56). Kaynaklardan aldığın İngilizce biçimli rakamları ($85,000 / 1.51%) Türkçeye çevirerek yaz.
 
 İÇERİK KURALLARI
 - <panel_verisi> içinde kullanıcının panelindeki güncel fiyatlar, haber başlıkları ve (paylaşıldıysa) portföy/borç bilgisi verilir. Bunları birincil kaynak say. Kullanıcıya ait rakamları ASLA uydurma; verilmemişse "bunu paylaşmamışsın" de.
@@ -7411,7 +7411,9 @@ BİÇİM (markdown)
 - Belirsizse tek bir netleştirici soru sor.
 
 KAYNAK VE DOĞRULAMA (web araması açıkken)
-- Kaynaklar bilgi verir, görüşü sen kurarsın: bulduklarını kendi yorumunla tart, haber metnini aktarmakla yetinme.
+- Kaynaklar bilgi verir, görüşü sen kurarsın: bulduklarını kendi yorumunla tart, haber metnini aktarmakla yetinme. "Ne oldu" kısmını en fazla 1-2 cümleyle geç; ağırlık senin yorumunda olsun.
+- TAZELİK: <panel_verisi>'ndeki fiyatlar canlıdır ve en güncel veridir (Zaman satırına bak). Haberdeki ya da aramadaki fiyat, o yazının yayımlandığı ana aittir ve çoğunlukla daha eskidir. Çelişirse panel fiyatını esas al, farkı zaman farkıyla açıkla; panel verisinin gecikmeli olduğunu söyleme.
+- Aramadan aldığın bilgiyi cümlenin içinde kaynağıyla an ("Reuters'ın bugünkü haberine göre…", "CoinDesk, 2 Eki"); kaynaksız haber cümlesi kurma.
 - Arama yalnız güvenilir kaynaklarda yapılır. Kaynak sırası: (1) resmî/birincil — KAP, TCMB, TÜİK, SPK, Borsa İstanbul, Resmî Gazete, Fed, ECB, SEC, ABD istatistik kurumları; (2) haber ajansları ve köklü finans basını — Reuters, Bloomberg, AP, AA, Bloomberg HT, Financial Times, WSJ, CNBC, BBC, Dünya, Ekonomim; (3) piyasa verisi — Investing, TradingView, Yahoo Finance, Morningstar (fiyat, seviye, takvim için).
 - Şirket haberinde önce KAP'a, faiz/enflasyonda önce TCMB/TÜİK/Fed'e bak. Önemli bir rakamı mümkünse iki kaynakla doğrula; kaynaklar çelişiyorsa bunu açıkça söyle.
 - Her önemli bilgiye kaynağını ve tarihini yaz (ör. "Reuters, 2 Eki"). 48 saatten eski bilgiyi "güncel olmayabilir" diye işaretle.
@@ -7502,11 +7504,11 @@ function bpSnapshotOlustur(paylas, haber){
   s.push('<panel_verisi>');
   s.push('Zaman: ' + simdi.toLocaleString('tr-TR') + ' (Türkiye saati). USD/TRY: ' + (usdtry ? fmtNumber(usdtry, 2) : 'bilinmiyor'));
   s.push('');
-  s.push('Piyasa (bir önceki kapanışa göre değişim):');
+  s.push('Piyasa — CANLI fiyatlar (yukarıdaki Zaman anına ait, en güncel veri budur; değişim: hisse/emtia/kurda bir önceki kapanışa, kriptoda son 24 saate göre):');
   CARDS.forEach(c => {
     const v = _lastGoodValues[c.key];
     if(!v || !isFinite(v.price)) return;
-    const ch = (v.chgPct >= 0 ? '+' : '') + fmtNumber(v.chgPct, 2) + '%';
+    const ch = (v.chgPct >= 0 ? '+%' : '−%') + fmtNumber(Math.abs(v.chgPct), 2);   // Türkçe biçim: +%1,51 / −%0,56
     const seans = (v.seans && SEANS_ETIKET[v.seans]) ? ' [' + SEANS_ETIKET[v.seans].toLowerCase() + ']' : '';
     const digerSeanslar = (v.seanslar || []).map(x => x.ad.toLowerCase() + ' ' + (x.metin != null ? x.metin : fmtNumber(x.fiyat, c.fmt === 'try4' ? 4 : 2)) + (x.chg != null ? ' (' + (x.chg >= 0 ? '+' : '') + fmtNumber(x.chg, 2) + '%)' : '')).join(', ');
     s.push('- ' + c.label + ': ' + fmtNumber(v.price, c.fmt === 'usd0' ? 0 : (c.fmt === 'try4' ? 4 : 2)) + ' (' + ch + ')' + seans + (digerSeanslar ? ' — ' + digerSeanslar : ''));
@@ -7931,7 +7933,7 @@ async function bpGonder(metinParam, opsiyon){
   const paylas = bp.ayar.paylas;
   const haber = bp.ayar.haber || !!opsiyon.haber;
   const s = chat.snapshot;
-  if(!s || (Date.now() - s.t) > 30 * 60 * 1000 || s.paylas !== paylas || s.haber !== haber){
+  if(!s || (Date.now() - s.t) > 2 * 60 * 1000 || s.paylas !== paylas || s.haber !== haber){   // fiyatlar dakikada bir tazelenir; Bay Piyasa en fazla 2 dk eski veri görsün
     chat.snapshot = { t: Date.now(), paylas, haber, text: bpSnapshotOlustur(paylas, haber) };
   }
   const ek = bpEk;
