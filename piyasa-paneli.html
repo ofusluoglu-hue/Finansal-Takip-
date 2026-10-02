@@ -80,13 +80,28 @@
   .nav-item + .nav-item{margin-top:1px;}
   .nav-grup{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);padding:7px 12px 3px;margin-top:4px;border-top:1px solid var(--border);}   /* gruplar profil çizgisiyle aynı ince çizgiyle ayrılır */
   /* Kısa ekran (laptop): bir kademe daha sık */
-  @media (min-width:901px) and (max-height:880px){
+  @media (min-width:901px) and (max-height:960px){
     .nav-item{padding:5px 12px;font-size:12.5px;}
     .nav-item svg{width:16px;height:16px;}
     .nav-grup{padding:5px 12px 2px;margin-top:3px;font-size:9.5px;}
     .sidebar-kutu > .profil-kutu{padding:4px 8px 7px;margin-bottom:3px;}
     .sidebar-kutu > .profil-kutu .avatar{width:30px;height:30px;font-size:12px;}
     .nav-alt{margin-top:4px !important;padding-top:6px !important;}
+  }
+  /* Çok kısa ekran (1366×768, 1280×720): bir kademe daha — yönetici menüsü de kaymadan sığsın */
+  @media (min-width:901px) and (max-height:800px){
+    .nav-item{padding:3.5px 12px;font-size:12px;gap:10px;}
+    .nav-item svg{width:15px;height:15px;}
+    .nav-grup{padding:4px 12px 1px;margin-top:2px;font-size:9px;}
+    .sidebar-kutu{padding:6px 8px;}
+    .sidebar-kutu > .profil-kutu{padding:3px 8px 5px;margin-bottom:2px;}
+    .sidebar-kutu > .profil-kutu .avatar{width:26px;height:26px;font-size:11px;}
+    .nav-alt{margin-top:3px !important;padding-top:5px !important;}
+  }
+  @media (min-width:901px) and (max-height:740px){   /* 1280×720 */
+    .nav-item{padding:2.5px 12px;}
+    .nav-grup{padding:3px 12px 1px;margin-top:1px;}
+    .nav-item + .nav-item{margin-top:0;}
   }
   .nav-item svg{
     width:17px;height:17px;
@@ -549,6 +564,68 @@
   .mesaj-oge.secili{background:rgba(231,168,59,.07);}
   .mesaj-arac label, .mesaj-arac .mesaj-sec-say, .mesaj-arac a{white-space:nowrap;}
   .mesaj-kisa{display:none;}
+  /* ---------- Hesap Araçları ---------- */
+  .arac-secim{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+  .arac-secim::-webkit-scrollbar{display:none;}
+  .arac-sec{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s,background .15s;}
+  .arac-sec:hover{color:var(--text);border-color:#333d4a;}
+  .arac-sec.active{color:var(--amber);border-color:var(--amber);background:rgba(231,168,59,.08);}
+  .arac-panel{display:none;}
+  .arac-panel.active{display:block;}
+  .arac-bolum{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;padding:16px 18px 18px;}
+  .arac-form{display:flex;flex-direction:column;gap:12px;}
+  .arac-alan{display:flex;flex-direction:column;gap:5px;}
+  .arac-alan[hidden]{display:none;}   /* gizli alan (ör. günlük hesapta yenileme) gerçekten kalksın */
+  .arac-panel[data-arac="makine"] .arac-bolum{grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:32px;}
+  .hm-t:focus{outline:none;}
+  .hm-t:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
+  .arac-alan > span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .arac-alan small{font-size:11.5px;color:var(--muted-2);}
+  .arac-alan .ai-input{width:100%;max-width:none;font-size:15px;font-variant-numeric:tabular-nums;}
+  .arac-hizli{display:flex;gap:6px;flex-wrap:wrap;}
+  .arac-hizli a{font-size:11.5px;padding:3px 9px;border-radius:7px;border:1px solid var(--border);color:var(--muted);cursor:pointer;}
+  .arac-hizli a:hover, .arac-hizli a.secili{color:var(--amber);border-color:var(--amber);}
+  .arac-sonuc{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;align-self:start;}
+  .arac-sonuc .as-etiket{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .arac-sonuc .as-buyuk{font-size:30px;font-weight:800;margin:4px 0 2px;font-variant-numeric:tabular-nums;color:var(--text);}
+  .arac-sonuc .as-alt{font-size:12.5px;color:var(--muted);margin-bottom:12px;}
+  .arac-sonuc .as-satir{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--border);font-size:13px;}
+  .arac-sonuc .as-satir span:first-child{color:var(--muted);}
+  .arac-sonuc .as-satir b{font-variant-numeric:tabular-nums;}
+  .arac-sonuc .as-not{margin-top:10px;font-size:12px;line-height:1.55;color:var(--muted);}
+  .arac-sonuc .as-not b.iyi{color:var(--up);} .arac-sonuc .as-not b.kotu{color:var(--down);}
+  .as-cubuk{display:flex;height:9px;border-radius:5px;overflow:hidden;margin:2px 0 6px;background:var(--border);}
+  .as-cubuk i{display:block;height:100%;}
+  .as-lejant{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-bottom:10px;}
+  .as-lejant i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:0;}
+  .arac-hata{color:var(--amber);font-size:13px;}
+  /* hesap makinesi */
+  .hm-kutu{max-width:340px;width:100%;}
+  .hm-ekran{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:right;margin-bottom:10px;min-height:86px;display:flex;flex-direction:column;justify-content:flex-end;}
+  .hm-ifade{font-size:13px;color:var(--muted);min-height:18px;word-break:break-all;}
+  .hm-sonuc{font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;word-break:break-all;line-height:1.2;}
+  .hm-tuslar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .hm-t{height:52px;border-radius:12px;border:1px solid var(--border);background:var(--panel-2);color:var(--text);font-family:inherit;font-size:19px;font-weight:600;cursor:pointer;transition:background .1s,transform .05s;}
+  .hm-t:hover{background:#1d2430;}
+  .hm-t:active, .hm-t.basildi{transform:scale(.96);background:#242c38;}
+  .hm-islev{color:var(--muted);font-size:16px;}
+  .hm-op{color:var(--amber);font-size:22px;}
+  .hm-esit{background:var(--amber);color:#14161c;border-color:var(--amber);font-size:22px;}
+  .hm-esit:hover{background:#f0b44a;}
+  .hm-gecmis-bas{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .hm-gecmis-bas a{font-size:12px;color:var(--muted);cursor:pointer;}
+  .hm-gecmis-bas a:hover{color:var(--amber);}
+  .hm-g{padding:8px 4px;border-top:1px solid var(--border);text-align:right;cursor:pointer;border-radius:6px;}
+  .hm-g:hover{background:var(--panel-2);}
+  .hm-g .i{font-size:12px;color:var(--muted);word-break:break-all;}
+  .hm-g .s{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;}
+  @media (max-width:760px){
+    .arac-bolum, .arac-panel[data-arac="makine"] .arac-bolum{grid-template-columns:1fr;gap:16px;padding:14px;}
+    .arac-secim{display:grid;grid-template-columns:1fr 1fr;overflow:visible;}   /* telefonda 2×2: dört araç da görünür */
+    .arac-sec{justify-content:center;padding:10px 8px;}
+    .hm-kutu{max-width:none;}
+    .hm-t{height:58px;}
+  }
   @media (max-width:640px){ .mesaj-arac .mesaj-arac-sag{gap:10px;} .mesaj-uzun{display:none;} .mesaj-kisa{display:inline;} }   /* telefonda araç çubuğu tek satır */
   .mesaj-ust-not a{color:var(--amber);cursor:pointer;}
   @media (max-width:640px){ #pfMesajBolum .mesaj-kutu-bas{flex-wrap:wrap;} #pfMesajBolum .mesaj-kutu-sag{margin-left:0;width:100%;justify-content:space-between;} }   /* telefonda sekmeler ve düğme alt satırda: başlık kesilmesin */
@@ -2495,6 +2572,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>
         <span data-kisa="Hedef">Birikim Hedefleri</span>
       </div>
+      <div class="nav-item" data-tab="araclar" onclick="switchTab('araclar')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="16" height="19" rx="2.5"/><rect x="7.5" y="5.5" width="9" height="4" rx="1"/><path d="M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01M16 17h.01"/></svg>
+        <span data-kisa="Araçlar">Hesap Araçları</span>
+      </div>
       <div class="nav-grup">Asistan</div>
       <div class="nav-item" data-tab="ai" data-alt="1" onclick="switchTab('ai')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg>
@@ -3508,6 +3589,18 @@
       <button class="bolum-ekle" onclick="switchTab('borcplan')">Borç Kapatma Planı'na git →</button>
     </div></details>
 
+    <details class="kv-bolum" id="kv-araclar"><summary>🧮 Hesap Araçları <span>hesap makinesi, kredi, KMH ve mevduat faizi</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Faiz ve taksit sorularını panelden çıkmadan hesaplarsın. Üstteki düğmelerle aracı seç (telefonda dört düğme iki satırdır); son seçtiğin araç ve yazdığın rakamlar bu cihazda hatırlanır.</p>
+      <ul class="kv-liste">
+        <li><b>Hesap makinesi:</b> dört işlem, yüzde (“200 + 10 %” = 220, “200 × 10 %” = 20), ± ve geri silme. Klavyeyle de yazabilirsin (Enter = eşittir, Esc = temizle). Son 8 hesap <b>Geçmiş</b>'te durur; birine dokunursan sonucu yeniden kullanırsın.</li>
+        <li><b>Kredi:</b> tür (ihtiyaç, taşıt, konut), tutar, vade ve bankanın yazdığı <b>aylık</b> faizi gir. Aylık taksit, toplam faiz, KKDF + BSMV, toplam geri ödeme ve yıllık maliyet çıkar; “Ödeme planı › Göster” ay ay tabloyu açar. Örnek: ₺100.000, 12 ay, aylık %3,50 ihtiyaç kredisi → taksit ≈ ₺10.998, toplam ≈ ₺131.976.</li>
+        <li><b>KMH / Kart faizi:</b> borç, aylık faiz ve gün sayısı → o sürenin faiz + vergi maliyeti ve günlük maliyet. KMH hesabın kayıtlıysa “Hesabımdan doldur” ile tek dokunuşta gelir. Örnek: ₺20.000, aylık %4,25, 30 gün → ≈ ₺1.105.</li>
+        <li><b>Vadeli mevduat:</b> anapara, yıllık brüt faiz, vade (gün) ve stopaj. Vadeli hesapta faiz vade sonunda, günlük kazandıranda her gün eklenir; vadeyi üst üste yenilemeyi de hesaplar. Sonuçta net kazanç, vade sonu tutar ve <b>enflasyona göre reel getiri</b> görünür.</li>
+      </ul>
+      <p class="kv-ipucu">💡 Rakamları “100.000” ya da “100000” diye yazabilirsin; kutudan çıkınca binlik ayraçla gösterilir. Stopaj oranını bankanın uyguladığı orana göre düzelt.</p>
+      <button class="bolum-ekle" onclick="switchTab('araclar')">Hesap Araçları'na git →</button>
+    </div></details>
+
     <details class="kv-bolum" id="kv-hedef"><summary>◎ Birikim Hedefleri <span>araba, ev, acil durum fonu…</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Bir hedef ve tarih koyarsın; ayda ne kadar ayırman gerektiğini ve planın önünde mi geride mi olduğunu gösterir. Tutarı ₺ ya da $ olarak koyabilirsin.</p>
       <p><b>Biriken para nereden izlenir:</b></p>
@@ -3644,6 +3737,8 @@
     <div class="kv-grup-bas">Hedefler ve acil fon</div>
     <details class="kv-bolum kv-sss"><summary>Acil durum fonum ne kadar olmalı?</summary><div class="kv-ic"><p>Yaygın ölçü <b>3–6 aylık zorunlu gider</b>. Panel bunu senin için hesaplar: Birikim Hedefleri'nde hedef eklerken “Bu bir acil durum fonu”nu işaretle; aylık giderini (harcama + kredi taksidi) ve 3 ile 6 aylık önerilen tutarı gösterir. Fonun kaç aylık gideri karşıladığı hedef satırında ve Finansal Durumum'da yazar.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Hedefimi bir yatırıma bağladım, birikim neden kendi kendine değişiyor?</summary><div class="kv-ic"><p>Yatırıma bağlı hedefler yatırımın <b>canlı</b> değerini izler; fiyat düşünce birikim de düşer. Sabit bir tutar izlemek istersen satırdaki ⇄ ile kaynağı “Elle gireceğim” ya da “Varlıklarımdan” yap.</p></div></details>
+
+    <details class="kv-bolum kv-sss"><summary>Bir kredinin ya da KMH borcumun bana kaça mal olacağını nasıl hesaplarım?</summary><div class="kv-ic"><p>Menüde <b>Planlama › Hesap Araçları</b>'na git. <b>Kredi</b> aracı aylık taksiti, toplam faizi ve vergileri; <b>KMH / Kart faizi</b> aracı borcun seçtiğin gün sayısındaki maliyetini; <b>Vadeli mevduat</b> aracı mevduatın net getirisini ve enflasyona göre reel getirisini hesaplar. Basit hesaplar için aynı sayfada hesap makinesi de var.</p></div></details>
 
     <div class="kv-grup-bas">Görünüm</div>
     <details class="kv-bolum kv-sss"><summary>Satırların başındaki yeşil ve kırmızı ışıklar ne demek?</summary><div class="kv-ic"><p><b>Yeşil:</b> değer güncel. Ya bugün güncelledin ya da canlı hesaplanıyor (kur, faiz, fiyat). <b>Kırmızı:</b> değeri en son bugünden önce güncelledin ya da canlı fiyata ulaşılamadı ve son bilinen değer gösteriliyor. Kırmızı bir hata değildir; yalnızca “bunu güncellemek isteyebilirsin” demektir.</p></div></details>
@@ -3979,6 +4074,98 @@
   <!-- ================= /TAB: AYLIK RAPOR ================= -->
 
   <!-- ================= TAB: BİRİKİM HEDEFLERİ ================= -->
+  <!-- ================= TAB: HESAP ARAÇLARI ================= -->
+  <div class="tab-panel" id="tab-araclar">
+    <div class="page-head"><h1>Hesap Araçları</h1></div>
+
+    <div class="arac-secim" role="tablist" aria-label="Araç seç">
+      <button class="arac-sec" data-arac="makine" onclick="aracSec('makine')"><span aria-hidden="true">🧮</span>Hesap makinesi</button>
+      <button class="arac-sec" data-arac="kredi" onclick="aracSec('kredi')"><span aria-hidden="true">🏦</span>Kredi</button>
+      <button class="arac-sec" data-arac="kmh" onclick="aracSec('kmh')"><span aria-hidden="true">💳</span>KMH / Kart faizi</button>
+      <button class="arac-sec" data-arac="mevduat" onclick="aracSec('mevduat')"><span aria-hidden="true">📈</span>Vadeli mevduat</button>
+    </div>
+
+    <!-- Hesap makinesi -->
+    <div class="arac-panel" data-arac="makine">
+      <div class="bolum arac-bolum">
+        <div class="hm-kutu">
+          <div class="hm-ekran"><div class="hm-ifade" id="hmIfade">&nbsp;</div><div class="hm-sonuc" id="hmSonuc">0</div></div>
+          <div class="hm-tuslar" id="hmTuslar">
+            <button class="hm-t hm-islev" data-k="C">C</button><button class="hm-t hm-islev" data-k="geri" aria-label="Sil">⌫</button><button class="hm-t hm-islev" data-k="%">%</button><button class="hm-t hm-op" data-k="/">÷</button>
+            <button class="hm-t" data-k="7">7</button><button class="hm-t" data-k="8">8</button><button class="hm-t" data-k="9">9</button><button class="hm-t hm-op" data-k="*">×</button>
+            <button class="hm-t" data-k="4">4</button><button class="hm-t" data-k="5">5</button><button class="hm-t" data-k="6">6</button><button class="hm-t hm-op" data-k="-">−</button>
+            <button class="hm-t" data-k="1">1</button><button class="hm-t" data-k="2">2</button><button class="hm-t" data-k="3">3</button><button class="hm-t hm-op" data-k="+">+</button>
+            <button class="hm-t hm-islev" data-k="±">±</button><button class="hm-t" data-k="0">0</button><button class="hm-t" data-k=",">,</button><button class="hm-t hm-esit" data-k="=">=</button>
+          </div>
+          <div class="ku-ipucu" style="margin-top:8px;">Klavyeyle de yazabilirsin: rakamlar, + − * /, virgül ya da nokta, Enter (=), Backspace, Esc (C). “200 + 10 %” = 220.</div>
+        </div>
+        <div class="hm-gecmis">
+          <div class="hm-gecmis-bas"><span class="bolum-baslik">Geçmiş</span><a onclick="hmGecmisTemizle()" id="hmGecmisSil">Temizle</a></div>
+          <div id="hmGecmis"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kredi -->
+    <div class="arac-panel" data-arac="kredi">
+      <div class="bolum arac-bolum">
+        <div class="arac-form">
+          <label class="arac-alan"><span>Kredi türü</span>
+            <select id="krTur" class="ai-input" onchange="aracHesapla()">
+              <option value="ihtiyac">İhtiyaç kredisi (KKDF %15 + BSMV %15)</option>
+              <option value="tasit">Taşıt kredisi (KKDF %15 + BSMV %15)</option>
+              <option value="konut">Konut kredisi (vergisiz)</option>
+            </select></label>
+          <label class="arac-alan"><span>Kredi tutarı (₺)</span><input id="krTutar" class="ai-input arac-sayi" inputmode="decimal" value="100.000"></label>
+          <label class="arac-alan"><span>Vade (ay)</span><input id="krVade" class="ai-input arac-sayi" inputmode="numeric" value="12">
+            <span class="arac-hizli"><a data-hedef="krVade" data-deger="6">6</a><a data-hedef="krVade" data-deger="12">12</a><a data-hedef="krVade" data-deger="24">24</a><a data-hedef="krVade" data-deger="36">36</a><a data-hedef="krVade" data-deger="120">120</a></span></label>
+          <label class="arac-alan"><span>Aylık faiz (%)</span><input id="krFaiz" class="ai-input arac-sayi" inputmode="decimal" value="3,50"><small>Bankanın yazdığı aylık akdi faiz (vergiler hariç)</small></label>
+        </div>
+        <div class="arac-sonuc" id="krSonuc"></div>
+      </div>
+      <div class="bolum" id="krPlanBolum">
+        <div class="bolum-bas"><span class="bolum-baslik">Ödeme planı</span><button class="bolum-ekle" style="margin-left:auto;" id="krPlanBtn" onclick="krPlanAcKapa()">Göster</button></div>
+        <div class="ist-tablo-kap" id="krPlanKap" hidden><table class="ist-tablo" id="krPlan"></table></div>
+      </div>
+    </div>
+
+    <!-- KMH / Kart -->
+    <div class="arac-panel" data-arac="kmh">
+      <div class="bolum arac-bolum">
+        <div class="arac-form">
+          <label class="arac-alan" id="kmhHazirAlan" hidden><span>Hesabımdan doldur</span><select id="kmhHazir" class="ai-input" onchange="kmhHazirDoldur(this.value)"></select></label>
+          <label class="arac-alan"><span>Borç (₺)</span><input id="kfBorc" class="ai-input arac-sayi" inputmode="decimal" value="20.000"></label>
+          <label class="arac-alan"><span>Aylık faiz (%)</span><input id="kfFaiz" class="ai-input arac-sayi" inputmode="decimal" value="4,25"><small>KMH ya da kartın aylık akdi faizi (vergiler hariç)</small></label>
+          <label class="arac-alan"><span>Kaç gün</span><input id="kfGun" class="ai-input arac-sayi" inputmode="numeric" value="30">
+            <span class="arac-hizli"><a data-hedef="kfGun" data-deger="1">1</a><a data-hedef="kfGun" data-deger="7">7</a><a data-hedef="kfGun" data-deger="30">30</a><a data-hedef="kfGun" data-deger="90">90</a><a data-hedef="kfGun" data-deger="365">365</a></span></label>
+        </div>
+        <div class="arac-sonuc" id="kfSonuc"></div>
+      </div>
+    </div>
+
+    <!-- Vadeli mevduat -->
+    <div class="arac-panel" data-arac="mevduat">
+      <div class="bolum arac-bolum">
+        <div class="arac-form">
+          <label class="arac-alan"><span>Hesap türü</span>
+            <select id="mvTur" class="ai-input" onchange="aracHesapla()">
+              <option value="vadeli">Vadeli (faiz vade sonunda)</option>
+              <option value="gunluk">Günlük kazandıran (her gün faiz)</option>
+            </select></label>
+          <label class="arac-alan"><span>Anapara (₺)</span><input id="mvAna" class="ai-input arac-sayi" inputmode="decimal" value="100.000"></label>
+          <label class="arac-alan"><span>Yıllık faiz (%, brüt)</span><input id="mvFaiz" class="ai-input arac-sayi" inputmode="decimal" value="40"></label>
+          <label class="arac-alan"><span>Vade (gün)</span><input id="mvGun" class="ai-input arac-sayi" inputmode="numeric" value="32">
+            <span class="arac-hizli"><a data-hedef="mvGun" data-deger="1">1</a><a data-hedef="mvGun" data-deger="32">32</a><a data-hedef="mvGun" data-deger="92">92</a><a data-hedef="mvGun" data-deger="181">181</a><a data-hedef="mvGun" data-deger="365">365</a></span></label>
+          <label class="arac-alan" id="mvYenileAlan"><span>Kaç vade üst üste (yenileme)</span><input id="mvYenile" class="ai-input arac-sayi" inputmode="numeric" value="1"><small>Ör. 32 günlük vadeyi 11 kez yenilersen ≈ 1 yıl; faiz anaparaya eklenir</small></label>
+          <label class="arac-alan"><span>Stopaj (%)</span><input id="mvStopaj" class="ai-input arac-sayi" inputmode="decimal" value="17,5"><small>Faizden kesilen vergi; bankanın uyguladığı oranı yaz</small></label>
+        </div>
+        <div class="arac-sonuc" id="mvSonuc"></div>
+      </div>
+    </div>
+
+    <div class="footnote"><b>Not:</b> Hesaplar bilgilendirme amaçlıdır; bankanın tahsis ücreti, sigorta ve yuvarlamaları sonucu birkaç lira değiştirebilir. <b>Kredi:</b> eşit taksitli; her ay kalan anaparaya aylık faiz işler, ihtiyaç ve taşıt kredisinde faizin üstüne %15 KKDF ve %15 BSMV eklenir (etkin oran = faiz × 1,30); konut kredisi bu vergilerden muaftır. <b>KMH / kart:</b> faiz günlük işler (borç × aylık faiz ÷ 30 × gün) ve her 30 günde bir borca eklenir; faizin %15'i KKDF, %15'i BSMV olarak eklenir. <b>Mevduat:</b> brüt faiz = anapara × yıllık faiz × gün ÷ 365; stopaj faizden kesilir. Günlük kazandıran hesapta net faiz her gün anaparaya eklenir. Reel getiri, son açıklanan aylık TÜFE'nin aynı süreye yayılmasıyla hesaplanır.</div>
+  </div>
+
   <div class="tab-panel" id="tab-hedef">
     <div class="page-head"><h1>Birikim Hedefleri</h1></div>
 
@@ -12168,6 +12355,7 @@ const TAB_BASLIKLARI = {
   sss:      ['Sık Sorulan Sorular', 'En sık takılınan noktaların kısa cevapları — konulara göre'],
   kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle'],
   rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],
+  araclar:  ['Hesap Araçları', 'Hesap makinesi; kredi, KMH / kart ve vadeli mevduat faiz hesaplayıcıları'],
   hedef:    ['Birikim Hedefleri', 'Tutar ve tarih koy — ayda ne kadar ayırman gerektiğini ve planın önünde mi olduğunu gör'],
   netgecmis: ['Net Varlık Geçmişi', 'Net servetinin günden güne değişimi'],
   odeme:    ['Ödeme Takvimi', 'Taksitler, kart son ödeme günleri, faturalar ve abonelikler tek takvimde'],
@@ -12196,6 +12384,7 @@ function switchTab(tabId){
   if(tabId === 'odeme') renderOdeme();
   if(tabId === 'netgecmis') renderNetGecmis();
   if(tabId === 'hedef') renderHedef();
+  if(tabId === 'araclar') renderAraclar();
   if(tabId === 'rapor') renderRapor();
   if(tabId === 'kullanicilar'){ renderKullanicilar(); renderGonderilen(); }
   if(tabId === 'destek') destekHazirla();
@@ -12619,6 +12808,289 @@ function gonderilenSil(id){
     }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); }
   });
 }
+
+// ---------- Hesap Araçları: hesap makinesi, kredi, KMH / kart faizi, vadeli mevduat ----------
+// Son seçilen araç ve girdiler yalnız bu cihazda (ft_araclar) tutulur — görünüm tercihi
+const ARAC_KEY = 'ft_araclar';
+function aracDurum(){ try{ return JSON.parse(localStorage.getItem(ARAC_KEY) || '{}'); }catch(e){ return {}; } }
+function aracDurumYaz(d){ try{ localStorage.setItem(ARAC_KEY, JSON.stringify(d)); }catch(e){ /* yok */ } }
+// Türkçe sayı oku: "1.234,56" / "1234.56" / "1234,5" / "₺ 20.000"
+function aracSayiOku(v){
+  let t = String(v == null ? '' : v).replace(/[₺%\s]/g, '');
+  if(!t) return NaN;
+  if(t.includes(',')) t = t.replace(/\./g, '').replace(',', '.');
+  else if(/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '');   // 100.000 → binlik ayraç
+  const n = Number(t);
+  return isFinite(n) ? n : NaN;
+}
+function aracDeger(id){ const el = document.getElementById(id); return el ? aracSayiOku(el.value) : NaN; }
+const aracTL = (v, d = 2) => '₺' + fmtNumber(v, d);
+const aracYz = (v, d = 2) => '%' + fmtNumber(v, d);
+let _aracKuruldu = false;
+function renderAraclar(){
+  const d = aracDurum();
+  if(!_aracKuruldu){
+    _aracKuruldu = true;
+    // Kayıtlı girdileri geri yükle
+    Object.entries(d.girdi || {}).forEach(([id, v]) => { const el = document.getElementById(id); if(el) el.value = v; });
+    document.querySelectorAll('#tab-araclar .arac-sayi, #tab-araclar select').forEach(el => {
+      el.addEventListener('input', aracHesapla);
+      if(el.classList.contains('arac-sayi')) el.addEventListener('blur', () => aracBicimle(el));
+    });
+    document.querySelectorAll('#tab-araclar .arac-hizli a').forEach(a => a.addEventListener('click', () => {
+      const el = document.getElementById(a.dataset.hedef); el.value = a.dataset.deger; aracHesapla();
+    }));
+    document.getElementById('hmTuslar').addEventListener('click', e => { const b = e.target.closest('.hm-t'); if(b) hmTus(b.dataset.k); });
+    hmGecmisCiz();
+  }
+  kmhHazirListe();
+  aracSec(d.secili || 'makine', true);
+}
+// Odağı kaybedince binlik ayraçla göster (100000 → 100.000)
+function aracBicimle(el){
+  const n = aracSayiOku(el.value);
+  if(!isFinite(n)) return;
+  const ondalik = /Faiz|Stopaj/.test(el.id) ? 2 : (/Vade|Gun|Yenile/.test(el.id) ? 0 : (Math.round(n) === n ? 0 : 2));
+  el.value = fmtNumber(n, ondalik);
+}
+function aracSec(k, ilk){
+  document.querySelectorAll('#tab-araclar .arac-sec').forEach(b => b.classList.toggle('active', b.dataset.arac === k));
+  document.querySelectorAll('#tab-araclar .arac-panel').forEach(p => p.classList.toggle('active', p.dataset.arac === k));
+  const d = aracDurum(); d.secili = k; aracDurumYaz(d);
+  aracHesapla();
+}
+function aracHesapla(){
+  const d = aracDurum(); d.girdi = d.girdi || {};
+  document.querySelectorAll('#tab-araclar .arac-sayi, #tab-araclar select:not(#kmhHazir)').forEach(el => { d.girdi[el.id] = el.value; });
+  aracDurumYaz(d);
+  document.querySelectorAll('#tab-araclar .arac-hizli a').forEach(a => a.classList.toggle('secili', aracDeger(a.dataset.hedef) === Number(a.dataset.deger)));
+  krediHesapla(); kmhFaizHesapla(); mevduatHesapla();
+}
+const aracHata = (id, m) => { const el = document.getElementById(id); if(el) el.innerHTML = `<div class="arac-hata">${m}</div>`; };
+
+// ---- Kredi: eşit taksit, etkin oran = faiz × (1 + KKDF + BSMV)
+let _krPlanAcik = false;
+function krediHesapla(){
+  const tur = document.getElementById('krTur').value, P = aracDeger('krTutar'), n = Math.round(aracDeger('krVade')), i = aracDeger('krFaiz') / 100;
+  if(!(P > 0) || !(n >= 1 && n <= 480) || !(i >= 0 && i < 1)) return aracHata('krSonuc', 'Tutarı, 1–480 ay arası vadeyi ve aylık faizi yaz.');
+  const vergi = tur === 'konut' ? 0 : 0.30, r = i * (1 + vergi);
+  const taksit = r > 0 ? P * r / (1 - Math.pow(1 + r, -n)) : P / n;
+  let kalan = P, topFaiz = 0, topVergi = 0; const plan = [];
+  for(let ay = 1; ay <= n; ay++){
+    const faiz = kalan * i, kkdf = tur === 'konut' ? 0 : faiz * 0.15, bsmv = tur === 'konut' ? 0 : faiz * 0.15;
+    let ana = taksit - faiz - kkdf - bsmv; if(ay === n) ana = kalan;
+    kalan = Math.max(0, kalan - ana); topFaiz += faiz; topVergi += kkdf + bsmv;
+    plan.push([ay, ana + faiz + kkdf + bsmv, ana, faiz, kkdf + bsmv, kalan]);
+  }
+  const toplam = P + topFaiz + topVergi, yillik = (Math.pow(1 + r, 12) - 1) * 100;
+  const pA = P / toplam * 100, pF = topFaiz / toplam * 100, pV = topVergi / toplam * 100;
+  document.getElementById('krSonuc').innerHTML = `
+    <div class="as-etiket">Aylık taksit</div>
+    <div class="as-buyuk">${aracTL(taksit)}</div>
+    <div class="as-alt">${n} ay boyunca · toplam ${aracTL(toplam, 0)} geri ödersin</div>
+    <div class="as-cubuk"><i style="width:${pA}%;background:#6EC3FF"></i><i style="width:${pF}%;background:var(--amber)"></i><i style="width:${pV}%;background:var(--down)"></i></div>
+    <div class="as-lejant"><span><i style="background:#6EC3FF"></i>Anapara %${fmtNumber(pA, 0)}</span><span><i style="background:var(--amber)"></i>Faiz %${fmtNumber(pF, 0)}</span>${topVergi ? `<span><i style="background:var(--down)"></i>Vergi %${fmtNumber(pV, 0)}</span>` : ''}</div>
+    <div class="as-satir"><span>Kredi tutarı</span><b>${aracTL(P, 0)}</b></div>
+    <div class="as-satir"><span>Toplam faiz</span><b>${aracTL(topFaiz)}</b></div>
+    ${topVergi ? `<div class="as-satir"><span>KKDF + BSMV</span><b>${aracTL(topVergi)}</b></div>` : ''}
+    <div class="as-satir"><span>Toplam geri ödeme</span><b>${aracTL(toplam)}</b></div>
+    <div class="as-satir"><span>Etkin aylık oran${vergi ? ' (vergiler dahil)' : ''}</span><b>${aracYz(r * 100)}</b></div>
+    <div class="as-satir"><span>Yıllık maliyet (bileşik)</span><b>${aracYz(yillik, 1)}</b></div>
+    <div class="as-not">Her ₺100 kredi için <b>${aracTL((toplam - P) / P * 100)}</b> faiz${vergi ? ' ve vergi' : ''} ödersin.</div>`;
+  const tb = document.getElementById('krPlan');
+  if(tb) tb.innerHTML = '<thead><tr><th>Ay</th><th>Taksit</th><th>Anapara</th><th>Faiz</th>' + (vergi ? '<th>KKDF+BSMV</th>' : '') + '<th>Kalan</th></tr></thead><tbody>'
+    + plan.map(p => `<tr><td>${p[0]}</td><td>${fmtNumber(p[1], 2)}</td><td>${fmtNumber(p[2], 2)}</td><td>${fmtNumber(p[3], 2)}</td>${vergi ? `<td>${fmtNumber(p[4], 2)}</td>` : ''}<td>${fmtNumber(p[5], 2)}</td></tr>`).join('') + '</tbody>';
+}
+function krPlanAcKapa(){
+  _krPlanAcik = !_krPlanAcik;
+  document.getElementById('krPlanKap').hidden = !_krPlanAcik;
+  document.getElementById('krPlanBtn').textContent = _krPlanAcik ? 'Gizle' : 'Göster';
+}
+
+// ---- KMH / kart: günlük faiz, 30 günde bir borca eklenir; vergiler faizin %15 + %15'i
+function kmhHazirListe(){
+  const L = manuelListeYukle(KMH_KEY).filter(k => Number(k.faizAylik) > 0);
+  const alan = document.getElementById('kmhHazirAlan'), sec = document.getElementById('kmhHazir');
+  if(!alan || !sec) return;
+  alan.hidden = !L.length;
+  sec.innerHTML = '<option value="">— Seç —</option>' + L.map(k => `<option value="${k.id}">${escapeHtml(k.ad || 'KMH')} · %${fmtNumber(Number(k.faizAylik), 2)}</option>`).join('');
+}
+function kmhHazirDoldur(id){
+  const k = manuelListeYukle(KMH_KEY).find(x => x.id === id); if(!k) return;
+  const c = kmhCanli(k);
+  document.getElementById('kfBorc').value = fmtNumber(c ? c.tutar : Number(k.tutar) || 0, 2);
+  document.getElementById('kfFaiz').value = fmtNumber(Number(k.faizAylik), 2);
+  aracHesapla();
+}
+function kmhFaizHesapla(){
+  const B = aracDeger('kfBorc'), i = aracDeger('kfFaiz') / 100, g = Math.round(aracDeger('kfGun'));
+  if(!(B > 0) || !(i >= 0 && i < 1) || !(g >= 1 && g <= 3650)) return aracHata('kfSonuc', 'Borcu, aylık faizi ve 1–3650 arası gün sayısını yaz.');
+  const r = i * 1.30, ay = Math.floor(g / 30), kalanGun = g % 30;
+  let bakiye = B * Math.pow(1 + r, ay); bakiye += bakiye * r * kalanGun / 30;
+  const maliyet = bakiye - B, oran = maliyet / B;
+  const faizPay = maliyet / 1.30, vergi = maliyet - faizPay;
+  const gunluk = B * r / 30, yillik = (Math.pow(1 + r, 12) - 1) * 100;
+  document.getElementById('kfSonuc').innerHTML = `
+    <div class="as-etiket">${g} günün maliyeti</div>
+    <div class="as-buyuk" style="color:var(--down);">${aracTL(maliyet)}</div>
+    <div class="as-alt">${g} gün sonra borç <b style="color:var(--text);">${aracTL(bakiye)}</b> olur (+${aracYz(oran * 100)})</div>
+    <div class="as-satir"><span>Faiz</span><b>${aracTL(faizPay)}</b></div>
+    <div class="as-satir"><span>KKDF (%15) + BSMV (%15)</span><b>${aracTL(vergi)}</b></div>
+    <div class="as-satir"><span>Bugünkü borçla günlük maliyet</span><b>${aracTL(gunluk)}</b></div>
+    <div class="as-satir"><span>Etkin aylık oran (vergiler dahil)</span><b>${aracYz(r * 100)}</b></div>
+    <div class="as-satir"><span>Yıllık maliyet (bileşik)</span><b>${aracYz(yillik, 1)}</b></div>
+    <div class="as-not">Bu borcu bugün kapatırsan ${g} günde <b class="iyi">${aracTL(maliyet, 0)}</b> cebinde kalır. Borcu kapatma sırası için Borç Kapatma Planı'na bak.</div>`;
+}
+
+// ---- Vadeli mevduat: brüt = anapara × yıllık × gün / 365; stopaj faizden kesilir
+function mevduatHesapla(){
+  const tur = document.getElementById('mvTur').value, A = aracDeger('mvAna'), f = aracDeger('mvFaiz') / 100, g = Math.round(aracDeger('mvGun')), st = aracDeger('mvStopaj') / 100;
+  const k = tur === 'gunluk' ? 1 : Math.max(1, Math.round(aracDeger('mvYenile') || 1));
+  document.getElementById('mvYenileAlan').hidden = tur === 'gunluk';
+  if(!(A > 0) || !(f >= 0 && f < 10) || !(g >= 1 && g <= 3650) || !(st >= 0 && st < 1) || !(k <= 120)) return aracHata('mvSonuc', 'Anaparayı, yıllık faizi, 1–3650 arası günü ve stopaj oranını yaz.');
+  let son, brut = 0, stopaj = 0;
+  if(tur === 'gunluk'){
+    let b = A;
+    for(let d = 0; d < g; d++){ const gf = b * f / 365; brut += gf; stopaj += gf * st; b += gf * (1 - st); }
+    son = b;
+  } else {
+    let b = A;
+    for(let t = 0; t < k; t++){ const bf = b * f * g / 365; brut += bf; stopaj += bf * st; b += bf * (1 - st); }
+    son = b;
+  }
+  const net = son - A, topGun = g * k;
+  const yillikNet = (Math.pow(son / A, 365 / topGun) - 1) * 100;
+  const enf = (Math.pow(1 + ENFLASYON_VERI.tufe.aylik / 100, topGun / 30) - 1) * 100;
+  const reel = ((son / A) / (1 + enf / 100) - 1) * 100;
+  document.getElementById('mvSonuc').innerHTML = `
+    <div class="as-etiket">Net kazanç (${topGun} gün)</div>
+    <div class="as-buyuk" style="color:var(--up);">${aracTL(net)}</div>
+    <div class="as-alt">Vade sonunda hesabında <b style="color:var(--text);">${aracTL(son)}</b> olur</div>
+    <div class="as-satir"><span>Brüt faiz</span><b>${aracTL(brut)}</b></div>
+    <div class="as-satir"><span>Stopaj kesintisi (${aracYz(st * 100, 1)})</span><b>−${aracTL(stopaj)}</b></div>
+    <div class="as-satir"><span>Net faiz</span><b>${aracTL(net)}</b></div>
+    ${tur === 'gunluk' ? `<div class="as-satir"><span>Günlük net kazanç (başta)</span><b>${aracTL(A * f * (1 - st) / 365)}</b></div>` : (k > 1 ? `<div class="as-satir"><span>Vade sayısı</span><b>${k} × ${g} gün</b></div>` : '')}
+    <div class="as-satir"><span>Net yıllık getiri (bileşik)</span><b>${aracYz(yillikNet, 1)}</b></div>
+    <div class="as-not">Aynı sürede enflasyon ≈ ${aracYz(enf, 1)} (aylık TÜFE ${aracYz(ENFLASYON_VERI.tufe.aylik)}, ${ayAdi(ENFLASYON_VERI.tufe.ay)}). Reel getirin <b class="${reel >= 0 ? 'iyi' : 'kotu'}">${reel >= 0 ? '+' : '−'}${aracYz(Math.abs(reel), 1)}</b>: ${reel >= 0 ? 'paran enflasyonun önünde.' : 'paran enflasyonun gerisinde kalıyor.'}</div>`;
+}
+
+// ---- Hesap makinesi (eval yok: küçük ayrıştırıcı). "200 + 10 %" = 220, "200 × 10 %" = 20
+let _hmIfade = '', _hmSon = null;
+const HM_OP = { '+': '+', '-': '−', '*': '×', '/': '÷' };
+// Sayı ve işlemlere ayır; başta ya da bir işlemden sonra gelen "-" sayının işaretidir (5 × −3)
+function hmParcala(t){
+  const p = []; let sayi = '', eksi = false;
+  for(const c of t){
+    if(/[0-9.]/.test(c)){ sayi += c; continue; }
+    if(sayi){ p.push((eksi ? -1 : 1) * Number(sayi)); sayi = ''; eksi = false; p.push(c); continue; }
+    if(c === '-') eksi = !eksi;
+  }
+  if(sayi) p.push((eksi ? -1 : 1) * Number(sayi));
+  return p;
+}
+function hmHesapla(t){
+  const p = hmParcala(String(t || '').replace(/[+\-*/]+$/, ''));
+  if(!p.length) return 0;
+  // önce × ÷
+  const q = [p[0]];
+  for(let j = 1; j < p.length; j += 2){
+    const op = p[j], b = p[j + 1];
+    if(op === '*') q[q.length - 1] *= b; else if(op === '/') q[q.length - 1] = b === 0 ? NaN : q[q.length - 1] / b;
+    else q.push(op, b);
+  }
+  let s = q[0];
+  for(let j = 1; j < q.length; j += 2) s = q[j] === '+' ? s + q[j + 1] : s - q[j + 1];
+  return s;
+}
+function hmBicim(n){
+  if(!isFinite(n)) return 'Tanımsız';
+  const y = Math.abs(n) >= 1e15 || (Math.abs(n) > 0 && Math.abs(n) < 1e-9) ? n.toExponential(6).replace('.', ',') : n.toLocaleString('tr-TR', { maximumFractionDigits: 10 });
+  return y;
+}
+function hmIfadeGoster(t){
+  return (t.replace(/(\d+(?:\.\d*)?)/g, m => { const [a, b] = m.split('.'); return Number(a).toLocaleString('tr-TR') + (b != null ? ',' + b : ''); })
+    .replace(/[+\-*/]/g, o => ' ' + HM_OP[o] + ' ')) || '';
+}
+function hmTus(k){
+  const t = _hmIfade, son = t.slice(-1), opSon = /[+\-*/]/.test(son);
+  const sonSayi = (t.match(/(\d+(?:\.\d*)?)$/) || [''])[0];
+  if(/^[0-9]$/.test(k)){
+    if(_hmSon != null && !opSon && t === String(_hmSon)) _hmIfade = '';   // sonuçtan sonra rakam: yeni hesap
+    if(sonSayi === '0') _hmIfade = _hmIfade.slice(0, -1);
+    if(sonSayi.replace('.', '').length >= 15) return;
+    _hmIfade += k; _hmSon = null;
+  } else if(k === ',' || k === '.'){
+    if(_hmSon != null && t === String(_hmSon)) _hmIfade = '';
+    if(sonSayi.includes('.')) return;
+    _hmIfade += (sonSayi ? '' : '0') + '.'; _hmSon = null;
+  } else if(['+', '-', '*', '/'].includes(k)){
+    if(!t){ if(k === '-') _hmIfade = '-'; }
+    else if(opSon) _hmIfade = t.replace(/[+\-*/]+$/, '') + k;   // art arda işlem: sonuncusu geçerli
+    else _hmIfade += k;
+    _hmSon = null;
+  } else if(k === 'C'){ _hmIfade = ''; _hmSon = null; }
+  else if(k === 'geri'){ _hmIfade = t.slice(0, -1); _hmSon = null; }
+  else if(k === '±'){
+    if(!sonSayi) return;
+    // son sayının işaretini çevir: önünde tekli eksi varsa kaldır, yoksa ekle
+    const once = t.slice(0, t.length - sonSayi.length);
+    const tekliEksi = once === '-' || /[+\-*/]-$/.test(once);
+    _hmIfade = (tekliEksi ? once.slice(0, -1) : once + '-') + sonSayi; _hmSon = null;
+  } else if(k === '%'){
+    if(!sonSayi) return;
+    const once = t.slice(0, t.length - sonSayi.length), op = once.slice(-1), n = Number(sonSayi);
+    let yeni;
+    if(op === '+' || op === '-'){ const sol = hmHesapla(once.slice(0, -1)); yeni = sol * n / 100; }
+    else yeni = n / 100;
+    _hmIfade = once + String(Math.round(yeni * 1e10) / 1e10);
+  } else if(k === '='){
+    if(!t || opSon) return;
+    const sonuc = hmHesapla(t);
+    if(isFinite(sonuc)){
+      const yuv = Math.round(sonuc * 1e10) / 1e10;
+      hmGecmisEkle(hmIfadeGoster(t), hmBicim(yuv));
+      _hmIfade = String(yuv); _hmSon = yuv;
+    } else { document.getElementById('hmIfade').textContent = hmIfadeGoster(t); document.getElementById('hmSonuc').textContent = 'Tanımsız'; _hmIfade = ''; return; }
+  }
+  hmCiz();
+}
+function hmCiz(){
+  const t = _hmIfade, ifadeEl = document.getElementById('hmIfade'), sonEl = document.getElementById('hmSonuc');
+  if(!ifadeEl) return;
+  if(_hmSon != null){ ifadeEl.innerHTML = '&nbsp;'; sonEl.textContent = hmBicim(_hmSon); return; }
+  ifadeEl.textContent = t ? hmIfadeGoster(t) : '\u00a0';
+  sonEl.textContent = t ? hmBicim(Math.round(hmHesapla(t) * 1e10) / 1e10) : '0';   // yazarken anlık sonuç
+}
+function hmGecmisEkle(ifade, sonuc){
+  const d = aracDurum(); d.gecmis = [{ ifade, sonuc }].concat(d.gecmis || []).slice(0, 8); aracDurumYaz(d); hmGecmisCiz();
+}
+function hmGecmisCiz(){
+  const L = aracDurum().gecmis || [], el = document.getElementById('hmGecmis'), sil = document.getElementById('hmGecmisSil');
+  if(!el) return;
+  if(sil) sil.hidden = !L.length;
+  el.innerHTML = L.length ? L.map((g, j) => `<div class="hm-g" onclick="hmGecmisKullan(${j})" title="Sonucu kullan"><div class="i">${escapeHtml(g.ifade)} =</div><div class="s">${escapeHtml(g.sonuc)}</div></div>`).join('')
+    : '<div class="bos-not">Yaptığın hesaplar burada görünür; birine dokunursan sonucu yeniden kullanırsın.</div>';
+}
+function hmGecmisKullan(j){
+  const g = (aracDurum().gecmis || [])[j]; if(!g) return;
+  const n = aracSayiOku(g.sonuc); if(!isFinite(n)) return;
+  _hmIfade = String(n); _hmSon = n; hmCiz();
+}
+function hmGecmisTemizle(){ const d = aracDurum(); d.gecmis = []; aracDurumYaz(d); hmGecmisCiz(); }
+// Klavye: yalnız Hesap Araçları › hesap makinesi açıkken ve bir giriş kutusunda değilken
+document.addEventListener('keydown', e => {
+  const p = document.getElementById('tab-araclar');
+  if(!p || !p.classList.contains('active') || aracDurum().secili !== 'makine') return;
+  if(e.target.closest && e.target.closest('input, textarea, select')) return;
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  const harita = { Enter: '=', '=': '=', Backspace: 'geri', Escape: 'C', Delete: 'C', ',': ',', '.': ',', '+': '+', '-': '-', '*': '*', x: '*', X: '*', '/': '/', '%': '%' };
+  const k = /^[0-9]$/.test(e.key) ? e.key : harita[e.key];
+  if(!k) return;
+  e.preventDefault();
+  hmTus(k);
+  const b = document.querySelector(`#hmTuslar [data-k="${k === ',' ? ',' : k}"]`);
+  if(b){ b.classList.add('basildi'); setTimeout(() => b.classList.remove('basildi'), 110); }
+});
 
 buildCards();
 updateGarantiLive();
