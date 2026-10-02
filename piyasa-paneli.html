@@ -2087,10 +2087,18 @@
   .rapor-avatar{width:44px;height:44px;flex:0 0 44px;}
   .rapor-yorum-kimlik{display:flex;flex-direction:column;min-width:0;flex:1 1 auto;}
   .rapor-yorum-alt{font-size:12px;color:var(--muted-2);}
+  /* Yorumu aç/kapa: varsayılan açık; kapalıyken başlık altı ayraç da kalkar */
+  .rapor-katla{flex:0 0 auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:15px;line-height:1;cursor:pointer;transition:transform .2s,color .15s;}
+  .rapor-katla:hover{color:var(--text);border-color:var(--muted-2);}
+  .bolum.yorum-kapali .rapor-katla{transform:rotate(-90deg);}
+  .bolum.yorum-kapali #raporYorum{display:none;}
+  .bolum.yorum-kapali .rapor-yorum-bas{border-bottom:none;padding-bottom:4px;}
   @media (max-width:640px){
     .rapor-yorum-bas{flex-wrap:wrap;row-gap:10px;}
     .rapor-yorum-kimlik{flex:1 1 0;}
     .rapor-yorum-kimlik .bolum-baslik{white-space:normal;}
+    .rapor-yorum-bas .rapor-katla{order:2;}
+    .bolum.yorum-kapali .rapor-yorum-bas #raporYorumBtn{display:none;}   /* telefonda kapalıyken başlık tek satır */
     .rapor-yorum-bas #raporYorumBtn{order:3;flex:1 1 100%;margin-left:0 !important;padding:9px 12px;}   /* telefonda düğme alt satırda: başlık kesilmesin */
   }
   .rapor-yorum h2{font-size:14px;color:var(--amber);margin:12px 0 6px;}
@@ -3392,7 +3400,7 @@
 
     <details class="kv-bolum" id="kv-rapor"><summary>📄 Aylık Rapor <span>ayın özeti tek sayfada</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Seçtiğin ayın harcamasını (önceki aya ve son 6 aya göre), bütçe uyumunu, ay sonu kalanı, kredi anaparasındaki azalışı ve net varlık değişimini tek sayfada özetler. “Öne Çıkan Gelişmeler” kendiliğinden yazılır ve ücretsizdir.</p>
-      <p><b>Bay Piyasa yorumu:</b> Özet kutularının hemen altındadır, “Öne Çıkan Gelişmeler” ondan sonra gelir. <b>“Bay Piyasa yorumlasın”</b>a basarsan bir kişisel finans danışmanı gibi ayın bütün rakamlarına bakar: harcama (enflasyondan arındırılmış), gelir ve tasarruf oranı, kredi taksitlerinin gelire oranı, kart/KMH borçlarının vergiler dahil gerçek faizi, net varlığın ay sonu değişimi (TL, dolar, altın), yatırım dağılımı, acil fon ve gelecek ay. Sonuçta bir <b>finansal sağlık tablosu</b> ve rakamlı bir <b>gelecek ay planı</b> yazar; eksik veri varsa (ör. gelir girilmemişse) uydurmaz, söyler. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez, <b>↻ Yeniden yorumla</b> ile tazelersin.</p>
+      <p><b>Bay Piyasa yorumu:</b> Özet kutularının hemen altındadır, “Öne Çıkan Gelişmeler” ondan sonra gelir. Başlığın sağındaki küçük <b>▾</b> okuyla yorumu kapatıp açabilirsin; varsayılan açıktır, kapattıysan bu cihazda kapalı kalır. <b>“Bay Piyasa yorumlasın”</b>a basarsan bir kişisel finans danışmanı gibi ayın bütün rakamlarına bakar: harcama (enflasyondan arındırılmış), gelir ve tasarruf oranı, kredi taksitlerinin gelire oranı, kart/KMH borçlarının vergiler dahil gerçek faizi, net varlığın ay sonu değişimi (TL, dolar, altın), yatırım dağılımı, acil fon ve gelecek ay. Sonuçta bir <b>finansal sağlık tablosu</b> ve rakamlı bir <b>gelecek ay planı</b> yazar; eksik veri varsa (ör. gelir girilmemişse) uydurmaz, söyler. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez, <b>↻ Yeniden yorumla</b> ile tazelersin.</p>
       <p class="kv-ipucu">💡 Rapor ne kadar eksiksizse yorum o kadar isabetli olur: Nakit Akışı'nda gelirini, Borç Kapatma Planı'nda faizli kartlarını, Birikim Hedefleri'nde acil durum fonunu tanımla.</p>
       <p><b>Yazdır / PDF:</b> Raporu yazdırabilir ya da PDF olarak kaydedebilirsin.</p>
       <button class="bolum-ekle" onclick="switchTab('rapor')">Aylık Rapor'a git →</button>
@@ -3768,6 +3776,7 @@
           <span class="rapor-yorum-alt" id="raporYorumAlt">Kişisel finans danışmanın</span>
         </div>
         <button class="bolum-ekle" id="raporYorumBtn" style="margin-left:auto;" onclick="raporYorumla()">✨ Bay Piyasa yorumlasın</button>
+        <button class="rapor-katla" id="raporKatlaBtn" type="button" onclick="raporYorumKatla()" aria-expanded="true" title="Yorumu gizle" aria-label="Yorumu gizle">▾</button>
       </div>
       <div id="raporYorum" style="padding-bottom:8px;"></div>
     </div>
@@ -11676,6 +11685,7 @@ function renderRapor(){
   // ---- Bay Piyasa yorumu (başlıkta karakter ve "danışmanın · <ay> değerlendirmesi")
   const av = document.getElementById('raporAvatar'); if(av && !av.firstChild) av.innerHTML = BP_AVATAR_SVG;
   istYaz('raporYorumAlt', 'Kişisel finans danışmanın · ' + ayAdi(_raporAy) + ' değerlendirmesi');
+  raporYorumKatlaUygula();
   const kayit = raporYukle().find(x => x.id === _raporAy);
   const yEl = document.getElementById('raporYorum'), btn = document.getElementById('raporYorumBtn');
   if(yEl) yEl.innerHTML = _raporMesgul ? '<div class="bos-not">Bay Piyasa raporu okuyor…</div>'
@@ -11838,11 +11848,29 @@ function raporMetni(R){
   s.push(`- TÜFE (${ENFLASYON_VERI.tufe.ay}): yıllık %${fmtNumber(ENFLASYON_VERI.tufe.yillik, 2)}, aylık %${fmtNumber(ENFLASYON_VERI.tufe.aylik, 2)} · TCMB piyasa beklentisi 12 ay sonrası %${fmtNumber(ENFLASYON_VERI.pka.ay12, 2)}`);
   return s.join('\n');
 }
+// Bay Piyasa yorumunu aç/kapa (yalnız bu cihazda hatırlanır; varsayılan açık)
+const RAPOR_YORUM_KAPALI = 'ft_rapor_yorum_kapali';
+function raporYorumKatlaUygula(){
+  const btn = document.getElementById('raporKatlaBtn'), bol = btn && btn.closest('.bolum');
+  if(!bol) return;
+  let kapali = false; try{ kapali = localStorage.getItem(RAPOR_YORUM_KAPALI) === '1'; }catch(e){ /* depolama kapalı */ }
+  bol.classList.toggle('yorum-kapali', kapali);
+  btn.setAttribute('aria-expanded', String(!kapali));
+  btn.title = kapali ? 'Yorumu göster' : 'Yorumu gizle';
+  btn.setAttribute('aria-label', btn.title);
+}
+function raporYorumKatla(){
+  const btn = document.getElementById('raporKatlaBtn'), kapali = !(btn && btn.closest('.bolum').classList.contains('yorum-kapali'));
+  try{ kapali ? localStorage.setItem(RAPOR_YORUM_KAPALI, '1') : localStorage.removeItem(RAPOR_YORUM_KAPALI); }catch(e){ /* yok */ }
+  raporYorumKatlaUygula();
+}
+
 function raporYorumla(){
   if(_raporMesgul) return;
   const calistir = async () => {
     if(bpBugunHarcama() >= bp.ayar.limit){ showAlertModal('Bay Piyasa\'nın bugünkü limiti (' + bpPara(bp.ayar.limit) + ') doldu. Limiti Bay Piyasa sayfasından artırabilirsin.'); return; }
     const ayK = _raporAy, R = raporVerisi(ayK);
+    try{ localStorage.removeItem(RAPOR_YORUM_KAPALI); }catch(e){ /* yok */ }
     _raporMesgul = true; renderRapor();
     try{
       // Rapor danışmanlık işi: Haiku seçiliyse bile en az Sonnet (rakam üzerinden akıl yürütme kalitesi için)
