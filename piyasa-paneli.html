@@ -3939,7 +3939,7 @@
     <details class="kv-bolum" id="kv-bp"><summary>✨ Bay Piyasa <span>yapay zekâ asistanın</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Piyasayı, haberleri ve izin verirsen senin portföyünü ve borçlarını bilen bir sohbet asistanı. Soru sorarsın ya da hazır raporlardan birini seçersin (Günlük özet, Portföy analizi, Borç planı, Harcama analizi…).</p>
       <p><b>Gizlilik:</b> Rakamların yalnızca <b>“Portföyümü paylaş”</b> açıksa gönderilir. Kapalıyken yalnız piyasa ve haber verisini bilir.</p>
-      <p><b>Maliyet:</b> Her cevabın küçük bir ücreti vardır; ekranda yazar. <b>Günlük limit</b> (varsayılan $0,50) dolunca durur. Model seçimiyle hız ve fiyatı ayarlarsın; günlük kullanım için Sonnet yeterli.</p>
+      <p><b>Maliyet:</b> Her cevabın küçük bir ücreti vardır; ekranda yazar. <b>Günlük limit</b> (varsayılan $0,50) dolunca durur. Model seçimiyle hız ve fiyatı ayarlarsın; günlük kullanım için Sonnet yeterli. Uzun cevaplar (web araması, portföy ve haber okumasıyla) yarıda kesilmez: sınıra gelirse Bay Piyasa kendiliğinden kaldığı yerden devam eder; ücret yalnız yazılan kadardır.</p>
       <p><b>Örnek soru:</b> “KMH'yi mi kapatayım yoksa ihtiyaç kredime ek ödeme mi yapayım?”</p>
       <p><b>Hazır sorular:</b> Boş sohbette dört öneri çıkar: Bitcoin için bugünkü piyasa öngörüsü, altın ve dolar, ABD borsasında bugün önemli olanlar ve <b>BİST'teki hisselerinle ilgili bugünkü KAP haberleri</b>. KAP sorusu Yatırımlarım'daki BİST hisselerini kullanır ve web'de arar (arama başına yaklaşık $0,01); bunun için onay ister, gerekiyorsa “Portföyümü paylaş”ı açar.</p>
       <p><b>Kurulum (bir kez):</b> Bay Piyasa, Anthropic'in Claude yapay zekâsını kullanır; kendi <b>Anthropic API anahtarını</b> eklemen gerekir. Bay Piyasa sayfasındaki <b>Anahtarını ekle</b>'ye ya da <b>Profilim › Bay Piyasa (yapay zekâ)</b>'ya git, anahtarı yapıştır ve <b>Kaydet ve doğrula</b>'ya bas. Anahtar Anthropic'te doğrulanır, şifreli saklanır, bir daha tamamı gösterilmez. Anahtarı almak için: console.anthropic.com'da hesap aç → Billing'den kredi yükle (ör. $5) → API Keys › Create Key. Ücret kullandıkça senin Anthropic hesabından düşer. Aynı anahtar haber başlığı çevirisi, kredi PDF'i okuma ve Aylık Rapor yorumu için de kullanılır. Yönetici hesabında sunucunun anahtarı kullanılır.</p>
@@ -7920,46 +7920,56 @@ async function bpGonder(metinParam, opsiyon){
 
   try{
     const model = bp.ayar.model;
-    const res = await fetch(AI_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model,
-        max_tokens: 2500,
-        webSearch: !!bp.ayar.ara || !!opsiyon.ara,   // bazı hazır sorular (KAP) bu mesaj için aramayı kendisi açar
-        system: [
-          { type:'text', text: BP_SISTEM, cache_control: { type:'ephemeral' } },
-          { type:'text', text: chat.snapshot.text },
-        ],
-        messages: bpApiMesajlari(chat, ek),
-      }),
-    });
-    let data = null;
-    try{ data = await res.json(); }catch(e){ /* JSON değil */ }
-    if(!res.ok || !data){
-      const d = data && ((data.error && (data.error.message || data.error)) || data.message) || '';
-      throw new Error('İstek başarısız (' + res.status + ')' + (d ? ': ' + d : ''));
+    // Bütçe geniş: model yazmadan önce düşünür; web araması, portföy ve haber okuması da bu bütçeden harcar
+    // (2500'de cevap yarıda kalıyordu). Ücret yalnız üretilen kadar. Yine sınıra takılırsa en fazla 2 kez
+    // "kaldığın yerden devam et" denir (yeniden arama yapılmaz), parçalar tek cevapta birleşir.
+    const sistem = [
+      { type:'text', text: BP_SISTEM, cache_control: { type:'ephemeral' } },
+      { type:'text', text: chat.snapshot.text },
+    ];
+    const ilkMesajlar = bpApiMesajlari(chat, ek);
+    const iste = async (messages, webSearch) => {
+      const res = await fetch(AI_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model, max_tokens: 12000, webSearch, system: sistem, messages }),
+      });
+      let data = null;
+      try{ data = await res.json(); }catch(e){ /* JSON değil */ }
+      if(!res.ok || !data){
+        const d = data && ((data.error && (data.error.message || data.error)) || data.message) || '';
+        throw new Error('İstek başarısız (' + res.status + ')' + (d ? ': ' + d : ''));
+      }
+      return data;
+    };
+    let cevap = '', maliyet = 0, kesik = false;
+    const kullanim = {}, kaynaklar = [], goruldu = new Set();
+    for(let tur = 0; tur < 3; tur++){
+      const data = tur === 0
+        ? await iste(ilkMesajlar, !!bp.ayar.ara || !!opsiyon.ara)   // bazı hazır sorular (KAP) bu mesaj için aramayı kendisi açar
+        : await iste(ilkMesajlar.concat([{ role: 'assistant', content: cevap.replace(/\s+$/, '') }, { role: 'user', content: 'Cevabın uzunluk sınırında kesildi. Tam kaldığın yerden (yarım kalan kelime ya da cümleden) devam et; önceki kısmı tekrar etme, yeni giriş yazma, yeniden arama yapma.' }]), false);
+      // Web araması yapıldıysa modelin araç öncesi/arası anlatımını atla: sadece son araç sonucundan sonraki metin
+      const bloklar = data.content || [];
+      let sonArac = -1;
+      bloklar.forEach((b, i) => { if(b.type !== 'text' && b.type !== 'thinking') sonArac = i; });
+      const metinBloklari = bloklar.filter((b, i) => b.type === 'text' && i > sonArac);
+      // Alıntı yüzünden bölünmüş bitişik metin parçaları kesintisiz birleşir
+      let parca = metinBloklari.map(b => b.text).join('');
+      if(!parca.trim()) parca = bloklar.filter(b => b.type === 'text').map(b => b.text).join('\n\n');
+      cevap = tur === 0 ? parca.replace(/^\s+/, '') : cevap + parca;
+      metinBloklari.forEach(b => (b.citations || []).forEach(c => {
+        if(c.url && !goruldu.has(c.url)){ goruldu.add(c.url); kaynaklar.push({ u:c.url, b:c.title || '' }); }
+      }));
+      maliyet += bpMaliyet(model, data.usage);
+      Object.entries(data.usage || {}).forEach(([k, v]) => { if(typeof v === 'number') kullanim[k] = (kullanim[k] || 0) + v; else if(v && typeof v === 'object' && !kullanim[k]) kullanim[k] = v; });
+      kesik = data.stop_reason === 'max_tokens';
+      if(!kesik || !parca.trim()) break;
     }
-
-    // Web araması yapıldıysa modelin araç öncesi/arası anlatımını atla: sadece son araç sonucundan sonraki metin
-    const bloklar = data.content || [];
-    let sonArac = -1;
-    bloklar.forEach((b, i) => { if(b.type !== 'text') sonArac = i; });
-    const metinBloklari = bloklar.filter((b, i) => b.type === 'text' && i > sonArac);
-    // Alıntı yüzünden bölünmüş bitişik metin parçaları kesintisiz birleşir
-    let cevap = metinBloklari.map(b => b.text).join('').trim();
-    if(!cevap) cevap = bloklar.filter(b => b.type === 'text').map(b => b.text).join('\n\n').trim();
+    cevap = cevap.trim();
     if(!cevap) throw new Error('Boş yanıt döndü');
-    if(data.stop_reason === 'max_tokens') cevap += '\n\n*(Cevap uzunluk sınırında kesildi — "devam et" yazabilirsin.)*';
+    if(kesik) cevap += '\n\n*(Cevap uzunluk sınırında kesildi — "devam et" yazabilirsin.)*';
 
-    const kaynaklar = [];
-    const goruldu = new Set();
-    metinBloklari.forEach(b => (b.citations || []).forEach(c => {
-      if(c.url && !goruldu.has(c.url)){ goruldu.add(c.url); kaynaklar.push({ u:c.url, b:c.title || '' }); }
-    }));
-
-    const maliyet = bpMaliyet(model, data.usage);
-    chat.mesajlar.push({ r:'bot', t: cevap, ts: Date.now(), model, kullanim: data.usage || {}, maliyet, kaynaklar });
+    chat.mesajlar.push({ r:'bot', t: cevap, ts: Date.now(), model, kullanim, maliyet, kaynaklar });
     bpHarcamaEkle(maliyet);
   }catch(e){
     chat.mesajlar.push({ r:'bot', hata:true, t: 'Cevap alınamadı: ' + (e.message || e), ts: Date.now() });
