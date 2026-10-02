@@ -3941,6 +3941,7 @@
       <p><b>Gizlilik:</b> Rakamların yalnızca <b>“Portföyümü paylaş”</b> açıksa gönderilir. Kapalıyken yalnız piyasa ve haber verisini bilir.</p>
       <p><b>Maliyet:</b> Her cevabın küçük bir ücreti vardır; ekranda yazar. <b>Günlük limit</b> (varsayılan $0,50) dolunca durur. Model seçimiyle hız ve fiyatı ayarlarsın; günlük kullanım için Sonnet yeterli. Uzun cevaplar (web araması, portföy ve haber okumasıyla) yarıda kesilmez: sınıra gelirse Bay Piyasa kendiliğinden kaldığı yerden devam eder; ücret yalnız yazılan kadardır.</p>
       <p><b>Örnek soru:</b> “KMH'yi mi kapatayım yoksa ihtiyaç kredime ek ödeme mi yapayım?”</p>
+      <p><b>Güvenilir kaynaklar:</b> Web araması açıkken Bay Piyasa yalnız güvenilir kaynaklarda arar: resmî kurumlar (KAP, TCMB, TÜİK, SPK, Borsa İstanbul, Fed, ECB, SEC), haber ajansları ve finans basını (Reuters, Bloomberg, AP, BBC, Financial Times, WSJ, CNBC, AA, Bloomberg HT, Dünya, Ekonomim) ve piyasa verisi siteleri (Investing, TradingView, Yahoo Finance, Morningstar; kriptoda CoinDesk, CoinGecko). Önemli bilgiye kaynağını ve tarihini yazar, haberi yorumdan ayırır; analizleri “Ne anlama geliyor” ve “Ne yapabilirsin” (rakamlı seçenekler, izlenecek seviyeler ve tarihler) ile bitirir.</p>
       <p><b>Hazır sorular:</b> Boş sohbette dört öneri çıkar: Bitcoin için bugünkü piyasa öngörüsü, altın ve dolar, ABD borsasında bugün önemli olanlar ve <b>BİST'teki hisselerinle ilgili bugünkü KAP haberleri</b>. KAP sorusu Yatırımlarım'daki BİST hisselerini kullanır ve web'de arar (arama başına yaklaşık $0,01); bunun için onay ister, gerekiyorsa “Portföyümü paylaş”ı açar.</p>
       <p><b>Kurulum (bir kez):</b> Bay Piyasa, Anthropic'in Claude yapay zekâsını kullanır; kendi <b>Anthropic API anahtarını</b> eklemen gerekir. Bay Piyasa sayfasındaki <b>Anahtarını ekle</b>'ye ya da <b>Profilim › Bay Piyasa (yapay zekâ)</b>'ya git, anahtarı yapıştır ve <b>Kaydet ve doğrula</b>'ya bas. Anahtar Anthropic'te doğrulanır, şifreli saklanır, bir daha tamamı gösterilmez. Anahtarı almak için: console.anthropic.com'da hesap aç → Billing'den kredi yükle (ör. $5) → API Keys › Create Key. Ücret kullandıkça senin Anthropic hesabından düşer. Aynı anahtar haber başlığı çevirisi, kredi PDF'i okuma ve Aylık Rapor yorumu için de kullanılır. Yönetici hesabında sunucunun anahtarı kullanılır.</p>
       <p class="kv-ipucu">💡 Cevaplar yatırım tavsiyesi değildir; senaryo ve olasılık dilinde düşünmene yardım eder.</p>
@@ -4082,6 +4083,7 @@
     <details class="kv-bolum kv-sss"><summary>Panel her açılışta başka bir sayfayla açılsın istiyorum.</summary><div class="kv-ic"><p><b>Profilim › Tercihler › Açılış sayfası</b>'ndan seç (ör. Harcama Takibim). Seçim hesabına kaydedilir; bütün cihazlarında geçerli olur.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>İlk girişte neden şifremi değiştirmem isteniyor?</summary><div class="kv-ic"><p>Hesabın yönetici tarafından <b>geçici</b> bir şifreyle açıldı. Bu şifreyi başkası da bildiği için panel, devam etmeden önce yalnızca senin bildiğin bir şifre belirlemeni ister.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bir arkadaşım ya da eşim de paneli kullanabilir mi?</summary><div class="kv-ic"><p>Evet, ama kendi hesabıyla. Hesapları yönetici açar; ondan iste. Herkesin verisi ayrıdır, kimse diğerinin harcamasını ya da borcunu göremez. Aynı bilgisayarı kullanıyorsanız işin bitince <b>Çıkış yap</b>.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bay Piyasa hangi kaynaklara bakıyor?</summary><div class="kv-ic"><p>Web araması açıkken yalnız güvenilir kaynaklarda arar: KAP, TCMB, TÜİK, SPK, Borsa İstanbul, Fed, SEC gibi resmî kurumlar; Reuters, Bloomberg, BBC, Financial Times, WSJ, CNBC, AA, Bloomberg HT gibi haber ajansları ve finans basını; Investing, TradingView, Yahoo Finance gibi piyasa verisi siteleri. Forum, sosyal medya ve kaynaksız siteler aramaya girmez. Cevapta önemli bilgilerin kaynağını ve tarihini yazar. Web araması kapalıyken panelindeki fiyatları ve haber başlıklarını kullanır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bay Piyasa verilerimi görüyor mu?</summary><div class="kv-ic"><p>Yalnızca Bay Piyasa sayfasındaki <b>“Portföyümü paylaş”</b> açıksa portföy, borç, harcama ve hedef <b>rakamların</b> gönderilir; isim ya da e-posta gönderilmez. Kapalıyken yalnızca piyasa ve haber verisini bilir. Aylık Rapor yorumu da aynı izni ister.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bay Piyasa “Anthropic API anahtarın gerekiyor” diyor.</summary><div class="kv-ic"><p>Bay Piyasa yapay zekâ kullanır ve her cevabın küçük bir ücreti vardır; bu ücret senin Anthropic hesabından düşsün diye kendi anahtarını eklersin. <b>Anahtarını ekle</b>'ye bas (ya da Profilim › Bay Piyasa), anahtarı yapıştır, <b>Kaydet ve doğrula</b>. Anahtarın yoksa: console.anthropic.com'da hesap aç → Billing'den kredi yükle (ör. $5) → API Keys › Create Key → “sk-ant-” ile başlayan metni kopyala. Anahtar eklenene kadar haber başlıkları İngilizce kalabilir ve kredi PDF'ini okutamazsın (Excel şablonuyla eklersin); diğer her şey çalışır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Anthropic anahtarım güvende mi? Ne kadar tutar?</summary><div class="kv-ic"><p>Anahtar kaydedilmeden önce Anthropic'te doğrulanır, sunucuda <b>şifreli</b> saklanır ve yalnızca senin hesabının isteklerinde çözülür; panelde sana bile tamamı bir daha gösterilmez (yalnızca baş ve son harfleri), yönetici de göremez. Ücret kullandıkça Anthropic hesabından düşer: kısa bir soru genelde $0,01'in altındadır, her cevabın ücreti altında yazar ve Bay Piyasa sayfasındaki <b>günlük limit</b> (varsayılan $0,50) dolunca durur. Anahtarı Profilim'den istediğin an kaldırabilir ya da Anthropic'te iptal edebilirsin.</p></div></details>
@@ -7396,7 +7398,19 @@ BİÇİM (markdown)
 - Web araması yoksa güncel olmayabilecek bilgiyi belirt. Emin olmadığın rakamı uydurma.
 - Kesin al/sat emri verme; senaryo, olasılık ve risk diliyle konuş. Öneri içeren cevapların sonuna tek satırlık kısa bir "yatırım tavsiyesi değildir" notu ekle; her mesajda tekrarlama.
 - Bir varlığı değerlendirirken portföydeki payını ve borç dengesini biliyorsan mutlaka bağla.
-- Belirsizse tek bir netleştirici soru sor.`;
+- Belirsizse tek bir netleştirici soru sor.
+
+KAYNAK VE DOĞRULAMA (web araması açıkken)
+- Arama yalnız güvenilir kaynaklarda yapılır. Kaynak sırası: (1) resmî/birincil — KAP, TCMB, TÜİK, SPK, Borsa İstanbul, Resmî Gazete, Fed, ECB, SEC, ABD istatistik kurumları; (2) haber ajansları ve köklü finans basını — Reuters, Bloomberg, AP, AA, Bloomberg HT, Financial Times, WSJ, CNBC, BBC, Dünya, Ekonomim; (3) piyasa verisi — Investing, TradingView, Yahoo Finance, Morningstar (fiyat, seviye, takvim için).
+- Şirket haberinde önce KAP'a, faiz/enflasyonda önce TCMB/TÜİK/Fed'e bak. Önemli bir rakamı mümkünse iki kaynakla doğrula; kaynaklar çelişiyorsa bunu açıkça söyle.
+- Her önemli bilgiye kaynağını ve tarihini yaz (ör. "Reuters, 2 Eki"). 48 saatten eski bilgiyi "güncel olmayabilir" diye işaretle.
+- Haberi yorumdan ayır: "Reuters'a göre…", "analistler … bekliyor". Sosyal medya, forum ve kaynaksız iddiaları kullanma.
+- Güncel bilgi gerekiyor ama web araması kapalıysa bunu söyle ve "Web aramasını açarsan güncel kaynaklardan bakarım" diye yönlendir.
+
+YÖNLENDİRİCİ OL
+- Analiz veya haber cevaplarını iki kısa bölümle bitir: "Ne anlama geliyor" (kullanıcının portföyü/borcu açısından, rakamla) ve "Ne yapabilirsin" (2-3 somut, rakamlı seçenek; her birinin artısı/riski tek cümle).
+- İzlenecek seviyeleri ve takvimi ver: kritik fiyat seviyeleri, yaklaşan Fed/TCMB toplantısı, TÜFE/istihdam açıklaması, bilanço ya da temettü tarihi.
+- İşe yarayacaksa paneldeki ilgili sayfaya yönlendir: Borç Kapatma Planı, Hesap Araçları (kredi/KMH/mevduat hesabı), Bütçe Planlaması, Birikim Hedefleri, Aylık Rapor, Portföy İstatistikleri.`;
 
 const BP_RAPORLAR = [
   { id:'ozet',    ad:'☀ Günlük özet',      portfoy:true,  haber:true,
@@ -7864,8 +7878,8 @@ function bpKapSor(){
   const kodlar = [...new Set(manuelListeYukle(YATIRIM_KEY).filter(y => y.tur === 'bist').map(y => String(y.kod || y.ad || '').toUpperCase().trim()).filter(Boolean))];
   if(!kodlar.length){ showAlertModal("Yatırımlarım'da BİST hissesi yok. Önce hisselerini Yatırımlarım › BİST bölümüne ekle; sonra KAP haberlerini sorabilirsin."); return; }
   const soru = `Portföyümdeki BİST hisseleri (${kodlar.join(', ')}) için bugünkü ve son günlerdeki KAP bildirimlerini (özel durum açıklaması, temettü, sermaye artırımı, geri alım, finansal tablo, yeni iş ilişkisi vb.) ve önemli gelişmeleri web'de araştır. Her hisse için kısa madde yaz: ne oldu, tarihi, hisseye olası etkisi. Kaynak olarak öncelikle KAP (kap.org.tr) ve güvenilir haber sitelerini kullan, kaynağı belirt; yeni bildirim bulamadığın hisse için "son günlerde yeni bildirim bulunamadı" yaz. Yatırım tavsiyesi verme.`;
-  const gonder = () => bpGonder(soru, { ara: true, haber: true });
-  const not = "Bu soru için Bay Piyasa web'de arama yapar (arama başına yaklaşık $0,01, en fazla 3 arama) ve portföyündeki hisse kodlarını (" + kodlar.join(', ') + ") kullanır.";
+  const gonder = () => bpGonder(soru, { ara: true, haber: true, maxArama: 5 });
+  const not = "Bu soru için Bay Piyasa KAP ve güvenilir finans kaynaklarında arama yapar (arama başına yaklaşık $0,01, en fazla 5 arama) ve portföyündeki hisse kodlarını (" + kodlar.join(', ') + ") kullanır.";
   if(!bp.ayar.paylas){
     showConfirmModal(not + " Portföy rakamların da Anthropic API'sine gönderilir (isim/e-posta gönderilmez). Devam edelim mi?", () => { bp.ayar.paylas = true; bpKaydet(); bpRenderAyar(); gonder(); });
     return;
@@ -7932,7 +7946,7 @@ async function bpGonder(metinParam, opsiyon){
       const res = await fetch(AI_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model, max_tokens: 12000, webSearch, system: sistem, messages }),
+        body: JSON.stringify({ model, max_tokens: 12000, webSearch, maxArama: opsiyon.maxArama || 3, system: sistem, messages }),
       });
       let data = null;
       try{ data = await res.json(); }catch(e){ /* JSON değil */ }

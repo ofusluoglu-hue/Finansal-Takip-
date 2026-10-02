@@ -45,6 +45,21 @@ const IZINLI_ANAHTARLAR = new Set([
 const MAX_DEGER_BAYT = 1500000;      // D1 satır sınırı 2 MB
 const KILIT_ESIK = 8;                // 15 dk içinde bu kadar yanlış deneme → kilit
 const KILIT_PENCERE_MS = 15 * 60 * 1000;
+// Bay Piyasa web araması yalnız bu kaynaklarda yapılır (alt alan adları dahil). Katmanlar: resmî/birincil · haber ajansı ve
+// köklü finans basını · piyasa verisi · kripto. Forum, sosyal medya ve anonim bloglar bilerek dışarıda.
+const GUVENILIR_KAYNAKLAR = [
+  // Türkiye resmî / birincil
+  'kap.org.tr', 'tcmb.gov.tr', 'tuik.gov.tr', 'borsaistanbul.com', 'spk.gov.tr', 'bddk.org.tr', 'hmb.gov.tr', 'resmigazete.gov.tr',
+  // Küresel resmî / birincil
+  'federalreserve.gov', 'ecb.europa.eu', 'sec.gov', 'treasury.gov', 'bls.gov', 'bea.gov', 'imf.org', 'worldbank.org', 'oecd.org', 'eia.gov', 'opec.org', 'cmegroup.com',
+  // Haber ajansları ve finans basını
+  'reuters.com', 'bloomberg.com', 'apnews.com', 'bbc.com', 'ft.com', 'wsj.com', 'cnbc.com', 'marketwatch.com', 'economist.com', 'barrons.com', 'nikkei.com',
+  'aa.com.tr', 'bloomberght.com', 'dunya.com', 'ekonomim.com', 'foreks.com',
+  // Piyasa verisi ve grafik
+  'investing.com', 'tradingview.com', 'finance.yahoo.com', 'morningstar.com', 'kitco.com',
+  // Kripto
+  'coindesk.com', 'theblock.co', 'coingecko.com', 'coinmarketcap.com',
+];
 const OTURUM_SURE_MS = 60 * 24 * 3600 * 1000;    // 60 gün; kullanıldıkça uzar (60 gün hiç kullanılmayan oturum düşer)
 const SIFRE_ITER = 20000;            // PBKDF2 tekrar sayısı: ücretsiz plan istek başına ~10 ms CPU verir (60 bin ≈ 22 ms). Kullanıcı başına saklanır, ileride artırılabilir.
 const SIFRE_MIN = 8;
@@ -749,13 +764,28 @@ export default {
         // ücret yalnız gerçekten üretilen token kadardır). Web araması ARAMA BAŞINA $0,01 ücretlidir; yalnız istenirse.
         const maxTokens = Math.min(Math.max(parseInt(payload.max_tokens, 10) || 2500, 200), 16000);
         const body = { model, max_tokens: maxTokens, system: payload.system || '', messages: payload.messages || [] };
-        if (payload.webSearch === true) body.tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }];
+        // Arama: yalnız güvenilir kaynaklar, Türkiye konumlu; arama sayısı 1–5 (varsayılan 3; KAP gibi çok hisseli sorular 5 ister)
+        if (payload.webSearch === true) body.tools = [{
+          type: 'web_search_20250305', name: 'web_search', max_uses: Math.min(Math.max(parseInt(payload.maxArama, 10) || 3, 1), 5),
+          allowed_domains: GUVENILIR_KAYNAKLAR,
+          user_location: { type: 'approximate', country: 'TR', timezone: 'Europe/Istanbul' },
+        }];
+        const gonder = b => fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': apiAnahtari, 'anthropic-version': '2023-06-01' },
+          body: JSON.stringify(b),
+        });
         try {
-          const upstream = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-api-key': apiAnahtari, 'anthropic-version': '2023-06-01' },
-            body: JSON.stringify(body),
-          });
+          let upstream = await gonder(body);
+          // Güvence: arama aracı kaynak listesi/konum yüzünden reddedilirse aynı istek bir kez sınırsız aramayla denenir
+          if (upstream.status === 400 && body.tools) {
+            const hata = await upstream.clone().json().catch(() => ({}));
+            const m = JSON.stringify(hata).toLowerCase();
+            if (/allowed_domains|user_location|domain|tool/.test(m)) {
+              body.tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: body.tools[0].max_uses }];
+              upstream = await gonder(body);
+            }
+          }
           if (anahtarHatasi(upstream.status)) return hataVer('Anthropic anahtarın reddedildi (geçersiz, iptal edilmiş ya da bakiyesi yok). Profilim › Bay Piyasa’dan kontrol et.', 'anahtar_gecersiz', 400);
           return json(await upstream.json(), upstream.status);
         } catch (e) {
