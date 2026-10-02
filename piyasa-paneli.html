@@ -517,6 +517,10 @@
   .bildirim-oge.bilgi{border-left-color:#6EC3FF;}
   .bildirim-oge.bilgi .bildirim-ikon{background:rgba(110,195,255,.14);color:#6EC3FF;}
   .bildirim-oge.bilgi .bildirim-zaman{color:#6EC3FF;}
+  #mesajPanel .bildirim-metin{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  #mesajPanel .bildirim-oge:not(.okunmadi){border-left-color:transparent;}
+  .mesaj-oge{scroll-margin-top:110px;}
+  @media (max-width:900px){ .mesaj-oge{scroll-margin-top:16px;} }
   /* Zarf (mesajlar): zilin solunda, aynı biçim ve aynı kırmızı sayı; dokununca Profilim › Mesaj kutusu */
   .mesaj-btn + .bildirim-btn{margin-left:2px;}
   .sidebar-kutu > .mesaj-btn{margin-right:-2px;}
@@ -2512,7 +2516,7 @@
       <div id="senkronDurum" data-durum="senkron">☁ Senkronize ediliyor…</div>
       <button class="cikis-btn" onclick="cikisYap()" title="Bu cihazdan çıkış yap">🔒 Çıkış</button>
     </div>
-    <button type="button" class="bildirim-btn mesaj-btn bildirim-btn-mobil" onclick="mesajKutusuAc()" title="Mesajlar" aria-label="Mesajlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><span class="bildirim-rozet" hidden></span></button>
+    <button type="button" class="bildirim-btn mesaj-btn bildirim-btn-mobil" onclick="mesajPanelAc(this)" aria-haspopup="true" aria-expanded="false" title="Mesajlar" aria-label="Mesajlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><span class="bildirim-rozet" hidden></span></button>
     <button type="button" class="bildirim-btn bildirim-btn-mobil" onclick="bildirimPanelAc(this)" aria-haspopup="true" aria-expanded="false" title="Bildirimler" aria-label="Bildirimler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bildirim-rozet" hidden></span></button>
    </div>
   </div>
@@ -2545,11 +2549,12 @@
         </svg>
         Yenile
       </button>
-      <button type="button" class="bildirim-btn mesaj-btn" onclick="mesajKutusuAc()" title="Mesajlar" aria-label="Mesajlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><span class="bildirim-rozet" hidden></span></button>
+      <button type="button" class="bildirim-btn mesaj-btn" onclick="mesajPanelAc(this)" aria-haspopup="true" aria-expanded="false" title="Mesajlar" aria-label="Mesajlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><span class="bildirim-rozet" hidden></span></button>
       <button type="button" class="bildirim-btn" onclick="bildirimPanelAc(this)" aria-haspopup="true" aria-expanded="false" title="Bildirimler" aria-label="Bildirimler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bildirim-rozet" hidden></span></button>
     </div>
   </div>
   <div class="bildirim-panel" id="bildirimPanel" role="dialog" aria-label="Bildirimler" hidden></div>
+  <div class="bildirim-panel" id="mesajPanel" role="dialog" aria-label="Mesajlar" hidden></div>
 
   <!-- ================= TAB: GÜNLÜK MAKRO ÖZET ================= -->
   <div class="tab-panel active" id="tab-gunluk">
@@ -12293,18 +12298,25 @@ function bildirimPanelCiz(){
       : (od.length ? '<div class="bildirim-grup">Yaklaşan ödemeler</div>' + od.map(oge).join('') : '') + (uy.length ? '<div class="bildirim-grup">Uyarılar</div>' + uy.map(oge).join('') : '')}</div>
     <div class="bildirim-alt"><a onclick="bildirimPanelKapat();switchTab('odeme')">Ödeme Takvimi ›</a><a onclick="bildirimPanelKapat();switchTab('butce')">Bütçe ›</a></div>`;
 }
-function bildirimPanelAc(btn){
-  const p = document.getElementById('bildirimPanel'); if(!p) return;
-  if(!p.hidden && p._btn === btn){ bildirimPanelKapat(); return; }
-  bildirimGuncelle(); bildirimPanelCiz();
-  p.hidden = false; p._btn = btn;
+// Açılır paneli düğmenin altına yerleştir (telefonda tam genişlik)
+function acilirKonumla(p, btn){
   const r = btn.getBoundingClientRect();
   p.style.top = Math.round(r.bottom + 8) + 'px';
   if(innerWidth <= 640){ p.style.left = '10px'; p.style.right = '10px'; p.style.width = 'auto'; }
   else { p.style.left = 'auto'; p.style.width = ''; p.style.right = Math.max(10, Math.round(innerWidth - r.right)) + 'px'; }
+}
+function bildirimPanelAc(btn){
+  const p = document.getElementById('bildirimPanel'); if(!p) return;
+  if(!p.hidden && p._btn === btn){ bildirimPanelKapat(); return; }
+  mesajPanelKapat();
+  bildirimGuncelle(); bildirimPanelCiz();
+  p.hidden = false; p._btn = btn;
+  acilirKonumla(p, btn);
   document.querySelectorAll('.bildirim-btn:not(.mesaj-btn)').forEach(b => b.setAttribute('aria-expanded', String(b === btn)));
 }
+// Kapatma her iki paneli de kapatır (sekme değişimi, Esc, dışarı tıklama, boyut değişimi)
 function bildirimPanelKapat(){
+  mesajPanelKapat();
   const p = document.getElementById('bildirimPanel'); if(!p || p.hidden) return;
   p.hidden = true; p._btn = null;
   document.querySelectorAll('.bildirim-btn:not(.mesaj-btn)').forEach(b => b.setAttribute('aria-expanded', 'false'));
@@ -12320,7 +12332,10 @@ function bildirimTikla(idK){
 function bildirimKaldir(idK){ const id = decodeURIComponent(idK); bildirimIsaretle(id, 'kaldir'); bildirimGuncelle(); bildirimPanelCiz(); }
 function bildirimHepsiOkundu(){ const d = bildirimDurum(); _bildirimler.forEach(b => { d.okundu[b.id] = Date.now(); }); bildirimDurumYaz(d); bildirimGuncelle(); bildirimPanelCiz(); }
 // Dışarı tıklayınca ya da Esc ile kapanır (panel içinde yeniden çizilip DOM'dan çıkan düğme "dışarı" sayılmaz); pencere boyu değişince kapanır (konum yeniden hesaplanmasın diye)
-document.addEventListener('click', e => { const p = document.getElementById('bildirimPanel'); if(p && !p.hidden && e.target.isConnected && !p.contains(e.target) && !e.target.closest('.bildirim-btn')) bildirimPanelKapat(); });
+document.addEventListener('click', e => {
+  if(!e.target.isConnected || e.target.closest('.bildirim-btn')) return;
+  ['bildirimPanel', 'mesajPanel'].forEach(id => { const p = document.getElementById(id); if(p && !p.hidden && !p.contains(e.target)) (id === 'mesajPanel' ? mesajPanelKapat : bildirimPanelKapat)(); });
+}, true);   // yakalama aşamasında: tıklanan düğme olayı durdursa (stopPropagation) da panel kapanır
 document.addEventListener('keydown', e => { if(e.key === 'Escape') bildirimPanelKapat(); });
 window._bildirimGen = innerWidth;   // başlangıç genişliği: ilk (kendiliğinden gelen) resize olayı paneli kapatmasın
 window.addEventListener('resize', () => { if(innerWidth !== window._bildirimGen){ window._bildirimGen = innerWidth; bildirimPanelKapat(); } });
@@ -12343,14 +12358,14 @@ async function mesajlariCek(){
     const j = await res.json();
     _mesajlar = j.mesajlar || []; _gidenKutu = j.gonderilen || [];
   }catch(e){ return; }
-  bildirimGuncelle(); renderMesajKutusu();
+  bildirimGuncelle(); renderMesajKutusu(); mesajPanelCiz();
 }
 // İyimser: önce ekranda okundu, sonra sunucuya (hata olursa bir sonraki çekmede düzelir)
 function mesajOku(ids){
   ids = ids.filter(id => (_mesajlar || []).some(m => m.id === id && !m.okundu));
   if(!ids.length) return;
   _mesajlar.forEach(m => { if(ids.includes(m.id)) m.okundu = true; });
-  bildirimGuncelle(); renderMesajKutusu();
+  bildirimGuncelle(); renderMesajKutusu(); mesajPanelCiz();
   fetch(MY_WORKER + '/mesajlar/okundu', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) }).catch(() => {});
 }
 function mesajHepsiOkundu(){ mesajOku((_mesajlar || []).filter(m => !m.okundu).map(m => m.id)); }
@@ -12423,13 +12438,45 @@ function mesajIsaretGuncelle(){
     btn.setAttribute('aria-label', btn.title);
   });
 }
-// Zarfa dokununca: Profilim › Mesaj kutusu (okunmamış varsa en yenisi açık gelir)
-function mesajKutusuAc(){
+// Zarf: zil gibi açılır liste (son mesajlar, okunmamış vurgulu); mesaja dokununca Profilim'de o mesaj açık
+function mesajPanelAc(btn){
+  const p = document.getElementById('mesajPanel'); if(!p) return;
+  if(!p.hidden && p._btn === btn){ mesajPanelKapat(); return; }
   bildirimPanelKapat();
-  const ilk = (_mesajlar || []).find(m => !m.okundu);
-  if(ilk){ _acikMesaj = ilk.id; mesajOku([ilk.id]); }
-  switchTab('profil'); mesajKutusunaKaydir();
+  p.hidden = false; p._btn = btn;
+  mesajPanelCiz(); acilirKonumla(p, btn);
+  document.querySelectorAll('.mesaj-btn').forEach(b => b.setAttribute('aria-expanded', String(b === btn)));
+  if(Date.now() - _mesajSonCekme > 30000) mesajlariCek();   // açınca tazele
 }
+function mesajPanelKapat(){
+  const p = document.getElementById('mesajPanel'); if(!p || p.hidden) return;
+  p.hidden = true; p._btn = null;
+  document.querySelectorAll('.mesaj-btn').forEach(b => b.setAttribute('aria-expanded', 'false'));
+}
+function mesajPanelCiz(){
+  const p = document.getElementById('mesajPanel'); if(!p || p.hidden) return;
+  const L = (_mesajlar || []).slice(0, 8), n = (_mesajlar || []).filter(m => !m.okundu).length;
+  const ik = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + BILDIRIM_IKON.mektup + '</svg>';
+  const tik = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg>';
+  p.innerHTML = `<div class="bildirim-bas"><b>Mesajlar</b><span class="bildirim-sayi">${n ? n + ' okunmamış' : ''}</span><button class="bildirim-hepsi" onclick="mesajHepsiOkundu();mesajPanelCiz()"${n ? '' : ' disabled'} title="Tümünü okundu olarak işaretle" aria-label="Tümünü okundu olarak işaretle">${tik}</button></div>
+    <div class="bildirim-liste">${_mesajlar == null ? '<div class="bildirim-bos">Mesajlar yükleniyor…</div>'
+      : !L.length ? '<div class="bildirim-bos"><div class="ikon">✉</div><b>Mesajın yok</b><br>Yöneticiden gelen mesajlar burada görünür. Sen de “✉ Yeni mesaj” ile yazabilirsin.</div>'
+      : L.map(m => `<div class="bildirim-oge bilgi${m.okundu ? '' : ' okunmadi'}" onclick="mesajPanelTikla('${m.id}')">
+        <span class="bildirim-ikon" aria-hidden="true">${ik}</span>
+        <div class="bildirim-icerik"><div class="bildirim-baslik">${escapeHtml(m.baslik)}</div><div class="bildirim-metin">${escapeHtml(m.metin)}</div><div class="bildirim-zaman">${escapeHtml(m.gonderen.split(' · ')[0])}${m.herkese ? ' · duyuru' : ''} · ${mesajZaman(m.ts)}</div></div>
+        ${m.okundu ? '' : '<span class="bildirim-nokta" style="background:#6EC3FF;" aria-label="okunmadı"></span>'}
+      </div>`).join('')}</div>
+    <div class="bildirim-alt"><a onclick="mesajKutusuAc()">Tüm mesajlar ›</a><a onclick="mesajKutusuAc();mesajYazAc()">✉ Yeni mesaj</a></div>`;
+}
+// Listede bir mesaja dokununca: Profilim › Mesaj kutusu, o mesaj açık ve görünür
+function mesajPanelTikla(id){
+  mesajPanelKapat();
+  _acikMesaj = id; mesajOku([id]);
+  switchTab('profil'); mesajSekme('gelen'); _acikMesaj = id; renderMesajKutusu();
+  setTimeout(() => { const el = document.querySelector('#pfMesajListe .mesaj-oge.acik') || document.getElementById('pfMesajBolum'); if(el) el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60);
+}
+// "Tüm mesajlar": kutunun başına
+function mesajKutusuAc(){ mesajPanelKapat(); switchTab('profil'); mesajSekme('gelen'); mesajKutusunaKaydir(); }
 function mesajKutusunaKaydir(){ setTimeout(() => { const el = document.getElementById('pfMesajBolum'); if(el) el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); }
 function renderMesajKutusu(){
   const kap = document.getElementById('pfMesajListe'); if(!kap) return;
