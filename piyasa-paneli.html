@@ -2263,7 +2263,137 @@
   .kv-sozluk dl{margin:6px 0 4px;display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:9px 18px;font-size:13px;line-height:1.55;}
   .kv-sozluk dt{font-weight:700;color:var(--amber);}
   .kv-sozluk dd{margin:0;color:var(--text);}
-  .kv-gizli{display:none !important;}
+  .kv-gizli, .kat-gizli{display:none !important;}
+  /* ---------- Yardım (Kılavuz + SSS): arama başlığı ---------- */
+  .yardim-hero{background:linear-gradient(135deg, rgba(231,168,59,.10), rgba(110,195,255,.05) 60%, transparent), var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px 22px 16px;margin-bottom:12px;}
+  .yardim-hero-baslik{font-size:19px;font-weight:800;margin-bottom:12px;}
+  .yardim-ara{position:relative;}
+  .yardim-ara svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:19px;height:19px;color:var(--muted);pointer-events:none;}
+  .yardim-ara input{width:100%;box-sizing:border-box;height:50px;padding:0 16px 0 46px;border-radius:12px;border:1px solid #2c3542;background:var(--bg);color:var(--text);font-family:inherit;font-size:15px;outline:none;transition:border-color .15s, box-shadow .15s;}
+  .yardim-ara input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(231,168,59,.15);}
+  .yardim-oneri{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:11px;font-size:12px;color:var(--muted-2);}
+  .yardim-oneri a{padding:4px 11px;border-radius:999px;border:1px solid var(--border);background:var(--panel-2);color:var(--muted);cursor:pointer;font-size:12px;}
+  .yardim-oneri a:hover{color:var(--amber);border-color:var(--amber);}
+  .kv-grup-bas small{font-size:11px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted-2);margin-left:6px;}
+  /* Kurulum kontrol listesi */
+  .kv-giris{padding:16px 18px;}
+  .kur-ust{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
+  .kur-baslik{font-size:15px;font-weight:800;}
+  .kur-alt{font-size:12.5px;color:var(--muted);}
+  .kur-ilerleme{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);}
+  .kur-cubuk{width:150px;height:8px;border-radius:5px;background:var(--border);overflow:hidden;}
+  .kur-cubuk i{display:block;height:100%;background:linear-gradient(90deg, var(--amber), var(--up));border-radius:5px;}
+  .kur-adimlar{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));gap:9px;}
+  .kur-adim{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--border);border-radius:11px;background:var(--panel-2);cursor:pointer;transition:border-color .15s, transform .1s;}
+  .kur-adim:hover{border-color:var(--amber);}
+  .kur-no{flex:0 0 26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:rgba(231,168,59,.14);color:var(--amber);}
+  .kur-adim.tamam .kur-no{background:rgba(51,192,124,.16);color:var(--up);}
+  .kur-adim.tamam{opacity:.72;}
+  .kur-adim b{display:block;font-size:13px;margin-bottom:2px;}
+  .kur-adim small{display:block;font-size:11.5px;line-height:1.45;color:var(--muted);}
+  .kur-adim .kur-git{font-size:11.5px;color:var(--amber);margin-top:4px;display:block;}
+  .kur-adim.tamam .kur-git{color:var(--up);}
+  .kur-bitti{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);}
+  .kur-bitti b{color:var(--up);}
+  .kur-bitti a{margin-left:auto;color:var(--amber);cursor:pointer;font-size:12.5px;}
+  /* Sayfa rehberleri: kart ızgarası (kapalıyken kart, açık/arama sonucu tam genişlik) */
+  .kv-kartlar{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px;margin-bottom:8px;}
+  .kv-kartlar > .kv-bolum{margin:0;}
+  .kv-kartlar > .kv-bolum[open]{grid-column:1 / -1;}
+  .kv-kartlar > .kv-bolum > summary{align-items:center;flex-wrap:nowrap;gap:12px;padding:14px 16px;box-sizing:border-box;}
+  .kv-kartlar > .kv-bolum:not([open]) > summary{height:100%;}   /* kapalı kartlar satırda eşit boy; açıkken içerik başlığın hemen altında */
+  .kv-kartlar > .kv-bolum:not([open]) > summary::after{content:'›';font-size:20px;font-weight:400;color:var(--muted-2);}
+  .kv-kartlar > .kv-bolum:not([open]):hover{border-color:color-mix(in srgb, var(--renk, var(--amber)) 60%, transparent);transform:translateY(-1px);}
+  .kv-kartlar > .kv-bolum{transition:border-color .15s, transform .12s;}
+  .kv-ikon{flex:0 0 40px;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb, var(--renk, var(--amber)) 15%, transparent);color:var(--renk, var(--amber));}
+  .kv-ikon svg{width:20px;height:20px;}
+  .kv-kart-metin{display:flex;flex-direction:column;min-width:0;gap:2px;}
+  .kv-kart-metin b{font-size:14px;color:var(--text);}
+  .kv-kart-metin small{font-size:12px;font-weight:500;color:var(--muted);line-height:1.35;}
+  .kv-kart-metin i{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--renk, var(--muted-2));opacity:.85;}
+  /* Okuma görünümü */
+  .kv-makale-bar{display:none;}
+  .kv-makale .kv-makale-bar{display:flex;align-items:center;gap:10px;margin:0 0 10px;}
+  .kv-makale-bar button{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:13px;font-weight:600;padding:8px 13px;cursor:pointer;}
+  .kv-makale-bar button:hover{border-color:var(--amber);color:var(--amber);}
+  .kv-makale-bar span{font-size:12.5px;color:var(--muted);}
+  .kv-makale .kv-giris, .kv-makale .kv-grup-bas, .kv-makale .kv-sozluk, .kv-makale .kv-yonlendir, .kv-makale > .bolum:not(.kv-giris), .kv-makale .yardim-oneri, .kv-makale .kv-kartlar > .kv-bolum:not(.kv-secili){display:none !important;}
+  .kv-makale .kv-kartlar > .kv-secili > summary{pointer-events:none;padding:18px 20px;}
+  .kv-makale .kv-kartlar > .kv-secili > summary::after{content:none;}
+  .kv-makale .kv-kartlar > .kv-secili .kv-ikon{flex-basis:48px;width:48px;height:48px;}
+  .kv-makale .kv-kartlar > .kv-secili .kv-kart-metin b{font-size:18px;}
+  .kv-makale .kv-kartlar > .kv-secili > .kv-ic{padding:16px 22px 18px;font-size:14px;line-height:1.75;}
+  .kv-makale-alt{display:none;}
+  .kv-makale .kv-makale-alt{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 14px;}
+  .kv-makale-alt a{display:flex;flex-direction:column;gap:3px;padding:12px 14px;border:1px solid var(--border);border-radius:11px;background:var(--panel);cursor:pointer;}
+  .kv-makale-alt a:hover{border-color:var(--amber);}
+  .kv-makale-alt a small{font-size:11px;color:var(--muted-2);}
+  .kv-makale-alt a b{font-size:13.5px;color:var(--text);}
+  .kv-makale-alt a.sonraki{text-align:right;}
+  /* Arama sonucunda kartlar liste */
+  .kv-arama .kv-giris, .kv-arama .kv-yonlendir{display:none !important;}
+  /* Terimler: kartlar */
+  .kv-terimler{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:9px;padding:4px 0 2px;}
+  .kv-terim{padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:var(--panel-2);font-size:12.5px;line-height:1.55;color:var(--text);}
+  .kv-terim b{display:block;color:var(--amber);font-size:13px;margin-bottom:3px;}
+  /* ---------- SSS ---------- */
+  .sss-kategoriler{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;}
+  .sss-kat{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:var(--panel-2);color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .sss-kat svg{width:15px;height:15px;}
+  .sss-kat em{font-style:normal;font-size:11px;color:var(--muted-2);background:var(--bg);border-radius:999px;padding:1px 7px;}
+  .sss-kat:hover{color:var(--text);border-color:#333d4a;}
+  .sss-kat.active{color:#14161c;background:var(--amber);border-color:var(--amber);}
+  .sss-kat.active em{background:rgba(0,0,0,.18);color:#14161c;}
+  .sss-populer{margin:0 0 6px;}
+  .sss-populer:empty{display:none;}
+  .sss-pop-bas{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);margin:14px 4px 8px;}
+  .sss-pop{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:9px;}
+  .sss-pop a{display:flex;gap:10px;align-items:flex-start;padding:12px 13px;border:1px solid var(--border);border-radius:11px;background:var(--panel);cursor:pointer;font-size:13px;font-weight:600;line-height:1.4;color:var(--text);transition:border-color .15s;}
+  .sss-pop a:hover{border-color:var(--amber);}
+  .sss-pop a span{flex:0 0 24px;height:24px;border-radius:50%;background:rgba(231,168,59,.14);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
+  #tab-sss .kv-grup-bas{display:flex;align-items:center;gap:8px;margin-top:20px;}
+  #tab-sss .kv-grup-bas svg{width:15px;height:15px;color:var(--amber);}
+  .kv-sss{border-left:3px solid transparent;transition:border-color .15s;}
+  .kv-sss > summary{align-items:center !important;flex-wrap:nowrap !important;gap:12px !important;padding:13px 16px !important;}
+  .kv-sss > summary::before{content:'?';flex:0 0 24px;height:24px;border-radius:50%;background:var(--panel-2);border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
+  .kv-sss > summary::after{content:'' !important;flex:0 0 8px;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 3px auto !important;transition:transform .2s;}
+  .kv-sss[open] > summary::after{transform:rotate(-135deg);margin-bottom:-3px !important;}
+  .kv-sss[open]{border-left-color:var(--amber);}
+  .kv-sss[open] > summary::before{background:var(--amber);color:#14161c;border-color:var(--amber);}
+  .kv-sss[open] > .kv-ic{background:linear-gradient(180deg, rgba(231,168,59,.04), transparent 60%);padding-left:52px;}
+  .kv-sss.vurgu{animation:sss-vurgu 1.6s ease;}
+  @keyframes sss-vurgu{0%,40%{box-shadow:0 0 0 2px var(--amber);}100%{box-shadow:0 0 0 0 transparent;}}
+  .sss-alt-arac{display:flex;gap:14px;justify-content:flex-end;margin:10px 4px -4px;font-size:12px;}
+  .sss-alt-arac a{color:var(--muted);cursor:pointer;}
+  .sss-alt-arac[hidden], .sss-populer[hidden]{display:none !important;}
+  .sss-alt-arac a:hover{color:var(--amber);}
+  @media (max-width:1100px){ .kv-kartlar{grid-template-columns:repeat(2, minmax(0,1fr));} .sss-pop{grid-template-columns:repeat(2, minmax(0,1fr));} }
+  @media (max-width:640px){
+    .yardim-hero{padding:16px 14px 14px;border-radius:14px;}
+    .yardim-hero-baslik{font-size:17px;}
+    .sss-pop, .kv-terimler{grid-template-columns:1fr;}
+    /* telefonda rehberler uygulama menüsü gibi 2 sütun döşeme: simge üstte, ad altında (sayfa yarı boya iner) */
+    .kv-kartlar{grid-template-columns:1fr 1fr;gap:8px;}
+    .kv-kartlar > .kv-bolum:not([open]) > summary{flex-direction:column;align-items:flex-start;gap:8px;padding:12px;}
+    .kv-kartlar > .kv-bolum:not([open]) > summary::after{display:none;}
+    .kv-kartlar > .kv-bolum:not([open]) .kv-kart-metin i, .kv-kartlar > .kv-bolum:not([open]) .kv-kart-metin small{display:none;}
+    .kv-kartlar > .kv-bolum:not([open]) .kv-kart-metin b{font-size:13px;line-height:1.3;}
+    .kv-kartlar > .kv-bolum:not([open]) .kv-ikon{flex-basis:auto;width:36px;height:36px;}
+    .kur-ilerleme{margin-left:0;width:100%;}
+    .kur-cubuk{flex:1;}
+    .kur-adimlar{grid-template-columns:1fr 1fr;gap:7px;}
+    .kur-adim{padding:9px 10px;gap:8px;}
+    .kur-adim small{display:none;}
+    .kur-adim .kur-git{margin-top:2px;}
+    .sss-kategoriler{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-14px;padding-right:14px;}
+    .sss-kategoriler::-webkit-scrollbar{display:none;}
+    .kv-makale .kv-makale-alt{grid-template-columns:1fr;}
+    .kv-sss[open] > .kv-ic{padding-left:14px;}
+    .kv-sss > summary{padding:10px 12px !important;gap:10px !important;font-size:13px;}
+    .kv-sss > summary::before{flex-basis:22px;height:22px;font-size:11px;}
+    .sss-pop a:nth-child(n+5){display:none;}   /* telefonda en çok sorulan 4 */
+    .sss-pop a{padding:10px 12px;}
+  }
   mark.kv-isaret{background:rgba(231,168,59,.35);color:inherit;border-radius:3px;padding:0 1px;}
   @media (max-width:640px){
     .kv-bolum > summary{padding:12px 14px;}
@@ -3460,31 +3590,17 @@
   <div class="tab-panel" id="tab-kilavuz">
     <div class="page-head"><h1>Kullanım Kılavuzu</h1></div>
 
-    <div class="kv-ust">
-      <input type="search" id="kvAra" class="ai-input" placeholder="Kılavuzda ara… (ör. maaş, kart, acil fon, enflasyon)" oninput="kilavuzAra(this.value)" autocomplete="off">
-      <div class="kv-hizli">
-        <button class="bolum-ekle" onclick="kilavuzHepsi(true)">Tümünü aç</button>
-        <button class="bolum-ekle" onclick="kilavuzHepsi(false)">Tümünü kapat</button>
-      </div>
+    <div class="yardim-hero">
+      <div class="yardim-hero-baslik">Ne öğrenmek istiyorsun?</div>
+      <div class="yardim-ara"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" id="kvAra" placeholder="Kılavuzda ara… (ör. maaş, kart, acil fon, enflasyon)" oninput="yardimAra(this.value, 'tab-kilavuz')" autocomplete="off"></div>
+      <div class="yardim-oneri"><span>Sık arananlar:</span><a data-ara="maaş">maaş</a><a data-ara="kart">kart</a><a data-ara="acil fon">acil fon</a><a data-ara="enflasyon">enflasyon</a><a data-ara="bildirim">bildirim</a><a data-ara="PDF">kredi PDF</a></div>
     </div>
     <div class="kv-sonuc" id="kvSonuc"></div>
+    <div class="kv-makale-bar" id="kvMakaleBar"></div>
 
-    <div class="bolum kv-giris">
-      <div class="bolum-bas"><span class="bolum-baslik">İlk kurulum — 10 dakikada hazır</span></div>
-      <p class="kv-p">Panel, girdiğin bilgilerden hesap yapar. Aşağıdaki sırayla bir kez girersen bütün sayfalar dolar; sonra yalnızca değişeni güncellersin.</p>
-      <ol class="kv-adim">
-        <li><b>Profilim</b> — menünün en üstündeki adına (telefonda üstteki adına) tıkla; adını soyadını yaz, istersen fotoğraf ekle. <a href="#" onclick="switchTab('profil'); return false;">Profilim'e git →</a></li>
-        <li><b>Borçlarım</b> — kredilerini (ödeme planını PDF ya da Excel olarak yükle), kredi kartı borçlarını, KMH'yi ve elden borçlarını gir. <a href="#" onclick="switchTab('borclar'); return false;">Borçlarım'a git →</a></li>
-        <li><b>Finansal Durumum › Varlıklarım</b> — ev, arsa, araba gibi varlıklarını ve nakitte duran paranı gir. <a href="#" onclick="switchTab('finansal'); return false;">Git →</a></li>
-        <li><b>Yatırımlarım</b> — ETF, kripto, BİST hissesi ve altın/gümüşünü adetiyle gir; fiyatlar kendiliğinden gelir. <a href="#" onclick="switchTab('yatirim'); return false;">Git →</a></li>
-        <li><b>Harcama Takibim</b> — her ay sonunda o ayın harcamalarını kategori kategori gir (ör. Eylül 2026 · Market · ₺26.985). <a href="#" onclick="switchTab('harcama'); return false;">Git →</a></li>
-        <li><b>Nakit Akışı › Gelirler</b> — maaşını bir kez “Her ay” olarak ekle. <a href="#" onclick="switchTab('nakitakis'); return false;">Git →</a></li>
-        <li><b>Ödeme Takvimi</b> — kart son ödeme günlerini ve kira, aidat, fatura, abonelik gibi düzenli ödemelerini gir. <a href="#" onclick="switchTab('odeme'); return false;">Git →</a></li>
-      </ol>
-      <p class="kv-p kv-not">Bunlardan sonra Bütçe Planlaması, Borç Kapatma Planı, Birikim Hedefleri, Net Varlık Geçmişi ve Aylık Rapor kendiliğinden çalışır; ayrıca veri girmen gerekmez.</p>
-    </div>
+    <div class="bolum kv-giris" id="kvKurulum"></div>
 
-    <div class="kv-grup-bas">Sayfalar</div>
+    <div class="kv-grup-bas">Sayfa rehberleri <small>bir karta dokun, anlatımı açılsın</small></div>
 
     <details class="kv-bolum" id="kv-piyasa"><summary>📈 Piyasa Özeti <span>fiyatlar ve haberler</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Seçtiğin piyasaların (dolar ve euro kuru, ons altın, Brent petrol, ABD hisse ve ETF'leri, kriptolar…) güncel fiyatını ve günlük değişimini gösterir. Altta Türkçe ve İngilizce güvenilir kaynaklardan haber başlıkları vardır.</p>
@@ -3698,14 +3814,13 @@
   <div class="tab-panel" id="tab-sss">
     <div class="page-head"><h1>Sık Sorulan Sorular</h1></div>
 
-    <div class="kv-ust">
-      <input type="search" id="sssAra" class="ai-input" placeholder="Sorunu yaz… (ör. kart ödedim, zam, acil fon, ışık)" oninput="kilavuzAra(this.value, 'tab-sss', 'sssSonuc')" autocomplete="off">
-      <div class="kv-hizli">
-        <button class="bolum-ekle" onclick="kilavuzHepsi(true, 'tab-sss')">Tümünü aç</button>
-        <button class="bolum-ekle" onclick="kilavuzHepsi(false, 'tab-sss')">Tümünü kapat</button>
-      </div>
+    <div class="yardim-hero">
+      <div class="yardim-hero-baslik">Sorunu yaz, cevabı bul</div>
+      <div class="yardim-ara"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" id="sssAra" placeholder="Sorunu yaz… (ör. kart ödedim, zam, acil fon, ışık)" oninput="yardimAra(this.value, 'tab-sss')" autocomplete="off"></div>
+      <div class="sss-kategoriler" id="sssKategoriler" role="tablist" aria-label="Konular"></div>
     </div>
     <div class="kv-sonuc" id="sssSonuc"></div>
+    <div class="sss-populer" id="sssPopuler"></div>
     <p class="kv-p kv-not" style="margin:0 2px 6px;">Bir sayfayı baştan öğrenmek istiyorsan <a href="#" onclick="switchTab('kilavuz'); return false;" style="color:var(--amber);">Kullanım Kılavuzu</a>'na bak. Burada en sık takılınan noktaların kısa cevapları var.</p>
 
     <div class="kv-grup-bas">Başlarken</div>
@@ -12397,6 +12512,7 @@ function switchTab(tabId){
   if(tabId === 'netgecmis') renderNetGecmis();
   if(tabId === 'hedef') renderHedef();
   if(tabId === 'araclar') renderAraclar();
+  if(tabId === 'kilavuz' || tabId === 'sss'){ yardimKur(); if(tabId === 'kilavuz'){ kilavuzAnaSayfa(); kurulumCiz(); } }
   if(tabId === 'rapor') renderRapor();
   if(tabId === 'kullanicilar'){ renderKullanicilar(); renderGonderilen(); }
   if(tabId === 'destek') destekHazirla();
@@ -13210,6 +13326,133 @@ document.addEventListener('keydown', e => {
   const b = document.querySelector(`#hmTuslar [data-k="${k === ',' ? ',' : k}"]`);
   if(b){ b.classList.add('basildi'); setTimeout(() => b.classList.remove('basildi'), 110); }
 });
+
+// ---------- Yardım sayfaları (Kılavuz + SSS): kart ızgarası, okuma görünümü, kurulum listesi, kategoriler ----------
+// İçerik HTML'de kalır (arama aynı metinde çalışır); bu kod yalnız düzeni kurar.
+const YARDIM_KV_TAB = { 'kv-piyasa': 'gunluk', 'kv-finansal': 'finansal', 'kv-yatirim': 'yatirim', 'kv-borclar': 'borclar', 'kv-harcama': 'harcama', 'kv-odeme': 'odeme', 'kv-nakit': 'nakitakis', 'kv-butce': 'butce',
+  'kv-netgecmis': 'netgecmis', 'kv-istatistik': 'istatistik', 'kv-borcplan': 'borcplan', 'kv-araclar': 'araclar', 'kv-hedef': 'hedef', 'kv-bp': 'ai', 'kv-rapor': 'rapor', 'kv-hesap': 'profil', 'kv-kullanicilar': 'kullanicilar' };
+const YARDIM_GRUP_RENK = { 'Varlık ve borç': '#6EC3FF', 'Harcama ve bütçe': '#E7A83B', 'İstatistikler': '#C9A6FF', 'Planlama': '#33C07C', 'Asistan': '#FF8FB1', 'Yönetim': '#7C8695', '': '#5EEAD4' };
+const YARDIM_PROFIL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
+const YARDIM_BASLA_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4L15 12H4"/></svg>';
+function navBilgi(tab){
+  const el = document.querySelector(`#navPanel > .nav-item[data-tab="${tab}"]`);
+  if(!el) return { svg: tab === 'profil' ? YARDIM_PROFIL_SVG : '', grup: tab === 'profil' ? '' : '' };
+  let g = el.previousElementSibling; while(g && !g.classList.contains('nav-grup')) g = g.previousElementSibling;
+  const svg = el.querySelector('svg');
+  return { svg: svg ? svg.outerHTML : '', grup: g ? g.textContent.trim() : '' };
+}
+let _yardimKuruldu = false;
+function yardimKur(){
+  if(_yardimKuruldu) return; _yardimKuruldu = true;
+  // ---- Kılavuz: rehberleri kart ızgarasına al
+  const kv = document.getElementById('tab-kilavuz');
+  const ilk = kv.querySelector('details.kv-bolum');
+  const kap = document.createElement('div'); kap.className = 'kv-kartlar'; kap.id = 'kvKartlar';
+  ilk.parentNode.insertBefore(kap, ilk);
+  kv.querySelectorAll('details.kv-bolum').forEach(d => {
+    kap.appendChild(d);
+    const sm = d.querySelector('summary'), alt = sm.querySelector('span');
+    const altMetin = alt ? alt.textContent : ''; if(alt) alt.remove();
+    const ad = sm.textContent.replace(/^[^\p{L}]+/u, '').trim();   // baştaki emoji/simge
+    const nb = navBilgi(YARDIM_KV_TAB[d.id] || ''), renk = YARDIM_GRUP_RENK[nb.grup] || YARDIM_GRUP_RENK[''];
+    d.style.setProperty('--renk', renk);
+    sm.innerHTML = `<span class="kv-ikon" aria-hidden="true">${nb.svg || YARDIM_BASLA_SVG}</span><span class="kv-kart-metin">${nb.grup ? `<i>${escapeHtml(nb.grup)}</i>` : ''}<b>${escapeHtml(ad)}</b><small>${escapeHtml(altMetin)}</small></span>`;
+    sm.addEventListener('click', e => { e.preventDefault(); kilavuzMakaleAc(d.id); });
+  });
+  const alt = document.createElement('div'); alt.className = 'kv-makale-alt'; alt.id = 'kvMakaleAlt';
+  kap.after(alt);
+  // Terimler: tanım listesi → kartlar
+  const dl = kv.querySelector('.kv-sozluk dl');
+  if(dl){
+    const kartlar = document.createElement('div'); kartlar.className = 'kv-terimler';
+    [...dl.querySelectorAll('dt')].forEach(dt => { const dd = dt.nextElementSibling; const k = document.createElement('div'); k.className = 'kv-terim'; k.innerHTML = `<b>${dt.innerHTML}</b>${dd ? dd.innerHTML : ''}`; kartlar.appendChild(k); });
+    dl.replaceWith(kartlar);
+  }
+  document.querySelectorAll('.yardim-oneri a[data-ara]').forEach(a => a.addEventListener('click', () => { const i = document.getElementById('kvAra'); i.value = a.dataset.ara; yardimAra(i.value, 'tab-kilavuz'); i.focus(); }));
+  // ---- SSS: kategoriler, sorulara kategori etiketi, popüler sorular
+  const sss = document.getElementById('tab-sss');
+  const KAT_TAB = { 'Başlarken': '', 'Harcama ve bütçe': 'harcama', 'Borçlar ve kartlar': 'borclar', 'Gelir ve tahminler': 'nakitakis', 'Yatırım ve varlıklar': 'yatirim', 'Hedefler ve acil fon': 'hedef', 'Görünüm': 'gunluk', 'Hesap, güvenlik ve Bay Piyasa': 'ai' };
+  const kats = [];
+  sss.querySelectorAll('.kv-grup-bas').forEach(h => {
+    const ad = h.textContent.trim(), svg = KAT_TAB[ad] ? navBilgi(KAT_TAB[ad]).svg : YARDIM_BASLA_SVG;
+    h.innerHTML = svg + '<span>' + escapeHtml(ad) + '</span>'; h.dataset.kat = ad;
+    let n = 0, e = h.nextElementSibling;
+    while(e && !e.classList.contains('kv-grup-bas')){ if(e.matches('details.kv-bolum')){ e.dataset.kat = ad; n++; } e = e.nextElementSibling; }
+    kats.push({ ad, svg, n });
+  });
+  const toplam = kats.reduce((t, k) => t + k.n, 0);
+  document.getElementById('sssKategoriler').innerHTML = `<button class="sss-kat active" data-kat="">Tümü <em>${toplam}</em></button>` + kats.map(k => `<button class="sss-kat" data-kat="${escapeHtml(k.ad)}">${k.svg}${escapeHtml(k.ad)} <em>${k.n}</em></button>`).join('');
+  document.querySelectorAll('#sssKategoriler .sss-kat').forEach(b => b.addEventListener('click', () => sssKategori(b.dataset.kat)));
+  const POP = ['nereden başlamalıyım', 'Kredi kartımı ödedim', 'Maaşıma zam geldi', 'Acil durum fonum ne kadar', 'Fiyatlar güncellenmiyor', 'Şifremi unuttum'];
+  const sorular = [...sss.querySelectorAll('details.kv-sss')];
+  const pop = POP.map(p => sorular.find(d => d.querySelector('summary').textContent.includes(p))).filter(Boolean);
+  document.getElementById('sssPopuler').innerHTML = pop.length ? '<div class="sss-pop-bas">En çok sorulanlar</div><div class="sss-pop">' + pop.map((d, i) => { d.id = d.id || 'sss-' + i; return `<a onclick="sssSoruAc('${d.id}')"><span>?</span>${escapeHtml(d.querySelector('summary').textContent)}</a>`; }).join('') + '</div>' : '';
+  // Tümünü aç / kapat: sorular listesinin üstünde küçük bağlantı
+  const ilkGrup = sss.querySelector('.kv-grup-bas');
+  const arac = document.createElement('div'); arac.className = 'sss-alt-arac'; arac.id = 'sssArac';
+  arac.innerHTML = '<a onclick="kilavuzHepsi(true, \'tab-sss\')">Tümünü aç</a><a onclick="kilavuzHepsi(false, \'tab-sss\')">Tümünü kapat</a>';
+  ilkGrup.parentNode.insertBefore(arac, ilkGrup);
+}
+// Kurulum kontrol listesi: verine bakarak hangi adımın yapıldığını işaretler
+function kurulumCiz(){
+  const el = document.getElementById('kvKurulum'); if(!el) return;
+  const k = kullaniciBilgi() || {}, var_ = key => { try{ return manuelListeYukle(key).length > 0; }catch(e){ return false; } };
+  const A = [
+    { ad: 'Profilim', ac: 'Adını yaz, istersen fotoğraf ekle', tab: 'profil', tamam: !!k.ad },
+    { ad: 'Borçlarım', ac: 'Kredi (PDF/Excel), kart, KMH, elden borç', tab: 'borclar', tamam: (typeof getAllLoans === 'function' && getAllLoans().length > 0) || var_(KK_KARTLARI_KEY) || var_(KMH_KEY) || var_('ft_elden_nakit_v1') },
+    { ad: 'Varlıklarım', ac: 'Ev, araba, nakit — Finansal Durumum', tab: 'finansal', tamam: var_(VARLIK_KEY) },
+    { ad: 'Yatırımlarım', ac: 'ETF, kripto, BİST, altın — adetiyle', tab: 'yatirim', tamam: var_(YATIRIM_KEY) },
+    { ad: 'Harcamalar', ac: 'Ay sonunda kategori kategori', tab: 'harcama', tamam: var_(HARCAMA_KEY) },
+    { ad: 'Gelir', ac: 'Maaşını bir kez “Her ay” ekle — Nakit Akışı', tab: 'nakitakis', tamam: var_(GELIR_KEY) },
+    { ad: 'Ödeme Takvimi', ac: 'Kart günleri, kira, fatura, abonelik', tab: 'odeme', tamam: var_(ODEME_KEY) },
+  ];
+  const n = A.filter(a => a.tamam).length, yuzde = Math.round(n / A.length * 100);
+  let kapali = false; try{ kapali = localStorage.getItem('ft_kurulum_gizli') === '1'; }catch(e){}
+  if(n === A.length && kapali){ el.innerHTML = `<div class="kur-bitti">✓ <b>Kurulum tamam.</b> Bütün sayfalar senin verinle çalışıyor.<a onclick="try{localStorage.removeItem('ft_kurulum_gizli')}catch(e){}; kurulumCiz()">Adımları göster</a></div>`; return; }
+  el.innerHTML = `<div class="kur-ust"><div><div class="kur-baslik">${n === A.length ? '🎉 Kurulum tamam' : 'İlk kurulum — 10 dakikada hazır'}</div><div class="kur-alt">${n === A.length ? 'Bütün sayfalar senin verinle çalışıyor; artık yalnız değişeni güncelle.' : 'Bu 7 adımı bir kez yap; Bütçe, Borç Planı, Hedefler ve Aylık Rapor kendiliğinden dolar.'}</div></div>
+      <div class="kur-ilerleme"><span><b style="color:var(--text);">${n} / ${A.length}</b> adım</span><div class="kur-cubuk"><i style="width:${yuzde}%"></i></div>${n === A.length ? `<a style="color:var(--muted);cursor:pointer;" onclick="try{localStorage.setItem('ft_kurulum_gizli','1')}catch(e){}; kurulumCiz()">Gizle</a>` : ''}</div></div>
+    <div class="kur-adimlar">${A.map((a, i) => `<div class="kur-adim${a.tamam ? ' tamam' : ''}" onclick="switchTab('${a.tab}')" role="link" tabindex="0" onkeydown="if(event.key==='Enter') switchTab('${a.tab}')"><span class="kur-no">${a.tamam ? '✓' : i + 1}</span><div><b>${a.ad}</b><small>${a.ac}</small><span class="kur-git">${a.tamam ? 'Tamam · düzenle' : 'Başla'} →</span></div></div>`).join('')}</div>`;
+}
+// Okuma görünümü: tek rehber, üstte "← Tüm konular", altta önceki / sonraki
+function kilavuzMakaleAc(id){
+  const kv = document.getElementById('tab-kilavuz'), d = document.getElementById(id); if(!d) return;
+  const liste = [...document.querySelectorAll('#kvKartlar > details.kv-bolum')].filter(x => !x.hidden);
+  liste.forEach(x => { x.classList.toggle('kv-secili', x === d); x.open = x === d; });
+  kv.classList.add('kv-makale');
+  const ad = t => t.querySelector('.kv-kart-metin b').textContent;
+  const sira = liste.indexOf(d), once = liste[sira - 1], sonra = liste[sira + 1];
+  document.getElementById('kvMakaleBar').innerHTML = `<button onclick="kilavuzAnaSayfa()">← Tüm konular</button><span>${sira + 1} / ${liste.length}</span>`;
+  document.getElementById('kvMakaleAlt').innerHTML = (once ? `<a onclick="kilavuzMakaleAc('${once.id}')"><small>← Önceki</small><b>${escapeHtml(ad(once))}</b></a>` : '<span></span>')
+    + (sonra ? `<a class="sonraki" onclick="kilavuzMakaleAc('${sonra.id}')"><small>Sonraki →</small><b>${escapeHtml(ad(sonra))}</b></a>` : '');
+  window.scrollTo(0, 0);
+}
+function kilavuzAnaSayfa(){
+  const kv = document.getElementById('tab-kilavuz'); if(!kv) return;
+  kv.classList.remove('kv-makale');
+  document.querySelectorAll('#kvKartlar > details.kv-bolum').forEach(x => { x.classList.remove('kv-secili'); if(!kv.classList.contains('kv-arama')) x.open = false; });
+}
+// Arama: kılavuzda okuma görünümünden çıkar; SSS'de kategori "Tümü"ye döner
+function yardimAra(q, sekme){
+  const kok = document.getElementById(sekme), dolu = !!String(q || '').trim();
+  if(sekme === 'tab-kilavuz'){ kok.classList.remove('kv-makale'); kok.querySelectorAll('.kv-secili').forEach(x => x.classList.remove('kv-secili')); }
+  else sssKategori('', true);
+  kok.classList.toggle('kv-arama', dolu);
+  kilavuzAra(q, sekme, sekme === 'tab-kilavuz' ? 'kvSonuc' : 'sssSonuc');
+  if(sekme === 'tab-sss'){ document.getElementById('sssPopuler').hidden = dolu; document.getElementById('sssArac').hidden = dolu; }
+}
+function sssKategori(kat, aramadan){
+  const sss = document.getElementById('tab-sss');
+  document.querySelectorAll('#sssKategoriler .sss-kat').forEach(b => b.classList.toggle('active', b.dataset.kat === (kat || '')));
+  if(!aramadan){ const i = document.getElementById('sssAra'); if(i && i.value){ i.value = ''; kilavuzAra('', 'tab-sss', 'sssSonuc'); sss.classList.remove('kv-arama'); document.getElementById('sssPopuler').hidden = false; document.getElementById('sssArac').hidden = false; } }
+  sss.querySelectorAll('details.kv-bolum[data-kat], .kv-grup-bas[data-kat]').forEach(e => e.classList.toggle('kat-gizli', !!kat && e.dataset.kat !== kat));
+  const pop = document.getElementById('sssPopuler'); if(pop && !aramadan) pop.hidden = !!kat;
+}
+function sssSoruAc(id){
+  sssKategori('');
+  const d = document.getElementById(id); if(!d) return;
+  d.open = true; d.classList.remove('vurgu'); void d.offsetWidth; d.classList.add('vurgu');
+  d.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
 
 buildCards();
 updateGarantiLive();
