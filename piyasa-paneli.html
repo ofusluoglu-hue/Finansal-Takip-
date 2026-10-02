@@ -91,21 +91,21 @@
   /* ---------- Açık tema (data-theme="light"): göz yormayan kırık beyaz zemin, koyu gri yazı, koyulaştırılmış vurgu renkleri ---------- */
   :root[data-theme="light"]{
     /* Açık tema yüzeyleri: beyaza yakın, hafif sıcak krem (saf beyaz gibi göz almasın) — bütün açık renkler buradan türer */
-    --a-zemin:#FAF9F7;
+    --a-zemin:#FCFBF9;
     --a-kart:#FFFFFF;
-    --a-kart2:#FBFAF8;
+    --a-kart2:#FDFCFA;
     --a-ust:#FFFFFF;
-    --a-baslik:#FAF9F6;
-    --a-hover:#F5F3F0;
-    --a-aktif:#EEECE7;
-    --a-iz:#EEECE7;
-    --a-cizgi:#EAE7E2;
-    --a-cizgi2:#DCD8D1;
-    --a-cizgi3:#AFAAA2;
+    --a-baslik:#FBFAF8;
+    --a-hover:#F7F6F3;
+    --a-aktif:#F0EEEA;
+    --a-iz:#F0EEEA;
+    --a-cizgi:#EDEAE5;
+    --a-cizgi2:#DFDBD5;
+    --a-cizgi3:#B0ABA3;
     --a-yazi:#26211A;
     --a-soluk:#5A5246;
     --a-soluk2:#6B6356;
-    --a-golge:rgba(70,52,24,.07);
+    --a-golge:rgba(70,52,24,.09);
     --bg:var(--a-zemin);
     --panel:var(--a-kart);
     --panel-2:var(--a-kart2);
@@ -721,6 +721,8 @@
   :root[data-theme="light"] .bolum, :root[data-theme="light"] .ozet-kart, :root[data-theme="light"] .sidebar-kutu, :root[data-theme="light"] .card,
   :root[data-theme="light"] .kv-bolum, :root[data-theme="light"] .yardim-hero, :root[data-theme="light"] .digital-clock, :root[data-theme="light"] .kart-duzen-btn{box-shadow:0 1px 2px var(--a-golge), 0 1px 3px var(--a-golge);}
   :root[data-theme="light"] .bildirim-panel{box-shadow:0 12px 32px rgba(70,52,24,.18);}
+  :root[data-theme="light"] [style*="background:var(--amber)"]{background:var(--amber-dolgu) !important;}
+  :root[data-theme="light"] [style*="fill:var(--amber)"]{fill:var(--amber-dolgu) !important;}   /* grafik çubukları da parlak amber */   /* çubuk/nokta dolguları parlak amber (yazı amberi koyu kalır; sayfa kahverengiye kaçmasın) */
   :root[data-theme="light"] .period-btn.active{background:var(--a-ust);box-shadow:0 1px 2px rgba(70,52,24,.14);}   /* seçili sekme: beyaz hap */
   @media (max-width:900px){ .app-bar .tema-anahtar{display:none;} .tema-anahtar-mobil{display:inline-flex;} }
   /* Telefonun üst satırı: ad görünsün diye senkron yazısı "☁ saat"e iner, anahtar biraz küçülür */
@@ -13142,7 +13144,7 @@ function temaUygula(acik){
     b.setAttribute('aria-label', acik ? 'Açık tema' : 'Koyu tema');
     b.title = acik ? 'Açık tema — koyu temaya geçmek için dokun' : 'Koyu tema — açık temaya geçmek için dokun';
   });
-  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = acik ? '#FAF9F7' : '#0A0D12';
+  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = acik ? '#FCFBF9' : '#0A0D12';
 }
 function temaDegistir(){
   const acik = document.documentElement.dataset.theme !== 'light';
