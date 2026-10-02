@@ -90,80 +90,96 @@
   }
   /* ---------- Açık tema (data-theme="light"): göz yormayan kırık beyaz zemin, koyu gri yazı, koyulaştırılmış vurgu renkleri ---------- */
   :root[data-theme="light"]{
-    --bg:#F3F5F8;
-    --panel:#FFFFFF;
-    --panel-2:#F6F8FA;
-    --border:#E1E5EB;
-    --text:#18202B;
-    --muted:#4D5764;
-    --muted-2:#636D7A;
-    --up:#0E7650;
-    --down:#C52F2F;
-    --amber:#AD5A00;
+    /* Açık tema yüzeyleri: mat krem (göz almasın) — bütün açık renkler buradan türer */
+    --a-zemin:#E8E2D6;
+    --a-kart:#F3EEE5;
+    --a-kart2:#EDE7DC;
+    --a-ust:#F9F6F0;
+    --a-baslik:#ECE5D9;
+    --a-hover:#E7E0D3;
+    --a-aktif:#DFD6C6;
+    --a-iz:#DED5C5;
+    --a-cizgi:#D9D0C1;
+    --a-cizgi2:#CBC0AE;
+    --a-cizgi3:#A59A88;
+    --a-yazi:#26211A;
+    --a-soluk:#5A5246;
+    --a-soluk2:#6B6356;
+    --a-golge:rgba(70,52,24,.07);
+    --bg:var(--a-zemin);
+    --panel:var(--a-kart);
+    --panel-2:var(--a-kart2);
+    --border:var(--a-cizgi);
+    --text:var(--a-yazi);
+    --muted:var(--a-soluk);
+    --muted-2:var(--a-soluk2);
+    --up:#0B6A46;
+    --down:#B32A2A;
+    --amber:#984E00;
     --amber-dolgu:#E9A23B;
-    --t-3a4453:#9EA8B5;
-    --t-2b3340:#CDD4DD;
-    --t-333d4a:#BCC5D0;
-    --t-2a3140:#CBD3DD;
-    --t-2c3542:#CBD3DD;
-    --t-2f3947:#C5CDD7;
-    --t-1b212a:#E4E9EF;
-    --t-1b222c:#EEF1F5;
-    --t-161c25:#F1F4F8;
-    --t-1a212b:#EDF1F6;
-    --t-171c25:#EFF2F6;
-    --t-161b23:#F2F4F7;
-    --t-1a1f27:#ECEFF3;
-    --t-232a34:#F7F8FA;
-    --t-242c38:#E1E6ED;
-    --t-1d2430:#E9EDF2;
-    --t-1c222b:#EEF1F5;
-    --t-1a2029:#EEF1F5;
-    --t-141922:#EEF3F9;
-    --t-0f141b:#FFFFFF;
-    --t-0d1117:#F3F5F8;
+    --t-3a4453:var(--a-cizgi3);
+    --t-2b3340:var(--a-cizgi2);
+    --t-333d4a:var(--a-cizgi2);
+    --t-2a3140:var(--a-cizgi2);
+    --t-2c3542:var(--a-cizgi2);
+    --t-2f3947:var(--a-cizgi2);
+    --t-1b212a:var(--a-iz);
+    --t-1b222c:var(--a-baslik);
+    --t-161c25:var(--a-baslik);
+    --t-1a212b:var(--a-hover);
+    --t-171c25:var(--a-hover);
+    --t-161b23:var(--a-baslik);
+    --t-1a1f27:var(--a-iz);
+    --t-232a34:var(--a-kart2);
+    --t-242c38:var(--a-aktif);
+    --t-1d2430:var(--a-hover);
+    --t-1c222b:var(--a-baslik);
+    --t-1a2029:var(--a-baslik);
+    --t-141922:var(--a-baslik);
+    --t-0f141b:var(--a-ust);
+    --t-0d1117:var(--a-kart2);
     --t-1c2733:#E6F0FA;
     --t-2b3a4b:#C6DAEE;
     --t-2a1f12:#FBF0DC;
     --t-1c150c:#FDF6EA;
     --t-4a3319:#E5C68C;
-    --t-9aa4b2:#FFFFFF;
+    --t-9aa4b2:var(--a-ust);
     --t-14161c:#1A1205;
     --t-1a1205:#1A1205;
     --t-1a1200:#1A1205;
     --t-08220f:#FFFFFF;
-    --t-222a35:#E3E7ED;
-    --t-252d39:#D5DBE3;
+    --t-222a35:var(--a-iz);
+    --t-252d39:var(--a-cizgi2);
     --t-8a94a6:#8A94A6;
-    --p-6ec3ff:#1A6DAA;
-    --p-c9a6ff:#7C4DDB;
-    --p-5eead4:#0F9C88;
-    --p-82cba4:#17734B;
-    --p-8cffb5:#119455;
-    --p-f2c94c:#B07F05;
-    --p-ff8a8a:#D64545;
-    --p-e7c27a:#A8781A;
-    --p-8fe3bc:#1D8F5E;
-    --p-8fb4ff:#3A68D6;
-    --p-ff9494:#D24A4A;
-    --p-ffb3b3:#C94343;
-    --p-f4c871:#A9770F;
-    --p-ffd27a:#A87512;
-    --p-f0b458:#A86D10;
-    --p-f2b84b:#A86D10;
+    --p-6ec3ff:#175F95;
+    --p-c9a6ff:#6A3FC4;
+    --p-5eead4:#0B6E61;
+    --p-82cba4:#146640;
+    --p-8cffb5:#0E7A45;
+    --p-f2c94c:#8C6400;
+    --p-ff8a8a:#B83636;
+    --p-e7c27a:#8A6214;
+    --p-8fe3bc:#16704A;
+    --p-8fb4ff:#2F56B8;
+    --p-ff9494:#B33B3B;
+    --p-ffb3b3:#B03939;
+    --p-f4c871:#8A6100;
+    --p-ffd27a:#8A6100;
+    --p-f0b458:#8F5A00;
+    --p-f2b84b:#8F5A00;
     --p-f0b44a:#94600E;
-    --p-d9801c:#B9650E;
-    --p-e59a9a:#C04848;
-    --p-c9a227:#9C7A10;
-    --p-ff8fb1:#CC3F6E;
-    --p-ff8a65:#D2552B;
-    --p-5ac8c8:#138A8A;
-    --p-e879f9:#B03BC8;
-    --p-e7a83b:#AD5A00;
-    --p-33c07c:#0E7650;
-    --p-ff5c5c:#C52F2F;
+    --p-d9801c:#9B520A;
+    --p-e59a9a:#A63A3A;
+    --p-c9a227:#7F6300;
+    --p-ff8fb1:#A8325A;
+    --p-ff8a65:#AD4420;
+    --p-5ac8c8:#0F6F6F;
+    --p-e879f9:#922FA6;
+    --p-e7a83b:#984E00;
+    --p-33c07c:#0B6A46;
+    --p-ff5c5c:#B32A2A;
     --p-7c8695:#5A6472;
-    --p-9fc4e6:#2F6CA3;
+    --p-9fc4e6:#265A88;
     --t-vurgu:#10151c;
     --golge:rgba(16,24,40,.16);
     color-scheme:light;
@@ -697,15 +713,15 @@
   .ta-ikon svg{width:14px;height:14px;}
   .ta-gunes{margin-left:2px;} .ta-ay{margin-right:2px;}
   .tema-anahtar .ta-ay{color:var(--amber);}
-  :root[data-theme="light"] .ta-top{left:3px;background:#FFFFFF;box-shadow:0 1px 3px rgba(16,24,40,.25);}
+  :root[data-theme="light"] .ta-top{left:3px;background:var(--a-ust);box-shadow:0 1px 3px rgba(70,52,24,.25);}
   :root[data-theme="light"] .tema-anahtar .ta-gunes{color:var(--amber);}
   :root[data-theme="light"] .tema-anahtar .ta-ay{color:var(--muted-2);}
   .tema-anahtar-mobil{display:none;}
   /* Açık temada kartlara çok hafif gölge (beyaz kart açık gri zeminde düz kalmasın); açılır paneller daha yumuşak gölge */
   :root[data-theme="light"] .bolum, :root[data-theme="light"] .ozet-kart, :root[data-theme="light"] .sidebar-kutu, :root[data-theme="light"] .card,
-  :root[data-theme="light"] .kv-bolum, :root[data-theme="light"] .yardim-hero, :root[data-theme="light"] .digital-clock, :root[data-theme="light"] .kart-duzen-btn{box-shadow:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);}
-  :root[data-theme="light"] .bildirim-panel{box-shadow:0 12px 32px rgba(16,24,40,.16);}
-  :root[data-theme="light"] .period-btn.active{background:#FFFFFF;box-shadow:0 1px 2px rgba(16,24,40,.12);}   /* seçili sekme: beyaz hap */
+  :root[data-theme="light"] .kv-bolum, :root[data-theme="light"] .yardim-hero, :root[data-theme="light"] .digital-clock, :root[data-theme="light"] .kart-duzen-btn{box-shadow:0 1px 2px var(--a-golge), 0 1px 3px var(--a-golge);}
+  :root[data-theme="light"] .bildirim-panel{box-shadow:0 12px 32px rgba(70,52,24,.18);}
+  :root[data-theme="light"] .period-btn.active{background:var(--a-ust);box-shadow:0 1px 2px rgba(70,52,24,.14);}   /* seçili sekme: beyaz hap */
   @media (max-width:900px){ .app-bar .tema-anahtar{display:none;} .tema-anahtar-mobil{display:inline-flex;} }
   /* Telefonun üst satırı: ad görünsün diye senkron yazısı "☁ saat"e iner, anahtar biraz küçülür */
   @media (max-width:640px){
@@ -13126,7 +13142,7 @@ function temaUygula(acik){
     b.setAttribute('aria-label', acik ? 'Açık tema' : 'Koyu tema');
     b.title = acik ? 'Açık tema — koyu temaya geçmek için dokun' : 'Koyu tema — açık temaya geçmek için dokun';
   });
-  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = acik ? '#F3F5F8' : '#0A0D12';
+  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = acik ? '#E8E2D6' : '#0A0D12';
 }
 function temaDegistir(){
   const acik = document.documentElement.dataset.theme !== 'light';
