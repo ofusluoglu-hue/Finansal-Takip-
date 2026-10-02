@@ -45,7 +45,7 @@ const IZINLI_ANAHTARLAR = new Set([
 const MAX_DEGER_BAYT = 1500000;      // D1 satır sınırı 2 MB
 const KILIT_ESIK = 8;                // 15 dk içinde bu kadar yanlış deneme → kilit
 const KILIT_PENCERE_MS = 15 * 60 * 1000;
-const OTURUM_SURE_MS = 180 * 24 * 3600 * 1000;   // 180 gün; kullanıldıkça uzar
+const OTURUM_SURE_MS = 60 * 24 * 3600 * 1000;    // 60 gün; kullanıldıkça uzar (60 gün hiç kullanılmayan oturum düşer)
 const SIFRE_ITER = 20000;            // PBKDF2 tekrar sayısı: ücretsiz plan istek başına ~10 ms CPU verir (60 bin ≈ 22 ms). Kullanıcı başına saklanır, ileride artırılabilir.
 const SIFRE_MIN = 8;
 const FOTO_MAX = 120000;             // profil fotoğrafı (panel 192×192 JPEG'e küçültür, ~15–30 KB)
@@ -250,7 +250,8 @@ async function oturumKullanici(request, env) {
   const r = await env.DB.prepare('SELECT s.token_hash, s.expires_at, s.last_seen, u.id, u.email, u.ad, u.role, u.disabled, u.must_change FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ?').bind(ozet).first();
   if (r) {
     if (r.expires_at < simdi || r.disabled) return null;
-    if (simdi - r.last_seen > 3600 * 1000) {   // kullanıldıkça uzar (saatte en fazla bir yazma)
+    // kullanıldıkça uzar (saatte en fazla bir yazma); eski 180 günlük oturumlar ilk kullanımda 60 güne çekilir
+    if (simdi - r.last_seen > 3600 * 1000 || r.expires_at > simdi + OTURUM_SURE_MS) {
       await env.DB.prepare('UPDATE sessions SET last_seen = ?, expires_at = ? WHERE token_hash = ?').bind(simdi, simdi + OTURUM_SURE_MS, ozet).run();
     }
     return { id: r.id, email: r.email, ad: r.ad, role: r.role, must_change: !!r.must_change };

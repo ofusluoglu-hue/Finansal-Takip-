@@ -78,7 +78,7 @@ npx.cmd wrangler deploy
 
 ## Güvenlik
 
-- Giriş e-posta + şifre ile yapılır; sunucu rastgele bir oturum anahtarı verir (180 gün, kullanıldıkça uzar) ve her istek bununla doğrulanır. Şifreler PBKDF2-SHA256 + tuzla, oturum anahtarları yalnızca SHA-256 özetiyle saklanır.
+- Giriş e-posta + şifre ile yapılır; sunucu rastgele bir oturum anahtarı verir (60 gün, kullanıldıkça uzar; 60 gün hiç kullanılmazsa düşer) ve her istek bununla doğrulanır. Şifreler PBKDF2-SHA256 + tuzla, oturum anahtarları yalnızca SHA-256 özetiyle saklanır.
 - Her kullanıcının verisi ayrıdır; Worker her istekte veriyi oturumun sahibine göre okur ve yazar. Yönetici başkasının verisini panelden göremez.
 - Hatalı girişte hangi bilginin yanlış olduğu söylenmez; 15 dakikada 8 hatalı denemede hem o IP hem o e-posta 15 dakika kilitlenir.
 - CORS yalnızca GitHub Pages adresine izin verir.
