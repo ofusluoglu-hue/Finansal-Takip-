@@ -431,32 +431,76 @@ export default {
     }
 
     // ---------- YÖNETİM: kullanıcılar (yalnız yönetici) ----------
-    // ---------- MESAJ KUTUSU (kullanıcı) ----------
-    // GET /mesajlar · POST /mesajlar/okundu {ids:[…]} ya da {hepsi:true} · DELETE /mesajlar/<id> (yalnız kendi kutusundan kaldırır)
+    // ---------- MESAJ KUTUSU ----------
+    // alici: kullanıcı kimliği | '*' (herkese duyuru) | '@yonetici' (kullanıcıdan yöneticilere)
+    // GET /mesajlar → {mesajlar (gelen), gonderilen, okunmamis} · POST /mesajlar {alici?, baslik, metin} (kullanıcı yalnız yöneticiye yazar)
+    // POST /mesajlar/okundu {ids:[…]} | {hepsi:true} · DELETE /mesajlar/<id> (yalnız kendi gelen kutusundan kaldırır)
+    const gelenKosul = "(m.alici = ? OR (m.alici = '*' AND (m.gonderen IS NULL OR m.gonderen != ?))" + (yonetici ? " OR m.alici = '@yonetici'" : '') + ')';
+    const gelenBag = [ben.id, ben.id];
     if (url.pathname === '/mesajlar' && request.method === 'GET') {
       const { results } = await env.DB.prepare(
-        "SELECT m.id, m.baslik, m.metin, m.ts, m.alici, d.okundu, g.ad AS gonderen_ad FROM mesajlar m LEFT JOIN mesaj_durum d ON d.mesaj_id = m.id AND d.user_id = ? LEFT JOIN users g ON g.id = m.gonderen "
-        + "WHERE (m.alici = ? OR m.alici = '*') AND NOT (m.alici = '*' AND m.gonderen = ?) AND d.silindi IS NULL ORDER BY m.ts DESC LIMIT 100"
-      ).bind(ben.id, ben.id, ben.id).all();
-      const mesajlar = (results || []).map(m => ({ id: m.id, baslik: m.baslik, metin: m.metin, ts: m.ts, herkese: m.alici === '*', okundu: !!m.okundu, gonderen: m.gonderen_ad || 'Yönetici' }));
-      return json({ mesajlar, okunmamis: mesajlar.filter(m => !m.okundu).length });
+        'SELECT m.id, m.baslik, m.metin, m.ts, m.alici, m.gonderen, d.okundu, g.ad AS g_ad, g.email AS g_email, g.role AS g_rol FROM mesajlar m '
+        + 'LEFT JOIN mesaj_durum d ON d.mesaj_id = m.id AND d.user_id = ? LEFT JOIN users g ON g.id = m.gonderen '
+        + 'WHERE ' + gelenKosul + ' AND d.silindi IS NULL ORDER BY m.ts DESC LIMIT 100'
+      ).bind(ben.id, ...gelenBag).all();
+      const mesajlar = (results || []).map(m => {
+        const yon = m.g_rol === 'admin';
+        return {
+          id: m.id, baslik: m.baslik, metin: m.metin, ts: m.ts, herkese: m.alici === '*', yoneticiye: m.alici === '@yonetici', okundu: !!m.okundu,
+          // gönderen: yöneticiden gelende ad ya da "Yönetici"; kullanıcıdan gelende (yalnız yönetici görür) ad · e-posta
+          gonderen: yon ? (m.g_ad || 'Yönetici') : (m.g_ad ? m.g_ad + ' · ' + (m.g_email || '') : (m.g_email || 'silinmiş hesap')),
+          // yanıt nereye: kullanıcı her zaman yöneticiye; yönetici gönderen kişiye
+          yanit: !yonetici ? '@yonetici' : (m.gonderen && m.gonderen !== ben.id ? m.gonderen : null),
+        };
+      });
+      const { results: gr } = await env.DB.prepare(
+        "SELECT m.id, m.baslik, m.metin, m.ts, m.alici, u.ad AS a_ad, u.email AS a_email, "
+        + "(SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan "
+        + "FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.gonderen = ? ORDER BY m.ts DESC LIMIT 50"
+      ).bind(ben.id).all();
+      const gonderilen = (gr || []).map(m => ({
+        id: m.id, baslik: m.baslik, metin: m.metin, ts: m.ts, okuyan: m.okuyan,
+        kime: m.alici === '*' ? 'Herkes' : m.alici === '@yonetici' ? 'Yönetici' : (m.a_ad || m.a_email || 'silinmiş hesap'), herkese: m.alici === '*',
+      }));
+      return json({ mesajlar, gonderilen, okunmamis: mesajlar.filter(m => !m.okundu).length });
+    }
+    if (url.pathname === '/mesajlar' && request.method === 'POST') {
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      const baslik = String(g.baslik || '').trim().slice(0, 120), metin = String(g.metin || '').trim().slice(0, 4000);
+      if (!baslik) return json({ error: 'konu yaz' }, 400);
+      if (!metin) return json({ error: 'mesajı yaz' }, 400);
+      let alici = '@yonetici';
+      if (yonetici) {
+        alici = String(g.alici || '');
+        if (alici !== '*') {
+          const u = await env.DB.prepare('SELECT id FROM users WHERE id = ?').bind(alici).first();
+          if (!u) return json({ error: 'alıcı bulunamadı' }, 404);
+        }
+      } else {
+        // kullanıcı: günde en fazla 20 mesaj (kötüye kullanım sınırı)
+        const say = await env.DB.prepare('SELECT COUNT(*) AS n FROM mesajlar WHERE gonderen = ? AND ts > ?').bind(ben.id, Date.now() - 864e5).first();
+        if (say && say.n >= 20) return json({ error: 'bugün için mesaj sınırına ulaştın (20); yarın tekrar yazabilirsin' }, 429);
+      }
+      const id = 'ms_' + b64url(crypto.getRandomValues(new Uint8Array(9)));
+      await env.DB.prepare('INSERT INTO mesajlar (id, alici, gonderen, baslik, metin, ts) VALUES (?, ?, ?, ?, ?, ?)').bind(id, alici, ben.id, baslik, metin, Date.now()).run();
+      return json({ ok: true, id });
     }
     if (url.pathname === '/mesajlar/okundu' && request.method === 'POST') {
       let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
-      const simdi = Date.now(), gorunur = "(alici = ? OR alici = '*')";
-      const ust = 'INSERT INTO mesaj_durum (mesaj_id, user_id, okundu) SELECT id, ?, ? FROM mesajlar WHERE ' + gorunur;
+      const simdi = Date.now();
+      const ust = 'INSERT INTO mesaj_durum (mesaj_id, user_id, okundu) SELECT m.id, ?, ? FROM mesajlar m WHERE ' + gelenKosul;
       const son = ' ON CONFLICT (mesaj_id, user_id) DO UPDATE SET okundu = COALESCE(mesaj_durum.okundu, excluded.okundu)';
-      if (g.hepsi) await env.DB.prepare(ust + son).bind(ben.id, simdi, ben.id).run();
+      if (g.hepsi) await env.DB.prepare(ust + son).bind(ben.id, simdi, ...gelenBag).run();
       else {
         const ids = (Array.isArray(g.ids) ? g.ids : []).map(String).filter(x => /^ms_[\w-]{6,40}$/.test(x)).slice(0, 100);
         if (!ids.length) return json({ ok: true });
-        await env.DB.prepare(ust + ' AND id IN (' + ids.map(() => '?').join(',') + ')' + son).bind(ben.id, simdi, ben.id, ...ids).run();
+        await env.DB.prepare(ust + ' AND m.id IN (' + ids.map(() => '?').join(',') + ')' + son).bind(ben.id, simdi, ...gelenBag, ...ids).run();
       }
       return json({ ok: true });
     }
     if (url.pathname.startsWith('/mesajlar/') && request.method === 'DELETE') {
       const id = decodeURIComponent(url.pathname.slice('/mesajlar/'.length));
-      const m = await env.DB.prepare("SELECT id FROM mesajlar WHERE id = ? AND (alici = ? OR alici = '*')").bind(id, ben.id).first();
+      const m = await env.DB.prepare('SELECT m.id FROM mesajlar m WHERE m.id = ? AND ' + gelenKosul).bind(id, ...gelenBag).first();
       if (!m) return json({ error: 'mesaj bulunamadı' }, 404);
       const simdi = Date.now();
       await env.DB.prepare('INSERT INTO mesaj_durum (mesaj_id, user_id, okundu, silindi) VALUES (?, ?, ?, ?) ON CONFLICT (mesaj_id, user_id) DO UPDATE SET silindi = excluded.silindi, okundu = COALESCE(mesaj_durum.okundu, excluded.okundu)')
@@ -470,7 +514,7 @@ export default {
       if (!yonetici) return json({ error: 'yetki yok' }, 403);
       if (url.pathname === '/admin/mesajlar' && request.method === 'GET') {
         const { results } = await env.DB.prepare(
-          "SELECT m.id, m.alici, m.baslik, m.metin, m.ts, u.email AS alici_email, u.ad AS alici_ad, (SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan FROM mesajlar m LEFT JOIN users u ON u.id = m.alici ORDER BY m.ts DESC LIMIT 100"
+          "SELECT m.id, m.alici, m.baslik, m.metin, m.ts, u.email AS alici_email, u.ad AS alici_ad, (SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.alici != '@yonetici' ORDER BY m.ts DESC LIMIT 100"
         ).all();
         const herkes = await env.DB.prepare('SELECT COUNT(*) AS n FROM users WHERE disabled = 0 AND id != ?').bind(ben.id).first();
         return json({ mesajlar: results || [], herkesSayisi: herkes ? herkes.n : 0 });
@@ -550,8 +594,8 @@ export default {
           await env.DB.batch([
             env.DB.prepare('DELETE FROM ukv WHERE user_id = ?').bind(hedef.id),
             env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(hedef.id),
-            env.DB.prepare('DELETE FROM mesaj_durum WHERE user_id = ? OR mesaj_id IN (SELECT id FROM mesajlar WHERE alici = ?)').bind(hedef.id, hedef.id),
-            env.DB.prepare('DELETE FROM mesajlar WHERE alici = ?').bind(hedef.id),
+            env.DB.prepare('DELETE FROM mesaj_durum WHERE user_id = ? OR mesaj_id IN (SELECT id FROM mesajlar WHERE alici = ? OR gonderen = ?)').bind(hedef.id, hedef.id, hedef.id),
+            env.DB.prepare('DELETE FROM mesajlar WHERE alici = ? OR gonderen = ?').bind(hedef.id, hedef.id),
             env.DB.prepare('DELETE FROM users WHERE id = ?').bind(hedef.id),
           ]);
           return json({ ok: true });

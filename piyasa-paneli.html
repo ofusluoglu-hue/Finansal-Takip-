@@ -523,6 +523,16 @@
   /* Mesaj kutusu (Profilim) */
   #pfMesajBolum{scroll-margin-top:96px;}   /* zilden gelince başlık yapışık üst çubuğun altında kalmasın */
   @media (max-width:900px){ #pfMesajBolum{scroll-margin-top:12px;} }
+  .mesaj-kutu-bas{flex-wrap:wrap;row-gap:8px;}
+  .mesaj-kutu-sag{margin-left:auto;display:flex;align-items:center;gap:8px;}
+  .mesaj-form-kime{display:flex;align-items:center;gap:10px;}
+  .mesaj-tamam{margin:6px 0 4px;padding:8px 12px;border-radius:8px;background:rgba(51,192,124,.1);border:1px solid rgba(51,192,124,.35);color:#82CBA4;font-size:12.5px;}
+  .mesaj-tamam[hidden]{display:none;}
+  .mesaj-dugmeler{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .mesaj-dugmeler .ai-btn{padding:7px 14px;font-size:12.5px;}
+  .mesaj-ust-not{display:flex;justify-content:flex-end;padding:2px 2px 6px;font-size:12px;}
+  .mesaj-ust-not a{color:var(--amber);cursor:pointer;}
+  @media (max-width:640px){ #pfMesajBolum .mesaj-kutu-bas{flex-wrap:wrap;} #pfMesajBolum .mesaj-kutu-sag{margin-left:0;width:100%;justify-content:space-between;} }   /* telefonda sekmeler ve düğme alt satırda: başlık kesilmesin */
   .mesaj-oge{border-top:1px solid var(--border);padding:11px 4px 11px 2px;display:flex;gap:11px;cursor:pointer;}
   .mesaj-oge:first-child{border-top:none;}
   .mesaj-oge:hover{background:var(--panel-2);}
@@ -539,7 +549,7 @@
   .mesaj-metin{font-size:13px;line-height:1.6;color:var(--text);margin-top:8px;white-space:pre-wrap;word-break:break-word;}
   .mesaj-oge.acik .mesaj-onizleme{display:none;}
   .mesaj-oge.acik .mesaj-baslik{white-space:normal;}
-  .mesaj-sil{margin-top:8px;}
+  .mesaj-sil{margin-top:0;}
   .led-dot.amber{background:var(--amber);box-shadow:0 0 5px rgba(231,168,59,.75);}
   .mesaj-etiket{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;padding:1px 6px;border-radius:6px;background:var(--panel-2);color:var(--muted);margin-left:6px;vertical-align:1px;}
   .app-bar-title h1{
@@ -3515,7 +3525,7 @@
       <p><b>Profilim sayfası:</b> Menünün en üstündeki fotoğrafına ve adına tıkla (telefonda en üstteki adına ya da <b>Diğer › Hesap › Profilim</b>). Burada:</p>
       <ul class="kv-liste">
         <li><b>📷 Fotoğraf yükle:</b> telefon ya da bilgisayardan bir fotoğraf seç; kare olarak ortadan kırpılır ve küçültülür. <b>Kaldır</b> ile silersin; yerine adının baş harfleri görünür (ör. “Ayşe Yılmaz” → AY).</li>
-        <li><b>Mesaj kutusu:</b> yöneticinin sana gönderdiği mesajlar ve herkese yaptığı duyurular (<b>DUYURU</b> etiketli) burada, en yenisi üstte. Okunmamış mesaj kalın görünür; sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar, zarfa dokununca kutu en yeni okunmamış mesaj açık gelir. Mesaja dokununca açılır ve okundu sayılır (okundu bilgisi tüm cihazlarında aynıdır); “Kutumdan kaldır” yalnız senin kutundan siler.</li>
+        <li><b>Mesaj kutusu:</b> yöneticinin sana gönderdiği mesajlar ve herkese yaptığı duyurular (<b>DUYURU</b> etiketli) burada, en yenisi üstte. Okunmamış mesaj kalın görünür; sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar, zarfa dokununca kutu en yeni okunmamış mesaj açık gelir. Mesaja dokununca açılır ve okundu sayılır (okundu bilgisi tüm cihazlarında aynıdır); “Kutumdan kaldır” yalnız senin kutundan siler. Sağdaki <b>✉ Yeni mesaj</b> ile yöneticiye yazarsın (bir sorun, öneri); açtığın mesajın altındaki <b>↩ Yanıtla</b> ile cevap verirsin. <b>Gönderilen</b> sekmesinde yazdıklarını ve okunup okunmadığını görürsün. Günde en fazla 20 mesaj gönderilebilir.</li>
         <li><b>Ad soyad:</b> yaz ve <b>Kaydet</b>. Menüde e-postan yerine adın görünür.</li>
         <li><b>Açılış sayfası:</b> panel açılınca ilk hangi sayfanın geleceğini seç (ör. her gün harcama giriyorsan Harcama Takibim).</li>
         <li><b>Bay Piyasa (yapay zekâ):</b> kendi Anthropic API anahtarını ekle, değiştir ya da kaldır. Anahtar doğrulanır ve şifreli saklanır; yönetici hesabında gerekmez.</li>
@@ -3618,7 +3628,7 @@
     <div class="kv-grup-bas">Görünüm</div>
     <details class="kv-bolum kv-sss"><summary>Satırların başındaki yeşil ve kırmızı ışıklar ne demek?</summary><div class="kv-ic"><p><b>Yeşil:</b> değer güncel. Ya bugün güncelledin ya da canlı hesaplanıyor (kur, faiz, fiyat). <b>Kırmızı:</b> değeri en son bugünden önce güncelledin ya da canlı fiyata ulaşılamadı ve son bilinen değer gösteriliyor. Kırmızı bir hata değildir; yalnızca “bunu güncellemek isteyebilirsin” demektir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bildirimler ne zaman gelir? Zildeki kırmızı sayı ne?</summary><div class="kv-ic"><p>Her ödeme son gününden <b>bir gün önce</b> ve <b>son gün</b> bildirim olur (6 Ekim'deki ödeme 5 ve 6 Ekim'de). Bütçesi aşılan ya da %90'ı dolan kategori ve asgarinin altında planlanan kart ödemesi de uyarı olarak gelir. Kırmızı sayı okunmamış bildirimlerdir; dokununca ilgili sayfa açılır, “Tümünü okundu say” sayıyı sıfırlar. Yöneticiden gelen mesajlar zilin yanındaki ✉ zarfta sayılır. Zildekilerin hepsini okundu saymak için zil panelinin başlığındaki <b>✓✓</b> simgesine bas. Bildirimler panel açıkken görünür; telefona ayrıca anlık bildirim (push) gönderilmez.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Mesajlarımı nerede görürüm?</summary><div class="kv-ic"><p><b>Profilim › Mesaj kutusu</b>'nda. Okunmamış mesajın varsa sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar (telefonda en üstteki satırın sağında); zarfa dokununca kutu açılır. Mesajlar yalnız yöneticiden gelir (tek kişiye ya da herkese duyuru); panelden yanıt gönderilmez, bir sorun için Yardım › Destek ve İletişim'deki adrese yazabilirsin.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Mesajlarımı nerede görürüm?</summary><div class="kv-ic"><p><b>Profilim › Mesaj kutusu</b>'nda. Okunmamış mesajın varsa sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar (telefonda en üstteki satırın sağında); zarfa dokununca kutu açılır. Yönetici tek kişiye ya da herkese (duyuru) yazar; sen de kutunun sağındaki <b>✉ Yeni mesaj</b> ile yöneticiye yazabilir, gelen mesajı <b>↩ Yanıtla</b> ile cevaplayabilirsin. Yazdıkların ve okunup okunmadıkları <b>Gönderilen</b> sekmesindedir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor, Kullanım Kılavuzu ve Sık Sorulan Sorular) sağ alttaki <b>Diğer</b> düğmesindedir. Profilim, şifre değiştirme ve çıkış da orada, en alttaki <b>Hesap</b> bölümünde; ayrıca ekranın en üstündeki adına dokunarak da Profilim'e gidersin.</p></div></details>
 
     <div class="kv-grup-bas">Hesap, güvenlik ve Bay Piyasa</div>
@@ -3712,11 +3722,28 @@
     </div>
 
     <div class="bolum" id="pfMesajBolum">
-      <div class="bolum-bas">
+      <div class="bolum-bas mesaj-kutu-bas">
         <span class="bolum-baslik">Mesaj kutusu</span>
         <span class="ku-ipucu" id="pfMesajSay" style="margin:0 0 0 8px;"></span>
-        <button class="bolum-ekle" id="pfMesajHepsi" style="margin-left:auto;" onclick="mesajHepsiOkundu()" hidden>✓ Tümünü okundu say</button>
+        <div class="mesaj-kutu-sag">
+          <div class="period-toggle" role="tablist">
+            <button class="period-btn active" data-kutu="gelen" onclick="mesajSekme('gelen')">Gelen</button>
+            <button class="period-btn" data-kutu="giden" onclick="mesajSekme('giden')">Gönderilen</button>
+          </div>
+          <button class="bolum-ekle" onclick="mesajYazAc()">✉ Yeni mesaj</button>
+        </div>
       </div>
+      <div class="bolum-form" id="pfMesajForm">
+        <div class="mesaj-form-kime"><span class="giris-etiket" style="margin:0;">Kime</span><span id="pmKimeSabit" class="pf-deger">Yönetici</span><select id="pmKime" class="ai-input bolum-secim" style="max-width:320px;" hidden></select></div>
+        <input type="text" id="pmBaslik" class="ai-input" style="width:100%;margin-top:8px;" maxlength="120" placeholder="Konu (ör. Grafik açılmıyor)">
+        <textarea id="pmMetin" class="ai-input" rows="5" maxlength="4000" style="width:100%;margin-top:6px;resize:vertical;font-family:inherit;" placeholder="Mesajın"></textarea>
+        <div class="loan-add-row" style="margin-top:6px;">
+          <button class="ai-btn" id="pmGonder" onclick="mesajYaz()">Gönder</button>
+          <button class="loan-btn-cancel" type="button" onclick="bolumFormAc('pfMesajForm')">Vazgeç</button>
+        </div>
+        <div class="ku-ipucu" id="pmNot">Mesajın yöneticiye gider; yanıtı bu kutuya düşer ve sağ üstteki ✉ zarfta görünür.</div>
+      </div>
+      <div class="mesaj-tamam" id="pmTamam" hidden></div>
       <div id="pfMesajListe" style="padding-bottom:6px;"><div class="bos-not">Mesajlar yükleniyor…</div></div>
     </div>
 
@@ -12299,7 +12326,7 @@ window._bildirimGen = innerWidth;   // başlangıç genişliği: ilk (kendiliği
 window.addEventListener('resize', () => { if(innerWidth !== window._bildirimGen){ window._bildirimGen = innerWidth; bildirimPanelKapat(); } });
 
 // ---------- Mesaj kutusu: yöneticiden gelen mesaj ve duyurular (sunucuda; okundu bilgisi hesap başına, tüm cihazlarda) ----------
-var _mesajlar = null, _acikMesaj = null, _mesajSonCekme = 0;
+var _mesajlar = null, _gidenKutu = [], _acikMesaj = null, _mesajSonCekme = 0, _mesajSekme = 'gelen';
 function mesajZaman(ts){
   const d = new Date(ts), b = new Date(), dun = new Date(b.getFullYear(), b.getMonth(), b.getDate() - 1);
   const saat = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
@@ -12313,7 +12340,8 @@ async function mesajlariCek(){
   try{
     const res = await fetch(MY_WORKER + '/mesajlar', { cache: 'no-store' });
     if(!res.ok) return;
-    _mesajlar = (await res.json()).mesajlar || [];
+    const j = await res.json();
+    _mesajlar = j.mesajlar || []; _gidenKutu = j.gonderilen || [];
   }catch(e){ return; }
   bildirimGuncelle(); renderMesajKutusu();
 }
@@ -12329,6 +12357,52 @@ function mesajHepsiOkundu(){ mesajOku((_mesajlar || []).filter(m => !m.okundu).m
 function mesajTikla(id){
   _acikMesaj = _acikMesaj === id ? null : id;
   mesajOku([id]); renderMesajKutusu();
+}
+function mesajSekme(k){
+  _mesajSekme = k; _acikMesaj = null;
+  document.querySelectorAll('#pfMesajBolum [data-kutu]').forEach(b => b.classList.toggle('active', b.dataset.kutu === k));
+  renderMesajKutusu();
+}
+// Yeni mesaj: kullanıcı yalnız yöneticiye yazar; yönetici herkese ya da bir kişiye
+async function mesajYazAc(alici, baslik){
+  const f = document.getElementById('pfMesajForm'); if(!f) return;
+  const yon = benYonetici(), sec = document.getElementById('pmKime'), sabit = document.getElementById('pmKimeSabit');
+  sec.hidden = !yon; sabit.hidden = yon;
+  if(yon){
+    if(!_kullanicilar.length) await renderKullanicilar();
+    const ben = kullaniciBilgi() || {};
+    sec.innerHTML = '<option value="*">Herkes (duyuru)</option><optgroup label="Kişiye özel">'
+      + _kullanicilar.filter(u => !u.disabled && u.id !== ben.id).map(u => `<option value="${u.id}">${escapeHtml((u.ad ? u.ad + ' — ' : '') + u.email)}</option>`).join('') + '</optgroup>';
+    sec.value = alici && alici !== '@yonetici' ? alici : '*';
+  }
+  document.getElementById('pmNot').textContent = yon ? 'Mesaj alıcının Profilim › Mesaj kutusu’na düşer ve sağ üstteki ✉ zarfta görünür.' : 'Mesajın yöneticiye gider; yanıtı bu kutuya düşer ve sağ üstteki ✉ zarfta görünür.';
+  document.getElementById('pmBaslik').value = baslik || '';
+  document.getElementById('pmTamam').hidden = true;
+  if(!f.classList.contains('acik')) bolumFormAc('pfMesajForm');
+  setTimeout(() => document.getElementById(baslik ? 'pmMetin' : 'pmBaslik').focus(), 30);
+}
+function mesajYanitla(id){
+  const m = (_mesajlar || []).find(x => x.id === id); if(!m) return;
+  mesajYazAc(m.yanit, /^Ynt:/i.test(m.baslik) ? m.baslik : ('Ynt: ' + m.baslik).slice(0, 120));
+  mesajKutusunaKaydir();
+}
+async function mesajYaz(){
+  const bas = document.getElementById('pmBaslik'), mt = document.getElementById('pmMetin'), sec = document.getElementById('pmKime');
+  if(!bas.value.trim()){ showAlertModal('Konu yaz.'); bas.focus(); return; }
+  if(!mt.value.trim()){ showAlertModal('Mesajı yaz.'); mt.focus(); return; }
+  const btn = document.getElementById('pmGonder'); btn.disabled = true;
+  const yon = benYonetici(), alici = yon ? sec.value : '@yonetici';
+  try{
+    const res = await fetch(MY_WORKER + '/mesajlar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ alici, baslik: bas.value.trim(), metin: mt.value.trim() }) });
+    if(!res.ok){ showAlertModal('Gönderilemedi: ' + await sunucuHata(res)); return; }
+    const kime = !yon ? 'yöneticiye' : alici === '*' ? 'herkese' : ((sec.options[sec.selectedIndex] || {}).text || '').split(' — ')[0] + ' adlı kişiye';
+    bas.value = ''; mt.value = '';
+    bolumFormAc('pfMesajForm');
+    const t = document.getElementById('pmTamam'); t.textContent = '✓ Mesajın ' + kime + ' gönderildi. Okunup okunmadığını “Gönderilen”de görebilirsin.'; t.hidden = false;
+    setTimeout(() => { t.hidden = true; }, 8000);
+    await mesajlariCek(); mesajSekme('giden');
+  }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); }
+  finally{ btn.disabled = false; }
 }
 function mesajSil(id){
   showConfirmModal('Bu mesaj kutundan kaldırılsın mı?', async () => {
@@ -12360,21 +12434,38 @@ function mesajKutusunaKaydir(){ setTimeout(() => { const el = document.getElemen
 function renderMesajKutusu(){
   const kap = document.getElementById('pfMesajListe'); if(!kap) return;
   const L = _mesajlar, n = (L || []).filter(m => !m.okundu).length;
-  istYaz('pfMesajSay', L && L.length ? (n ? n + ' okunmamış' : 'hepsi okundu') : '');
-  const hb = document.getElementById('pfMesajHepsi'); if(hb) hb.hidden = !n;
+  istYaz('pfMesajSay', L && L.length ? (n ? n + ' okunmamış' : '') : '');
   if(L == null){ kap.innerHTML = '<div class="bos-not">Mesajlar yükleniyor…</div>'; return; }
-  if(!L.length){ kap.innerHTML = '<div class="bos-not">Henüz mesajın yok. Yöneticinin gönderdiği mesaj ve duyurular burada görünür; yenisi gelince 🔔 zilde de haber verilir.</div>'; return; }
   const ik = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + BILDIRIM_IKON.mektup + '</svg>';
-  kap.innerHTML = L.map(m => `<div class="mesaj-oge${m.okundu ? '' : ' okunmadi'}${_acikMesaj === m.id ? ' acik' : ''}" onclick="mesajTikla('${m.id}')">
+  const giden = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>';
+  if(_mesajSekme === 'giden'){
+    const G = _gidenKutu || [];
+    kap.innerHTML = G.length ? G.map(m => {
+      const okuma = m.herkese ? m.okuyan + ' kişi okudu' : (m.okuyan ? '<span style="color:var(--up);">okundu ✓</span>' : 'henüz okunmadı');
+      return `<div class="mesaj-oge${_acikMesaj === m.id ? ' acik' : ''}" onclick="_acikMesaj = _acikMesaj === '${m.id}' ? null : '${m.id}'; renderMesajKutusu();">
+        <span class="mesaj-ikon">${giden}</span>
+        <div class="mesaj-ana">
+          <div class="mesaj-ust"><span class="mesaj-baslik">${escapeHtml(m.baslik)}</span><span class="mesaj-tarih">${mesajZaman(m.ts)}</span></div>
+          <div class="mesaj-kimden">Kime: ${escapeHtml(m.kime)} · ${okuma}</div>
+          <div class="mesaj-onizleme">${escapeHtml(m.metin.split('\n')[0])}</div>
+          ${_acikMesaj === m.id ? `<div class="mesaj-metin">${escapeHtml(m.metin)}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('') : '<div class="bos-not">Henüz mesaj göndermedin. Bir sorunun ya da önerin varsa “✉ Yeni mesaj” ile yöneticiye yazabilirsin.</div>';
+    return;
+  }
+  if(!L.length){ kap.innerHTML = '<div class="bos-not">Henüz mesajın yok. Yöneticinin gönderdiği mesaj ve duyurular burada görünür; yenisi gelince sağ üstteki ✉ zarfta sayı çıkar. Sen de “✉ Yeni mesaj” ile yöneticiye yazabilirsin.</div>'; return; }
+  kap.innerHTML = (n ? `<div class="mesaj-ust-not"><a onclick="mesajHepsiOkundu()">✓ Tümünü okundu say</a></div>` : '') + L.map(m => `<div class="mesaj-oge${m.okundu ? '' : ' okunmadi'}${_acikMesaj === m.id ? ' acik' : ''}" onclick="mesajTikla('${m.id}')">
       <span class="mesaj-ikon">${ik}</span>
       <div class="mesaj-ana">
         <div class="mesaj-ust"><span class="mesaj-baslik">${escapeHtml(m.baslik)}</span><span class="mesaj-tarih">${mesajZaman(m.ts)}</span></div>
-        <div class="mesaj-kimden">${escapeHtml(m.gonderen)}${m.herkese ? '<span class="mesaj-etiket">DUYURU</span>' : ''}</div>
+        <div class="mesaj-kimden">${escapeHtml(m.gonderen)}${m.herkese ? '<span class="mesaj-etiket">DUYURU</span>' : ''}${m.yoneticiye ? '<span class="mesaj-etiket">KULLANICIDAN</span>' : ''}</div>
         <div class="mesaj-onizleme">${escapeHtml(m.metin.split('\n')[0])}</div>
-        ${_acikMesaj === m.id ? `<div class="mesaj-metin">${escapeHtml(m.metin)}</div><button class="loan-btn-cancel mesaj-sil" onclick="event.stopPropagation();mesajSil('${m.id}')">Kutumdan kaldır</button>` : ''}
+        ${_acikMesaj === m.id ? `<div class="mesaj-metin">${escapeHtml(m.metin)}</div><div class="mesaj-dugmeler">${m.yanit ? `<button class="ai-btn" onclick="event.stopPropagation();mesajYanitla('${m.id}')">↩ Yanıtla</button>` : ''}<button class="loan-btn-cancel mesaj-sil" onclick="event.stopPropagation();mesajSil('${m.id}')">Kutumdan kaldır</button></div>` : ''}
       </div>
     </div>`).join('');
 }
+
 
 // ---------- Yönetici: mesaj gönder (Kullanıcılar sayfası) ----------
 var _gonderilen = [], _herkesSayisi = 0;
