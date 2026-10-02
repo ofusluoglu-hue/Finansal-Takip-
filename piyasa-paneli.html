@@ -948,7 +948,7 @@
   .grid{
     display:grid;
     grid-template-columns:repeat(6, 1fr);
-    gap:10px;
+    gap:8px;
   }
   @media (max-width:980px){
     .grid{grid-template-columns:repeat(3, 1fr);}
@@ -963,12 +963,12 @@
     border:1px solid var(--border);
     border-left:3px solid var(--border);
     border-radius:10px;
-    padding:10px 13px 9px;
+    padding:8px 13px 7px;   /* dikeyde sıkı: 3 satır kart + grafik dizüstü ekrana sığsın */
     min-height:0;
     display:flex;
     flex-direction:column;
     justify-content:flex-start;
-    gap:5px;
+    gap:3px;
     transition:border-left-color .3s ease;
     position:relative;
     overflow:hidden;
@@ -1103,7 +1103,7 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .card-seanslar{margin-top:1px;padding-top:4px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:1px;font-size:10.5px;line-height:1.3;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .card-seanslar{margin-top:1px;padding-top:3px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:0;font-size:10.5px;line-height:1.25;color:var(--muted);font-variant-numeric:tabular-nums;}
   .card-seanslar:empty{display:none;}
   .card-seanslar div{display:flex;align-items:baseline;gap:6px;white-space:nowrap;overflow:hidden;}
   .card-seanslar .s-ad{min-width:54px;color:var(--muted-2);}
@@ -1155,7 +1155,7 @@
   }
 
   .chart-panel{
-    margin-top:20px;
+    margin-top:14px;
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:12px;
