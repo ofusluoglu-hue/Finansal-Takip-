@@ -13828,7 +13828,11 @@ async function kapYukle(zorla){
   if(_kapYukleniyor || (!zorla && _kapVeri && Date.now() - _kapZaman < 10 * 60 * 1000)){ kapCiz(); return; }
   _kapYukleniyor = true; kapCiz();
   try{
-    const sonuc = await Promise.all(kodlar.map(k => kapHaberCek(k).catch(() => null)));
+    // Sayfa açılışında onlarca fiyat isteğiyle yarışınca zaman aşımı olabiliyor → her hisse 2 sn sonra bir kez daha denenir
+    const sonuc = await Promise.all(kodlar.map(k => kapHaberCek(k)
+      .catch(() => new Promise(r => setTimeout(r, 2000)).then(() => kapHaberCek(k)))
+      .catch(e => { console.warn('KAP haberleri alınamadı:', k, e && e.message); return null; })));
+    if(sonuc.every(x => x === null)){ _kapHata = true; return; }   // eski liste (varsa) ekranda kalır; 10 dk sonra ya da Yenile ile tekrar
     const grup = new Map();
     sonuc.flat().filter(Boolean).sort((a, b) => b.ts - a.ts).forEach(x => {
       const g = grup.get(x.anahtar), gun = new Date(x.ts).toDateString();
@@ -13836,7 +13840,7 @@ async function kapYukle(zorla){
     });
     _kapVeri = [...grup.values()].map(x => ({ ...x, tekrar: x.gunler.size })).slice(0, 40);
     _kapZaman = Date.now();
-    _kapHata = sonuc.every(x => x === null);
+    _kapHata = false;
   }catch(e){ _kapHata = true; }
   finally{ _kapYukleniyor = false; kapCiz(); }
 }
@@ -13857,8 +13861,8 @@ function kapCiz(){
   const L = veri.filter(x => !yalnizKap || x.kapMi);
   istYaz('kapDurum', _kapYukleniyor ? 'yükleniyor…' : _kapZaman ? 'güncellendi ' + new Date(_kapZaman).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '');
   const liste = document.getElementById('kapListe');
+  if(_kapHata && !veri.length && !_kapYukleniyor){ liste.innerHTML = '<div class="bos-not">Haber kaynağına şu an ulaşılamadı; biraz sonra “↻ Yenile”yi dene.</div>'; return; }
   if(_kapVeri == null){ liste.innerHTML = '<div class="bos-not">Bildirimler yükleniyor…</div>'; return; }
-  if(_kapHata && !veri.length){ liste.innerHTML = '<div class="bos-not">Haber kaynağına şu an ulaşılamadı; biraz sonra “↻ Yenile”yi dene.</div>'; return; }
   if(!L.length){ liste.innerHTML = '<div class="bos-not">Son ' + KAP_GUN + ' günde ' + (yalnizKap ? 'KAP bildirimi' : 'haber') + ' bulunamadı.</div>'; return; }
   const gorunen = _kapTumu ? L : L.slice(0, KAP_ILK);
   liste.innerHTML = gorunen.map(x => {
