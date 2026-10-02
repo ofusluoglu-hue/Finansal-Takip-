@@ -1609,10 +1609,12 @@
   .bp-msg{display:flex;gap:10px;min-width:0;}
   .bp-msg.user{justify-content:flex-end;}
   .bp-avatar{
-    width:30px;height:30px;border-radius:50%;flex-shrink:0;margin-top:2px;
-    background:linear-gradient(135deg,var(--amber),#e0871f);color:#1a1200;
-    font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;
+    width:40px;height:40px;border-radius:50%;flex-shrink:0;margin-top:0;overflow:hidden;
+    background:linear-gradient(135deg,#f2b84b,#d9801c);
+    box-shadow:0 0 0 2px rgba(231,168,59,.25);
+    display:flex;align-items:center;justify-content:center;
   }
+  .bp-avatar svg{width:100%;height:100%;display:block;}
   .bp-bubble{border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.65;min-width:0;}
   .bp-msg.user .bp-bubble{background:#1c2733;border:1px solid #2b3a4b;white-space:pre-wrap;max-width:min(82%,640px);}
   .bp-msg.bot .bp-bubble{background:var(--panel-2);border:1px solid var(--border);flex:1;max-width:860px;}
@@ -1663,7 +1665,7 @@
 
   /* Boş durum */
   .bp-empty{margin:auto;text-align:center;max-width:540px;padding:20px 10px;}
-  .bp-empty .bp-avatar{width:48px;height:48px;font-size:16px;margin:0 auto;}
+  .bp-empty .bp-avatar{width:88px;height:88px;margin:0 auto;box-shadow:0 0 0 4px rgba(231,168,59,.18), 0 8px 24px rgba(0,0,0,.35);}
   .bp-empty h2{font-size:20px;margin:12px 0 6px;}
   .bp-empty p{color:var(--muted);font-size:13.5px;line-height:1.6;margin:0 0 14px;}
   .bp-orneks{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
@@ -6639,6 +6641,8 @@ function renderIstatistik(){
 const AI_ENDPOINT = MY_WORKER + '/ai';
 
 const BP_KEY = 'ft_bay_piyasa_v1';
+// Bay Piyasa karakteri (Benjamin Graham'ın "Mr. Market"i): silindir şapka, yuvarlak gözlük, bıyık, papyon — sarı daire zemin CSS'te
+const BP_AVATAR_SVG = '<svg viewBox="6 4 52 52" aria-hidden="true"><path d="M8 66C10 51 21 45.5 32 45.5S54 51 56 66Z" fill="#1d2a3a"/><path d="M26.5 46 32 55 37.5 46Z" fill="#f4f1ea"/><rect x="28.5" y="39.5" width="7" height="7.5" rx="2" fill="#e2ad83"/><circle cx="20.8" cy="32.5" r="2.6" fill="#eab98f"/><circle cx="43.2" cy="32.5" r="2.6" fill="#eab98f"/><ellipse cx="32" cy="31.5" rx="11" ry="12" fill="#f3c9a0"/><circle cx="27.2" cy="30.6" r="3.7" fill="rgba(255,255,255,.35)" stroke="#1d2a3a" stroke-width="1.6"/><circle cx="36.8" cy="30.6" r="3.7" fill="rgba(255,255,255,.35)" stroke="#1d2a3a" stroke-width="1.6"/><path d="M30.9 30.4h2.2" stroke="#1d2a3a" stroke-width="1.6"/><circle cx="27.2" cy="30.9" r="1.1" fill="#1d2a3a"/><circle cx="36.8" cy="30.9" r="1.1" fill="#1d2a3a"/><path d="M24.8 37.6Q28.4 35 32 37.1Q35.6 35 39.2 37.6Q35.6 39.4 32 38.4Q28.4 39.4 24.8 37.6Z" fill="#6b4426"/><path d="M29.2 40.9Q32 42.7 34.8 40.9" fill="none" stroke="#8a4b2c" stroke-width="1.3" stroke-linecap="round"/><rect x="23" y="5.5" width="18" height="15.5" rx="2.2" fill="#1d2a3a"/><rect x="23" y="15.6" width="18" height="3.2" fill="#33C07C"/><rect x="18.5" y="19.6" width="27" height="3.6" rx="1.8" fill="#1d2a3a"/><path d="M27.6 48.4 32 50.6 27.6 52.8Z M36.4 48.4 32 50.6 36.4 52.8Z" fill="#33C07C"/><circle cx="32" cy="50.6" r="1.4" fill="#2aa36a"/></svg>';
 
 // Resmi fiyatlar (USD / milyon token). cw: 5 dk önbellek yazma, cr: önbellek okuma
 const BP_FIYAT = {
@@ -7038,7 +7042,7 @@ function bpMesajHtml(m, i){
     return `<div class="bp-msg user"><div class="bp-bubble">${escapeHtml(m.t)}${m.ek ? '<div class="bp-ekgoster">📎 ' + escapeHtml(m.ek) + '</div>' : ''}</div></div>`;
   }
   if(m.hata){
-    return `<div class="bp-msg bot hata"><div class="bp-avatar">BP</div><div class="bp-bubble">${escapeHtml(m.t)}</div></div>`;
+    return `<div class="bp-msg bot hata"><div class="bp-avatar">${BP_AVATAR_SVG}</div><div class="bp-bubble">${escapeHtml(m.t)}</div></div>`;
   }
   const k = m.kullanim || {};
   const girdi = (k.input_tokens || 0) + (k.cache_creation_input_tokens || 0) + (k.cache_read_input_tokens || 0);
@@ -7054,7 +7058,7 @@ function bpMesajHtml(m, i){
     arama ? arama + ' arama' : '',
     '≈ ' + bpPara(m.maliyet || 0),
   ].filter(Boolean).join(' · ');
-  return `<div class="bp-msg bot"><div class="bp-avatar">BP</div><div class="bp-bubble">
+  return `<div class="bp-msg bot"><div class="bp-avatar">${BP_AVATAR_SVG}</div><div class="bp-bubble">
     <div class="bp-md">${bpMd(m.t)}</div>
     <div class="bp-meta"><span>${meta}</span>${kaynak}<button class="bp-copy" onclick="bpKopyala(${i}, this)">Kopyala</button></div>
   </div></div>`;
@@ -7067,7 +7071,7 @@ function bpRenderThread(yaziyor){
   if(!chat || !chat.mesajlar.length){
     const paylas = bp.ayar.paylas;
     el.innerHTML = `<div class="bp-empty">
-      <div class="bp-avatar">BP</div>
+      <div class="bp-avatar">${BP_AVATAR_SVG}</div>
       <h2>Merhaba, ben Bay Piyasa</h2>
       <p>Piyasayı, haberleri ${paylas ? 've senin portföyünü ' : ''}bilen sohbet asistanınım. ${paylas ? '' : 'Portföyünü görmemi istersen üstteki <b>Portföyümü paylaş</b> anahtarını aç. '}Bir şey sor ya da aşağıdan hazır bir rapor seç.</p>
       <div class="bp-orneks">
@@ -7078,7 +7082,7 @@ function bpRenderThread(yaziyor){
     return;
   }
   el.innerHTML = chat.mesajlar.map(bpMesajHtml).join('')
-    + (yaziyor ? '<div class="bp-msg bot"><div class="bp-avatar">BP</div><div class="bp-bubble"><span class="bp-typing"><i></i><i></i><i></i></span></div></div>' : '');
+    + (yaziyor ? '<div class="bp-msg bot"><div class="bp-avatar">' + BP_AVATAR_SVG + '</div><div class="bp-bubble"><span class="bp-typing"><i></i><i></i><i></i></span></div></div>' : '');
   el.scrollTop = el.scrollHeight;
 }
 
