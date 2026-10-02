@@ -91,17 +91,17 @@
   /* ---------- Açık tema (data-theme="light"): göz yormayan kırık beyaz zemin, koyu gri yazı, koyulaştırılmış vurgu renkleri ---------- */
   :root[data-theme="light"]{
     /* Açık tema yüzeyleri: beyaza yakın, hafif sıcak krem (saf beyaz gibi göz almasın) — bütün açık renkler buradan türer */
-    --a-zemin:#F8F7F4;
-    --a-kart:#FEFEFD;
-    --a-kart2:#FAF9F7;
+    --a-zemin:#FAF9F7;
+    --a-kart:#FFFFFF;
+    --a-kart2:#FBFAF8;
     --a-ust:#FFFFFF;
-    --a-baslik:#F9F8F5;
-    --a-hover:#F4F2EE;
-    --a-aktif:#EDEAE4;
-    --a-iz:#EDEAE4;
-    --a-cizgi:#E8E5DF;
-    --a-cizgi2:#DAD6CE;
-    --a-cizgi3:#AEA9A0;
+    --a-baslik:#FAF9F6;
+    --a-hover:#F5F3F0;
+    --a-aktif:#EEECE7;
+    --a-iz:#EEECE7;
+    --a-cizgi:#EAE7E2;
+    --a-cizgi2:#DCD8D1;
+    --a-cizgi3:#AFAAA2;
     --a-yazi:#26211A;
     --a-soluk:#5A5246;
     --a-soluk2:#6B6356;
@@ -13142,7 +13142,7 @@ function temaUygula(acik){
     b.setAttribute('aria-label', acik ? 'Açık tema' : 'Koyu tema');
     b.title = acik ? 'Açık tema — koyu temaya geçmek için dokun' : 'Koyu tema — açık temaya geçmek için dokun';
   });
-  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = acik ? '#F8F7F4' : '#0A0D12';
+  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = acik ? '#FAF9F7' : '#0A0D12';
 }
 function temaDegistir(){
   const acik = document.documentElement.dataset.theme !== 'light';
