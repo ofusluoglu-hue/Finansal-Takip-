@@ -533,7 +533,9 @@
   .bildirim-oge.bilgi .bildirim-ikon{background:rgba(110,195,255,.14);color:#6EC3FF;}
   .bildirim-oge.bilgi .bildirim-zaman{color:#6EC3FF;}
   #mesajPanel .bildirim-metin{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  #mesajPanel .bildirim-oge:not(.okunmadi){border-left-color:transparent;}
+  #mesajPanel .bildirim-oge:not(.okunmadi){border-left-color:transparent;opacity:.55;}   /* okunan listede kalır, soluk */
+  #mesajPanel .bildirim-oge:not(.okunmadi):hover{opacity:.85;}
+  .mesaj-oge:not(.okunmadi):not(.acik) .mesaj-ana{opacity:.7;}
   .mesaj-oge{scroll-margin-top:110px;}
   @media (max-width:900px){ .mesaj-oge{scroll-margin-top:16px;} }
   /* Zarf (mesajlar): zilin solunda, aynı biçim ve aynı kırmızı sayı; dokununca Profilim › Mesaj kutusu */
@@ -3763,7 +3765,7 @@
       <p><b>Profilim sayfası:</b> Menünün en üstündeki fotoğrafına ve adına tıkla (telefonda en üstteki adına ya da <b>Diğer › Hesap › Profilim</b>). Burada:</p>
       <ul class="kv-liste">
         <li><b>📷 Fotoğraf yükle:</b> telefon ya da bilgisayardan bir fotoğraf seç; kare olarak ortadan kırpılır ve küçültülür. <b>Kaldır</b> ile silersin; yerine adının baş harfleri görünür (ör. “Ayşe Yılmaz” → AY).</li>
-        <li><b>Mesaj kutusu:</b> yöneticinin sana gönderdiği mesajlar ve herkese yaptığı duyurular (<b>DUYURU</b> etiketli) burada, en yenisi üstte. Okunmamış mesaj kalın görünür; sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar, Zarfa dokununca zil gibi bir liste açılır (son mesajlar, okunmamışlar mavi noktalı); bir mesaja dokununca Profilim'de o mesaj açık gelir. Mesaja dokununca açılır ve okundu sayılır (okundu bilgisi tüm cihazlarında aynıdır); “Kutumdan kaldır” yalnız senin kutundan siler. Sağdaki <b>✉ Yeni mesaj</b> ile yöneticiye yazarsın (bir sorun, öneri); açtığın mesajın altındaki <b>↩ Yanıtla</b> ile cevap verirsin. <b>Gönderilen</b> sekmesinde yazdıklarını ve okunup okunmadığını görürsün. Günde en fazla 20 mesaj gönderilebilir. <b>Toplu silme:</b> mesajların solundaki kutucukları işaretle (ya da <b>Tümünü seç</b>) ve <b>🗑 Sil</b>'e bas. Gelenler yalnız senin kutundan, gönderilenler yalnız senin listenden kalkar; alıcının kutusunda kalır.</li>
+        <li><b>Mesaj kutusu:</b> yöneticinin sana gönderdiği mesajlar ve herkese yaptığı duyurular (<b>DUYURU</b> etiketli) burada, en yenisi üstte. Okunmamış mesaj kalın görünür; sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar, Zarfa dokununca zil gibi bir liste açılır: okunmamışlar parlak ve mavi noktalı, okunanlar listede soluk kalır; bir mesaja dokununca Profilim'de o mesaj açık gelir. Yöneticinin herkese gönderdiği duyuru kendi zarfına da düşer. Mesaja dokununca açılır ve okundu sayılır (okundu bilgisi tüm cihazlarında aynıdır); “Kutumdan kaldır” yalnız senin kutundan siler. Sağdaki <b>✉ Yeni mesaj</b> ile yöneticiye yazarsın (bir sorun, öneri); açtığın mesajın altındaki <b>↩ Yanıtla</b> ile cevap verirsin. <b>Gönderilen</b> sekmesinde yazdıklarını ve okunup okunmadığını görürsün. Günde en fazla 20 mesaj gönderilebilir. <b>Toplu silme:</b> mesajların solundaki kutucukları işaretle (ya da <b>Tümünü seç</b>) ve <b>🗑 Sil</b>'e bas. Gelenler yalnız senin kutundan, gönderilenler yalnız senin listenden kalkar; alıcının kutusunda kalır.</li>
         <li><b>Ad soyad:</b> yaz ve <b>Kaydet</b>. Menüde e-postan yerine adın görünür.</li>
         <li><b>Açılış sayfası:</b> panel açılınca ilk hangi sayfanın geleceğini seç (ör. her gün harcama giriyorsan Harcama Takibim).</li>
         <li><b>Bay Piyasa (yapay zekâ):</b> kendi Anthropic API anahtarını ekle, değiştir ya da kaldır. Anahtar doğrulanır ve şifreli saklanır; yönetici hesabında gerekmez.</li>
@@ -4121,7 +4123,7 @@
         <textarea id="kmMetin" class="ai-input" rows="4" maxlength="4000" style="width:100%;margin-top:6px;resize:vertical;font-family:inherit;" placeholder="Mesajın"></textarea>
         <div class="loan-add-row" style="margin-top:6px;"><button class="ai-btn" id="kmGonder" onclick="mesajGonder()">Gönder</button></div>
         <div class="ku-ipucu" id="kmNot" style="color:var(--amber);"></div>
-        <div class="ku-ipucu">Alıcı listesinde “Herkes” ya da “Kişiye özel” altından bir e-posta seç. Mesaj alıcının Profilim › Mesaj kutusu'na düşer ve zilde bildirim olarak görünür. “Herkes” seçersen tüm açık hesaplara duyuru olur (sana gelmez).</div>
+        <div class="ku-ipucu">Alıcı listesinde “Herkes” ya da “Kişiye özel” altından bir e-posta seç. Mesaj alıcının Profilim › Mesaj kutusu’na düşer ve sağ üstteki ✉ zarfta sayı olarak görünür. “Herkes” seçersen tüm açık hesaplara duyuru olur; senin zarfına da düşer (alıcıların gördüğü gibi görürsün).</div>
       </div>
       <div id="kuMesajListe"><div class="bos-not">Yükleniyor…</div></div>
     </div>
@@ -12902,7 +12904,7 @@ async function mesajGonder(){
     if(!res.ok){ showAlertModal('Gönderilemedi: ' + await sunucuHata(res)); return; }
     bas.value = ''; mt.value = '';
     bolumFormAc('kuMesajForm');
-    renderGonderilen();
+    renderGonderilen(); mesajlariCek();   // kendi duyurusu da zarfa hemen düşsün
   }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); }
   finally{ btn.disabled = false; }
 }

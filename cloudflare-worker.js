@@ -437,8 +437,9 @@ export default {
     // alici: kullanıcı kimliği | '*' (herkese duyuru) | '@yonetici' (kullanıcıdan yöneticilere)
     // GET /mesajlar → {mesajlar (gelen), gonderilen, okunmamis} · POST /mesajlar {alici?, baslik, metin} (kullanıcı yalnız yöneticiye yazar)
     // POST /mesajlar/okundu {ids:[…]} | {hepsi:true} · DELETE /mesajlar/<id> (yalnız kendi gelen kutusundan kaldırır)
-    const gelenKosul = "(m.alici = ? OR (m.alici = '*' AND (m.gonderen IS NULL OR m.gonderen != ?))" + (yonetici ? " OR m.alici = '@yonetici'" : '') + ')';
-    const gelenBag = [ben.id, ben.id];
+    // Herkese duyuru gönderenin kutusuna da düşer (alıcıların gördüğü gibi görür; okununca soluk kalır)
+    const gelenKosul = "(m.alici = ? OR m.alici = '*'" + (yonetici ? " OR m.alici = '@yonetici'" : '') + ')';
+    const gelenBag = [ben.id];
     if (url.pathname === '/mesajlar' && request.method === 'GET') {
       const { results } = await env.DB.prepare(
         'SELECT m.id, m.baslik, m.metin, m.ts, m.alici, m.gonderen, d.okundu, g.ad AS g_ad, g.email AS g_email, g.role AS g_rol FROM mesajlar m '
@@ -457,7 +458,7 @@ export default {
       });
       const { results: gr } = await env.DB.prepare(
         "SELECT m.id, m.baslik, m.metin, m.ts, m.alici, u.ad AS a_ad, u.email AS a_email, "
-        + "(SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan "
+        + "(SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL AND (m.gonderen IS NULL OR d.user_id != m.gonderen)) AS okuyan "
         + "FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.gonderen = ? AND m.gonderen_sildi IS NULL ORDER BY m.ts DESC LIMIT 50"
       ).bind(ben.id).all();
       const gonderilen = (gr || []).map(m => ({
@@ -529,7 +530,7 @@ export default {
       if (!yonetici) return json({ error: 'yetki yok' }, 403);
       if (url.pathname === '/admin/mesajlar' && request.method === 'GET') {
         const { results } = await env.DB.prepare(
-          "SELECT m.id, m.alici, m.baslik, m.metin, m.ts, u.email AS alici_email, u.ad AS alici_ad, (SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL) AS okuyan FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.alici != '@yonetici' AND m.gonderen_sildi IS NULL ORDER BY m.ts DESC LIMIT 100"
+          "SELECT m.id, m.alici, m.baslik, m.metin, m.ts, u.email AS alici_email, u.ad AS alici_ad, (SELECT COUNT(*) FROM mesaj_durum d WHERE d.mesaj_id = m.id AND d.okundu IS NOT NULL AND (m.gonderen IS NULL OR d.user_id != m.gonderen)) AS okuyan FROM mesajlar m LEFT JOIN users u ON u.id = m.alici WHERE m.alici != '@yonetici' AND m.gonderen_sildi IS NULL ORDER BY m.ts DESC LIMIT 100"
         ).all();
         const herkes = await env.DB.prepare('SELECT COUNT(*) AS n FROM users WHERE disabled = 0 AND id != ?').bind(ben.id).first();
         return json({ mesajlar: results || [], herkesSayisi: herkes ? herkes.n : 0 });
