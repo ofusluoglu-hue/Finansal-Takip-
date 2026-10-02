@@ -7969,7 +7969,7 @@ async function bpGonder(metinParam, opsiyon){
       }
       return data;
     };
-    let cevap = '', maliyet = 0, kesik = false;
+    let cevap = '', maliyet = 0, kesik = false, kisitKalkti = false;
     const kullanim = {}, kaynaklar = [], goruldu = new Set();
     for(let tur = 0; tur < 3; tur++){
       const data = tur === 0
@@ -7990,11 +7990,13 @@ async function bpGonder(metinParam, opsiyon){
       maliyet += bpMaliyet(model, data.usage);
       Object.entries(data.usage || {}).forEach(([k, v]) => { if(typeof v === 'number') kullanim[k] = (kullanim[k] || 0) + v; else if(v && typeof v === 'object' && !kullanim[k]) kullanim[k] = v; });
       kesik = data.stop_reason === 'max_tokens';
+      if(data._kaynakKisiti === 'kaldirildi') kisitKalkti = true;   // sunucu güvenilir kaynak listesini uygulayamadı
       if(!kesik || !parca.trim()) break;
     }
     cevap = cevap.trim();
     if(!cevap) throw new Error('Boş yanıt döndü');
     if(kesik) cevap += '\n\n*(Cevap uzunluk sınırında kesildi — "devam et" yazabilirsin.)*';
+    if(kisitKalkti) cevap += '\n\n*(Not: bu cevapta arama güvenilir kaynak listesiyle sınırlanamadı; kaynakları kontrol et.)*';
 
     chat.mesajlar.push({ r:'bot', t: cevap, ts: Date.now(), model, kullanim, maliyet, kaynaklar });
     bpHarcamaEkle(maliyet);

@@ -776,18 +776,29 @@ export default {
           body: JSON.stringify(b),
         });
         try {
-          let upstream = await gonder(body);
-          // Güvence: arama aracı kaynak listesi/konum yüzünden reddedilirse aynı istek bir kez sınırsız aramayla denenir
-          if (upstream.status === 400 && body.tools) {
-            const hata = await upstream.clone().json().catch(() => ({}));
-            const m = JSON.stringify(hata).toLowerCase();
-            if (/allowed_domains|user_location|domain|tool/.test(m)) {
-              body.tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: body.tools[0].max_uses }];
+          let upstream = await gonder(body), kisit = body.tools ? 'uygulandi' : null;
+          // Güvence (kademeli): arama aracı reddedilirse önce konum çıkarılır (kaynak listesi korunur), o da olmazsa liste kaldırılır.
+          // Her adım günlüğe yazılır (wrangler tail) ve cevaba `_kaynakKisiti` eklenir; panel kısıt kalktıysa bunu gösterir.
+          const reddedildi = async () => {
+            if (upstream.status !== 400 || !body.tools) return false;
+            const m = JSON.stringify(await upstream.clone().json().catch(() => ({}))).toLowerCase();
+            console.log('ai web_search 400:', m.slice(0, 400));
+            return /allowed_domains|user_location|domain|tool|web_search/.test(m);
+          };
+          if (await reddedildi()) {
+            const { user_location, ...konumsuz } = body.tools[0];
+            body.tools = [konumsuz]; kisit = 'uygulandi-konumsuz';
+            upstream = await gonder(body);
+            if (await reddedildi()) {
+              body.tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: konumsuz.max_uses }]; kisit = 'kaldirildi';
               upstream = await gonder(body);
             }
           }
+          if (kisit) console.log('ai web_search kaynak kısıtı:', kisit, '· durum', upstream.status);
           if (anahtarHatasi(upstream.status)) return hataVer('Anthropic anahtarın reddedildi (geçersiz, iptal edilmiş ya da bakiyesi yok). Profilim › Bay Piyasa’dan kontrol et.', 'anahtar_gecersiz', 400);
-          return json(await upstream.json(), upstream.status);
+          const cevap = await upstream.json();
+          if (kisit && cevap && typeof cevap === 'object') cevap._kaynakKisiti = kisit;
+          return json(cevap, upstream.status);
         } catch (e) {
           return json({ error: 'AI isteği başarısız: ' + e.message }, 502);
         }
