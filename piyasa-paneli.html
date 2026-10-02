@@ -517,10 +517,9 @@
   .bildirim-oge.bilgi{border-left-color:#6EC3FF;}
   .bildirim-oge.bilgi .bildirim-ikon{background:rgba(110,195,255,.14);color:#6EC3FF;}
   .bildirim-oge.bilgi .bildirim-zaman{color:#6EC3FF;}
-  /* Profil kutusunda okunmamış mesaj işareti (zarf + sayı) */
-  .profil-mesaj{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;padding:2px 7px 2px 6px;border-radius:10px;background:rgba(110,195,255,.14);color:#6EC3FF;font-size:11px;font-weight:700;}
-  .profil-mesaj svg{width:14px;height:14px;}
-  .profil-mesaj[hidden]{display:none;}
+  /* Zarf (mesajlar): zilin solunda, aynı biçim ve aynı kırmızı sayı; dokununca Profilim › Mesaj kutusu */
+  .mesaj-btn + .bildirim-btn{margin-left:2px;}
+  .sidebar-kutu > .mesaj-btn{margin-right:-2px;}
   /* Mesaj kutusu (Profilim) */
   #pfMesajBolum{scroll-margin-top:96px;}   /* zilden gelince başlık yapışık üst çubuğun altında kalmasın */
   @media (max-width:900px){ #pfMesajBolum{scroll-margin-top:12px;} }
@@ -2412,7 +2411,6 @@
     <div class="profil-kutu" id="profilKutu" onclick="switchTab('profil')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') switchTab('profil')" title="Profilim" hidden>
       <span class="avatar" id="profilAvatar"></span>
       <span class="profil-metin"><b id="profilAd"></b><small id="profilEposta"></small></span>
-      <span class="profil-mesaj" id="profilMesaj" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><b>0</b></span>
       <span class="profil-ok" aria-hidden="true">›</span>
     </div>
     <div class="nav-panel" id="navPanel">
@@ -2504,6 +2502,7 @@
       <div id="senkronDurum" data-durum="senkron">☁ Senkronize ediliyor…</div>
       <button class="cikis-btn" onclick="cikisYap()" title="Bu cihazdan çıkış yap">🔒 Çıkış</button>
     </div>
+    <button type="button" class="bildirim-btn mesaj-btn bildirim-btn-mobil" onclick="mesajKutusuAc()" title="Mesajlar" aria-label="Mesajlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><span class="bildirim-rozet" hidden></span></button>
     <button type="button" class="bildirim-btn bildirim-btn-mobil" onclick="bildirimPanelAc(this)" aria-haspopup="true" aria-expanded="false" title="Bildirimler" aria-label="Bildirimler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bildirim-rozet" hidden></span></button>
    </div>
   </div>
@@ -2536,6 +2535,7 @@
         </svg>
         Yenile
       </button>
+      <button type="button" class="bildirim-btn mesaj-btn" onclick="mesajKutusuAc()" title="Mesajlar" aria-label="Mesajlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><span class="bildirim-rozet" hidden></span></button>
       <button type="button" class="bildirim-btn" onclick="bildirimPanelAc(this)" aria-haspopup="true" aria-expanded="false" title="Bildirimler" aria-label="Bildirimler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bildirim-rozet" hidden></span></button>
     </div>
   </div>
@@ -3426,7 +3426,7 @@
       <p><b>Kredi kartları:</b> Kartın son ödeme gününü bir kez yaz. Sıradaki dönem için <b>dönem borcu</b> (ekstre), <b>asgari</b> ve <b>ödeyeceğim</b> tutarını girebilirsin. Takvim önce “ödeyeceğim” tutarını kullanır.</p>
       <p><b>Örnek:</b> Kartının toplam borcu ₺135.571, dönem borcu ₺95.000, ödeyeceğin ₺60.000 → takvimde ₺60.000 görünür; altında “ödeme sonrası kalan borç ≈ ₺75.571” ve “₺35.000 sonraki döneme kalır (faiz işler)” yazar.</p>
       <p class="kv-ipucu">💡 Ödeme günü geçtiği halde kartın borcunu Borçlarım'da güncellemediysen satırda bir hatırlatma çıkar. Bugünden önceki ödemeler “✓ ödendi” sayılır.</p>
-      <p><b>Bildirimler (🔔):</b> Sağ üstteki zil (telefonda en üstteki satırın sağında) yaklaşan ödemeleri iki kez hatırlatır: son günden <b>bir gün önce</b> (“Yarın ödenecek”, sarı) ve <b>son gün</b> (“Bugün ödenecek”, kırmızı). Örnek: 6 Ekim'deki kira 5 Ekim'de ve 6 Ekim'de bildirim olarak gelir. Uyarılar da buradadır: bütçesi aşılan ya da %90'ı dolan kategori, asgarinin altında planlanan kart ödemesi. Yöneticiden gelen yeni mesajlar da en üstte <b>Mesajlar</b> grubunda görünür; dokununca Profilim › Mesaj kutusu'nda açılır. Kırmızı sayı okunmamış bildirim sayısıdır; bildirime dokununca ilgili sayfa açılır, × ile kaldırırsın, başlıktaki <b>✓✓</b> simgesi hepsini okundu sayar. Ödeme ve uyarıların okundu bilgisi bu cihazda, mesajlarınki hesabında tutulur.</p>
+      <p><b>Bildirimler (🔔):</b> Sağ üstteki zil (telefonda en üstteki satırın sağında) yaklaşan ödemeleri iki kez hatırlatır: son günden <b>bir gün önce</b> (“Yarın ödenecek”, sarı) ve <b>son gün</b> (“Bugün ödenecek”, kırmızı). Örnek: 6 Ekim'deki kira 5 Ekim'de ve 6 Ekim'de bildirim olarak gelir. Uyarılar da buradadır: bütçesi aşılan ya da %90'ı dolan kategori, asgarinin altında planlanan kart ödemesi. Yöneticiden gelen mesajlar zilin solundaki <b>✉ zarfta</b> sayılır (zilde ikinci kez görünmez); zarfa dokununca Profilim › Mesaj kutusu açılır. Zildeki kırmızı sayı okunmamış bildirim sayısıdır; bildirime dokununca ilgili sayfa açılır, × ile kaldırırsın, başlıktaki <b>✓✓</b> simgesi hepsini okundu sayar. Ödeme ve uyarıların okundu bilgisi bu cihazda, mesajlarınki hesabında tutulur.</p>
       <button class="bolum-ekle" onclick="switchTab('odeme')">Ödeme Takvimi'ne git →</button>
     </div></details>
 
@@ -3515,7 +3515,7 @@
       <p><b>Profilim sayfası:</b> Menünün en üstündeki fotoğrafına ve adına tıkla (telefonda en üstteki adına ya da <b>Diğer › Hesap › Profilim</b>). Burada:</p>
       <ul class="kv-liste">
         <li><b>📷 Fotoğraf yükle:</b> telefon ya da bilgisayardan bir fotoğraf seç; kare olarak ortadan kırpılır ve küçültülür. <b>Kaldır</b> ile silersin; yerine adının baş harfleri görünür (ör. “Ayşe Yılmaz” → AY).</li>
-        <li><b>Mesaj kutusu:</b> yöneticinin sana gönderdiği mesajlar ve herkese yaptığı duyurular (<b>DUYURU</b> etiketli) burada, en yenisi üstte. Okunmamış mesaj kalın görünür; menüde adının yanında mavi <b>✉ sayı</b> çıkar ve 🔔 zilde de bildirim olur. Mesaja dokununca açılır ve okundu sayılır (okundu bilgisi tüm cihazlarında aynıdır); “Kutumdan kaldır” yalnız senin kutundan siler.</li>
+        <li><b>Mesaj kutusu:</b> yöneticinin sana gönderdiği mesajlar ve herkese yaptığı duyurular (<b>DUYURU</b> etiketli) burada, en yenisi üstte. Okunmamış mesaj kalın görünür; sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar, zarfa dokununca kutu en yeni okunmamış mesaj açık gelir. Mesaja dokununca açılır ve okundu sayılır (okundu bilgisi tüm cihazlarında aynıdır); “Kutumdan kaldır” yalnız senin kutundan siler.</li>
         <li><b>Ad soyad:</b> yaz ve <b>Kaydet</b>. Menüde e-postan yerine adın görünür.</li>
         <li><b>Açılış sayfası:</b> panel açılınca ilk hangi sayfanın geleceğini seç (ör. her gün harcama giriyorsan Harcama Takibim).</li>
         <li><b>Bay Piyasa (yapay zekâ):</b> kendi Anthropic API anahtarını ekle, değiştir ya da kaldır. Anahtar doğrulanır ve şifreli saklanır; yönetici hesabında gerekmez.</li>
@@ -3617,8 +3617,8 @@
 
     <div class="kv-grup-bas">Görünüm</div>
     <details class="kv-bolum kv-sss"><summary>Satırların başındaki yeşil ve kırmızı ışıklar ne demek?</summary><div class="kv-ic"><p><b>Yeşil:</b> değer güncel. Ya bugün güncelledin ya da canlı hesaplanıyor (kur, faiz, fiyat). <b>Kırmızı:</b> değeri en son bugünden önce güncelledin ya da canlı fiyata ulaşılamadı ve son bilinen değer gösteriliyor. Kırmızı bir hata değildir; yalnızca “bunu güncellemek isteyebilirsin” demektir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Bildirimler ne zaman gelir? Zildeki kırmızı sayı ne?</summary><div class="kv-ic"><p>Her ödeme son gününden <b>bir gün önce</b> ve <b>son gün</b> bildirim olur (6 Ekim'deki ödeme 5 ve 6 Ekim'de). Bütçesi aşılan ya da %90'ı dolan kategori ve asgarinin altında planlanan kart ödemesi de uyarı olarak gelir. Kırmızı sayı okunmamış bildirimlerdir; dokununca ilgili sayfa açılır, “Tümünü okundu say” sayıyı sıfırlar. Yöneticiden gelen yeni mesajlar da zilde görünür. Hepsini okundu saymak için zil panelinin başlığındaki <b>✓✓</b> simgesine bas. Bildirimler panel açıkken görünür; telefona ayrıca anlık bildirim (push) gönderilmez.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Mesajlarımı nerede görürüm?</summary><div class="kv-ic"><p><b>Profilim › Mesaj kutusu</b>'nda. Okunmamış mesajın varsa menüde adının yanında mavi <b>✉ sayı</b> ve 🔔 zilde bildirim çıkar. Mesajlar yalnız yöneticiden gelir (tek kişiye ya da herkese duyuru); panelden yanıt gönderilmez, bir sorun için Yardım › Destek ve İletişim'deki adrese yazabilirsin.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bildirimler ne zaman gelir? Zildeki kırmızı sayı ne?</summary><div class="kv-ic"><p>Her ödeme son gününden <b>bir gün önce</b> ve <b>son gün</b> bildirim olur (6 Ekim'deki ödeme 5 ve 6 Ekim'de). Bütçesi aşılan ya da %90'ı dolan kategori ve asgarinin altında planlanan kart ödemesi de uyarı olarak gelir. Kırmızı sayı okunmamış bildirimlerdir; dokununca ilgili sayfa açılır, “Tümünü okundu say” sayıyı sıfırlar. Yöneticiden gelen mesajlar zilin yanındaki ✉ zarfta sayılır. Zildekilerin hepsini okundu saymak için zil panelinin başlığındaki <b>✓✓</b> simgesine bas. Bildirimler panel açıkken görünür; telefona ayrıca anlık bildirim (push) gönderilmez.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Mesajlarımı nerede görürüm?</summary><div class="kv-ic"><p><b>Profilim › Mesaj kutusu</b>'nda. Okunmamış mesajın varsa sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar (telefonda en üstteki satırın sağında); zarfa dokununca kutu açılır. Mesajlar yalnız yöneticiden gelir (tek kişiye ya da herkese duyuru); panelden yanıt gönderilmez, bir sorun için Yardım › Destek ve İletişim'deki adrese yazabilirsin.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor, Kullanım Kılavuzu ve Sık Sorulan Sorular) sağ alttaki <b>Diğer</b> düğmesindedir. Profilim, şifre değiştirme ve çıkış da orada, en alttaki <b>Hesap</b> bölümünde; ayrıca ekranın en üstündeki adına dokunarak da Profilim'e gidersin.</p></div></details>
 
     <div class="kv-grup-bas">Hesap, güvenlik ve Bay Piyasa</div>
@@ -12237,12 +12237,10 @@ const BILDIRIM_IKON = {
 };   // var: açılışta switchTab bu satırdan önce çağrılabilir
 function bildirimGuncelle(){
   const d = bildirimDurum();
-  _bildirimler = bildirimUret().filter(b => !d.kaldir[b.id]).map(b => Object.assign(b, { okundu: !!d.okundu[b.id] }))
-    .concat((_mesajlar || []).filter(m => !m.okundu).map(m => ({ id: 'mesaj|' + m.id, mesajId: m.id, grup: 'mesaj', seviye: 'bilgi', ikon: 'mektup', hedef: 'profil', sira: 0, okundu: false,
-      baslik: m.baslik, metin: m.metin.length > 110 ? m.metin.slice(0, 107).trim() + '…' : m.metin, zaman: (m.herkese ? 'Duyuru' : 'Mesaj') + ' · ' + m.gonderen + ' · ' + mesajZaman(m.ts) })));
-  mesajIsaretGuncelle();
+  _bildirimler = bildirimUret().filter(b => !d.kaldir[b.id]).map(b => Object.assign(b, { okundu: !!d.okundu[b.id] }));
+  mesajIsaretGuncelle();   // mesajlar zarfta sayılır (zilde ikinci kez sayılmaz)
   const okunmadi = _bildirimler.filter(b => !b.okundu), acil = okunmadi.some(b => b.seviye === 'acil');
-  document.querySelectorAll('.bildirim-btn').forEach(btn => {
+  document.querySelectorAll('.bildirim-btn:not(.mesaj-btn)').forEach(btn => {
     const roz = btn.querySelector('.bildirim-rozet');
     roz.hidden = !okunmadi.length; roz.textContent = okunmadi.length > 9 ? '9+' : okunmadi.length;
     btn.classList.toggle('var', okunmadi.length > 0); btn.classList.toggle('acil-var', acil);
@@ -12261,11 +12259,11 @@ function bildirimPanelCiz(){
       ${b.okundu ? '' : '<span class="bildirim-nokta" aria-label="okunmadı"></span>'}
       <button class="bildirim-kaldir" title="Kaldır" aria-label="Bildirimi kaldır" onclick="event.stopPropagation();bildirimKaldir('${encodeURIComponent(b.id)}')">×</button>
     </div>`;
-  const od = _bildirimler.filter(b => b.grup === 'odeme'), uy = _bildirimler.filter(b => b.grup === 'uyari'), ms = _bildirimler.filter(b => b.grup === 'mesaj');
+  const od = _bildirimler.filter(b => b.grup === 'odeme'), uy = _bildirimler.filter(b => b.grup === 'uyari');
   p.innerHTML = `<div class="bildirim-bas"><b>Bildirimler</b><span class="bildirim-sayi">${okunmadi ? okunmadi + ' okunmamış' : ''}</span><button class="bildirim-hepsi" onclick="bildirimHepsiOkundu()"${okunmadi ? '' : ' disabled'} title="Tümünü okundu olarak işaretle" aria-label="Tümünü okundu olarak işaretle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg></button></div>
     <div class="bildirim-liste">${!_bildirimler.length
-      ? '<div class="bildirim-bos"><div class="ikon">🔔</div><b>Yeni bildirim yok</b><br>Ödemeler son günden bir gün önce ve son gün; bütçe, kart uyarıları ve yeni mesajlar da oluştuğu anda burada görünür.</div>'
-      : (ms.length ? '<div class="bildirim-grup">Mesajlar</div>' + ms.map(oge).join('') : '') + (od.length ? '<div class="bildirim-grup">Yaklaşan ödemeler</div>' + od.map(oge).join('') : '') + (uy.length ? '<div class="bildirim-grup">Uyarılar</div>' + uy.map(oge).join('') : '')}</div>
+      ? '<div class="bildirim-bos"><div class="ikon">🔔</div><b>Yeni bildirim yok</b><br>Ödemeler son günden bir gün önce ve son gün; bütçe ve kart uyarıları da oluştuğu anda burada görünür. Mesajlar yandaki ✉ zarftadır.</div>'
+      : (od.length ? '<div class="bildirim-grup">Yaklaşan ödemeler</div>' + od.map(oge).join('') : '') + (uy.length ? '<div class="bildirim-grup">Uyarılar</div>' + uy.map(oge).join('') : '')}</div>
     <div class="bildirim-alt"><a onclick="bildirimPanelKapat();switchTab('odeme')">Ödeme Takvimi ›</a><a onclick="bildirimPanelKapat();switchTab('butce')">Bütçe ›</a></div>`;
 }
 function bildirimPanelAc(btn){
@@ -12277,33 +12275,23 @@ function bildirimPanelAc(btn){
   p.style.top = Math.round(r.bottom + 8) + 'px';
   if(innerWidth <= 640){ p.style.left = '10px'; p.style.right = '10px'; p.style.width = 'auto'; }
   else { p.style.left = 'auto'; p.style.width = ''; p.style.right = Math.max(10, Math.round(innerWidth - r.right)) + 'px'; }
-  document.querySelectorAll('.bildirim-btn').forEach(b => b.setAttribute('aria-expanded', String(b === btn)));
+  document.querySelectorAll('.bildirim-btn:not(.mesaj-btn)').forEach(b => b.setAttribute('aria-expanded', String(b === btn)));
 }
 function bildirimPanelKapat(){
   const p = document.getElementById('bildirimPanel'); if(!p || p.hidden) return;
   p.hidden = true; p._btn = null;
-  document.querySelectorAll('.bildirim-btn').forEach(b => b.setAttribute('aria-expanded', 'false'));
+  document.querySelectorAll('.bildirim-btn:not(.mesaj-btn)').forEach(b => b.setAttribute('aria-expanded', 'false'));
 }
 function bildirimIsaretle(id, alan){ const d = bildirimDurum(); d[alan][id] = Date.now(); bildirimDurumYaz(d); }
 function bildirimTikla(idK){
   const id = decodeURIComponent(idK), b = _bildirimler.find(x => x.id === id);
   bildirimPanelKapat();
-  if(b && b.mesajId){ mesajOku([b.mesajId]); _acikMesaj = b.mesajId; switchTab('profil'); mesajKutusunaKaydir(); return; }   // mesaj: kutuda açık gelir
   bildirimIsaretle(id, 'okundu'); bildirimGuncelle();
   if(b && b.hedef) switchTab(b.hedef);
 }
-// Zilde × : ödeme/uyarı bu cihazda kaldırılır; mesaj okundu sayılır (kutuda kalır)
-function bildirimKaldir(idK){
-  const id = decodeURIComponent(idK), b = _bildirimler.find(x => x.id === id);
-  if(b && b.mesajId) mesajOku([b.mesajId]); else { bildirimIsaretle(id, 'kaldir'); bildirimGuncelle(); }
-  bildirimPanelCiz();
-}
-function bildirimHepsiOkundu(){
-  const d = bildirimDurum(); _bildirimler.filter(b => !b.mesajId).forEach(b => { d.okundu[b.id] = Date.now(); }); bildirimDurumYaz(d);
-  const ms = _bildirimler.filter(b => b.mesajId).map(b => b.mesajId);
-  if(ms.length) mesajOku(ms); else bildirimGuncelle();
-  bildirimPanelCiz();
-}
+// Zilde × : bildirim bu cihazda kaldırılır
+function bildirimKaldir(idK){ const id = decodeURIComponent(idK); bildirimIsaretle(id, 'kaldir'); bildirimGuncelle(); bildirimPanelCiz(); }
+function bildirimHepsiOkundu(){ const d = bildirimDurum(); _bildirimler.forEach(b => { d.okundu[b.id] = Date.now(); }); bildirimDurumYaz(d); bildirimGuncelle(); bildirimPanelCiz(); }
 // Dışarı tıklayınca ya da Esc ile kapanır (panel içinde yeniden çizilip DOM'dan çıkan düğme "dışarı" sayılmaz); pencere boyu değişince kapanır (konum yeniden hesaplanmasın diye)
 document.addEventListener('click', e => { const p = document.getElementById('bildirimPanel'); if(p && !p.hidden && e.target.isConnected && !p.contains(e.target) && !e.target.closest('.bildirim-btn')) bildirimPanelKapat(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape') bildirimPanelKapat(); });
@@ -12352,10 +12340,21 @@ function mesajSil(id){
   });
 }
 function mesajIsaretGuncelle(){
-  const n = (_mesajlar || []).filter(m => !m.okundu).length, el = document.getElementById('profilMesaj');
-  if(!el) return;
-  el.hidden = !n; el.querySelector('b').textContent = n;
-  el.title = n + ' okunmamış mesaj';
+  const n = (_mesajlar || []).filter(m => !m.okundu).length;
+  document.querySelectorAll('.mesaj-btn').forEach(btn => {
+    const roz = btn.querySelector('.bildirim-rozet');
+    roz.hidden = !n; roz.textContent = n > 9 ? '9+' : n;
+    btn.classList.toggle('var', n > 0);
+    btn.title = n ? n + ' okunmamış mesaj' : 'Mesajlar';
+    btn.setAttribute('aria-label', btn.title);
+  });
+}
+// Zarfa dokununca: Profilim › Mesaj kutusu (okunmamış varsa en yenisi açık gelir)
+function mesajKutusuAc(){
+  bildirimPanelKapat();
+  const ilk = (_mesajlar || []).find(m => !m.okundu);
+  if(ilk){ _acikMesaj = ilk.id; mesajOku([ilk.id]); }
+  switchTab('profil'); mesajKutusunaKaydir();
 }
 function mesajKutusunaKaydir(){ setTimeout(() => { const el = document.getElementById('pfMesajBolum'); if(el) el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); }
 function renderMesajKutusu(){
