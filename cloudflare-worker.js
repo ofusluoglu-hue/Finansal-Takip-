@@ -436,7 +436,7 @@ export default {
     if (url.pathname === '/mesajlar' && request.method === 'GET') {
       const { results } = await env.DB.prepare(
         "SELECT m.id, m.baslik, m.metin, m.ts, m.alici, d.okundu, g.ad AS gonderen_ad FROM mesajlar m LEFT JOIN mesaj_durum d ON d.mesaj_id = m.id AND d.user_id = ? LEFT JOIN users g ON g.id = m.gonderen "
-        + "WHERE (m.alici = ? OR m.alici = '*') AND (m.gonderen IS NULL OR m.gonderen != ?) AND d.silindi IS NULL ORDER BY m.ts DESC LIMIT 100"
+        + "WHERE (m.alici = ? OR m.alici = '*') AND NOT (m.alici = '*' AND m.gonderen = ?) AND d.silindi IS NULL ORDER BY m.ts DESC LIMIT 100"
       ).bind(ben.id, ben.id, ben.id).all();
       const mesajlar = (results || []).map(m => ({ id: m.id, baslik: m.baslik, metin: m.metin, ts: m.ts, herkese: m.alici === '*', okundu: !!m.okundu, gonderen: m.gonderen_ad || 'Yönetici' }));
       return json({ mesajlar, okunmamis: mesajlar.filter(m => !m.okundu).length });

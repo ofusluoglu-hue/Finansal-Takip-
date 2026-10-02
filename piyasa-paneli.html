@@ -3854,7 +3854,8 @@
         </div>
         <textarea id="kmMetin" class="ai-input" rows="4" maxlength="4000" style="width:100%;margin-top:6px;resize:vertical;font-family:inherit;" placeholder="Mesajın"></textarea>
         <div class="loan-add-row" style="margin-top:6px;"><button class="ai-btn" id="kmGonder" onclick="mesajGonder()">Gönder</button></div>
-        <div class="ku-ipucu">Mesaj alıcının Profilim › Mesaj kutusu'na düşer ve zilde bildirim olarak görünür. “Herkes” seçersen tüm açık hesaplara duyuru olur.</div>
+        <div class="ku-ipucu" id="kmNot" style="color:var(--amber);"></div>
+        <div class="ku-ipucu">Alıcı listesinde “Herkes” ya da “Kişiye özel” altından bir e-posta seç. Mesaj alıcının Profilim › Mesaj kutusu'na düşer ve zilde bildirim olarak görünür. “Herkes” seçersen tüm açık hesaplara duyuru olur (sana gelmez).</div>
       </div>
       <div id="kuMesajListe"><div class="bos-not">Yükleniyor…</div></div>
     </div>
@@ -12378,11 +12379,16 @@ function renderMesajKutusu(){
 
 // ---------- Yönetici: mesaj gönder (Kullanıcılar sayfası) ----------
 var _gonderilen = [], _herkesSayisi = 0;
-function mesajFormAc(alici){
+async function mesajFormAc(alici){
   const f = document.getElementById('kuMesajForm'); if(!f) return;
+  if(!_kullanicilar.length) await renderKullanicilar();   // liste yüklenmeden açılırsa yalnız "Herkes" kalmasın
   const sec = document.getElementById('kmAlici'), ben = kullaniciBilgi() || {};
-  sec.innerHTML = '<option value="*">Herkes (duyuru)</option>' + _kullanicilar.filter(u => u.id !== ben.id).map(u => `<option value="${u.id}">${escapeHtml((u.ad ? u.ad + ' — ' : '') + u.email)}</option>`).join('');
+  const kisiler = _kullanicilar.filter(u => !u.disabled).sort((a, b) => (a.id === ben.id) - (b.id === ben.id));   // sen en sonda
+  sec.innerHTML = '<option value="*">Herkes (duyuru)</option><optgroup label="Kişiye özel">'
+    + kisiler.map(u => `<option value="${u.id}">${escapeHtml((u.ad ? u.ad + ' — ' : '') + u.email + (u.id === ben.id ? ' (sen)' : ''))}</option>`).join('') + '</optgroup>';
   sec.value = alici || '*';
+  const not = document.getElementById('kmNot');
+  if(not) not.textContent = kisiler.some(u => u.id !== ben.id) ? '' : 'Henüz senden başka hesap yok; kişiye özel mesaj için önce yukarıdaki Hesaplar bölümünden kullanıcı ekle. Denemek için kendini seçebilirsin.';
   if(!f.classList.contains('acik')) bolumFormAc('kuMesajForm');
   setTimeout(() => { f.scrollIntoView({ block: 'center', behavior: 'smooth' }); document.getElementById('kmBaslik').focus(); }, 50);
 }
