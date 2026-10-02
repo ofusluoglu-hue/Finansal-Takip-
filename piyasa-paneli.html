@@ -576,7 +576,7 @@
   .arac-form{display:flex;flex-direction:column;gap:12px;}
   .arac-alan{display:flex;flex-direction:column;gap:5px;}
   .arac-alan[hidden]{display:none;}   /* gizli alan (ör. günlük hesapta yenileme) gerçekten kalksın */
-  .arac-panel[data-arac="makine"] .arac-bolum{grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:32px;}
+  .arac-panel[data-arac="makine"] .arac-bolum{grid-template-columns:minmax(0,520px) 230px;gap:22px;justify-content:center;}   /* makine + dar geçmiş yan yana, ortada */
   .hm-t:focus{outline:none;}
   .hm-t:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
   .arac-alan > span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
@@ -600,31 +600,40 @@
   .as-lejant i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:0;}
   .arac-hata{color:var(--amber);font-size:13px;}
   /* hesap makinesi */
-  .hm-kutu{max-width:340px;width:100%;}
+  .hm-kutu{max-width:520px;width:100%;}
   .hm-ekran{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:right;margin-bottom:10px;min-height:86px;display:flex;flex-direction:column;justify-content:flex-end;}
   .hm-ifade{font-size:13px;color:var(--muted);min-height:18px;word-break:break-all;}
   .hm-sonuc{font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;word-break:break-all;line-height:1.2;}
-  .hm-tuslar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-  .hm-t{height:52px;border-radius:12px;border:1px solid var(--border);background:var(--panel-2);color:var(--text);font-family:inherit;font-size:19px;font-weight:600;cursor:pointer;transition:background .1s,transform .05s;}
+  .hm-tuslar{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
+  .hm-t{height:46px;border-radius:11px;border:1px solid var(--border);background:var(--panel-2);color:var(--text);font-family:inherit;font-size:18px;font-weight:600;cursor:pointer;transition:background .1s,transform .05s;}
+  .hm-fn{font-size:14.5px;color:#9fc4e6;background:#141922;}
+  .hm-mod{font-size:12px;letter-spacing:.04em;color:var(--amber);}
+  .hm-temizle{color:var(--down);}
   .hm-t:hover{background:#1d2430;}
   .hm-t:active, .hm-t.basildi{transform:scale(.96);background:#242c38;}
   .hm-islev{color:var(--muted);font-size:16px;}
   .hm-op{color:var(--amber);font-size:22px;}
   .hm-esit{background:var(--amber);color:#14161c;border-color:var(--amber);font-size:22px;}
   .hm-esit:hover{background:#f0b44a;}
+  .hm-gecmis{border-left:1px solid var(--border);padding-left:16px;max-height:470px;overflow-y:auto;scrollbar-width:thin;}
+  .hm-gecmis .bolum-baslik{font-size:13px;}
+  .hm-gecmis .bos-not{font-size:12px;padding:6px 0;}
   .hm-gecmis-bas{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
   .hm-gecmis-bas a{font-size:12px;color:var(--muted);cursor:pointer;}
   .hm-gecmis-bas a:hover{color:var(--amber);}
   .hm-g{padding:8px 4px;border-top:1px solid var(--border);text-align:right;cursor:pointer;border-radius:6px;}
   .hm-g:hover{background:var(--panel-2);}
-  .hm-g .i{font-size:12px;color:var(--muted);word-break:break-all;}
-  .hm-g .s{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .hm-g{padding:6px 4px;}
+  .hm-g .i{font-size:11px;color:var(--muted);word-break:break-all;}
+  .hm-g .s{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;word-break:break-all;}
   @media (max-width:760px){
     .arac-bolum, .arac-panel[data-arac="makine"] .arac-bolum{grid-template-columns:1fr;gap:16px;padding:14px;}
     .arac-secim{display:grid;grid-template-columns:1fr 1fr;overflow:visible;}   /* telefonda 2×2: dört araç da görünür */
     .arac-sec{justify-content:center;padding:10px 8px;}
     .hm-kutu{max-width:none;}
-    .hm-t{height:58px;}
+    .hm-t{height:50px;}
+    .hm-fn{font-size:14px;}
+    .hm-gecmis{border-left:none;padding-left:0;border-top:1px solid var(--border);padding-top:10px;max-height:220px;}
   }
   @media (max-width:640px){ .mesaj-arac .mesaj-arac-sag{gap:10px;} .mesaj-uzun{display:none;} .mesaj-kisa{display:inline;} }   /* telefonda araç çubuğu tek satır */
   .mesaj-ust-not a{color:var(--amber);cursor:pointer;}
@@ -4079,10 +4088,10 @@
     <div class="page-head"><h1>Hesap Araçları</h1></div>
 
     <div class="arac-secim" role="tablist" aria-label="Araç seç">
-      <button class="arac-sec" data-arac="makine" onclick="aracSec('makine')"><span aria-hidden="true">🧮</span>Hesap makinesi</button>
-      <button class="arac-sec" data-arac="kredi" onclick="aracSec('kredi')"><span aria-hidden="true">🏦</span>Kredi</button>
+      <button class="arac-sec" data-arac="kredi" onclick="aracSec('kredi')"><span aria-hidden="true">🏦</span>Kredi Faizi</button>
       <button class="arac-sec" data-arac="kmh" onclick="aracSec('kmh')"><span aria-hidden="true">💳</span>KMH / Kart faizi</button>
       <button class="arac-sec" data-arac="mevduat" onclick="aracSec('mevduat')"><span aria-hidden="true">📈</span>Vadeli mevduat</button>
+      <button class="arac-sec" data-arac="makine" onclick="aracSec('makine')"><span aria-hidden="true">🧮</span>Hesap makinesi</button>
     </div>
 
     <!-- Hesap makinesi -->
@@ -4091,13 +4100,16 @@
         <div class="hm-kutu">
           <div class="hm-ekran"><div class="hm-ifade" id="hmIfade">&nbsp;</div><div class="hm-sonuc" id="hmSonuc">0</div></div>
           <div class="hm-tuslar" id="hmTuslar">
-            <button class="hm-t hm-islev" data-k="C">C</button><button class="hm-t hm-islev" data-k="geri" aria-label="Sil">⌫</button><button class="hm-t hm-islev" data-k="%">%</button><button class="hm-t hm-op" data-k="/">÷</button>
-            <button class="hm-t" data-k="7">7</button><button class="hm-t" data-k="8">8</button><button class="hm-t" data-k="9">9</button><button class="hm-t hm-op" data-k="*">×</button>
-            <button class="hm-t" data-k="4">4</button><button class="hm-t" data-k="5">5</button><button class="hm-t" data-k="6">6</button><button class="hm-t hm-op" data-k="-">−</button>
-            <button class="hm-t" data-k="1">1</button><button class="hm-t" data-k="2">2</button><button class="hm-t" data-k="3">3</button><button class="hm-t hm-op" data-k="+">+</button>
-            <button class="hm-t hm-islev" data-k="±">±</button><button class="hm-t" data-k="0">0</button><button class="hm-t" data-k=",">,</button><button class="hm-t hm-esit" data-k="=">=</button>
+            <button class="hm-t hm-islev hm-mod" data-k="drad" aria-label="Derece / radyan">DER</button><button class="hm-t hm-islev" data-k="(">(</button><button class="hm-t hm-islev" data-k=")">)</button><button class="hm-t hm-islev" data-k="%">%</button><button class="hm-t hm-islev hm-temizle" data-k="C">C</button>
+            <button class="hm-t hm-fn" data-k="sin">sin</button><button class="hm-t hm-fn" data-k="cos">cos</button><button class="hm-t hm-fn" data-k="tan">tan</button><button class="hm-t hm-fn" data-k="sqrt" aria-label="Karekök">√</button><button class="hm-t hm-islev" data-k="geri" aria-label="Sil">⌫</button>
+            <button class="hm-t hm-fn" data-k="ln">ln</button><button class="hm-t hm-fn" data-k="log">log</button><button class="hm-t hm-fn" data-k="x2" aria-label="Kare">x²</button><button class="hm-t hm-fn" data-k="^" aria-label="Üs">xʸ</button><button class="hm-t hm-op" data-k="/">÷</button>
+            <button class="hm-t hm-fn" data-k="pi" aria-label="Pi">π</button><button class="hm-t " data-k="7">7</button><button class="hm-t " data-k="8">8</button><button class="hm-t " data-k="9">9</button><button class="hm-t hm-op" data-k="*">×</button>
+            <button class="hm-t hm-fn" data-k="e" aria-label="e sayısı">e</button><button class="hm-t " data-k="4">4</button><button class="hm-t " data-k="5">5</button><button class="hm-t " data-k="6">6</button><button class="hm-t hm-op" data-k="-">−</button>
+            <button class="hm-t hm-fn" data-k="inv" aria-label="Bir bölü x">1/x</button><button class="hm-t " data-k="1">1</button><button class="hm-t " data-k="2">2</button><button class="hm-t " data-k="3">3</button><button class="hm-t hm-op" data-k="+">+</button>
+            <button class="hm-t hm-fn" data-k="fact" aria-label="Faktöriyel">n!</button><button class="hm-t hm-islev" data-k="±">±</button><button class="hm-t " data-k="0">0</button><button class="hm-t " data-k=",">,</button><button class="hm-t hm-esit" data-k="=">=</button>
           </div>
-          <div class="ku-ipucu" style="margin-top:8px;">Klavyeyle de yazabilirsin: rakamlar, + − * /, virgül ya da nokta, Enter (=), Backspace, Esc (C). “200 + 10 %” = 220.</div>
+
+          <div class="ku-ipucu" style="margin-top:8px;">Klavyeyle de yazabilirsin: rakamlar, + − * / ^ ( ) !, virgül ya da nokta, Enter (=), Backspace, Esc (C). DER/RAD trigonometrinin açı birimidir. “200 + 10 %” = 220.</div>
         </div>
         <div class="hm-gecmis">
           <div class="hm-gecmis-bas"><span class="bolum-baslik">Geçmiş</span><a onclick="hmGecmisTemizle()" id="hmGecmisSil">Temizle</a></div>
@@ -12841,10 +12853,11 @@ function renderAraclar(){
       const el = document.getElementById(a.dataset.hedef); el.value = a.dataset.deger; aracHesapla();
     }));
     document.getElementById('hmTuslar').addEventListener('click', e => { const b = e.target.closest('.hm-t'); if(b) hmTus(b.dataset.k); });
+    _hmDerece = d.derece !== false; hmModCiz();
     hmGecmisCiz();
   }
   kmhHazirListe();
-  aracSec(d.secili || 'makine', true);
+  aracSec(d.secili || 'kredi', true);
 }
 // Odağı kaybedince binlik ayraçla göster (100000 → 100.000)
 function aracBicimle(el){
@@ -12974,92 +12987,198 @@ function mevduatHesapla(){
     <div class="as-not">Aynı sürede enflasyon ≈ ${aracYz(enf, 1)} (aylık TÜFE ${aracYz(ENFLASYON_VERI.tufe.aylik)}, ${ayAdi(ENFLASYON_VERI.tufe.ay)}). Reel getirin <b class="${reel >= 0 ? 'iyi' : 'kotu'}">${reel >= 0 ? '+' : '−'}${aracYz(Math.abs(reel), 1)}</b>: ${reel >= 0 ? 'paran enflasyonun önünde.' : 'paran enflasyonun gerisinde kalıyor.'}</div>`;
 }
 
-// ---- Hesap makinesi (eval yok: küçük ayrıştırıcı). "200 + 10 %" = 220, "200 × 10 %" = 20
-let _hmIfade = '', _hmSon = null;
-const HM_OP = { '+': '+', '-': '−', '*': '×', '/': '÷' };
-// Sayı ve işlemlere ayır; başta ya da bir işlemden sonra gelen "-" sayının işaretidir (5 × −3)
-function hmParcala(t){
-  const p = []; let sayi = '', eksi = false;
-  for(const c of t){
-    if(/[0-9.]/.test(c)){ sayi += c; continue; }
-    if(sayi){ p.push((eksi ? -1 : 1) * Number(sayi)); sayi = ''; eksi = false; p.push(c); continue; }
-    if(c === '-') eksi = !eksi;
+// ---- Bilimsel hesap makinesi (eval yok: özyinelemeli ayrıştırıcı)
+// İç ifade: sayılar (nokta ondalık), + - * / ^ ( ) !, π, e, sin( cos( tan( ln( log( sqrt(
+// Öncelik: ( ) > ! > ^ (sağdan) > tekli − > × ÷ ve örtük çarpma (2π, 3(4)) > + −. "200 + 10 %" = 220
+let _hmIfade = '', _hmSon = null, _hmDerece = true;
+const HM_FN = ['sin', 'cos', 'tan', 'ln', 'log', 'sqrt'];
+function hmTokenler(t){
+  const L = []; let i = 0;
+  while(i < t.length){
+    const c = t[i];
+    if(/[0-9.]/.test(c)){ let j = i; while(j < t.length && /[0-9.]/.test(t[j])) j++; L.push({ t: 'n', v: Number(t.slice(i, j)) }); i = j; continue; }
+    const f = HM_FN.find(x => t.startsWith(x, i));
+    if(f){ L.push({ t: 'f', v: f }); i += f.length; continue; }
+    if(c === 'π'){ L.push({ t: 'n', v: Math.PI, sabit: true }); i++; continue; }
+    if(c === 'e'){ L.push({ t: 'n', v: Math.E, sabit: true }); i++; continue; }
+    L.push({ t: 'o', v: c }); i++;
   }
-  if(sayi) p.push((eksi ? -1 : 1) * Number(sayi));
-  return p;
+  return L;
 }
 function hmHesapla(t){
-  const p = hmParcala(String(t || '').replace(/[+\-*/]+$/, ''));
-  if(!p.length) return 0;
-  // önce × ÷
-  const q = [p[0]];
-  for(let j = 1; j < p.length; j += 2){
-    const op = p[j], b = p[j + 1];
-    if(op === '*') q[q.length - 1] *= b; else if(op === '/') q[q.length - 1] = b === 0 ? NaN : q[q.length - 1] / b;
-    else q.push(op, b);
+  const L = hmTokenler(t); let p = 0;
+  const bak = () => L[p], al = () => L[p++];
+  const baslarMi = k => k && (k.t === 'n' || k.t === 'f' || (k.t === 'o' && k.v === '('));
+  const der = x => _hmDerece ? x * Math.PI / 180 : x;
+  function ifade(){ let v = terim(); while(bak() && bak().t === 'o' && (bak().v === '+' || bak().v === '-')){ const o = al().v, b = terim(); v = o === '+' ? v + b : v - b; } return v; }
+  function terim(){
+    let v = tekli();
+    while(bak()){
+      const k = bak();
+      if(k.t === 'o' && (k.v === '*' || k.v === '/')){ al(); const b = tekli(); v = k.v === '*' ? v * b : v / b; }
+      else if(baslarMi(k)) v *= tekli();   // örtük çarpma: 2π, 3(4), 2sin(30)
+      else break;
+    }
+    return v;
   }
-  let s = q[0];
-  for(let j = 1; j < q.length; j += 2) s = q[j] === '+' ? s + q[j + 1] : s - q[j + 1];
-  return s;
+  function tekli(){ const k = bak(); if(k && k.t === 'o' && (k.v === '-' || k.v === '+')){ al(); const v = tekli(); return k.v === '-' ? -v : v; } return us(); }
+  function us(){ const v = sonek(); if(bak() && bak().t === 'o' && bak().v === '^'){ al(); return Math.pow(v, tekli()); } return v; }
+  function sonek(){
+    let v = birincil();
+    while(bak() && bak().t === 'o' && bak().v === '!'){ al(); v = (Number.isInteger(v) && v >= 0 && v <= 170) ? Array.from({ length: v }, (_, i) => i + 1).reduce((a, b) => a * b, 1) : NaN; }
+    return v;
+  }
+  function birincil(){
+    const k = al();
+    if(!k) throw new Error('eksik');
+    if(k.t === 'n') return k.v;
+    if(k.t === 'o' && k.v === '('){ const v = ifade(); if(bak() && bak().v === ')') al(); return v; }
+    if(k.t === 'f'){
+      if(bak() && bak().v === '(') al();
+      const x = ifade(); if(bak() && bak().v === ')') al();
+      switch(k.v){
+        case 'sin': return Math.sin(der(x));
+        case 'cos': return Math.cos(der(x));
+        case 'tan': { const c = Math.cos(der(x)); return Math.abs(c) < 1e-12 ? NaN : Math.sin(der(x)) / c; }
+        case 'ln': return x > 0 ? Math.log(x) : NaN;
+        case 'log': return x > 0 ? Math.log10(x) : NaN;
+        case 'sqrt': return x >= 0 ? Math.sqrt(x) : NaN;
+      }
+    }
+    throw new Error('beklenmeyen');
+  }
+  try{
+    if(!L.length) return 0;
+    const v = ifade();
+    if(p < L.length) return NaN;
+    return v;
+  }catch(e){ return NaN; }
 }
+// Bitmemiş ifadeyi hesaplanabilir yap: sondaki işlem/açık fonksiyonu at, açık parantezleri kapat
+function hmTamamla(t){
+  let x = t.replace(/(sin|cos|tan|ln|log|sqrt)?\(?$/, m => m === '(' || /\($/.test(m) ? '' : m);
+  x = x.replace(/[+\-*/^(]+$/, '');
+  const ac = (x.match(/\(/g) || []).length - (x.match(/\)/g) || []).length;
+  return x + ')'.repeat(Math.max(0, ac));
+}
+const hmYuvarla = v => Math.abs(v) < 1e-12 ? 0 : Number(v.toPrecision(12));
 function hmBicim(n){
-  if(!isFinite(n)) return 'Tanımsız';
-  const y = Math.abs(n) >= 1e15 || (Math.abs(n) > 0 && Math.abs(n) < 1e-9) ? n.toExponential(6).replace('.', ',') : n.toLocaleString('tr-TR', { maximumFractionDigits: 10 });
-  return y;
+  if(!isFinite(n)) return 'Hata';
+  if(Math.abs(n) >= 1e15 || (n !== 0 && Math.abs(n) < 1e-7)) return n.toExponential(8).replace(/\.?0+e/, 'e').replace('.', ',').replace('e+', ' × 10^').replace('e-', ' × 10^-');
+  return n.toLocaleString('tr-TR', { maximumFractionDigits: 10 });
+}
+// Sonucu ifadeye güvenle yaz (üslü gösterim "e" sabitine karışmasın)
+function hmSayiYaz(v){
+  const s = String(v);
+  if(!/e/.test(s)) return s;
+  const [m, u] = v.toExponential(12).split('e');
+  return '(' + Number(m) + '*10^(' + Number(u) + '))';
 }
 function hmIfadeGoster(t){
-  return (t.replace(/(\d+(?:\.\d*)?)/g, m => { const [a, b] = m.split('.'); return Number(a).toLocaleString('tr-TR') + (b != null ? ',' + b : ''); })
-    .replace(/[+\-*/]/g, o => ' ' + HM_OP[o] + ' ')) || '';
+  return t.replace(/\d+(?:\.\d*)?/g, m => { const [a, b] = m.split('.'); return Number(a).toLocaleString('tr-TR') + (b != null ? ',' + b : ''); })
+    .replace(/sqrt/g, '√').replace(/\*/g, ' × ').replace(/\//g, ' ÷ ').replace(/\+/g, ' + ')
+    .replace(/([0-9,)!πe])-/g, '$1 − ').replace(/-/g, '−');   // ikili eksi boşluklu, işaret bitişik
 }
 function hmTus(k){
-  const t = _hmIfade, son = t.slice(-1), opSon = /[+\-*/]/.test(son);
-  const sonSayi = (t.match(/(\d+(?:\.\d*)?)$/) || [''])[0];
+  let t = _hmIfade;
+  const son = t.slice(-1), sonDeger = /[0-9.)!πe]$/.test(t) && !/(sin|cos|tan|ln|log|sqrt)$/.test(t);
+  const yeniBasla = _hmSon != null;   // "=" sonrası
+  const carpGerek = () => (/[0-9.)!πe]$/.test(_hmIfade) ? '*' : '');
+  const sonOperand = () => {   // sondaki sayı ya da parantez grubu (+ ardındaki ! ^2)
+    const x = _hmIfade;
+    if(/\)[!]*$/.test(x)){
+      let d = 0, i = x.length - 1; while(x[i] === '!') i--;
+      for(; i >= 0; i--){ if(x[i] === ')') d++; else if(x[i] === '('){ d--; if(d === 0) break; } }
+      let bas = i; const fn = x.slice(0, bas).match(/(sin|cos|tan|ln|log|sqrt)$/); if(fn) bas -= fn[0].length;
+      return bas >= 0 ? bas : 0;
+    }
+    const m = x.match(/(\d+(?:\.\d*)?|π|e)!*$/);
+    return m ? x.length - m[0].length : -1;
+  };
+  if(k === 'drad'){ _hmDerece = !_hmDerece; const d = aracDurum(); d.derece = _hmDerece; aracDurumYaz(d); hmCiz(); return; }
   if(/^[0-9]$/.test(k)){
-    if(_hmSon != null && !opSon && t === String(_hmSon)) _hmIfade = '';   // sonuçtan sonra rakam: yeni hesap
-    if(sonSayi === '0') _hmIfade = _hmIfade.slice(0, -1);
-    if(sonSayi.replace('.', '').length >= 15) return;
-    _hmIfade += k; _hmSon = null;
+    if(yeniBasla) t = '';
+    else if(/[)!πe]$/.test(t)) t += '*';
+    const m = t.match(/(\d+(?:\.\d*)?)$/);
+    if(m && m[1] === '0') t = t.slice(0, -1);
+    if(m && m[1].replace('.', '').length >= 15) return;
+    _hmIfade = t + k;
   } else if(k === ',' || k === '.'){
-    if(_hmSon != null && t === String(_hmSon)) _hmIfade = '';
-    if(sonSayi.includes('.')) return;
-    _hmIfade += (sonSayi ? '' : '0') + '.'; _hmSon = null;
-  } else if(['+', '-', '*', '/'].includes(k)){
-    if(!t){ if(k === '-') _hmIfade = '-'; }
-    else if(opSon) _hmIfade = t.replace(/[+\-*/]+$/, '') + k;   // art arda işlem: sonuncusu geçerli
-    else _hmIfade += k;
-    _hmSon = null;
-  } else if(k === 'C'){ _hmIfade = ''; _hmSon = null; }
-  else if(k === 'geri'){ _hmIfade = t.slice(0, -1); _hmSon = null; }
-  else if(k === '±'){
-    if(!sonSayi) return;
-    // son sayının işaretini çevir: önünde tekli eksi varsa kaldır, yoksa ekle
-    const once = t.slice(0, t.length - sonSayi.length);
-    const tekliEksi = once === '-' || /[+\-*/]-$/.test(once);
-    _hmIfade = (tekliEksi ? once.slice(0, -1) : once + '-') + sonSayi; _hmSon = null;
+    if(yeniBasla) t = '';
+    const m = t.match(/(\d+(?:\.\d*)?)$/);
+    if(m && m[1].includes('.')) return;
+    if(/[)!πe]$/.test(t)) t += '*';
+    _hmIfade = t + (m ? '' : '0') + '.';
+  } else if(['+', '-', '*', '/', '^'].includes(k)){
+    if(!t || son === '('){ if(k !== '-') return; _hmIfade = t + '-'; }   // başta / parantez içinde yalnız eksi (işaret)
+    else if(/[+\-*/^]$/.test(t)){
+      const kok = t.replace(/[+\-*/^]+$/, '');
+      if(k === '-' && /[*/^]$/.test(son)) _hmIfade = t + '-';            // 5 × − 3: sayının işareti
+      else if(!kok || kok.endsWith('(')) _hmIfade = kok + (k === '-' ? '-' : '');
+      else _hmIfade = kok + k;                                            // art arda işlem: sonuncusu geçerli
+    }
+    else _hmIfade = t + k;
+  } else if(k === '('){
+    if(yeniBasla) t = '';
+    _hmIfade = t + (/[0-9.)!πe]$/.test(t) ? '*' : '') + '(';
+  } else if(k === ')'){
+    const ac = (t.match(/\(/g) || []).length - (t.match(/\)/g) || []).length;
+    if(ac <= 0 || !sonDeger) return;
+    _hmIfade = t + ')';
+  } else if(HM_FN.includes(k)){
+    if(yeniBasla) t = '';
+    _hmIfade = t + (/[0-9.)!πe]$/.test(t) ? '*' : '') + k + '(';
+  } else if(k === 'pi' || k === 'e'){
+    if(yeniBasla) t = '';
+    _hmIfade = t + (/[0-9.)!πe]$/.test(t) ? '*' : '') + (k === 'pi' ? 'π' : 'e');
+  } else if(k === 'x2'){
+    if(!sonDeger) return; _hmIfade = t + '^2';
+  } else if(k === 'fact'){
+    if(!sonDeger) return; _hmIfade = t + '!';
+  } else if(k === 'inv'){
+    if(!sonDeger) return;
+    const b = sonOperand(); if(b < 0) return;
+    _hmIfade = t.slice(0, b) + '(1/' + t.slice(b) + ')';
+  } else if(k === '±'){
+    if(!sonDeger) return;
+    const b = sonOperand(); if(b < 0) return;
+    const once = t.slice(0, b);
+    if(once === '-' || /[+\-*/^(]-$/.test(once)) _hmIfade = once.slice(0, -1) + t.slice(b);
+    else _hmIfade = once + '-' + t.slice(b);
   } else if(k === '%'){
-    if(!sonSayi) return;
-    const once = t.slice(0, t.length - sonSayi.length), op = once.slice(-1), n = Number(sonSayi);
-    let yeni;
-    if(op === '+' || op === '-'){ const sol = hmHesapla(once.slice(0, -1)); yeni = sol * n / 100; }
-    else yeni = n / 100;
-    _hmIfade = once + String(Math.round(yeni * 1e10) / 1e10);
+    const m = t.match(/(\d+(?:\.\d*)?)$/); if(!m) return;
+    const once = t.slice(0, t.length - m[1].length), op = once.slice(-1), n = Number(m[1]);
+    let yeni = n / 100;
+    if((op === '+' || op === '-') && once.length > 1){ const sol = hmHesapla(hmTamamla(once.slice(0, -1))); if(isFinite(sol)) yeni = sol * n / 100; }
+    _hmIfade = once + hmSayiYaz(hmYuvarla(yeni));
+  } else if(k === 'C'){ _hmIfade = ''; }
+  else if(k === 'geri'){
+    if(yeniBasla){ _hmIfade = ''; }
+    else { const fn = t.match(/(sin|cos|tan|ln|log|sqrt)\($/); _hmIfade = fn ? t.slice(0, -fn[0].length) : t.slice(0, -1); }
   } else if(k === '='){
-    if(!t || opSon) return;
-    const sonuc = hmHesapla(t);
-    if(isFinite(sonuc)){
-      const yuv = Math.round(sonuc * 1e10) / 1e10;
-      hmGecmisEkle(hmIfadeGoster(t), hmBicim(yuv));
-      _hmIfade = String(yuv); _hmSon = yuv;
-    } else { document.getElementById('hmIfade').textContent = hmIfadeGoster(t); document.getElementById('hmSonuc').textContent = 'Tanımsız'; _hmIfade = ''; return; }
+    if(!t) return;
+    const tam = hmTamamla(t), v = hmHesapla(tam);
+    if(!isFinite(v)){ _hmSon = null; document.getElementById('hmIfade').textContent = hmIfadeGoster(tam) + ' ='; document.getElementById('hmSonuc').textContent = 'Hata'; return; }
+    const y = hmYuvarla(v);
+    hmGecmisEkle(hmIfadeGoster(tam), hmBicim(y));
+    _hmIfade = hmSayiYaz(y); _hmSon = y;
+    const ifEl = document.getElementById('hmIfade'); if(ifEl) ifEl.textContent = hmIfadeGoster(tam) + ' =';
+    document.getElementById('hmSonuc').textContent = hmBicim(y);
+    hmModCiz();
+    return;
   }
+  _hmSon = null;
   hmCiz();
 }
+function hmModCiz(){ const b = document.querySelector('#hmTuslar [data-k="drad"]'); if(b) b.textContent = _hmDerece ? 'DER' : 'RAD'; }
 function hmCiz(){
   const t = _hmIfade, ifadeEl = document.getElementById('hmIfade'), sonEl = document.getElementById('hmSonuc');
+  hmModCiz();
   if(!ifadeEl) return;
-  if(_hmSon != null){ ifadeEl.innerHTML = '&nbsp;'; sonEl.textContent = hmBicim(_hmSon); return; }
   ifadeEl.textContent = t ? hmIfadeGoster(t) : '\u00a0';
-  sonEl.textContent = t ? hmBicim(Math.round(hmHesapla(t) * 1e10) / 1e10) : '0';   // yazarken anlık sonuç
+  if(!t){ sonEl.textContent = '0'; return; }
+  const v = hmHesapla(hmTamamla(t));
+  if(isFinite(v)) sonEl.textContent = hmBicim(hmYuvarla(v));   // yazarken anlık sonuç (geçersizse öncekini korur)
 }
 function hmGecmisEkle(ifade, sonuc){
   const d = aracDurum(); d.gecmis = [{ ifade, sonuc }].concat(d.gecmis || []).slice(0, 8); aracDurumYaz(d); hmGecmisCiz();
@@ -13074,7 +13193,7 @@ function hmGecmisCiz(){
 function hmGecmisKullan(j){
   const g = (aracDurum().gecmis || [])[j]; if(!g) return;
   const n = aracSayiOku(g.sonuc); if(!isFinite(n)) return;
-  _hmIfade = String(n); _hmSon = n; hmCiz();
+  _hmIfade = hmSayiYaz(n); _hmSon = null; hmCiz();
 }
 function hmGecmisTemizle(){ const d = aracDurum(); d.gecmis = []; aracDurumYaz(d); hmGecmisCiz(); }
 // Klavye: yalnız Hesap Araçları › hesap makinesi açıkken ve bir giriş kutusunda değilken
@@ -13083,7 +13202,7 @@ document.addEventListener('keydown', e => {
   if(!p || !p.classList.contains('active') || aracDurum().secili !== 'makine') return;
   if(e.target.closest && e.target.closest('input, textarea, select')) return;
   if(e.ctrlKey || e.metaKey || e.altKey) return;
-  const harita = { Enter: '=', '=': '=', Backspace: 'geri', Escape: 'C', Delete: 'C', ',': ',', '.': ',', '+': '+', '-': '-', '*': '*', x: '*', X: '*', '/': '/', '%': '%' };
+  const harita = { Enter: '=', '=': '=', Backspace: 'geri', Escape: 'C', Delete: 'C', ',': ',', '.': ',', '+': '+', '-': '-', '*': '*', x: '*', X: '*', '/': '/', '%': '%', '^': '^', '(': '(', ')': ')', '!': 'fact', p: 'pi', e: 'e' };
   const k = /^[0-9]$/.test(e.key) ? e.key : harita[e.key];
   if(!k) return;
   e.preventDefault();
