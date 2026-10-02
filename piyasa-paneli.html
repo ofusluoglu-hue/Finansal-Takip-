@@ -2467,6 +2467,10 @@
   .kap-bolum.kapali .kap-ic{display:none;}
   .kap-yeni{font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--amber-dolgu);color:var(--t-14161c);}
   .kap-detay{margin-top:6px;font-size:11px;color:var(--muted-2);word-break:break-word;}
+  .kap-ozet{color:var(--muted);}
+  .kap-satir.rutin .kap-baslik{color:var(--muted);}
+  .kap-satir.rutin .kap-ozet, .kap-satir.rutin .kap-kod{color:var(--muted-2);}
+  .kap-satir.rutin .kap-etiket{opacity:.6;}
   .kap-tumu{display:block;text-align:center;padding:9px 0 6px;font-size:12.5px;font-weight:600;color:var(--amber);cursor:pointer;}
   .kap-yeni[hidden]{display:none;}
   .kap-arac{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:4px 2px 8px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted);}
@@ -3211,7 +3215,7 @@
           <a class="kap-yenile" onclick="kapYukle(true)">↻ Yenile</a>
         </div>
         <div id="kapListe"></div>
-        <div class="kap-not">Bildirimler, KAP açıklamalarını yayımlayan haber sitelerinden Google Haberler aracılığıyla ücretsiz çekilir (KAP'ın kendi sitesi otomatik erişime kapalı); <b>KAP</b> etiketi resmî bildirimi, diğerleri şirket haberini gösterir. Satıra dokununca kaynağı açılır. Bölüm açıkken 10 dakikada bir tazelenir.</div>
+        <div class="kap-not"><b>KAP</b> etiketli satırlar resmî bildirimlerdir; doğrudan KAP'tan (kap.org.tr) gelir ve dokununca bildirimin KAP sayfası açılır. Şirketin kendisi dışında Borsa İstanbul, Takasbank, MKK ya da ortakların o hisseyle ilgili bildirimleri de listelenir. Etiketsiz satırlar şirket haberleridir (Google Haberler, erişilebildiğinde). Ücretsizdir; bölüm açıkken 10 dakikada bir tazelenir.</div>
       </div>
     </div>
 
@@ -3875,7 +3879,7 @@
       </ul>
       <p><b>Örnek:</b> Kripto · Bitcoin · 0,0006983 → o anki fiyat $95.000 ve kur ₺48,90 ise değer ≈ ₺3.244.</p>
       <p><b>Yatırım / Borç oranı:</b> Yatırımlarının borcunu ne kadar karşıladığı. %50 altı kırmızı, %50–99 sarı, %100 ve üstü yeşil.</p>
-      <p><b>KAP ve şirket haberleri:</b> Portföyünde BİST hissesi varsa listenin altında çıkar; son 30 günün KAP bildirimlerini (<b>KAP</b> etiketli) ve şirket haberlerini en yeniden eskiye sıralar. Başlığa ya da sağdaki oka dokununca kapanır, kapalıyken yalnız başlık kalır ve yeni bildirim gelirse <b>“3 yeni”</b> gibi bir sayı görünür. Aynı bildirim birkaç kez geldiyse tek satırda “son 30 günde 3 kez” yazar; bildirimi şirketin kendisi değil Borsa İstanbul, Takasbank ya da ana ortağı yaptıysa “Gönderen” yazılır. <b>Yalnız KAP bildirimleri</b> kutusu haberleri gizler; satıra dokununca kaynağı yeni sekmede açılır.</p>
+      <p><b>KAP ve şirket haberleri:</b> Portföyünde BİST hissesi varsa listenin altında çıkar; son 30 günün <b>resmî KAP bildirimlerini</b> doğrudan KAP'tan alır. Şirketin kendi bildirimlerinin yanında Borsa İstanbul, Takasbank, MKK ya da ana ortağın o hisseyle ilgili bildirimleri de gelir; bunlarda “Gönderen” yazar. Birden çok hisseni ilgilendiren bildirim tek satırda, kodlar alt alta görünür. Varant, piyasa yapıcılığı, temerrüt gibi <b>rutin bildirimler</b> soluk yazılır ve konu başına tek satırda “son 30 günde 12 kez” diye toplanır; böylece özel durum açıklaması, ihraç, derecelendirme gibi önemli olanlar öne çıkar. Etiketsiz satırlar şirket haberleridir. Bölüm başlığa ya da sağdaki oka dokununca kapanır; kapalıyken yeni bildirim gelirse “3 yeni” gibi bir sayı görünür. <b>Yalnız KAP bildirimleri</b> kutusu haberleri gizler; satıra dokununca bildirimin KAP sayfası yeni sekmede açılır.</p>
       <button class="bolum-ekle" onclick="switchTab('yatirim')">Yatırımlarım'a git →</button>
     </div></details>
 
@@ -4099,7 +4103,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
-    <details class="kv-bolum kv-sss"><summary>Hisselerimin KAP bildirimlerini nereden görürüm?</summary><div class="kv-ic"><p>Yatırımlarım sayfasında, portföy listesinin altındaki <b>KAP ve şirket haberleri</b> bölümünde. Yalnız senin portföyündeki BİST hisseleri için son 30 günün bildirimleri ve haberleri listelenir; ücretsizdir. Bildirimler, KAP açıklamalarını yayımlayan haber sitelerinden (Yeni Şafak, GZT vb.) Google Haberler aracılığıyla gelir, çünkü KAP'ın kendi sitesi otomatik erişime kapalı; bu yüzden bir bildirim KAP'tan birkaç dakika sonra görünebilir. Bölümü başlığındaki okla kapatabilirsin; kapalıyken yer kaplamaz, yeni bildirim gelince başlıkta sayı çıkar. Bir hisse hakkında yorum istersen Bay Piyasa'daki “KAP haberleri” sorusunu kullan.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Hisselerimin KAP bildirimlerini nereden görürüm?</summary><div class="kv-ic"><p>Yatırımlarım sayfasında, portföy listesinin altındaki <b>KAP ve şirket haberleri</b> bölümünde. Yalnız senin portföyündeki BİST hisseleri için son 30 günün bildirimleri listelenir; bildirimler doğrudan KAP'ın kendisinden (kap.org.tr) gelir, ücretsizdir ve satıra dokununca bildirimin KAP sayfası açılır. Şirket haberleri (etiketsiz satırlar) Google Haberler'den eklenir; Google erişimi geçici olarak kısıtlarsa yalnız KAP bildirimleri görünür, bu bir hata değildir. Bölümü başlığındaki okla kapatabilirsin; kapalıyken yer kaplamaz, yeni bildirim gelince başlıkta sayı çıkar. Bir hisse hakkında yorum istersen Bay Piyasa'daki “KAP haberleri” sorusunu kullan.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Dövizim ya da altınım var; Yatırımlarım'a mı, Varlıklarım'a mı girmeliyim?</summary><div class="kv-ic"><p><b>Yatırım amacıyla</b> tuttuğun altın, gümüş, ETF, kripto ve hisseleri <b>Yatırımlarım</b>'a gir; portföy puanına ve yatırım/borç oranına katılır. <b>Gerektiğinde harcamak için</b> kenarda duran parayı (acil durum fonu, mevduat) <b>Finansal Durumum › Varlıklarım</b>'a <b>Nakit / Mevduat</b> türüyle gir; ₺, $, € ya da gram altın seçebilirsin. İkisi de net varlığına girer; aynı parayı iki yere girme.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Piyasa Özeti'nde istemediğim kartlar var / takip ettiğim hisse yok.</summary><div class="kv-ic"><p>Piyasa Özeti'nde en üstte saatin yanındaki <b>Kartları düzenle</b>'ye bas. ✕ ile istemediğini gizle, ↑ ↓ ile sırala. Herhangi bir ABD hissesi, ETF ya da kripto için pencerede arama kutusuna adını ya da kodunu yaz (ör. Tesla, TSM, ASML, XRP) ve listeden seç. Eklediğin hisseyi Yatırımlarım'da da seçebilirsin. BİST hisseleri de aynı kutudan aranır (ör. “aselsan”, “türk hava yolları”); kartta fiyat ₺ olarak ve 15 dakika gecikmeli görünür.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Fiyatlar güncellenmiyor ya da ışık kırmızı yanıyor.</summary><div class="kv-ic"><p>Fiyat kaynağına o an ulaşılamamış olabilir; panel son bilinen fiyatı gösterir ve ışık kırmızı yanar. Sağ üstteki <b>Yenile</b>'ye bas ya da bir dakika bekle. BİST fiyatları zaten yaklaşık 15 dakika gecikmelidir; ABD piyasası kapalıyken ETF fiyatı seans dışı fiyatla gösterilir.</p></div></details>
@@ -13787,8 +13791,10 @@ function sssSoruAc(id){
   d.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
-// ---------- KAP ve şirket haberleri: portföydeki BİST hisseleri için Google Haberler (KAP sitesi bot erişimine kapalı) ----------
-// Bildirimi yayımlayan siteler (Yeni Şafak, GZT…) başlığı "KAP *** ŞİRKET *** KOD *** Konu - Kaynak" biçiminde verir → KAP etiketi.
+// ---------- KAP ve şirket haberleri: portföydeki BİST hisseleri ----------
+// KAP bildirimleri RESMÎ kaynaktan: Worker /kap → kap.org.tr'nin açık uçları (şirketin kendi bildirimleri + Borsa İstanbul, Takasbank,
+// ortaklar gibi başka kurumların o hisseyle ilgili bildirimleri). Şirket haberleri ek olarak Google Haberler'den, erişilebildiğinde
+// (Google bazı Cloudflare çıkışlarını 503 ile engelliyor; o zaman yalnız KAP görünür, hata sayılmaz).
 // Kapalı/açık ve "son görülen" bu cihazda (ft_kap_durum). Bölüm açık ve sayfa görünürken en fazla 10 dakikada bir tazelenir.
 const KAP_DURUM_KEY = 'ft_kap_durum', KAP_GUN = 30;
 let _kapVeri = null, _kapZaman = 0, _kapYukleniyor = false, _kapTumu = false;
@@ -13796,36 +13802,52 @@ const KAP_ILK = 6;   // açıkken önce bu kadar satır; gerisi "Tümünü göst
 function kapDurum(){ try{ return JSON.parse(localStorage.getItem(KAP_DURUM_KEY) || '{}'); }catch(e){ return {}; } }
 function kapDurumYaz(d){ try{ localStorage.setItem(KAP_DURUM_KEY, JSON.stringify(d)); }catch(e){ /* yok */ } }
 function kapKodlar(){ return [...new Set(manuelListeYukle(YATIRIM_KEY).filter(y => y.tur === 'bist').map(y => String(y.kod || y.ad || '').toUpperCase().trim()).filter(Boolean))]; }
-function kapAyristir(it, kod){
-  const tam = it.title || '';
-  const kapMi = /^KAP\s*\*{3}/.test(tam);
-  let baslik = tam, sirket = '', kodlar = [kod];
-  if(kapMi){
-    const p = tam.split('***').map(x => x.trim()).filter(Boolean);   // ["KAP", "ŞİRKET", "KOD1,KOD2", "Konu"]
-    sirket = p[1] || ''; kodlar = (p[2] || '').split(',').map(x => x.trim()).filter(Boolean); baslik = p.slice(3).join(' — ');   // konusuz/kodsuz başlık elenir
-  } else baslik = tam.replace(/\s*\[FNC-NEWS\]/gi, '').trim();
-  // Aynı bildirim GZT ve Yeni Şafak'ta ayrı (kod listesi bile farklı) gelir; rutin bildirimler (piyasa yapıcılığı vb.) her gün tekrarlar →
-  // şirket + konu tek satırda birleşir, en yenisi gösterilir, kaç kez geldiği sayılır
-  return { anahtar: kapMi ? 'k|' + sirket + '|' + baslik : 'h|' + baslik.toLocaleLowerCase('tr-TR'), kapMi, baslik, sirket, kodlar, kod, link: it.link, ts: it.ts, kaynak: it.source };
+// Ayrıntılı hata (ekranda "Ayrıntı" satırı için)
+async function kapGetir(adres, ms){
+  let res;
+  try{ res = await fetchWithTimeout(adres, ms); }
+  catch(e){ throw new Error(e && e.name === 'AbortError' ? 'zaman aşımı (' + Math.round(ms / 1000) + ' sn)' : 'bağlantı: ' + ((e && e.message) || 'bilinmiyor')); }
+  if(!res.ok) throw new Error('sunucu ' + res.status + ' ' + String(await res.text().catch(() => '')).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60));
+  return res;
 }
+// Rutin bildirimler (aracı kurumların günlük varant/faiz/piyasa yapıcılığı, takas/temerrüt, toplu duyurular): özet farklı olsa da
+// konu başına tek satırda birleşir ve soluk gösterilir; özel durum, ihraç, derecelendirme, pay alım satım gibi önemliler öne çıkar
+const KAP_RUTIN_RE = /piyasa yapıcılığı|varant|sertifika|pay dışında sermaye piyasası aracı|borçlanma araçları, yatırım fonları|itfa|kupon|temerrüt|spk işlem yasağı|bistech|hak kullanım|tipe dönüşüm|izahname|viop işlem iptali|devre kesici/i;
+// Resmî KAP bildirimleri (tek istek, bütün kodlar)
+async function kapResmiCek(kodlar){
+  const j = await (await kapGetir(MY_WORKER + '/kap?kodlar=' + encodeURIComponent(kodlar.join(',')), 15000)).json();
+  const L = [];
+  (j.sonuc || []).forEach(s => {
+    if(s.hata){ _kapHataDetay[s.kod] = s.hata; return; }
+    (s.liste || []).forEach(x => {
+      const konu = x.konu || x.ozet || 'Bildirim', ozet = x.ozet && x.ozet !== x.konu ? x.ozet : '';
+      const rutin = KAP_RUTIN_RE.test(konu.toLocaleLowerCase('tr-TR'));   // JS /i, İ ile i'yi eşlemez
+      // Aynı bildirim birden çok hisseyle ilgili olabilir (MKK, Borsa İstanbul duyuruları); rutin bildirimler her gün tekrarlar →
+      // şirket + konu + özet tek satırda birleşir, en yenisi gösterilir, kaç gün geldiği sayılır
+      L.push({ anahtar: 'k|' + x.sirket + '|' + konu + (rutin ? '' : '|' + ozet), kapMi: true, rutin, baslik: konu, ozet, sirket: x.sirket,
+        kodlar: String(x.kodlar || '').split(',').map(k => k.trim()).filter(Boolean), kod: s.kod, gec: x.gec,
+        link: 'https://www.kap.org.tr/tr/Bildirim/' + encodeURIComponent(x.no), ts: x.ts, kaynak: '' });
+    });
+  });
+  return L;
+}
+// Şirket haberleri (Google Haberler RSS, Worker /proxy üzerinden; yalnız KAP dışı haberler alınır — bildirimler resmî kaynaktan)
 async function kapHaberCek(kod){
   const ad = typeof bistAdi === 'function' ? (bistAdi(kod) || '') : '';
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent('"' + kod + '" KAP')}&hl=tr&gl=TR&ceid=TR:tr`;
-  // Doğrudan kendi Worker'ımız (üçüncü taraf proxy'ler yavaş/güvenilmez); hata sebebi ekranda gösterilebilsin diye ayrıntılı
-  let res;
-  try{ res = await fetchWithTimeout(MY_WORKER + '/proxy?url=' + encodeURIComponent(url), 12000); }
-  catch(e){ throw new Error(e && e.name === 'AbortError' ? 'zaman aşımı (12 sn)' : 'bağlantı: ' + ((e && e.message) || 'bilinmiyor')); }
-  if(!res.ok) throw new Error('sunucu ' + res.status + ' ' + String(await res.text().catch(() => '')).slice(0, 80));
+  const res = await kapGetir(MY_WORKER + '/proxy?url=' + encodeURIComponent(url), 12000);
   const xml = new DOMParser().parseFromString(await res.text(), 'text/xml');
   const ilkKelime = ad.split(/\s+/)[0].toLocaleUpperCase('tr-TR');
   const sinir = Date.now() - KAP_GUN * 864e5;
   return Array.from(xml.querySelectorAll('item')).map(x => {
-    const baslik = x.querySelector('title')?.textContent || '', kaynak = x.querySelector('source')?.textContent || '';
-    const idx = baslik.lastIndexOf(' - ');
-    return { title: kaynak && idx > 0 ? baslik.slice(0, idx) : baslik, source: kaynak || (idx > 0 ? baslik.slice(idx + 3) : ''), link: x.querySelector('link')?.textContent || '#', ts: rssTarih(x.querySelector('pubDate')?.textContent) };
-  }).filter(it => it.ts >= sinir).map(it => kapAyristir(it, kod))
-    // KAP bildiriminde kod listesinde olmalı; haberde başlıkta kod ya da şirket adı geçmeli (alakasız sonuçlar elenir)
-    .filter(x => x.kapMi ? x.baslik && x.kodlar.includes(kod) : (x.baslik.toLocaleUpperCase('tr-TR').includes(kod) || (ilkKelime.length > 3 && x.baslik.toLocaleUpperCase('tr-TR').includes(ilkKelime))));
+    const tam = x.querySelector('title')?.textContent || '', kaynak = x.querySelector('source')?.textContent || '';
+    const idx = tam.lastIndexOf(' - ');
+    const baslik = (kaynak && idx > 0 ? tam.slice(0, idx) : tam).replace(/\s*\[FNC-NEWS\]/gi, '').trim();
+    return { anahtar: 'h|' + baslik.toLocaleLowerCase('tr-TR'), kapMi: false, baslik, ozet: '', sirket: '', kodlar: [kod], kod,
+      link: x.querySelector('link')?.textContent || '#', ts: rssTarih(x.querySelector('pubDate')?.textContent), kaynak: kaynak || (idx > 0 ? tam.slice(idx + 3) : '') };
+  }).filter(x => x.ts >= sinir && !/^KAP\s*\*{3}|^\*{3}/.test(x.baslik)
+    // başlıkta kod ya da şirket adı geçmeli (alakasız sonuçlar elenir)
+    && (x.baslik.toLocaleUpperCase('tr-TR').includes(kod) || (ilkKelime.length > 3 && x.baslik.toLocaleUpperCase('tr-TR').includes(ilkKelime))));
 }
 async function kapYukle(zorla){
   const kodlar = kapKodlar();
@@ -13833,19 +13855,21 @@ async function kapYukle(zorla){
   if(_kapYukleniyor || (!zorla && _kapVeri && Date.now() - _kapZaman < 10 * 60 * 1000)){ kapCiz(); return; }
   _kapYukleniyor = true; kapCiz();
   try{
-    // Sayfa açılışında onlarca fiyat isteğiyle yarışınca zaman aşımı olabiliyor → her hisse 2 sn sonra bir kez daha denenir
     _kapHataDetay = {};
-    const sonuc = await Promise.all(kodlar.map(k => kapHaberCek(k)
-      .catch(() => new Promise(r => setTimeout(r, 2000)).then(() => kapHaberCek(k)))
-      .catch(e => { console.warn('KAP haberleri alınamadı:', k, e && e.message); _kapHataDetay[k] = (e && e.message) || String(e); return null; })));
-    if(sonuc.every(x => x === null)){ _kapHata = true; return; }
-    _kapHataDetay = {};   // eski liste (varsa) ekranda kalır; 10 dk sonra ya da Yenile ile tekrar
+    // Resmî KAP: alınamazsa 2 sn sonra bir kez daha (sayfa açılışında fiyat istekleriyle yarışabiliyor). Haberler: sessizce, olursa
+    const [resmi, haberler] = await Promise.all([
+      kapResmiCek(kodlar).catch(() => new Promise(r => setTimeout(r, 2000)).then(() => kapResmiCek(kodlar)))
+        .catch(e => { console.warn('KAP bildirimleri alınamadı:', e && e.message); _kapHataDetay.KAP = (e && e.message) || String(e); return null; }),
+      Promise.all(kodlar.map(k => kapHaberCek(k).catch(e => { console.info('Şirket haberleri alınamadı (KAP etkilenmez):', k, e && e.message); return []; }))),
+    ]);
+    if(resmi === null && !haberler.flat().length){ _kapHata = true; return; }   // eski liste (varsa) ekranda kalır
     const grup = new Map();
-    sonuc.flat().filter(Boolean).sort((a, b) => b.ts - a.ts).forEach(x => {
+    [...(resmi || []), ...haberler.flat()].sort((a, b) => b.ts - a.ts).forEach(x => {
       const g = grup.get(x.anahtar), gun = new Date(x.ts).toDateString();
-      if(!g) grup.set(x.anahtar, { ...x, gunler: new Set([gun]) }); else g.gunler.add(gun);   // ilk gelen en yenisi
+      if(!g) grup.set(x.anahtar, { ...x, gunler: new Set([gun]), hisseler: new Set([x.kod]) });   // ilk gelen en yenisi
+      else { g.gunler.add(gun); g.hisseler.add(x.kod); }
     });
-    _kapVeri = [...grup.values()].map(x => ({ ...x, tekrar: x.gunler.size })).slice(0, 40);
+    _kapVeri = [...grup.values()].map(x => ({ ...x, tekrar: x.gunler.size, hisseler: [...x.hisseler] })).slice(0, 60);
     _kapZaman = Date.now();
     _kapHata = false;
   }catch(e){ _kapHata = true; _kapHataDetay.genel = (e && e.message) || String(e); }
@@ -13868,20 +13892,21 @@ function kapCiz(){
   const L = veri.filter(x => !yalnizKap || x.kapMi);
   istYaz('kapDurum', _kapYukleniyor ? 'yükleniyor…' : _kapZaman ? 'güncellendi ' + new Date(_kapZaman).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '');
   const liste = document.getElementById('kapListe');
-  if(_kapHata && !veri.length && !_kapYukleniyor){ liste.innerHTML = '<div class="bos-not">Haber kaynağına şu an ulaşılamadı; biraz sonra “↻ Yenile”yi dene.<div class="kap-detay">Ayrıntı: ' + escapeHtml(Object.entries(_kapHataDetay).map(([k, v]) => k + ' → ' + v).join(' · ') || 'bilinmiyor') + '</div></div>'; return; }
+  if(_kapHata && !veri.length && !_kapYukleniyor){ liste.innerHTML = '<div class="bos-not">KAP bildirimlerine şu an ulaşılamadı; biraz sonra “↻ Yenile”yi dene.<div class="kap-detay">Ayrıntı: ' + escapeHtml(Object.entries(_kapHataDetay).map(([k, v]) => k + ' → ' + v).join(' · ') || 'bilinmiyor') + '</div></div>'; return; }
   if(_kapVeri == null){ liste.innerHTML = '<div class="bos-not">Bildirimler yükleniyor…</div>'; return; }
-  if(!L.length){ liste.innerHTML = '<div class="bos-not">Son ' + KAP_GUN + ' günde ' + (yalnizKap ? 'KAP bildirimi' : 'haber') + ' bulunamadı.</div>'; return; }
+  if(!L.length){ liste.innerHTML = '<div class="bos-not">Son ' + KAP_GUN + ' günde ' + (yalnizKap ? 'KAP bildirimi' : 'bildirim ya da haber') + ' yok.</div>'; return; }
   const gorunen = _kapTumu ? L : L.slice(0, KAP_ILK);
+  const ilk = t => String(t || '').split(/[\s\-]+/)[0].toLocaleUpperCase('tr-TR');
+  const adDuzelt = t => t.toLocaleLowerCase('tr-TR').replace(/(^|[\s\-(])(\p{L})/gu, (m, a, b) => a + b.toLocaleUpperCase('tr-TR')).replace(/A\.ş\./g, 'A.Ş.').replace(/ Ve /g, ' ve ').replace(/Bıstech/g, 'BISTECH');
   liste.innerHTML = gorunen.map(x => {
-    const kod = x.kodlar.filter(k => kodlar.includes(k))[0] || x.kod;
-    // Bildirimi şirketin kendisi değil başka kurum yaptıysa (Borsa İstanbul, Takasbank, ana ortak…) gönderen yazılır
-    const ilk = t => String(t || '').split(/[\s\-]+/)[0].toLocaleUpperCase('tr-TR');
-    const gonderen = x.sirket && ilk(x.sirket) !== ilk(bistAdi(kod)) ? 'Gönderen: ' + x.sirket.toLocaleLowerCase('tr-TR').replace(/(^|[\s\-(])(\p{L})/gu, (m, a, b) => a + b.toLocaleUpperCase('tr-TR')).replace(/A\.ş\./g, 'A.Ş.').replace(/ Ve /g, ' ve ').replace(/Bıstech/g, 'BISTECH') + ' · ' : '';
-    const tekrar = x.tekrar > 1 ? ` · son ${KAP_GUN} günde ${x.tekrar} kez` : '';
-    return `<a class="kap-satir" href="${escapeHtml(x.link)}" target="_blank" rel="noopener noreferrer">
-      <span class="kap-kod">${escapeHtml(kod)}</span>
-      <span class="kap-govde"><span class="kap-baslik">${x.kapMi ? '<span class="kap-etiket">KAP</span>' : ''}${escapeHtml(x.baslik)}</span>
-        <span class="kap-alt">${escapeHtml(gonderen + (x.kaynak || '') + tekrar)}</span></span>
+    const hisseler = (x.hisseler || [x.kod]).filter(k => kodlar.includes(k));
+    // Bildirimi şirketin kendisi değil başka kurum yaptıysa (Borsa İstanbul, Takasbank, MKK, ana ortak…) gönderen yazılır
+    const gonderen = x.sirket && !hisseler.some(k => ilk(x.sirket) === ilk(bistAdi(k))) ? 'Gönderen: ' + adDuzelt(x.sirket) : '';
+    const alt = [gonderen, x.kaynak, x.gec ? 'geç bildirim' : '', x.tekrar > 1 ? `son ${KAP_GUN} günde ${x.tekrar} kez` : ''].filter(Boolean).join(' · ');
+    return `<a class="kap-satir${x.rutin ? ' rutin' : ''}" href="${escapeHtml(x.link)}" target="_blank" rel="noopener noreferrer"${x.rutin ? ' title="Rutin bildirim"' : ''}>
+      <span class="kap-kod">${hisseler.map(escapeHtml).join('<br>')}</span>
+      <span class="kap-govde"><span class="kap-baslik">${x.kapMi ? '<span class="kap-etiket">KAP</span>' : ''}${escapeHtml(x.baslik)}${x.ozet ? ' <span class="kap-ozet">— ' + escapeHtml(x.ozet) + '</span>' : ''}</span>
+        ${alt ? `<span class="kap-alt">${escapeHtml(alt)}</span>` : ''}</span>
       <span class="kap-zaman${x.ts > son ? ' yeni' : ''}">${haberGoreliZaman(x.ts)}</span>
     </a>`;
   }).join('') + (L.length > KAP_ILK ? `<a class="kap-tumu" onclick="_kapTumu = !_kapTumu; kapCiz()">${_kapTumu ? 'Daha az göster' : 'Tümünü göster (' + L.length + ')'}</a>` : '');

@@ -14,6 +14,7 @@
 //     /admin/kullanicilar/:id (DELETE)                                   — yalnız yönetici
 //     /data (GET), /data/:anahtar (PUT)    -> kullanıcının verileri (cihazlar arası senkron)
 //     /proxy?url=...                       -> CORS proxy (Yahoo, FRED, Google News, haber RSS'leri; 60 sn önbellek)
+//     /kap?kodlar=TUPRS,ISMEN              -> KAP resmî bildirimleri, son 30 gün (şirket kimliği 30 gün, liste 5 dk önbellek)
 //     /ai, /extract-loan                   -> Anthropic geçidi (yönetici: sunucunun anahtarı; diğer kullanıcılar: kendi kayıtlı anahtarı)
 //     /td, /td-series, /fh                 -> Twelve Data / Finnhub geçitleri (ortak kota için 60 sn önbellek)
 //     /fh-ara?q=                           -> ABD hisse/ETF sembol araması (Finnhub, 1 gün önbellek)
@@ -707,6 +708,53 @@ export default {
         return json({ ok: true, updated_at: kayit.updated_at });
       }
       return json({ error: 'desteklenmeyen istek' }, 405);
+    }
+
+    // ---------- KAP BİLDİRİMLERİ ----------
+    // KAP'ın kendi sitesinin kullandığı açık uçlar: member/filter/{KOD} → şirketin mkkMemberOid'i; disclosure/members/byCriteria
+    // (mkkMemberOidList) → o şirketle ilgili bütün bildirimler (şirketin kendi + Borsa İstanbul, Takasbank, ortaklar vb.).
+    // Google Haberler bazı Cloudflare çıkışlarını 503 ile engellediği için panel KAP'ı buradan alır.
+    if (url.pathname === '/kap') {
+      const kodlar = [...new Set((url.searchParams.get('kodlar') || '').toUpperCase().split(',').map(k => k.trim()).filter(k => /^[A-Z0-9]{2,8}$/.test(k)))].slice(0, 30);
+      if (!kodlar.length) return json({ error: 'kodlar gerekli' }, 400);
+      const KAP = 'https://www.kap.org.tr/tr/api/';
+      const bas = { 'User-Agent': 'Mozilla/5.0 (compatible; FinansTakip/1.0)', 'Accept': 'application/json', 'Accept-Language': 'tr' };
+      const cache = (typeof caches !== 'undefined' && caches.default) ? caches.default : null;
+      const onbellek = async (anahtar, sureSn, uret) => {
+        const k = new Request('https://onbellek.finansal-takip.invalid/kap?' + encodeURIComponent(anahtar));
+        if (cache) { const b = await cache.match(k); if (b) return b.json(); }
+        const veri = await uret();
+        if (cache && veri != null) await cache.put(k, new Response(JSON.stringify(veri), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'max-age=' + sureSn } }));
+        return veri;
+      };
+      const gun = t => new Date(t + 3 * 3600e3).toISOString().slice(0, 10);   // İstanbul tarihi
+      const ts = s => { const m = String(s || '').match(/^(\d\d)\.(\d\d)\.(\d{4}) (\d\d):(\d\d):(\d\d)$/); return m ? Date.UTC(+m[3], +m[2] - 1, +m[1], +m[4] - 3, +m[5], +m[6]) : 0; };
+      const sonuc = await Promise.all(kodlar.map(async kod => {
+        try {
+          const oid = await onbellek('oid|' + kod, 30 * 86400, async () => {
+            const r = await fetch(KAP + 'member/filter/' + kod, { headers: bas });
+            if (!r.ok) throw new Error('KAP şirket ' + r.status);
+            const l = await r.json();
+            return (Array.isArray(l) && l[0] && l[0].mkkMemberOid) || '';
+          });
+          if (!oid) return { kod, hata: "KAP'ta bulunamadı" };
+          const simdi = Date.now();
+          const liste = await onbellek('lst|' + oid + '|' + gun(simdi), 300, async () => {
+            const r = await fetch(KAP + 'disclosure/members/byCriteria', { method: 'POST', headers: { ...bas, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ fromDate: gun(simdi - 30 * 86400e3), toDate: gun(simdi), mkkMemberOidList: [oid] }) });
+            if (!r.ok) throw new Error('KAP liste ' + r.status);
+            const l = await r.json();
+            if (!Array.isArray(l)) throw new Error('KAP liste biçimi');
+            return l.slice(0, 200).map(x => ({ ts: ts(x.publishDate), sirket: x.kapTitle || '', konu: String(x.subject || '').trim(), ozet: String(x.summary || '').trim(),
+              kodlar: x.stockCodes || '', no: x.disclosureIndex, gec: !!x.isLate }));
+          });
+          return { kod, liste };
+        } catch (e) {
+          console.log('kap hata', kod, e.message);
+          return { kod, hata: e.message };
+        }
+      }));
+      return json({ sonuc });
     }
 
     // ---------- CORS PROXY ----------

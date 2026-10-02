@@ -51,6 +51,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 1. Yalnızca köklü, kurumsal haber kaynakları kullanılır (Reuters, Bloomberg, Bloomberg HT, BBC, Anadolu Ajansı, Investing.com, CNBC, MarketWatch vb.). Yeni kaynak eklemek bilinçli bir karardır ve Worker proxy izin listesine de eklenmelidir.
 2. Basın bültenleri, sponsorlu içerik ve fiyat/fon tanıtım sayfaları haber olarak gösterilmez.
 3. Türkçe okunabilir haber (Türkçe kaynak ya da Google Çeviri ile açılabilen İngilizce kaynak) önceliklidir; çevrilemeyen kaynaklar "İngilizce" diye işaretlenir.
+4. KAP bildirimleri resmî kaynaktan alınır (Worker `/kap` → kap.org.tr açık uçları); haber sitelerindeki KAP kopyaları (Google Haberler'deki "KAP *** …" başlıkları) kullanılmaz. Google Haberler bazı Cloudflare çıkışlarını 503 ile engeller; Google'a bağlı her özellik Google olmadan da çalışmalı (sessizce atlanır, hata gösterilmez).
 
 ## Yapay zekâ
 
