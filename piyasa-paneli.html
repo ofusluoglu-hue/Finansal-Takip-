@@ -12239,12 +12239,11 @@ function renderHedef(){
       const islem = _hedefIslem.id === h.id ? _hedefIslem.tur : null;
       const acilAy = hedefAcilMi(h) ? (() => { const g = aylikZorunluGider(); const tl = hedefTL(c.birikim, h.birim) || 0; if(!g.toplam) return ''; const a = tl / g.toplam, rk = a < 1 ? 'var(--down)' : a < 3 ? 'var(--amber)' : 'var(--up)';
         return ` · <b style="color:${rk};" title="Aylık zorunlu gider ≈ ₺${fmtNumber(g.toplam, 0)} (harcama + kredi taksidi). Hedefin karşıladığı: ${fmtNumber(hedefTL(c.hedef, h.birim) / g.toplam, 1)} ay">🛟 ${fmtNumber(a, 1)} aylık gider</b>`; })() : '';
-      const tlNot = h.birim === 'USD' && hedefKur() && c.birikim > 0 ? ` <span class="ozet-soluk">≈ ₺${fmtNumber(c.birikim * hedefKur(), 0)}</span>` : '';
       return `<div class="hedef-satir">
         <div class="hedef-ust">
           <div class="satir-ana"><div class="satir-ad">${escapeHtml(h.ad)}</div>
-            <div class="satir-alt">${ayAdi(h.ay)}${c.tamam || c.gecti ? '' : ' · ' + c.ay + ' ay kaldı · ayda ' + hedefFmt(c.aylik, h.birim) + (h.birim === 'USD' && hedefKur() ? ' (₺' + fmtNumber(c.aylik * hedefKur(), 0) + ')' : '')} · <span style="color:${renk};">${durum}</span>${acilAy} · <span class="ozet-soluk">${hedefElleMi(h) ? 'elle takip' : '↻ ' + escapeHtml(hedefKaynakAd(h))}</span></div></div>
-          <div class="satir-tutar">${hedefFmt(c.birikim, h.birim)}${tlNot} <small style="font-weight:500;color:var(--muted-2);font-size:11.5px;">/ ${hedefFmt(c.hedef, h.birim)}</small></div>
+            <div class="satir-alt">${ayAdi(h.ay)}${c.tamam || c.gecti ? '' : ' · ' + c.ay + ' ay kaldı · ayda ' + hedefFmt(c.aylik, h.birim)} · <span style="color:${renk};">${durum}</span>${acilAy} · <span class="ozet-soluk">${hedefElleMi(h) ? 'elle takip' : '↻ ' + escapeHtml(hedefKaynakAd(h))}</span></div></div>
+          <div class="satir-tutar">${hedefFmt(c.birikim, h.birim)} <small style="font-weight:500;color:var(--muted-2);font-size:11.5px;">/ ${hedefFmt(c.hedef, h.birim)}</small></div>
           <div class="butce-yuzde" style="color:${renk};min-width:46px;">%${fmtNumber(Math.min(999, c.oran * 100), 0)}</div>
           <div class="satir-aksiyon">
             ${hedefElleMi(h) ? `<button class="ikon-btn" title="Birikime ekle / çıkar" style="color:var(--up);" onclick="hedefIslemAc('${h.id}', 'katki')">+</button>` : ''}
