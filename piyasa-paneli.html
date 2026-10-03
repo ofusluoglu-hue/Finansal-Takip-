@@ -2763,7 +2763,8 @@
   .katli .katla-ok svg{transform:rotate(-90deg);animation-name:rapor-katla-zipla-yan;}
   .katli .katla-ic{display:none;}
   .bolum.katli > .bolum-bas{margin-bottom:0;border-bottom:none !important;padding-bottom:6px !important;}
-  .bolum.cerceve-varlik > .bolum-bas .bolum-baslik.katla-tik{flex:0 1 auto;}   /* ok başlığın hemen yanında kalsın (telefonda da) */
+  .bolum-bas > .katla-ok{margin-left:auto;}   /* ok sağdaki toplamın hemen solunda (KAP'ta satırın sonunda) */
+  .bolum-bas > .katla-ok + .bolum-toplam{margin-left:0;}
   .katla-tik{cursor:pointer;user-select:none;}
   @keyframes katla-ok-nabiz{
     0%,100%{background:var(--amber-dolgu);color:var(--t-14161c);box-shadow:0 0 0 0 rgba(231,168,59,.6);}
@@ -3327,9 +3328,9 @@
     <div class="bolum kap-bolum" id="kapBolum">
       <div class="bolum-bas kap-bas aciklamali" onclick="kapKatla()" role="button" tabindex="0" onkeydown="if(event.key==='Enter') kapKatla()" aria-expanded="true">
         <span class="bolum-baslik">KAP ve şirket haberleri</span>
-        <button class="katla-ok" type="button" aria-label="Aç / kapat" tabindex="-1"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         <span class="kap-yeni" id="kapYeni" hidden></span>
         <span class="ozet-soluk baslik-aciklama" id="kapAlt" style="font-size:12px;">portföyündeki BİST hisseleri</span>
+        <button class="katla-ok" type="button" aria-label="Aç / kapat" tabindex="-1"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
 
       </div>
       <div class="kap-ic" id="kapIc">
@@ -4003,7 +4004,7 @@
         <li><b>Emtia:</b> altın ve gümüş gram olarak girilir.</li>
       </ul>
       <p><b>Örnek:</b> Kripto · Bitcoin · 0,0006983 → o anki fiyat $95.000 ve kur ₺48,90 ise değer ≈ ₺3.244.</p>
-      <p><b>Çerçeveleri kapatma:</b> Her türün (ABD ETF &amp; Hisse, Kripto, BİST, Emtia) ve KAP bölümünün başlığının yanındaki yanıp sönen küçük sarı oka ya da başlığın kendisine dokununca o çerçeve kapanır, yalnız başlık ve toplamı kalır; tekrar dokununca açılır. Hepsi varsayılan olarak açıktır; seçimin bu cihazda hatırlanır. Kapalı çerçevedeki varlıklar toplama ve hesaplara yine dahildir.</p>
+      <p><b>Çerçeveleri kapatma:</b> Her türün (ABD ETF &amp; Hisse, Kripto, BİST, Emtia) ve KAP bölümünün sağındaki (toplamın hemen solundaki) yanıp sönen küçük sarı oka ya da başlığın kendisine dokununca o çerçeve kapanır, yalnız başlık ve toplamı kalır; tekrar dokununca açılır. Hepsi varsayılan olarak açıktır; seçimin bu cihazda hatırlanır. Kapalı çerçevedeki varlıklar toplama ve hesaplara yine dahildir.</p>
       <p><b>Yatırım / Borç oranı:</b> Yatırımlarının borcunu ne kadar karşıladığı. %50 altı kırmızı, %50–99 sarı, %100 ve üstü yeşil.</p>
       <p><b>KAP ve şirket haberleri:</b> Portföyünde BİST hissesi varsa listenin altında çıkar; son 30 günün <b>resmî KAP bildirimlerini</b> doğrudan KAP'tan alır. Şirketin kendi bildirimlerinin yanında Borsa İstanbul, Takasbank, MKK ya da ana ortağın o hisseyle ilgili bildirimleri de gelir; bunlarda “Gönderen” yazar. Birden çok hisseni ilgilendiren bildirim tek satırda, kodlar alt alta görünür. Varant, piyasa yapıcılığı, temerrüt gibi <b>rutin bildirimler</b> soluk yazılır ve konu başına tek satırda “son 30 günde 12 kez” diye toplanır; böylece özel durum açıklaması, ihraç, derecelendirme gibi önemli olanlar öne çıkar. Etiketsiz satırlar şirket haberleridir. Bölüm başlığa ya da sağdaki oka dokununca kapanır; kapalıyken yeni bildirim gelirse “3 yeni” gibi bir sayı görünür. <b>Yalnız KAP bildirimleri</b> kutusu haberleri gizler; satıra dokununca bildirimin KAP sayfası yeni sekmede açılır.</p>
       <button class="bolum-ekle" onclick="switchTab('yatirim')">Yatırımlarım'a git →</button>
@@ -9268,8 +9269,8 @@ function renderYatirim(){
       return `<div class="bolum cerceve-varlik${katli ? ' katli' : ''}">
         <div class="bolum-bas aciklamali">
           <span class="bolum-baslik katla-tik" style="color:${YATIRIM_KATEGORI_RENK[kat]};" onclick="yatirimKatla('${kat}')">${YATIRIM_KATEGORI_BASLIK[kat]}</span>
-          <button class="katla-ok" type="button" onclick="yatirimKatla('${kat}')" aria-expanded="${!katli}" title="${katli ? 'Göster' : 'Gizle'}" aria-label="${YATIRIM_KATEGORI_BASLIK[kat]} ${katli ? 'göster' : 'gizle'}"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <span class="ozet-soluk baslik-aciklama" style="font-size:12px;">${katListe.length} kalem · %${fmtNumber(toplamYatirim > 0 ? kategoriToplam[kat] / toplamYatirim * 100 : 0, 1)}</span>
+          <button class="katla-ok" type="button" onclick="yatirimKatla('${kat}')" aria-expanded="${!katli}" title="${katli ? 'Göster' : 'Gizle'}" aria-label="${YATIRIM_KATEGORI_BASLIK[kat]} ${katli ? 'göster' : 'gizle'}"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <span class="bolum-toplam" style="color:var(--up);">₺${fmtNumber(kategoriToplam[kat], 0)}</span>
           <button class="bolum-ekle" title="${YATIRIM_KATEGORI_BASLIK[kat]} ekle" onclick="yatirimEkleAc('${kat}')">+</button>
         </div>
