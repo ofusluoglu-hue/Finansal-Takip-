@@ -4554,7 +4554,7 @@
     <div class="yardim-hero kr-hero">
       <div class="kr-hero-ust">
         <div class="yardim-hero-baslik">Raporlarda ne arıyorsun?</div>
-        <div class="kr-hero-arac"><a class="kap-yenile" onclick="krYukle(true)">↻ Yenile</a><button class="bolum-ekle" onclick="krKurulumAc()">⚙ Kurulum</button></div>
+        <div class="kr-hero-arac"><a class="kap-yenile" id="krYenileBtn" onclick="krYenile()">↻ Yenile</a><button class="bolum-ekle" onclick="krKurulumAc()">⚙ Kurulum</button></div>
       </div>
       <div class="yardim-ara">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
@@ -14228,17 +14228,28 @@ async function krYukle(zorla){
 // Ortak raporlar (Ak Yatırım): sayfa açıkken sunucuya "yokla + bekleyen 1 raporu özetle" der (Türkiye'deki Cloudflare noktasından
 // Ak Yatırım'a erişim kesin; zamanlanmış görev yurt dışında çalışabiliyor). Aynı anda tek istek; yeni rapor ya da özet gelince liste tazelenir.
 let _krOrtakIstek = false, _krOrtakSon = 0;
-async function krOrtakTetikle(){
-  if(_krOrtakIstek || Date.now() - _krOrtakSon < 50 * 1000) return;
+async function krOrtakTetikle(hemen){
+  if(_krOrtakIstek || (!hemen && Date.now() - _krOrtakSon < 50 * 1000)) return;
   if(!document.getElementById('tab-kurum').classList.contains('active')) return;
-  _krOrtakIstek = true; _krOrtakSon = Date.now();
+  _krOrtakIstek = true; _krOrtakSon = Date.now(); krCiz();
   try{
     const res = await fetchWithTimeout(MY_WORKER + '/raporlar/ortak/yokla', 240000, { method: 'POST' });
     const j = await res.json().catch(() => ({}));
     if((j.yoklama && j.yoklama.yeni) || (j.sonuc && j.sonuc.durum === 'hazir')){ _krOrtakIstek = false; return krYukle(true); }
   }catch(e){ /* sonraki turda */ }
-  finally{ _krOrtakIstek = false; }
+  finally{ _krOrtakIstek = false; krCiz(); }
 }
+// Yenile: düğme geri bildirim verir; liste hemen çekilir, özet sırası beklemeden tetiklenir
+async function krYenile(){
+  const b = document.getElementById('krYenileBtn');
+  if(b){ b.textContent = '↻ Yenileniyor…'; b.style.pointerEvents = 'none'; }
+  await krYukle(true);
+  krOrtakTetikle(true);
+  _krBilgi = '✓ Güncellendi ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); krCiz();
+  setTimeout(() => { _krBilgi = ''; krCiz(); }, 4000);
+  if(b){ b.textContent = '↻ Yenile'; b.style.pointerEvents = ''; }
+}
+let _krBilgi = '';
 // Hazır raporlardaki hisse geçişleri (yeniden eskiye)
 function krGecisler(L){
   const out = [];
@@ -14351,7 +14362,7 @@ function krCiz(){
   // Üst bilgi satırı: kaç rapor, kaç kurum, son rapor, bekleyen
   const kurumlar = [...new Set(L.map(r => r.kurum))], sonR = L.slice().sort((a, b) => krTarih(b).localeCompare(krTarih(a)))[0];
   document.getElementById('krIstat').innerHTML = _krYukleniyor && !_krVeri ? 'Raporlar yükleniyor…' : _krHata ? '<span class="kr-down">Raporlar alınamadı: ' + escapeHtml(_krHata) + '</span>'
-    : L.length ? `<b>${L.length}</b> rapor · <b>${kurumlar.length}</b> kurum (${kurumlar.map(escapeHtml).join(', ')}) · son rapor <b>${krTarihYaz(krTarih(sonR))}</b>${bekleyen ? ` · <span class="kr-amber">${bekleyen} rapor özetleniyor</span>` : ''}${_krZaman ? ' · güncellendi ' + new Date(_krZaman).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : ''}${krMaliyetMetni()}`
+    : L.length ? `<b>${L.length}</b> rapor · <b>${kurumlar.length}</b> kurum (${kurumlar.map(escapeHtml).join(', ')}) · son rapor <b>${krTarihYaz(krTarih(sonR))}</b>${_krBilgi ? ` · <span class="kr-up" style="font-weight:700;">${_krBilgi}</span>` : ''}${_krOrtakIstek ? ' · <span class="kr-amber">1 rapor şu an özetleniyor (yaklaşık 1 dk)…</span>' : ''}${bekleyen ? ` · <span class="kr-amber">${bekleyen} rapor sırada (sayfa açıkken dakikada bir özetlenir)</span>` : ''}${_krZaman ? ' · güncellendi ' + new Date(_krZaman).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : ''}${krMaliyetMetni()}`
     : 'Kurulumu bir kez yaptığında Yatırım Finansman, Ak Yatırım gibi kurumların e-postana gelen PDF raporları kendiliğinden buraya gelir ve özetlenir: portföyündeki hisseler en üstte, kategori ve konuya göre.';
   // Hızlı arama: raporlarda geçen portföy hisseleri
   const gecen = {}; krGecisler(L).forEach(x => { if(kodlar.has(x.h.kod)) gecen[x.h.kod] = (gecen[x.h.kod] || 0) + 1; });
