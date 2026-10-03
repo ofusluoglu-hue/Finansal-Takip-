@@ -2460,24 +2460,24 @@
   .kv-sozluk dd{margin:0;color:var(--text);}
   .kv-gizli, .kat-gizli{display:none !important;}
   /* ---------- Kurum Raporları (görsel dil Kılavuz/SSS ile aynı: yardim-hero, sss-kat, kur-adim, kv-ikon) ---------- */
-  .kr-hero-ust{display:flex;align-items:flex-start;gap:12px;}
-  .kr-hero-arac{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:13px;}
-  .kr-hero-alt{display:flex;align-items:center;gap:10px 22px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
-  .kr-anahtar{display:flex;align-items:center;gap:11px;cursor:pointer;}
-  .kr-anahtar input{position:absolute;opacity:0;width:1px;height:1px;}
-  .kr-ray{flex:0 0 40px;width:40px;height:22px;border-radius:999px;background:var(--panel-2);border:1px solid var(--t-2c3542);position:relative;transition:background .2s, border-color .2s;}
-  .kr-ray::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:transform .2s, background .2s;}
-  .kr-anahtar input:checked + .kr-ray{background:var(--amber-dolgu);border-color:var(--amber);}
-  .kr-anahtar input:checked + .kr-ray::after{transform:translateX(18px);background:var(--t-14161c);}
-  .kr-anahtar input:focus-visible + .kr-ray{box-shadow:0 0 0 3px rgba(231,168,59,.25);}
-  .kr-anahtar-metin{display:flex;flex-direction:column;gap:1px;}
-  .kr-anahtar-metin b{font-size:13.5px;color:var(--text);}
-  .kr-anahtar-metin small{font-size:11.5px;color:var(--muted-2);}
+  /* Üst çubuk: Bay Piyasa araç çubuğuyla aynı ölçüler (bp-toolbar, bp-lbl, bp-toggle, bp-meter) */
+  .kr-cubuk{margin-bottom:8px;}
+  .kr-ara-alan{flex:1 1 300px;max-width:440px;min-width:0;}
+  .kr-ara{position:relative;}
+  .kr-ara svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);pointer-events:none;}
+  .kr-ara input{width:100%;box-sizing:border-box;height:34px;min-height:34px;padding:0 10px 0 32px;font-size:12.5px;}
+  .kr-cubuk-sag{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12.5px;}
+  .kr-sekmeler{flex:1 1 100%;margin-top:0;gap:6px;}
+  .kr-sekmeler .sss-kat{padding:4px 10px;font-size:12px;gap:6px;}
+  .kr-sekmeler .sss-kat svg{width:13px;height:13px;}
+  .kr-sekmeler .sss-kat em{font-size:10.5px;padding:0 6px;}
+  .kr-cubuk [hidden], .kr-sekmeler[hidden]{display:none !important;}
+  .kr-istat{display:block;margin-bottom:8px;line-height:1.6;}
+  .kr-oneri{margin:0 4px 10px;}
   .kr-oneri{margin-top:0;}
   .kr-oneri a{font-weight:700;letter-spacing:.02em;}
   .kr-oneri a em{font-style:normal;font-weight:500;color:var(--muted-2);margin-left:3px;}
   .kr-oneri[hidden]{display:none;}
-  .kr-hero .sss-kategoriler[hidden], .kr-hero-alt[hidden], .kr-hero .yardim-ara[hidden]{display:none;}
   .kr-istat{margin-top:12px;font-size:12.5px;color:var(--muted);}
   .kr-istat b{color:var(--text);}
   .kr-amber{color:var(--amber);font-weight:600;}
@@ -2525,19 +2525,21 @@
   .kr-ipucu em{margin-left:auto;font-style:normal;font-weight:700;color:var(--amber);white-space:nowrap;}
   .kr-alt-baslik{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);margin:16px 0 8px;}
   /* Gün / konu başlıkları (SSS grup başlığı kalıbı) */
-  .kr-grup-bas{display:flex;align-items:center;gap:8px;margin-top:20px;}
+  .kr-grup-bas{display:flex;align-items:center;gap:8px;margin-top:14px;}
   .kr-grup-bas svg{width:15px;height:15px;color:var(--amber);}
   /* Rapor satırı (SSS satırı kalıbı: ikon · metin · sağda tarih/durum · ok) */
   .kr-rapor{background:var(--panel);border:1px solid var(--border);border-left:3px solid transparent;border-radius:12px;margin-bottom:8px;overflow:hidden;transition:border-color .15s;}
   .kr-rapor:hover{border-color:var(--t-333d4a);}
   .kr-rapor.acik{border-color:var(--border);border-left-color:var(--amber);}
-  .kr-rapor-bas{padding:13px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;}
+  .kr-rapor-bas{padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;}
+  .kr-rapor-bas .kv-ikon{flex-basis:34px;width:34px;height:34px;border-radius:9px;}
+  .kr-rapor-bas .kv-ikon svg{width:17px;height:17px;}
   .kr-rapor-bas::after{content:'';flex:0 0 8px;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 3px 4px;transition:transform .2s;}
   .kr-rapor.acik .kr-rapor-bas::after{transform:rotate(-135deg);margin-bottom:-3px;}
   .kr-metin{flex:1;}
-  .kr-metin b{font-size:14.5px;}
-  .kr-metin small{font-size:12.5px;line-height:1.45;}
-  .kr-metin i{text-transform:none;letter-spacing:.01em;font-size:11.5px;}
+  .kr-metin b{font-size:13.5px;}
+  .kr-metin small{font-size:12px;line-height:1.45;}
+  .kr-metin i{letter-spacing:.04em;font-size:10px;}
   .kr-sag{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:0 0 auto;}
   .kr-zaman{font-size:12px;color:var(--muted-2);white-space:nowrap;}
   .kr-hsay{font-size:11px;font-weight:600;color:var(--muted);padding:1px 8px;border-radius:999px;background:var(--panel-2);white-space:nowrap;}
@@ -2545,17 +2547,17 @@
   .kr-rozet{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;}
   .kr-rozet.bekliyor{color:var(--amber);background:color-mix(in srgb, var(--amber-dolgu) 15%, transparent);}
   .kr-rozet.uyari{color:var(--amber);border:1px solid var(--amber);} .kr-rozet.hata{color:var(--down);border:1px solid var(--down);}
-  .kr-govde{padding:4px 18px 16px 70px;border-top:1px solid var(--border);background:linear-gradient(180deg, rgba(231,168,59,.04), transparent 50%);}
-  .kr-maddeler{margin:12px 0;padding-left:18px;display:flex;flex-direction:column;gap:7px;font-size:13.5px;line-height:1.6;}
+  .kr-govde{padding:4px 16px 14px 60px;border-top:1px solid var(--border);background:linear-gradient(180deg, rgba(231,168,59,.04), transparent 50%);}
+  .kr-maddeler{margin:10px 0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.6;}
   .kr-maddeler li::marker{color:var(--amber);}
   .kr-sayfa{font-size:11px;white-space:nowrap;}
-  .kr-gorus{font-size:13.5px;line-height:1.6;padding:11px 14px;border-radius:10px;background:var(--panel-2);border-left:3px solid var(--amber-dolgu);}
+  .kr-gorus{font-size:13px;line-height:1.6;padding:11px 14px;border-radius:10px;background:var(--panel-2);border-left:3px solid var(--amber-dolgu);}
   .kr-takvim{font-size:13px;padding:4px 0;display:flex;gap:10px;} .kr-takvim span{min-width:110px;color:var(--muted);font-variant-numeric:tabular-nums;}
   .kr-dugmeler{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:16px;padding-top:12px;border-top:1px solid var(--border);}
   .kr-dugmeler .kr-sil{color:var(--down);}
   @media (max-width:1100px){ .kr-adimlar4{grid-template-columns:repeat(2, minmax(0,1fr));} }
   @media (max-width:640px){
-    .kr-hero-ust{flex-direction:column;gap:6px;} .kr-hero-arac{margin-left:0;}
+    .kr-ara-alan{flex-basis:100%;max-width:none;} .kr-tumu-anahtar{flex:1 1 auto;min-width:0;} .kr-cubuk-sag{margin-left:auto;gap:10px;} .kr-kurulum-yazi{display:none;}
     .kr-kartlar{grid-template-columns:1fr;} .kr-hisse-hedef{margin-left:0;flex-basis:100%;}
     .kr-rapor-bas{padding:11px 12px;gap:10px;align-items:flex-start;} .kr-rapor-bas .kv-ikon{flex-basis:34px;width:34px;height:34px;}
     .kr-rapor-bas::after{display:none;}
@@ -4551,22 +4553,22 @@
   <!-- ================= TAB: AYLIK RAPOR ================= -->
   <div class="tab-panel" id="tab-kurum">
     <div class="page-head"><h1>Kurum Raporları</h1></div>
-    <div class="yardim-hero kr-hero">
-      <div class="kr-hero-ust">
-        <div class="yardim-hero-baslik">Raporlarda ne arıyorsun?</div>
-        <div class="kr-hero-arac"><a class="kap-yenile" id="krYenileBtn" onclick="krYenile()">↻ Yenile</a><button class="bolum-ekle" onclick="krKurulumAc()">⚙ Kurulum</button></div>
+    <div class="bp-toolbar kr-cubuk">
+      <div class="bp-tool kr-ara-alan">
+        <label class="bp-lbl" for="krAra">Raporlarda ara</label>
+        <div class="kr-ara">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="krAra" class="ai-input" type="search" placeholder="Hisse kodu, konu ya da kelime (ör. THYAO, enflasyon)" oninput="krAraDegisti(this.value)" autocomplete="off">
+        </div>
       </div>
-      <div class="yardim-ara">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-        <input id="krAra" type="search" placeholder="Hisse kodu, konu ya da kelime ara… (ör. THYAO, enflasyon, hedef fiyat)" oninput="krAraDegisti(this.value)" autocomplete="off">
-      </div>
-      <div class="sss-kategoriler" id="krSekmeler"></div>
-      <div class="kr-hero-alt">
-        <label class="kr-anahtar"><input type="checkbox" id="krTumu" onchange="krTumuDegisti(this.checked)"><span class="kr-ray"></span><span class="kr-anahtar-metin"><b>Raporlardaki tüm hisseler</b><small>Kapalıyken yalnız portföyün; açıkken raporlarda geçen bütün hisseler (portföyün yine önde)</small></span></label>
-        <div class="yardim-oneri kr-oneri" id="krOneri" hidden></div>
-      </div>
-      <div class="kr-istat" id="krIstat"></div>
+      <label class="bp-toggle kr-tumu-anahtar" title="Kapalıyken yalnız portföyündeki hisseler; açıkken raporlarda geçen bütün hisseler (portföyün yine önde)">
+        <input type="checkbox" id="krTumu" onchange="krTumuDegisti(this.checked)"><span class="bp-switch"></span>Raporlardaki tüm hisseler
+      </label>
+      <div class="kr-cubuk-sag"><a class="kap-yenile" id="krYenileBtn" onclick="krYenile()">↻ Yenile</a><button class="bolum-ekle" onclick="krKurulumAc()" title="Kurulum: e-postana gelen raporları ekle">⚙<span class="kr-kurulum-yazi"> Kurulum</span></button></div>
+      <div class="sss-kategoriler kr-sekmeler" id="krSekmeler"></div>
     </div>
+    <div class="bp-meter kr-istat" id="krIstat"></div>
+    <div class="yardim-oneri kr-oneri" id="krOneri" hidden></div>
     <div id="krKurulum" class="bolum kv-giris kr-kurulum" hidden></div>
     <div id="krDerleme"></div>
     <div id="krListe"></div>
@@ -14356,8 +14358,7 @@ function krCiz(){
   document.getElementById('krSekmeler').innerHTML = KR_KATEGORI.filter(([k]) => k === 'hepsi' || say(k)).map(([k, ad]) => `<button class="sss-kat${ay.kat === k ? ' active' : ''}" onclick="krAyarYaz({ kat: '${k}' }); krCiz()">${krSvg(KR_IKON[k])}${ad} <em>${say(k)}</em></button>`).join('');
   // Rapor yokken kategori, anahtar ve arama işe yaramaz: yalnız kurulum öne çıkar
   const bos = !!_krVeri && !L.length;
-  document.getElementById('krSekmeler').hidden = bos; sayfa.querySelector('.kr-hero-alt').hidden = bos; sayfa.querySelector('.kr-hero .yardim-ara').hidden = bos;
-  sayfa.querySelector('.kr-hero .yardim-hero-baslik').textContent = bos ? 'Aracı kurum raporların burada toplanacak' : 'Raporlarda ne arıyorsun?';
+  document.getElementById('krSekmeler').hidden = bos; sayfa.querySelector('.kr-ara-alan').hidden = bos; sayfa.querySelector('.kr-tumu-anahtar').hidden = bos;
   const bekleyen = L.filter(r => r.durum === 'bekliyor' || r.durum === 'isleniyor').length;
   // Üst bilgi satırı: kaç rapor, kaç kurum, son rapor, bekleyen
   const kurumlar = [...new Set(L.map(r => r.kurum))], sonR = L.slice().sort((a, b) => krTarih(b).localeCompare(krTarih(a)))[0];
