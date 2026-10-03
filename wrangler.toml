@@ -14,3 +14,7 @@ preview_urls = false
 binding = "DB"
 database_name = "finansal-takip"
 database_id = "6cc1d6f4-3f4e-48fa-8ad9-a64360ca2da0"
+
+# Kurum raporları: bekleyen PDF'leri her 5 dakikada bir özetle, eski PDF'leri sil
+[triggers]
+crons = ["*/5 * * * *"]

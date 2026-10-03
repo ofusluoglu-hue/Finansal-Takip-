@@ -232,7 +232,7 @@
     display:flex;
     align-items:center;
     gap:11px;
-    padding:6.5px 12px;   /* ~30 px satır: 900 px ekranda menünün tamamı görünür (yönetim grubu ve Destek dahil) */
+    padding:5.75px 12px;   /* ~29 px satır: 900 px ekranda menünün tamamı görünür (yönetim grubu ve Destek dahil) */
     border-radius:8px;
     cursor:pointer;
     color:var(--muted);
@@ -245,7 +245,7 @@
   .nav-grup{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);padding:7px 12px 3px;margin-top:4px;border-top:1px solid var(--border);}   /* gruplar profil çizgisiyle aynı ince çizgiyle ayrılır */
   /* Kısa ekran (laptop): bir kademe daha sık */
   @media (min-width:901px) and (max-height:960px){
-    .nav-item{padding:5px 12px;font-size:12.5px;}
+    .nav-item{padding:4.25px 12px;font-size:12.5px;}
     .nav-item svg{width:16px;height:16px;}
     .nav-grup{padding:5px 12px 2px;margin-top:3px;font-size:9.5px;}
     .sidebar-kutu > .profil-kutu{padding:4px 8px 7px;margin-bottom:3px;}
@@ -254,7 +254,7 @@
   }
   /* Çok kısa ekran (1366×768, 1280×720): bir kademe daha — yönetici menüsü de kaymadan sığsın */
   @media (min-width:901px) and (max-height:800px){
-    .nav-item{padding:3.5px 12px;font-size:12px;gap:10px;}
+    .nav-item{padding:2.75px 12px;font-size:12px;gap:10px;}
     .nav-item svg{width:15px;height:15px;}
     .nav-grup{padding:4px 12px 1px;margin-top:2px;font-size:9px;}
     .sidebar-kutu{padding:6px 8px;}
@@ -263,7 +263,7 @@
     .nav-alt{margin-top:3px !important;padding-top:5px !important;}
   }
   @media (min-width:901px) and (max-height:740px){   /* 1280×720 */
-    .nav-item{padding:2.5px 12px;}
+    .nav-item{padding:1.75px 12px;}
     .nav-grup{padding:3px 12px 1px;margin-top:1px;}
     .nav-item + .nav-item{margin-top:0;}
   }
@@ -2459,6 +2459,70 @@
   .kv-sozluk dt{font-weight:700;color:var(--amber);}
   .kv-sozluk dd{margin:0;color:var(--text);}
   .kv-gizli, .kat-gizli{display:none !important;}
+  /* ---------- Kurum Raporları ---------- */
+  .kr-ust{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+  .kr-sekmeler{display:flex;gap:6px;flex-wrap:wrap;}
+  .kr-sekme{padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--muted);font:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+  .kr-sekme span{font-weight:500;color:var(--muted-2);margin-left:3px;}
+  .kr-sekme.aktif{background:var(--panel-2);color:var(--text);border-color:var(--amber);}
+  .kr-arac{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;}
+  .kr-arac .ai-input{flex:1 1 260px;max-width:420px;}
+  .kr-tumu-sec{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;color:var(--text);}
+  .kr-tumu-sec input{accent-color:var(--amber-dolgu);width:16px;height:16px;}
+  .kr-durum{color:var(--muted-2);font-size:12px;}
+  .kr-kurulum code{background:var(--panel-2);padding:1px 6px;border-radius:5px;font-size:12.5px;}
+  .kr-adimlar{margin:4px 0 10px;padding-left:22px;display:flex;flex-direction:column;gap:12px;font-size:13.5px;line-height:1.55;}
+  .kr-adimlar > li::marker{font-weight:800;color:var(--amber);}
+  .kr-betik{margin-top:10px;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--panel-2);display:flex;flex-direction:column;gap:8px;}
+  .kr-betik textarea{width:100%;height:150px;font:12px/1.45 ui-monospace,Consolas,monospace;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px;resize:vertical;box-sizing:border-box;}
+  .kr-betik ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;}
+  .kr-soluk{color:var(--muted-2);font-size:12px;}
+  .kr-up{color:var(--up);} .kr-down{color:var(--down);}
+  .kr-derleme .bolum-bas{margin-bottom:10px;}
+  .kr-kartlar{display:grid;grid-template-columns:repeat(auto-fill, minmax(330px, 1fr));gap:10px;margin-bottom:10px;}
+  .kr-kartlar.tek{grid-template-columns:1fr;}
+  .kr-kart{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--panel-2);display:flex;flex-direction:column;gap:8px;}
+  .kr-kart.portfoy{border-left:3px solid var(--amber-dolgu);}
+  .kr-hisse{display:flex;flex-direction:column;gap:4px;}
+  .kr-kart .kr-hisse + .kr-hisse{border-top:1px dashed var(--border);padding-top:8px;}
+  .kr-govde .kr-hisse{padding:8px 0;border-bottom:1px solid var(--border);}
+  .kr-govde .kr-hisse.portfoy{background:color-mix(in srgb, var(--amber-dolgu) 8%, transparent);padding:8px 8px;border-radius:8px;border-bottom:none;margin-bottom:4px;}
+  .kr-hisse-ust{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:13px;}
+  .kr-kod{font-weight:800;font-size:12px;padding:2px 7px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text);}
+  .kr-tavsiye{font-size:11px;font-weight:800;padding:2px 7px;border-radius:6px;background:var(--panel);border:1px solid var(--border);color:var(--muted);}
+  .kr-tavsiye.up{color:var(--up);border-color:var(--up);} .kr-tavsiye.down{color:var(--down);border-color:var(--down);}
+  .kr-degisim{font-size:11px;font-weight:700;} .kr-degisim.up{color:var(--up);} .kr-degisim.down{color:var(--down);}
+  .kr-hisse-hedef{margin-left:auto;font-size:12.5px;color:var(--muted);}
+  .kr-hisse-hedef b{color:var(--text);}
+  .kr-hisse-ozet{font-size:13px;line-height:1.5;color:var(--text);}
+  .kr-kaynak{font-size:11.5px;color:var(--muted-2);}
+  .kr-kaynak a, .kr-sayfa, .kr-etki a{color:var(--amber);cursor:pointer;text-decoration:none;}
+  .kr-etki{font-size:13px;line-height:1.5;padding:4px 0;}
+  .kr-etki.olumlu .kr-kod{border-color:var(--up);} .kr-etki.olumsuz .kr-kod{border-color:var(--down);}
+  .kr-alt-baslik{font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;}
+  .kr-ipucu{font-size:13px;color:var(--muted);padding:6px 0 4px;}
+  .kr-grup-baslik{font-size:13px;font-weight:800;color:var(--muted);margin:16px 2px 8px;}
+  .kr-grup-baslik span{font-weight:500;color:var(--muted-2);margin-left:4px;}
+  .kr-rapor{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;}
+  .kr-rapor.acik{border-color:var(--amber);}
+  .kr-rapor-bas{padding:12px 16px;cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;}
+  .kr-rapor-bas:hover{background:var(--panel-2);}
+  .kr-kurum{font-size:11.5px;font-weight:800;color:var(--amber);}
+  .kr-konu{font-size:11.5px;font-weight:600;color:var(--muted);padding:1px 8px;border-radius:999px;background:var(--panel-2);}
+  .kr-zaman{margin-left:auto;font-size:12px;color:var(--muted-2);}
+  .kr-rapor-baslik{flex-basis:100%;font-size:14.5px;font-weight:700;color:var(--text);}
+  .kr-tek{flex-basis:100%;font-size:13px;line-height:1.5;color:var(--muted);}
+  .kr-rozet{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;}
+  .kr-rozet.bekliyor{color:var(--amber);background:color-mix(in srgb, var(--amber-dolgu) 15%, transparent);}
+  .kr-rozet.uyari{color:var(--amber);border:1px solid var(--amber);} .kr-rozet.hata{color:var(--down);border:1px solid var(--down);}
+  .kr-govde{padding:2px 16px 14px;border-top:1px solid var(--border);}
+  .kr-maddeler{margin:10px 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.55;}
+  .kr-sayfa{font-size:11px;white-space:nowrap;}
+  .kr-gorus{font-size:13.5px;line-height:1.55;padding:10px 12px;border-radius:8px;background:var(--panel-2);border-left:3px solid var(--amber-dolgu);}
+  .kr-takvim{font-size:13px;padding:3px 0;display:flex;gap:10px;} .kr-takvim span{min-width:90px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .kr-dugmeler{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px;}
+  .kr-dugmeler .kr-sil{color:var(--down);}
+  @media (max-width:640px){ .kr-kartlar{grid-template-columns:1fr;} .kr-hisse-hedef{margin-left:0;flex-basis:100%;} .kr-rapor-bas, .kr-govde{padding-left:12px;padding-right:12px;} }
   /* ---------- KAP ve şirket haberleri (Yatırımlarım) ---------- */
   .kap-bas{cursor:pointer;user-select:none;flex-wrap:wrap;row-gap:2px;}
   .kap-ok{margin-left:auto;width:30px;height:30px;padding:0;border-radius:8px;border:1px solid var(--border);background:var(--panel-2);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s, color .15s;}
@@ -2949,6 +3013,10 @@
       <div class="nav-item" data-tab="rapor" onclick="switchTab('rapor')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
         <span data-kisa="Rapor">Aylık Rapor</span>
+      </div>
+      <div class="nav-item" data-tab="kurum" onclick="switchTab('kurum')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h8l3 3v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M4 7v12a2 2 0 0 0 2 2h9"/><path d="M10.5 9h6M10.5 12.5h6M10.5 16h3.5"/></svg>
+        <span data-kisa="Raporlar">Kurum Raporları</span>
       </div>
       <div class="nav-grup">Yardım</div>
       <div class="nav-item" data-tab="kilavuz" onclick="switchTab('kilavuz')">
@@ -4006,6 +4074,16 @@
       <button class="bolum-ekle" onclick="switchTab('rapor')">Aylık Rapor'a git →</button>
     </div></details>
 
+    <details class="kv-bolum" id="kv-kurum"><summary>🗂️ Kurum Raporları <span>aracı kurum raporlarının özetleri</span></summary><div class="kv-ic">
+      <p><b>Ne işe yarar:</b> Aracı kurumların (ör. Yatırım Finansman, Ak Yatırım) e-postana gönderdiği günlük bülten, makro, şirket ve strateji raporlarını tek yerde arşivler ve Bay Piyasa'ya özetletir. Her raporun ana bulguları rakamlarıyla, kurumun görüşü, adı geçen hisselerin tavsiye ve hedef fiyatları, piyasa beklentisi ve takvim kısa maddeler halinde görünür; her maddenin yanındaki <b>s. 2</b> gibi bağlantı PDF'i o sayfada açar.</p>
+      <p><b>Portföyün önde:</b> En üstteki <b>Portföyün raporlarda</b> bölümü son 14 günde portföyündeki hisseler hakkında her kurumun en yeni görüşünü gösterir; tavsiyesi ya da hedefi değişenler önce gelir. <b>Raporlardaki tüm hisseler</b> kutusunu işaretlersen raporlarda geçen diğer bütün hisseler de altta listelenir (seçimin hatırlanır).</p>
+      <p><b>Sekmeler ve arama:</b> Raporlar Günlük, Şirket, Makro, Strateji ve Sektör sekmelerine ayrılır; Makro'da enflasyon, faiz, büyüme gibi konu başlıkları altında toplanır. Arama kutusuna bir hisse kodu yazarsan (ör. THYAO) o hisse hakkında raporlarda söylenenler tarih sırasıyla, tavsiye ve hedef değişimleriyle görünür.</p>
+      <p><b>Kurulum (bir kez):</b> Sayfadaki <b>⚙ Kurulum</b> düğmesi adım adım anlatır: kurumun e-bültenine abone ol → rapor e-postalarının geldiği adresleri yaz → <b>Betiğimi oluştur</b> → betiği script.google.com'a yapıştırıp <b>kur</b>'u çalıştır. Betik Gmail şifreni istemez; yalnız yazdığın göndericilerden gelen PDF eklerini panele gönderir ve 15 dakikada bir kendiliğinden çalışır.</p>
+      <p><b>Bildirim:</b> Portföyündeki bir hissenin tavsiyesi ya da hedef fiyatı değişirse zilde bildirim çıkar.</p>
+      <p class="kv-ipucu">💡 Özet için Bay Piyasa'nın Anthropic API anahtarı gerekir (Profilim › Bay Piyasa); anahtar yokken de raporlar arşivlenir ve PDF olarak açılır, anahtarı ekleyince kendiliğinden özetlenir. PDF'ler 90 gün saklanır, özetler kalıcıdır. Raporlar yalnız senin hesabında görünür.</p>
+      <button class="bolum-ekle" onclick="switchTab('kurum')">Kurum Raporları'na git →</button>
+    </div></details>
+
     <details class="kv-bolum" id="kv-hesap"><summary>👤 Profilim ve hesabın <span>ad, fotoğraf, tercihler, şifre, çıkış</span></summary><div class="kv-ic">
       <p><b>Hesabı kim açar:</b> Panelde kayıt ekranı yok; hesapları yönetici açar ve sana e-posta adresinle bir <b>geçici şifre</b> iletir.</p>
       <p><b>İlk giriş:</b> E-posta ve geçici şifreyle gir. Panel hemen kendi şifreni belirlemeni ister (en az 8 karakter); bunu yapmadan devam edemezsin. Hesabın boş açılır; Kılavuz'un başındaki <b>İlk kurulum</b> adımlarıyla doldurursun.</p>
@@ -4121,6 +4199,12 @@
     <details class="kv-bolum kv-sss"><summary>Bildirimler ne zaman gelir? Zildeki kırmızı sayı ne?</summary><div class="kv-ic"><p>Her ödeme son gününden <b>bir gün önce</b> ve <b>son gün</b> bildirim olur (6 Ekim'deki ödeme 5 ve 6 Ekim'de). Bütçesi aşılan ya da %90'ı dolan kategori ve asgarinin altında planlanan kart ödemesi de uyarı olarak gelir. Kırmızı sayı okunmamış bildirimlerdir; dokununca ilgili sayfa açılır, “Tümünü okundu say” sayıyı sıfırlar. Yöneticiden gelen mesajlar zilin yanındaki ✉ zarfta sayılır. Zildekilerin hepsini okundu saymak için zil panelinin başlığındaki <b>✓✓</b> simgesine bas. Bildirimler panel açıkken görünür; telefona ayrıca anlık bildirim (push) gönderilmez.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Mesajlarımı nerede görürüm?</summary><div class="kv-ic"><p><b>Profilim › Mesaj kutusu</b>'nda. Okunmamış mesajın varsa sağ üstte zilin yanındaki <b>✉ zarfın</b> üstünde kırmızı sayı çıkar (telefonda en üstteki satırın sağında); zarfa dokununca son mesajların listesi açılır; birine dokununca o mesaj Profilim'de açık gelir. Yönetici tek kişiye ya da herkese (duyuru) yazar; sen de kutunun sağındaki <b>✉ Yeni mesaj</b> ile yöneticiye yazabilir, gelen mesajı <b>↩ Yanıtla</b> ile cevaplayabilirsin. Yazdıkların ve okunup okunmadıkları <b>Gönderilen</b> sekmesindedir. Silmek için mesajların solundaki kutucukları işaretleyip <b>🗑 Sil</b>'e bas.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Telefonda bazı sayfaları bulamıyorum.</summary><div class="kv-ic"><p>Telefonda alt çubukta en sık kullanılan 6 sayfa durur. Geri kalanlar (Ödeme Takvimi, Nakit Akışı, Bütçe Planlaması, Net Varlık Geçmişi, Portföy İstatistikleri, Borç Kapatma Planı, Birikim Hedefleri, Aylık Rapor, Kullanım Kılavuzu ve Sık Sorulan Sorular) sağ alttaki <b>Diğer</b> düğmesindedir. Profilim, şifre değiştirme ve çıkış da orada, en alttaki <b>Hesap</b> bölümünde; ayrıca ekranın en üstündeki adına dokunarak da Profilim'e gidersin.</p></div></details>
+
+    <div class="kv-grup-bas">Kurum raporları</div>
+    <details class="kv-bolum kv-sss"><summary>Aracı kurum raporlarımı panele nasıl getiririm?</summary><div class="kv-ic"><p>Kurum Raporları sayfasında <b>⚙ Kurulum</b>'a bas. Önce kurumun e-bültenine abone ol (müşteri temsilcin ya da kurumun sitesindeki araştırma raporları aboneliği); raporların e-postana PDF eki olarak gelmesi gerekir. Sonra rapor e-postalarının geldiği adresleri yaz (ör. bulten@yf.com.tr), <b>Betiğimi oluştur</b>'a bas ve çıkan kodu script.google.com'da yeni bir projeye yapıştırıp <b>kur</b> işlevini çalıştır. Son 7 günün raporları hemen, sonrakiler 15 dakikada bir gelir ve 5–10 dakika içinde özetlenir.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Gmail şifremi ya da e-postalarımı panele vermiş olur muyum?</summary><div class="kv-ic"><p>Hayır. Betik senin Google hesabında, senin izninle çalışır; panele yalnız yazdığın göndericilerden gelen PDF eklerini gönderir. Başka e-postalarına bakmaz, şifreni hiçbir yere iletmez. Google'ın “uygulama doğrulanmadı” uyarısı, betiği bir şirket değil senin oluşturduğun için çıkar. Durdurmak istersen script.google.com'da projeyi silmen ya da sayfada yeni betik oluşturman (eski anahtar geçersiz olur) yeterli.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Raporları başka kullanıcılar da görebilir mi?</summary><div class="kv-ic"><p>Hayır, raporlar yalnız aktaran kişinin hesabında görünür. Aracı kurumların raporları alıcısına özeldir ve başkalarıyla paylaşılması yasaktır. Diğer kullanıcılar aynı özeti kendi aboneliklerini kendi hesaplarına bağlayarak alır; kurulum herkes için aynıdır.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Rapor geldi ama “Özet için API anahtarı gerekli” yazıyor.</summary><div class="kv-ic"><p>Özetleri Bay Piyasa yapar ve bunun için Profilim › Bay Piyasa bölümünde kendi Anthropic API anahtarının kayıtlı olması gerekir (ücret senin Anthropic hesabından düşer; rapor başına bir kez). Anahtarı ekleyince bekleyen raporlar birkaç dakika içinde kendiliğinden özetlenir. O zamana kadar rapor arşivde durur ve <b>PDF'i aç</b> ile okunabilir.</p></div></details>
 
     <div class="kv-grup-bas">Hesap, güvenlik ve Bay Piyasa</div>
     <details class="kv-bolum kv-sss"><summary>Verilerim diğer cihazlarımda da görünür mü?</summary><div class="kv-ic"><p>Evet. Girdiğin her şey hesabında saklanır ve aynı e-posta ve şifreyle girdiğin her cihazda görünür. Sol alttaki “☁ Senkron tamam” bunun gerçekleştiğini gösterir. İnternet yokken yaptığın değişiklikler bağlantı gelince gönderilir.</p></div></details>
@@ -4384,6 +4468,23 @@
   <!-- ================= /TAB: KULLANICILAR ================= -->
 
   <!-- ================= TAB: AYLIK RAPOR ================= -->
+  <div class="tab-panel" id="tab-kurum">
+    <div class="page-head"><h1>Kurum Raporları</h1></div>
+    <div class="kr-ust">
+      <div class="kr-sekmeler" id="krSekmeler"></div>
+      <div class="kr-arac">
+        <input id="krAra" class="ai-input" type="search" placeholder="Ara: hisse kodu (THYAO), konu ya da kelime…" oninput="krAraDegisti(this.value)">
+        <label class="kr-tumu-sec"><input type="checkbox" id="krTumu" onchange="krTumuDegisti(this.checked)"> Raporlardaki tüm hisseler</label>
+        <span class="kr-durum" id="krDurum"></span>
+        <a class="kap-yenile" onclick="krYukle(true)">↻ Yenile</a>
+        <button class="bolum-ekle" onclick="krKurulumAc()">⚙ Kurulum</button>
+      </div>
+    </div>
+    <div id="krKurulum" class="bolum kr-kurulum" hidden></div>
+    <div id="krDerleme"></div>
+    <div id="krListe"></div>
+  </div>
+
   <div class="tab-panel" id="tab-rapor">
     <div class="page-head"><h1>Aylık Rapor</h1></div>
 
@@ -6882,10 +6983,10 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
-function fetchWithTimeout(url, ms = 7000){
+function fetchWithTimeout(url, ms = 7000, init){
   const controller = new AbortController();
   const timer = setTimeout(()=> controller.abort(), ms);
-  return fetch(url, { signal: controller.signal, cache: 'no-store' }).finally(()=> clearTimeout(timer));
+  return fetch(url, Object.assign({ cache: 'no-store' }, init, { signal: controller.signal })).finally(()=> clearTimeout(timer));
 }
 
 async function fetchWithFallback(url){
@@ -12799,6 +12900,7 @@ const TAB_BASLIKLARI = {
   destek:   ['Destek ve İletişim', 'Çözemediğin bir sorun ya da önerin için bize yaz'],
   sss:      ['Sık Sorulan Sorular', 'En sık takılınan noktaların kısa cevapları — konulara göre'],
   kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle'],
+  kurum:    ['Kurum Raporları', 'Aracı kurum raporlarının özetleri — portföyün önde, kategori ve konuya göre'],
   rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],
   araclar:  ['Hesap Araçları', 'Hesap makinesi; kredi, KMH / kart ve vadeli mevduat faiz hesaplayıcıları'],
   hedef:    ['Birikim Hedefleri', 'Tutar ve tarih koy — ayda ne kadar ayırman gerektiğini ve planın önünde mi olduğunu gör'],
@@ -12833,6 +12935,7 @@ function switchTab(tabId){
   if(tabId === 'yatirim') kapYukle();   // KAP ve şirket haberleri (10 dk önbellek)
   if(tabId === 'kilavuz' || tabId === 'sss'){ yardimKur(); if(tabId === 'kilavuz'){ kilavuzAnaSayfa(); kurulumCiz(); } }
   if(tabId === 'rapor') renderRapor();
+  if(tabId === 'kurum') krYukle();
   if(tabId === 'kullanicilar'){ renderKullanicilar(); renderGonderilen(); }
   if(tabId === 'destek') destekHazirla();
   if(tabId === 'profil'){ renderProfil(); profilYenile(); renderMesajKutusu(); }
@@ -12907,6 +13010,8 @@ function bildirimUret(bugunS){
       }
     });
   }catch(e){ /* kart yok */ }
+  // 4) Kurum raporları: portföydeki hissede tavsiye/hedef değişikliği (rapor listesi yüklendiyse)
+  try{ out.push(...krBildirimleri(bugunS)); }catch(e){ /* rapor yok */ }
   return out.sort((a, b) => (a.grup === b.grup ? 0 : a.grup === 'odeme' ? -1 : 1) || a.sira - b.sira || (a.seviye === 'acil' ? -1 : 1));
 }
 var _bildirimler = [];
@@ -12917,6 +13022,7 @@ const BILDIRIM_IKON = {
   butce: '<path d="M21 12a9 9 0 1 1-9-9v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
   uyari: '<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
   mektup: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>',
+  rapor: '<path d="M9 3h8l3 3v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M4 7v12a2 2 0 0 0 2 2h9"/><path d="M10.5 9h6M10.5 12.5h6"/>',
 };   // var: açılışta switchTab bu satırdan önce çağrılabilir
 function bildirimGuncelle(){
   const d = bildirimDurum();
@@ -13666,7 +13772,7 @@ document.addEventListener('keydown', e => {
 // ---------- Yardım sayfaları (Kılavuz + SSS): kart ızgarası, okuma görünümü, kurulum listesi, kategoriler ----------
 // İçerik HTML'de kalır (arama aynı metinde çalışır); bu kod yalnız düzeni kurar.
 const YARDIM_KV_TAB = { 'kv-piyasa': 'gunluk', 'kv-finansal': 'finansal', 'kv-yatirim': 'yatirim', 'kv-borclar': 'borclar', 'kv-harcama': 'harcama', 'kv-odeme': 'odeme', 'kv-nakit': 'nakitakis', 'kv-butce': 'butce',
-  'kv-netgecmis': 'netgecmis', 'kv-istatistik': 'istatistik', 'kv-borcplan': 'borcplan', 'kv-araclar': 'araclar', 'kv-hedef': 'hedef', 'kv-bp': 'ai', 'kv-rapor': 'rapor', 'kv-hesap': 'profil', 'kv-kullanicilar': 'kullanicilar' };
+  'kv-netgecmis': 'netgecmis', 'kv-istatistik': 'istatistik', 'kv-borcplan': 'borcplan', 'kv-araclar': 'araclar', 'kv-hedef': 'hedef', 'kv-bp': 'ai', 'kv-rapor': 'rapor', 'kv-kurum': 'kurum', 'kv-hesap': 'profil', 'kv-kullanicilar': 'kullanicilar' };
 const YARDIM_GRUP_RENK = { 'Varlık ve borç': 'var(--p-6ec3ff)', 'Harcama ve bütçe': 'var(--p-e7a83b)', 'İstatistikler': 'var(--p-c9a6ff)', 'Planlama': 'var(--p-33c07c)', 'Asistan': 'var(--p-ff8fb1)', 'Yönetim': 'var(--p-7c8695)', '': 'var(--p-5eead4)' };
 const YARDIM_PROFIL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
 const YARDIM_BASLA_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4L15 12H4"/></svg>';
@@ -13918,6 +14024,293 @@ function kapKatla(){
 }
 // Arka planda (bölüm kapalıyken de) yeni sayısı için seyrek tazele; yalnız sayfa görünürken
 setInterval(() => { if(document.visibilityState === 'visible' && kapKodlar().length && Date.now() - _kapZaman > 10 * 60 * 1000 && document.getElementById('tab-yatirim').classList.contains('active')) kapYukle(); }, 60000);
+
+// ---------- Kurum Raporları: aracı kurumların e-postayla gelen PDF raporlarının özetleri ----------
+// Kaynak: kullanıcının kendi Gmail'i → kendi Google Apps Script'i → Worker /rapor-al (kişisel rapor anahtarı). Worker her 5 dk'da bekleyenleri
+// Claude ile özetler. Raporlar yalnız sahibine görünür (kurumların dağıtım şartı). Tercihler bu cihazda: ft_kurum_rapor { tum, kat, gonderen }.
+const KR_AYAR_KEY = 'ft_kurum_rapor';
+const KR_KATEGORI = [['hepsi', 'Hepsi'], ['gunluk', 'Günlük'], ['sirket', 'Şirket'], ['makro', 'Makro'], ['strateji', 'Strateji ve Sektör'], ['diger', 'Diğer']];
+const KR_KAT_AD = { gunluk: 'Günlük', sirket: 'Şirket', makro: 'Makro', strateji: 'Strateji', sektor: 'Sektör', diger: 'Diğer' };
+const KR_DEGISIM = { yeni: ['Kapsama alındı', 'up'], yukseltme: ['Tavsiye yükseltildi', 'up'], dusurme: ['Tavsiye düşürüldü', 'down'], hedef_artti: ['Hedef artırıldı', 'up'], hedef_dustu: ['Hedef düşürüldü', 'down'] };
+let _krVeri = null, _krZaman = 0, _krYukleniyor = false, _krHata = '', _krAcik = {}, _krHisseAcik = {}, _krDigerTumu = false, _krAra = '', _krIslem = {}, _krBetik = null;
+function krAyar(){ try{ return Object.assign({ tum: false, kat: 'hepsi', gonderen: 'bulten@yf.com.tr' }, JSON.parse(localStorage.getItem(KR_AYAR_KEY) || '{}')); }catch(e){ return { tum: false, kat: 'hepsi', gonderen: 'bulten@yf.com.tr' }; } }
+function krAyarYaz(d){ try{ localStorage.setItem(KR_AYAR_KEY, JSON.stringify(Object.assign(krAyar(), d))); }catch(e){ /* yok */ } }
+function krKodlar(){ return new Set(manuelListeYukle(YATIRIM_KEY).map(y => String(y.kod || y.sembol || y.ad || '').toUpperCase().trim()).filter(Boolean)); }
+function krTarih(r){ return r.raporTarih || new Date((r.epostaTarih || r.alindi) + 3 * 3600e3).toISOString().slice(0, 10); }
+function krTarihYaz(s){ const d = new Date(s + 'T00:00:00'), f = gunFarkiS(s, bugunISO()); return f === 0 ? 'Bugün' : f === 1 ? 'Dün' : d.getDate() + ' ' + AY_UZUN[d.getMonth()] + (d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : ''); }
+function krKatGrup(k){ return k === 'sektor' ? 'strateji' : (k || 'diger'); }
+function krTavsiyeRenk(t){ t = String(t || '').toLocaleUpperCase('tr-TR'); return /SAT|ALTINDA|AZALT/.test(t) ? 'down' : /AL\b|^AL|ÜZERİNDE|ARTIR|EKLE/.test(t) ? 'up' : 'notr'; }
+function krPara(v){ return v == null ? '' : '₺' + fmtNumber(v, v >= 100 ? 0 : 2); }
+
+async function krYukle(zorla){
+  if(_krYukleniyor || (!zorla && _krVeri && Date.now() - _krZaman < 2 * 60 * 1000)){ krCiz(); return; }
+  _krYukleniyor = true; if(document.getElementById('tab-kurum').classList.contains('active')) krCiz();
+  try{
+    const res = await fetchWithTimeout(MY_WORKER + '/raporlar', 15000);
+    if(!res.ok) throw new Error('sunucu ' + res.status);
+    _krVeri = (await res.json()).raporlar || []; _krZaman = Date.now(); _krHata = '';
+  }catch(e){ _krHata = (e && e.name === 'AbortError') ? 'zaman aşımı' : ((e && e.message) || 'bağlantı'); }
+  finally{ _krYukleniyor = false; krCiz(); bildirimGuncelle(); }
+}
+// Hazır raporlardaki hisse geçişleri (yeniden eskiye)
+function krGecisler(L){
+  const out = [];
+  L.filter(r => r.durum === 'hazir' && r.ozet).forEach(r => (r.ozet.hisseler || []).forEach(h => { if(h && h.kod) out.push({ r, h: Object.assign({}, h, { kod: String(h.kod).toUpperCase().trim() }) }); }));
+  return out.sort((a, b) => krTarih(b.r).localeCompare(krTarih(a.r)) || (b.r.alindi - a.r.alindi));
+}
+function krHisseSatir(x, portfoyde, tamTarih){
+  const h = x.h, r = x.r, dg = KR_DEGISIM[h.degisiklik];
+  const hedef = h.hedef_fiyat != null ? `hedef <b>${krPara(h.hedef_fiyat)}</b>${h.onceki_hedef != null && h.onceki_hedef !== h.hedef_fiyat ? ` <span class="kr-soluk">(önce ${krPara(h.onceki_hedef)})</span>` : ''}` : '';
+  const pot = h.potansiyel_yuzde != null ? ` · potansiyel <b class="${h.potansiyel_yuzde >= 0 ? 'kr-up' : 'kr-down'}">%${fmtNumber(h.potansiyel_yuzde, 1)}</b>` : '';
+  return `<div class="kr-hisse${portfoyde ? ' portfoy' : ''}">
+    <div class="kr-hisse-ust"><span class="kr-kod">${escapeHtml(h.kod)}</span>${h.tavsiye ? `<span class="kr-tavsiye ${krTavsiyeRenk(h.tavsiye)}">${escapeHtml(h.tavsiye)}</span>` : ''}${dg ? `<span class="kr-degisim ${dg[1]}">${dg[0]}${h.onceki_tavsiye && h.onceki_tavsiye !== h.tavsiye ? ' · önce ' + escapeHtml(h.onceki_tavsiye) : ''}</span>` : ''}<span class="kr-hisse-hedef">${hedef}${pot}</span></div>
+    ${h.ozet ? `<div class="kr-hisse-ozet">${escapeHtml(h.ozet)}</div>` : ''}
+    ${tamTarih ? `<div class="kr-kaynak">${escapeHtml(r.kurum)} · ${krTarihYaz(krTarih(r))} · <a onclick="krRaporAc('${r.id}')">${escapeHtml(r.baslik || r.konu || 'rapor')}</a>${h.sayfa ? ` · <a onclick="krPdfAc('${r.id}', ${+h.sayfa || 1})">s. ${+h.sayfa}</a>` : ''}</div>`
+      : h.sayfa ? `<div class="kr-kaynak"><a onclick="krPdfAc('${r.id}', ${+h.sayfa || 1})">PDF'te gör · s. ${+h.sayfa}</a></div>` : ''}
+  </div>`;
+}
+// Üstteki derleme: portföyündeki hisseler için son 14 günün raporları (her kurumun en yeni görüşü); kutucuk işaretliyse diğer hisseler de
+function krDerlemeHtml(L, kodlar, tum){
+  const sinir = (() => { const d = new Date(); d.setDate(d.getDate() - 14); return d.toISOString().slice(0, 10); })();
+  const G = krGecisler(L).filter(x => krTarih(x.r) >= sinir);
+  const kodBasi = new Map();
+  G.forEach(x => { const l = kodBasi.get(x.h.kod) || []; if(!l.some(y => y.r.kurum === x.r.kurum)) l.push(x); kodBasi.set(x.h.kod, l); });   // kurum başına en yenisi
+  const etkiler = new Map();
+  L.filter(r => r.durum === 'hazir' && r.ozet && krTarih(r) >= sinir).forEach(r => (r.ozet.portfoy || []).forEach(p => { const k = String(p.kod || '').toUpperCase(); if(!kodlar.has(k)) return; const l = etkiler.get(k) || []; if(l.length < 2) l.push({ r, p }); etkiler.set(k, l); }));
+  const pKod = [...new Set([...kodBasi.keys(), ...etkiler.keys()])].filter(k => kodlar.has(k));
+  const dKod = [...kodBasi.keys()].filter(k => !kodlar.has(k));
+  if(!pKod.length && !dKod.length) return '';
+  const oncelik = k => { const l = kodBasi.get(k) || []; return l.some(x => KR_DEGISIM[x.h.degisiklik]) ? 0 : 1; };
+  let h = '<div class="bolum kr-derleme"><div class="bolum-bas aciklamali"><span class="bolum-baslik">Portföyün raporlarda</span><span class="ozet-soluk baslik-aciklama" style="font-size:12px;">son 14 gün · her kurumun en yeni görüşü</span></div>';
+  h += pKod.length ? '<div class="kr-kartlar">' + pKod.sort((a, b) => oncelik(a) - oncelik(b) || a.localeCompare(b)).map(k => {
+    const l = kodBasi.get(k) || [], e = etkiler.get(k) || [];
+    return `<div class="kr-kart portfoy">${l.map(x => krHisseSatir(x, true, true)).join('')}${e.map(({ r, p }) => `<div class="kr-etki ${p.etki}"><span class="kr-kod">${escapeHtml(k)}</span> ${p.etki === 'olumlu' ? '▲' : p.etki === 'olumsuz' ? '▼' : '•'} ${escapeHtml(p.not)} <span class="kr-soluk">— ${escapeHtml(r.kurum)}, <a onclick="krRaporAc('${r.id}')">${escapeHtml(r.ozet.konu || r.baslik || 'rapor')}</a></span></div>`).join('')}</div>`;
+  }).join('') + '</div>' : '<div class="bos-not">Son 14 günün raporlarında portföyündeki hisseler geçmiyor.</div>';
+  if(dKod.length){
+    if(tum){
+      const sirali = dKod.sort((a, b) => oncelik(a) - oncelik(b) || krTarih(kodBasi.get(b)[0].r).localeCompare(krTarih(kodBasi.get(a)[0].r)));
+      const goster = _krDigerTumu ? sirali : sirali.slice(0, 12);
+      h += `<div class="kr-alt-baslik">Diğer hisseler <span class="kr-soluk">(${dKod.length})</span></div><div class="kr-kartlar">` + goster.map(k => `<div class="kr-kart">${kodBasi.get(k).map(x => krHisseSatir(x, false, true)).join('')}</div>`).join('') + '</div>'
+        + (dKod.length > 12 ? `<a class="kap-tumu" onclick="_krDigerTumu = !_krDigerTumu; krCiz()">${_krDigerTumu ? 'Daha az göster' : 'Tümünü göster (' + dKod.length + ')'}</a>` : '');
+    } else h += `<div class="kr-ipucu">Raporlarda portföyünde olmayan <b>${dKod.length} hisse</b> daha var — görmek için yukarıdaki <b>Raporlardaki tüm hisseler</b> kutusunu işaretle.</div>`;
+  }
+  return h + '</div>';
+}
+// Arama bir hisse koduysa: o hissenin raporlardaki geçmişi (tavsiye/hedef zaman içinde)
+function krKodGecmisHtml(L, kod){
+  const G = krGecisler(L).filter(x => x.h.kod === kod);
+  if(!G.length) return '';
+  return `<div class="bolum kr-derleme"><div class="bolum-bas aciklamali"><span class="bolum-baslik">${escapeHtml(kod)} raporlarda</span><span class="ozet-soluk baslik-aciklama" style="font-size:12px;">${G.length} geçiş · yeniden eskiye</span></div>
+    <div class="kr-kartlar tek">${G.slice(0, 30).map(x => `<div class="kr-kart">${krHisseSatir(x, krKodlar().has(kod), true)}</div>`).join('')}</div></div>`;
+}
+function krRaporHtml(r, kodlar, tum){
+  const o = r.ozet, acik = !!_krAcik[r.id], islem = _krIslem[r.id];
+  const durumY = r.durum === 'hazir' ? '' : r.durum === 'anahtar_yok' ? '<span class="kr-rozet uyari">Özet için API anahtarı gerekli</span>'
+    : r.durum === 'hata' ? '<span class="kr-rozet hata">Özetlenemedi</span>' : '<span class="kr-rozet bekliyor">Özetleniyor…</span>';
+  const kat = o ? KR_KAT_AD[o.kategori] || 'Diğer' : '';
+  const ust = `<div class="kr-rapor-bas" onclick="krRaporAc('${r.id}', true)">
+      <span class="kr-kurum">${escapeHtml(r.kurum)}</span>${kat ? `<span class="kr-konu">${kat}${o.konu && o.konu !== kat ? ' · ' + escapeHtml(o.konu) : ''}</span>` : ''}${durumY}
+      <span class="kr-zaman">${krTarihYaz(krTarih(r))}</span>
+      <div class="kr-rapor-baslik">${escapeHtml(r.baslik || (o && o.baslik) || r.konu || r.dosya || 'Rapor')}</div>
+      ${o && o.tek_cumle ? `<div class="kr-tek">${escapeHtml(o.tek_cumle)}</div>` : r.durum !== 'hazir' && r.hata ? `<div class="kr-tek kr-soluk">${escapeHtml(r.hata)}</div>` : ''}
+    </div>`;
+  if(!acik) return `<div class="kr-rapor" id="kr-${r.id}">${ust}</div>`;
+  let g = '';
+  if(o){
+    if((o.maddeler || []).length) g += '<ul class="kr-maddeler">' + o.maddeler.map(m => `<li>${escapeHtml(m.metin)}${m.sayfa ? ` <a class="kr-sayfa" onclick="krPdfAc('${r.id}', ${+m.sayfa || 1})">s. ${+m.sayfa}</a>` : ''}</li>`).join('') + '</ul>';
+    if(o.kurum_gorusu) g += `<div class="kr-gorus"><b>Kurumun görüşü:</b> ${escapeHtml(o.kurum_gorusu)}</div>`;
+    const P = (o.portfoy || []).filter(p => kodlar.has(String(p.kod || '').toUpperCase()));
+    if(P.length) g += '<div class="kr-alt-baslik">Portföyüne etkisi</div>' + P.map(p => `<div class="kr-etki ${p.etki}"><span class="kr-kod">${escapeHtml(String(p.kod).toUpperCase())}</span> ${p.etki === 'olumlu' ? '▲' : p.etki === 'olumsuz' ? '▼' : '•'} ${escapeHtml(p.not)}</div>`).join('');
+    const H = (o.hisseler || []).map(h => ({ r, h: Object.assign({}, h, { kod: String(h.kod || '').toUpperCase().trim() }) })).filter(x => x.h.kod);
+    const hP = H.filter(x => kodlar.has(x.h.kod)), hD = H.filter(x => !kodlar.has(x.h.kod));
+    const hepsi = tum || _krHisseAcik[r.id];
+    if(H.length){
+      g += `<div class="kr-alt-baslik">Hisseler <span class="kr-soluk">(${H.length}${hP.length ? ', ' + hP.length + ' tanesi portföyünde' : ''})</span></div>`;
+      g += hP.map(x => krHisseSatir(x, true, false)).join('') + (hepsi ? hD.map(x => krHisseSatir(x, false, false)).join('') : '');
+      if(!hepsi && hD.length) g += `<a class="kap-tumu" style="text-align:left;" onclick="_krHisseAcik['${r.id}'] = true; krCiz()">Bu rapordaki ${hD.length} hisseyi daha göster</a>`;
+    }
+    if((o.piyasa || []).length) g += '<div class="kr-alt-baslik">Piyasa görüşü</div>' + o.piyasa.map(p => `<div class="kr-etki ${p.yon === 'olumlu' ? 'olumlu' : p.yon === 'olumsuz' ? 'olumsuz' : 'notr'}"><b>${escapeHtml(p.varlik)}:</b> ${escapeHtml(p.gorus)}</div>`).join('');
+    if((o.takvim || []).length) g += '<div class="kr-alt-baslik">Takvim</div>' + o.takvim.map(t => `<div class="kr-takvim"><span>${escapeHtml(/^\d{4}-\d\d-\d\d$/.test(t.tarih || '') ? (d => d.getDate() + ' ' + AY_UZUN[d.getMonth()] + ' ' + d.getFullYear())(new Date(t.tarih + 'T00:00:00')) : t.tarih)}</span>${escapeHtml(t.olay)}</div>`).join('');
+  }
+  const btn = `<div class="kr-dugmeler">
+      ${r.pdfVar ? `<button class="bolum-ekle" onclick="krPdfAc('${r.id}', 1)">📄 PDF'i aç</button>` : '<span class="kr-soluk">PDF 90 günden eski olduğu için silindi</span>'}
+      ${r.pdfVar && r.durum !== 'isleniyor' ? `<button class="bolum-ekle" onclick="krOzetle('${r.id}')" ${islem ? 'disabled' : ''}>${islem === 'ozet' ? 'Özetleniyor… (1 dk sürebilir)' : r.durum === 'hazir' ? '↻ Yeniden özetle' : 'Şimdi özetle'}</button>` : ''}
+      <button class="bolum-ekle kr-sil" onclick="krSil('${r.id}')">Sil</button>
+      <span class="kr-soluk" style="margin-left:auto;">${escapeHtml(r.konu || '')}</span>
+    </div>`;
+  return `<div class="kr-rapor acik" id="kr-${r.id}">${ust}<div class="kr-govde">${g}${btn}</div></div>`;
+}
+function krCiz(){
+  const sayfa = document.getElementById('tab-kurum'); if(!sayfa) return;
+  const ay = krAyar(), kodlar = krKodlar(), L = _krVeri || [];
+  document.getElementById('krTumu').checked = !!ay.tum;
+  const say = k => k === 'hepsi' ? L.length : L.filter(r => r.ozet && krKatGrup(r.ozet.kategori) === k).length;
+  document.getElementById('krSekmeler').innerHTML = KR_KATEGORI.filter(([k]) => k === 'hepsi' || say(k)).map(([k, ad]) => `<button class="kr-sekme${ay.kat === k ? ' aktif' : ''}" onclick="krAyarYaz({ kat: '${k}' }); krCiz()">${ad} <span>${say(k)}</span></button>`).join('');
+  const bekleyen = L.filter(r => r.durum === 'bekliyor' || r.durum === 'isleniyor').length;
+  istYaz('krDurum', _krYukleniyor ? 'yükleniyor…' : _krHata ? 'alınamadı: ' + _krHata : (bekleyen ? bekleyen + ' rapor özetleniyor · ' : '') + (_krZaman ? 'güncellendi ' + new Date(_krZaman).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : ''));
+  const kur = document.getElementById('krKurulum');
+  if(_krVeri && !L.length && kur.hidden && !_krKurulumKapandi) kur.hidden = false;
+  if(!kur.hidden) krKurulumCiz();
+  const der = document.getElementById('krDerleme'), lst = document.getElementById('krListe');
+  if(_krVeri == null){ der.innerHTML = ''; lst.innerHTML = `<div class="bos-not">${_krHata ? 'Raporlar alınamadı (' + escapeHtml(_krHata) + '). Biraz sonra yenile.' : 'Raporlar yükleniyor…'}</div>`; return; }
+  if(!L.length){ der.innerHTML = ''; lst.innerHTML = '<div class="bos-not">Henüz rapor yok. Yukarıdaki kurulumu bir kez yaptığında aracı kurumlardan e-postana gelen PDF raporlar kendiliğinden burada toplanır ve özetlenir.</div>'; return; }
+  // Arama: kelime ya da hisse kodu
+  const q = _krAra.trim().toLocaleLowerCase('tr-TR'), kodQ = /^[a-zçğıöşü0-9]{3,6}$/i.test(_krAra.trim()) ? _krAra.trim().toLocaleUpperCase('tr-TR') : '';
+  const metin = r => [r.kurum, r.konu, r.baslik, r.dosya, r.ozet && JSON.stringify(r.ozet)].join(' ').toLocaleLowerCase('tr-TR');
+  let F = L.filter(r => ay.kat === 'hepsi' || (r.ozet && krKatGrup(r.ozet.kategori) === ay.kat));
+  if(q) F = F.filter(r => metin(r).includes(q));
+  der.innerHTML = q ? (kodQ ? krKodGecmisHtml(L, kodQ) : '') : krDerlemeHtml(L, kodlar, ay.tum);
+  if(!F.length){ lst.innerHTML = '<div class="bos-not">' + (q ? '“' + escapeHtml(_krAra) + '” ile eşleşen rapor yok.' : 'Bu kategoride rapor yok.') + '</div>'; return; }
+  // Gruplama: Makro'da konuya göre, diğerlerinde güne göre
+  const grup = new Map();
+  F.forEach(r => { const g = ay.kat === 'makro' ? ((r.ozet && r.ozet.konu) || 'Diğer') : krTarih(r); if(!grup.has(g)) grup.set(g, []); grup.get(g).push(r); });
+  const anahtarlar = [...grup.keys()];
+  if(ay.kat !== 'makro') anahtarlar.sort((a, b) => b.localeCompare(a)); else anahtarlar.sort((a, b) => krTarih(grup.get(b)[0]).localeCompare(krTarih(grup.get(a)[0])));
+  lst.innerHTML = anahtarlar.map(g => `<div class="kr-grup-baslik">${ay.kat === 'makro' ? escapeHtml(g) : krTarihYaz(g)} <span>${grup.get(g).length}</span></div>` + grup.get(g).map(r => krRaporHtml(r, kodlar, ay.tum)).join('')).join('');
+}
+let _krKurulumKapandi = false, _krAraZaman = null;
+function krAraDegisti(v){ _krAra = v; clearTimeout(_krAraZaman); _krAraZaman = setTimeout(krCiz, 200); }
+function krTumuDegisti(v){ krAyarYaz({ tum: !!v }); _krHisseAcik = {}; krCiz(); }
+function krRaporAc(id, degistir){
+  _krAcik[id] = degistir ? !_krAcik[id] : true;
+  const r = (_krVeri || []).find(x => x.id === id);
+  if(!degistir && r && r.ozet && krAyar().kat !== 'hepsi' && krKatGrup(r.ozet.kategori) !== krAyar().kat) krAyarYaz({ kat: 'hepsi' });
+  if(!degistir && _krAra){ _krAra = ''; document.getElementById('krAra').value = ''; }
+  krCiz();
+  if(!degistir){ const el = document.getElementById('kr-' + id); if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+}
+// PDF'i oturumla indirip yeni sekmede ilgili sayfada açar (açılır pencere engeline takılmasın diye sekme önce açılır)
+async function krPdfAc(id, sayfa){
+  const w = window.open('', '_blank');
+  if(w) w.document.write('<p style="font:15px sans-serif;padding:20px;">Rapor açılıyor…</p>');
+  try{
+    const res = await fetchWithTimeout(MY_WORKER + '/raporlar/' + id + '/pdf', 30000);
+    if(!res.ok){ const j = await res.json().catch(() => ({})); throw new Error(j.error || 'sunucu ' + res.status); }
+    const url = URL.createObjectURL(await res.blob()) + '#page=' + (sayfa || 1);
+    if(w) w.location.href = url; else location.href = url;
+  }catch(e){ if(w) w.close(); alert('PDF açılamadı: ' + ((e && e.message) || e)); }
+}
+async function krOzetle(id){
+  _krIslem[id] = 'ozet'; krCiz();
+  try{
+    const res = await fetchWithTimeout(MY_WORKER + '/raporlar/' + id + '/ozetle', 180000, { method: 'POST' });
+    const j = await res.json().catch(() => ({}));
+    if(j.rapor){ const i = _krVeri.findIndex(x => x.id === id); if(i >= 0) _krVeri[i] = j.rapor; }
+    if(!res.ok) alert('Özetlenemedi: ' + (j.error || res.status));
+  }catch(e){ alert('Özetlenemedi: ' + ((e && e.message) || e)); }
+  delete _krIslem[id]; krCiz(); bildirimGuncelle();
+}
+async function krSil(id){
+  const r = (_krVeri || []).find(x => x.id === id);
+  if(!confirm('“' + ((r && (r.baslik || r.konu)) || 'Rapor') + '” arşivden silinsin mi? PDF ve özeti birlikte silinir.')) return;
+  const res = await fetchWithTimeout(MY_WORKER + '/raporlar/' + id, 15000, { method: 'DELETE' }).catch(() => null);
+  if(res && res.ok){ _krVeri = _krVeri.filter(x => x.id !== id); krCiz(); } else alert('Silinemedi.');
+}
+// Kurulum rehberi (yönlendirme): abonelik → gönderenler → Gmail betiği → bekle
+function krKurulumAc(){ const k = document.getElementById('krKurulum'); k.hidden = !k.hidden; if(k.hidden) _krKurulumKapandi = true; krCiz(); }
+function krBetik(anahtar, gonderenler){
+  const liste = gonderenler.split(/[\s,;]+/).map(x => x.trim()).filter(x => /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(x) || /^@?[a-z0-9.-]+\.[a-z]{2,}$/i.test(x));
+  const kimden = liste.map(x => x.replace(/^@/, '')).join(' OR ');
+  return `// Finansal Takip Paneli — Kurum Raporları köprüsü (Google Apps Script)
+// Yalnız aşağıdaki göndericilerden gelen PDF eklerini panele gönderir; başka e-postalarına dokunmaz.
+// Kurulum: kaydet → üstten "kur" işlevini seç → Çalıştır → izin ver. Sonra 15 dakikada bir kendiliğinden çalışır.
+const ADRES = '${MY_WORKER}/rapor-al';
+const ANAHTAR = '${anahtar}';   // kişisel rapor anahtarın — kimseyle paylaşma
+const GONDERENLER = 'from:(${kimden})';
+
+function raporlariGonder(gunSayisi) {
+  const props = PropertiesService.getScriptProperties();
+  const gonderilen = JSON.parse(props.getProperty('gonderilen') || '{}');
+  const arama = GONDERENLER + ' has:attachment filename:pdf newer_than:' + (gunSayisi || 2) + 'd';
+  GmailApp.search(arama, 0, 50).forEach(function (konu) {
+    konu.getMessages().forEach(function (m) {
+      m.getAttachments().forEach(function (ek, i) {
+        if (!/\\.pdf$/i.test(ek.getName()) && ek.getContentType() !== 'application/pdf') return;
+        const id = m.getId() + '|' + i;
+        if (gonderilen[id]) return;
+        const cevap = UrlFetchApp.fetch(ADRES, {
+          method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+          headers: { 'X-Rapor-Anahtar': ANAHTAR },
+          payload: JSON.stringify({ mesajId: id, gonderen: m.getFrom(), konu: m.getSubject(), tarih: m.getDate().toISOString(), dosya: ek.getName(), pdf: Utilities.base64Encode(ek.getBytes()) })
+        });
+        if (cevap.getResponseCode() === 200) gonderilen[id] = Date.now();
+        else console.log('Gönderilemedi (' + cevap.getResponseCode() + '): ' + ek.getName() + ' — ' + cevap.getContentText().slice(0, 200));
+      });
+    });
+  });
+  const sinir = Date.now() - 14 * 86400000;
+  Object.keys(gonderilen).forEach(function (k) { if (gonderilen[k] < sinir) delete gonderilen[k]; });
+  props.setProperty('gonderilen', JSON.stringify(gonderilen));
+}
+function zamanli() { raporlariGonder(2); }
+
+// Bir kez çalıştır: 15 dakikalık zamanlayıcıyı kurar ve son 7 günün raporlarını hemen gönderir
+function kur() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('zamanli').timeBased().everyMinutes(15).create();
+  raporlariGonder(7);
+}
+`;
+}
+async function krBetikOlustur(){
+  const g = (document.getElementById('krGonderen') || {}).value || '';
+  krAyarYaz({ gonderen: g });
+  if(!g.trim()){ alert('En az bir gönderen adresi yaz.'); return; }
+  if(_krBetik && !confirm('Yeni betik oluşturulunca önceki betiğin anahtarı geçersiz olur; Google Apps Script\'teki kodu yenisiyle değiştirmen gerekir. Devam edilsin mi?')) return;
+  try{
+    const res = await fetchWithTimeout(MY_WORKER + '/raporlar/anahtar', 15000, { method: 'POST' });
+    const j = await res.json();
+    if(!res.ok || !j.anahtar) throw new Error(j.error || res.status);
+    _krBetik = krBetik(j.anahtar, g); krKurulumCiz();
+  }catch(e){ alert('Betik oluşturulamadı: ' + ((e && e.message) || e)); }
+}
+function krBetikKopyala(){
+  const t = document.getElementById('krBetikMetin'); if(!t) return;
+  (navigator.clipboard ? navigator.clipboard.writeText(t.value) : Promise.reject()).catch(() => { t.select(); document.execCommand('copy'); })
+    .finally(() => { const b = document.getElementById('krKopyalaBtn'); if(b){ b.textContent = '✓ Kopyalandı'; setTimeout(() => { b.textContent = 'Kopyala'; }, 2000); } });
+}
+function krKurulumCiz(){
+  const k = document.getElementById('krKurulum'), ay = krAyar(), anahtarYok = !aiKullanilabilir();
+  k.innerHTML = `<div class="bolum-bas" style="flex-wrap:nowrap;align-items:flex-start;"><span class="bolum-baslik" style="white-space:normal;">Kurulum: raporlar e-postandan buraya nasıl gelir?</span><button class="kap-ok" style="margin-left:auto;" onclick="krKurulumAc()" title="Kapat">✕</button></div>
+  <ol class="kr-adimlar">
+    <li><b>Raporlara abone ol.</b> Aracı kurumlar günlük bülten, makro ve şirket raporlarını müşterilerine ve e-bülten abonelerine ücretsiz e-postayla gönderir. Hesabın olan kurumun müşteri temsilcisinden ya da internet sitesindeki “e-bülten / araştırma raporları” bölümünden kaydol. Raporların e-postana <b>PDF eki</b> olarak gelmesi gerekir.</li>
+    <li><b>Gönderen adreslerini yaz.</b> Rapor e-postalarının geldiği adresler (virgülle). Örnek: <code>bulten@yf.com.tr</code> (Yatırım Finansman).
+      <div class="loan-add-row" style="margin-top:6px;"><input id="krGonderen" class="ai-input" style="flex:1 1 320px;max-width:520px;" value="${escapeHtml(ay.gonderen || '')}" placeholder="bulten@yf.com.tr, rapor@kurum.com.tr"></div></li>
+    <li><b>Gmail bağlantısını kur.</b> Panel, Gmail'ine şifreni istemeden bağlanmak için sana özel küçük bir Google betiği hazırlar. Betik yalnız bu göndericilerden gelen PDF eklerini okur ve panele gönderir; başka e-postalarına dokunmaz.
+      <div style="margin-top:8px;"><button class="ai-btn" onclick="krBetikOlustur()">${_krBetik ? 'Yeni betik oluştur' : 'Betiğimi oluştur'}</button></div>
+      ${_krBetik ? `<div class="kr-betik">
+        <div class="loan-add-row"><b>Betiğin hazır</b><button class="bolum-ekle" id="krKopyalaBtn" onclick="krBetikKopyala()">Kopyala</button></div>
+        <textarea id="krBetikMetin" readonly spellcheck="false">${escapeHtml(_krBetik)}</textarea>
+        <ol>
+          <li><a href="https://script.google.com/create" target="_blank" rel="noopener">script.google.com/create</a> adresini aç (rapor e-postalarının geldiği Google hesabıyla).</li>
+          <li>Açılan sayfadaki kodu tamamen sil, kopyaladığın betiği yapıştır ve 💾 <b>Kaydet</b>'e bas.</li>
+          <li>Üstteki işlev seçicisinden <b>kur</b>'u seç ve ▶ <b>Çalıştır</b>'a bas.</li>
+          <li>Google izin isteyecek: hesabını seç → <b>Gelişmiş</b> → <b>(güvenli değil) sayfasına git</b> → <b>İzin ver</b>. Bu uyarı, betiği Google'a onaylatılmış bir uygulama değil senin yazdığın için çıkar.</li>
+          <li>Bitti. Son 7 günün raporları hemen, sonrakiler 15 dakikada bir buraya gelir.</li>
+        </ol>
+        <div class="kr-soluk">Bu kodu kimseyle paylaşma: içindeki anahtar raporlarını senin hesabına yazar. Yeni betik oluşturursan eskisi çalışmaz.</div>
+      </div>` : ''}</li>
+    <li><b>Bekle.</b> Raporlar geldikten sonra 5–10 dakika içinde özetlenir: portföyündeki hisseler en üstte, diğerleri “Raporlardaki tüm hisseler” kutusuyla.${anahtarYok ? ' <span class="kr-down">Özet için Profilim › Bay Piyasa bölümünden Anthropic API anahtarını eklemelisin; eklemeden de raporlar arşivlenir ve PDF olarak açılır.</span>' : ''}</li>
+  </ol>
+  <div class="kr-soluk">Raporlar yalnız senin hesabında görünür. Kurumların raporları alıcısına özeldir; başkalarıyla paylaşma.</div>`;
+}
+// Bildirim: portföyündeki bir hissede son 3 günde tavsiye ya da hedef değiştiyse
+function krBildirimleri(bugunS){
+  if(!_krVeri) return [];
+  const kodlar = krKodlar(), out = [], d = new Date(bugunS + 'T00:00:00'); d.setDate(d.getDate() - 3);
+  const sinir = d.toISOString().slice(0, 10);
+  krGecisler(_krVeri).filter(x => kodlar.has(x.h.kod) && KR_DEGISIM[x.h.degisiklik] && krTarih(x.r) >= sinir).forEach(x => {
+    const dg = KR_DEGISIM[x.h.degisiklik];
+    out.push({ id: 'kurum|' + x.r.id + '|' + x.h.kod, grup: 'uyari', seviye: 'uyari', hedef: 'kurum', ikon: 'rapor',
+      baslik: `${x.h.kod}: ${x.r.kurum} — ${dg[0].toLocaleLowerCase('tr-TR')}`,
+      metin: [x.h.tavsiye ? 'Tavsiye ' + x.h.tavsiye + (x.h.onceki_tavsiye && x.h.onceki_tavsiye !== x.h.tavsiye ? ' (önce ' + x.h.onceki_tavsiye + ')' : '') : '', x.h.hedef_fiyat != null ? 'hedef ' + krPara(x.h.hedef_fiyat) + (x.h.onceki_hedef != null ? ' (önce ' + krPara(x.h.onceki_hedef) + ')' : '') : ''].filter(Boolean).join(', ') + '.',
+      zaman: krTarihYaz(krTarih(x.r)) + ' · Kurum Raporları', sira: 20 });
+  });
+  return out;
+}
+// Açık sayfada özetlenmeyi bekleyen rapor varsa dakikada bir tazele; açılıştan 20 sn sonra bir kez (bildirimler için)
+setInterval(() => { if(document.visibilityState === 'visible' && document.getElementById('tab-kurum').classList.contains('active') && (_krVeri || []).some(r => r.durum === 'bekliyor' || r.durum === 'isleniyor')) krYukle(true); }, 60000);
+setTimeout(() => { if(localStorage.getItem(ERISIM_KEY)) krYukle(); }, 20000);
 
 buildCards();
 updateGarantiLive();
