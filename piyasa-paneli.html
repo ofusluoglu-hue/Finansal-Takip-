@@ -2765,13 +2765,18 @@
   .bolum.katli > .bolum-bas{margin-bottom:0;border-bottom:none !important;padding-bottom:6px !important;}
   .bolum-bas > .katla-ok{margin-left:auto;}   /* ok sağdaki toplamın hemen solunda (KAP'ta satırın sonunda) */
   .bolum-bas > .katla-ok + .bolum-toplam{margin-left:0;}
+  .ad-kisa{display:none;}
   /* Sayfadaki bütün oklar aynı dikey hizada: toplam sabit genişlikte (sağa yaslı), KAP'ta toplam + "+" kadar boşluk */
-  #tab-yatirim{--katla-toplam:150px;--katla-ekle:32px;--katla-aralik:12px;}
-  #tab-yatirim .bolum-bas > .katla-ok + .bolum-toplam{min-width:var(--katla-toplam);text-align:right;box-sizing:border-box;}
+  #tab-yatirim, #tab-borclar{--katla-toplam:150px;--katla-ekle:32px;--katla-aralik:12px;}
+  #tab-yatirim .bolum-bas > .katla-ok + .bolum-toplam, #tab-borclar .bolum-bas > .katla-ok + .bolum-toplam{min-width:var(--katla-toplam);text-align:right;box-sizing:border-box;}
   .katla-bosluk{flex:0 0 calc(var(--katla-toplam) + var(--katla-ekle) + var(--katla-aralik));}
   @media (max-width:640px){
-    #tab-yatirim{--katla-toplam:140px;--katla-aralik:8px;}
-    #kapBolum .kap-bas .bolum-baslik{flex:1 1 0;min-width:0;white-space:normal;line-height:1.25;}   /* başlık daralsın, ok ve boşluk ilk satırda kalsın */
+    #tab-yatirim, #tab-borclar{--katla-toplam:140px;--katla-aralik:8px;}
+    #kapBolum .kap-bas .bolum-baslik{flex:1 1 0;min-width:0;white-space:normal;line-height:1.25;}
+    #tab-borclar .ad-uzun{display:none;}
+    #tab-borclar .ad-kisa{display:inline;}
+    #tab-borclar .ekle-yazi{display:none;}   /* telefonda "+ Ekle" → "+" (başlıklara yer kalsın) */
+    #tab-borclar .cerceve-borc > .bolum-bas .bolum-ekle{min-width:32px;padding-left:0;padding-right:0;}   /* başlık daralsın, ok ve boşluk ilk satırda kalsın */
   }
   .katla-tik{cursor:pointer;user-select:none;}
   @keyframes katla-ok-nabiz{
@@ -3483,7 +3488,7 @@
       <div class="bolum-bas">
         <span class="bolum-baslik">Kredilerim</span>
         <span class="bolum-toplam" id="loansBolumToplam" style="color:var(--amber);"></span>
-        <button class="bolum-ekle" onclick="bolumFormAc('krediForm')">+ Ekle</button>
+        <button class="bolum-ekle" onclick="bolumFormAc('krediForm')" title="Ekle">+<span class="ekle-yazi"> Ekle</span></button>
       </div>
       <div class="bolum-form" id="krediForm">
         <div class="kredi-form-ic">
@@ -3518,7 +3523,7 @@
       <div class="bolum-bas">
         <span class="bolum-baslik">Kredi Kartlarım</span>
         <span class="bolum-toplam" id="kkBolumToplam" style="color:var(--p-c9a6ff);"></span>
-        <button class="bolum-ekle" onclick="bolumFormAc('kkForm')">+ Ekle</button>
+        <button class="bolum-ekle" onclick="bolumFormAc('kkForm')" title="Ekle">+<span class="ekle-yazi"> Ekle</span></button>
       </div>
       <div class="bolum-form" id="kkForm">
         <div class="loan-add-row">
@@ -3547,9 +3552,9 @@
 
     <div class="bolum cerceve-borc">
       <div class="bolum-bas">
-        <span class="bolum-baslik">Kredili Mevduat Hesabı (KMH)</span>
+        <span class="bolum-baslik"><span class="ad-uzun">Kredili Mevduat Hesabı (KMH)</span><span class="ad-kisa">KMH</span></span>
         <span class="bolum-toplam" id="kmhBolumToplam" style="color:var(--p-6ec3ff);"></span>
-        <button class="bolum-ekle" onclick="bolumFormAc('kmhForm')">+ Ekle</button>
+        <button class="bolum-ekle" onclick="bolumFormAc('kmhForm')" title="Ekle">+<span class="ekle-yazi"> Ekle</span></button>
       </div>
       <div class="bolum-form" id="kmhForm">
         <div class="loan-add-row">
@@ -3582,7 +3587,7 @@
       <div class="bolum-bas">
         <span class="bolum-baslik">Elden Nakit Borçlar</span>
         <span class="bolum-toplam" id="nakitBolumToplam" style="color:var(--p-5eead4);"></span>
-        <button class="bolum-ekle" onclick="bolumFormAc('nakitForm')">+ Ekle</button>
+        <button class="bolum-ekle" onclick="bolumFormAc('nakitForm')" title="Ekle">+<span class="ekle-yazi"> Ekle</span></button>
       </div>
       <div class="bolum-form" id="nakitForm">
         <div class="loan-add-row">
@@ -4026,6 +4031,7 @@
       <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki ⚙ ile de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
       <p><b>Elden Nakit Borçlar:</b> Birinden aldığın borcu TL, dolar ya da euro olarak gir. Dövizliyse TL karşılığı güncel kurla hesaplanır; kur canlıyken ışık yeşil yanar.</p>
       <p class="kv-ipucu">💡 Satırdaki ışık: yeşil = bugün güncel (ya da canlı hesaplanıyor), kırmızı = son güncelleme bugünden önce.</p>
+      <p><b>Çerçeveleri kapatma:</b> Kredilerim, Kredi Kartlarım, KMH ve Elden Nakit Borçlar çerçevelerinin sağındaki (toplamın hemen solundaki) yanıp sönen küçük sarı oka ya da başlığa dokununca çerçeve kapanır, yalnız başlık ve toplamı kalır. Hepsi varsayılan olarak açıktır; seçimin bu cihazda hatırlanır. Kapalı çerçevede <b>+ Ekle</b>'ye basarsan çerçeve kendiliğinden açılır. Kapalı çerçevedeki borçlar toplamlara ve hesaplara yine dahildir.</p>
       <button class="bolum-ekle" onclick="switchTab('borclar')">Borçlarım'a git →</button>
     </div></details>
 
@@ -8521,6 +8527,7 @@ function ledDateHtml(dateIso){
 function bolumFormAc(id){
   const f = document.getElementById(id);
   if(!f) return;
+  const kc = f.closest('.katli[data-katla]'); if(kc) borcKatla(kc.dataset.katla);   // kapalı çerçevede "+ Ekle" → önce çerçeveyi aç
   f.classList.toggle('acik');
   if(f.classList.contains('acik')){ const i = f.querySelector('input:not([type=file]):not([style*="display:none"]), select'); if(i) i.focus(); }
 }
@@ -9222,6 +9229,40 @@ function yatirimSatirHtml(item, toplamYatirim){
     sil,
   });
 }
+
+// Borçlarım çerçeveleri (Kredilerim, Kredi Kartlarım, KMH, Elden Nakit): Yatırımlarım'daki küçük dinamik okla kapanır.
+// Çerçeveler sabit HTML olduğu için ok ve katlanan alan açılışta bir kez eklenir; durum bu cihazda (ft_borc_kapali), varsayılan açık.
+const BORC_KATLI_KEY = 'ft_borc_kapali';
+function borcKatliDurum(){ try{ return JSON.parse(localStorage.getItem(BORC_KATLI_KEY) || '{}'); }catch(e){ return {}; } }
+function borcKatlaUygula(){
+  const d = borcKatliDurum();
+  document.querySelectorAll('#tab-borclar .bolum.cerceve-borc[data-katla]').forEach(b => {
+    const k = !!d[b.dataset.katla], ok = b.querySelector(':scope > .bolum-bas > .katla-ok');
+    b.classList.toggle('katli', k);
+    if(ok){ ok.setAttribute('aria-expanded', String(!k)); ok.title = k ? 'Göster' : 'Gizle'; }
+  });
+}
+function borcKatla(ad){ const d = borcKatliDurum(); if(d[ad]) delete d[ad]; else d[ad] = true; try{ localStorage.setItem(BORC_KATLI_KEY, JSON.stringify(d)); }catch(e){ /* yok */ } borcKatlaUygula(); }
+function borcKatlaKur(){
+  document.querySelectorAll('#tab-borclar .bolum.cerceve-borc').forEach(b => {
+    if(b.dataset.katla) return;
+    const bas = b.querySelector(':scope > .bolum-bas'), baslik = bas && bas.querySelector('.bolum-baslik'), toplam = bas && bas.querySelector('.bolum-toplam');
+    if(!bas || !baslik || !toplam) return;
+    const ad = toplam.id || baslik.textContent.trim();
+    b.dataset.katla = ad;
+    baslik.classList.add('katla-tik'); baslik.addEventListener('click', () => borcKatla(ad));
+    const ok = document.createElement('button');
+    ok.type = 'button'; ok.className = 'katla-ok'; ok.setAttribute('aria-label', (baslik.querySelector('.ad-uzun') || baslik).textContent.trim() + ' göster / gizle');
+    ok.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+    ok.addEventListener('click', () => borcKatla(ad));
+    bas.insertBefore(ok, toplam);
+    const ic = document.createElement('div'); ic.className = 'katla-ic';
+    while(bas.nextSibling) ic.appendChild(bas.nextSibling);
+    b.appendChild(ic);
+  });
+  borcKatlaUygula();
+}
+borcKatlaKur();
 
 // Tür çerçevelerinin açık/kapalı durumu (yalnız bu cihazda; varsayılan açık)
 const YATIRIM_KATLI_KEY = 'ft_yatirim_kapali';
