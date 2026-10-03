@@ -2765,6 +2765,14 @@
   .bolum.katli > .bolum-bas{margin-bottom:0;border-bottom:none !important;padding-bottom:6px !important;}
   .bolum-bas > .katla-ok{margin-left:auto;}   /* ok sağdaki toplamın hemen solunda (KAP'ta satırın sonunda) */
   .bolum-bas > .katla-ok + .bolum-toplam{margin-left:0;}
+  /* Sayfadaki bütün oklar aynı dikey hizada: toplam sabit genişlikte (sağa yaslı), KAP'ta toplam + "+" kadar boşluk */
+  #tab-yatirim{--katla-toplam:150px;--katla-ekle:32px;--katla-aralik:12px;}
+  #tab-yatirim .bolum-bas > .katla-ok + .bolum-toplam{min-width:var(--katla-toplam);text-align:right;box-sizing:border-box;}
+  .katla-bosluk{flex:0 0 calc(var(--katla-toplam) + var(--katla-ekle) + var(--katla-aralik));}
+  @media (max-width:640px){
+    #tab-yatirim{--katla-toplam:140px;--katla-aralik:8px;}
+    #kapBolum .kap-bas .bolum-baslik{flex:1 1 0;min-width:0;white-space:normal;line-height:1.25;}   /* başlık daralsın, ok ve boşluk ilk satırda kalsın */
+  }
   .katla-tik{cursor:pointer;user-select:none;}
   @keyframes katla-ok-nabiz{
     0%,100%{background:var(--amber-dolgu);color:var(--t-14161c);box-shadow:0 0 0 0 rgba(231,168,59,.6);}
@@ -3331,6 +3339,7 @@
         <span class="kap-yeni" id="kapYeni" hidden></span>
         <span class="ozet-soluk baslik-aciklama" id="kapAlt" style="font-size:12px;">portföyündeki BİST hisseleri</span>
         <button class="katla-ok" type="button" aria-label="Aç / kapat" tabindex="-1"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <span class="katla-bosluk" aria-hidden="true"></span>
 
       </div>
       <div class="kap-ic" id="kapIc">
