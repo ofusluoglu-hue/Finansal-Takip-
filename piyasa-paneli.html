@@ -1882,9 +1882,9 @@
   .satir-tutar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
   .satir-aksiyon{display:flex;gap:2px;flex-shrink:0;}
   /* Satır işlem düğmeleri: her işlem kendi renginde, hafif dolgulu, her zaman görünür (fare üzerine gelmesi gerekmez) */
-  .aks-btn{--c:var(--muted);display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 9px;border-radius:7px;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:700;white-space:nowrap;
+  .aks-btn{--c:var(--muted);position:relative;display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 7px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:10.5px;font-weight:700;white-space:nowrap;
     color:var(--c);border:1px solid color-mix(in srgb, var(--c) 45%, transparent);background:color-mix(in srgb, var(--c) 11%, transparent);transition:background .15s, border-color .15s, transform .1s;}
-  .aks-btn svg{width:14px;height:14px;flex:0 0 14px;}
+  .aks-btn svg{width:12px;height:12px;flex:0 0 12px;}
   .aks-btn:hover{background:color-mix(in srgb, var(--c) 22%, transparent);border-color:var(--c);}
   .aks-btn:active{transform:scale(.96);}
   .aks-btn:focus-visible{outline:2px solid var(--c);outline-offset:1px;}
@@ -1893,8 +1893,9 @@
   .aks-btn.onay{--c:var(--up);}
   .aks-btn.ekle{--c:var(--amber);}
   .aks-btn.ayar, .aks-btn.kaynak{--c:var(--muted);}
-  .satir-aksiyon{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-  @media (max-width:900px){ .aks-btn span{display:none;} .aks-btn{width:32px;height:32px;padding:0;justify-content:center;} .aks-btn svg{width:16px;height:16px;flex-basis:16px;} }
+  .satir-aksiyon{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+  @media (max-width:900px){ .aks-btn span{display:none;} .aks-btn{width:22px;height:22px;padding:0;justify-content:center;} .aks-btn svg{width:12px;height:12px;flex-basis:12px;}
+    .aks-btn{z-index:1;} .aks-btn::after{content:'';position:absolute;inset:-6px;} .satir-aksiyon{gap:8px;} }   /* görünen 22 px, dokunma alanı 34 px */
   .ikon-btn{background:transparent;border:1px solid transparent;color:var(--muted-2);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:13px;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;padding:0;}
   .ikon-btn:hover{border-color:var(--border);color:var(--text);}
   .ikon-btn.sil:hover{color:var(--down);border-color:var(--down);}
