@@ -74,7 +74,7 @@ const SIFRE_ITER = 20000;            // PBKDF2 tekrar sayısı: ücretsiz plan i
 const SIFRE_MIN = 8;
 const FOTO_MAX = 120000;             // profil fotoğrafı (panel 192×192 JPEG'e küçültür, ~15–30 KB)
 const FOTO_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/;
-const TERCIH_ALANLARI = ['acilis'];   // users.ayar içinde saklanabilen tercihler
+const TERCIH_ALANLARI = ['acilis', 'raporModel'];   // users.ayar içinde saklanabilen tercihler
 
 // İstemciye giden hesap bilgisi (şifre özeti vb. asla)
 function kullaniciCikti(u, ek) {
@@ -341,7 +341,24 @@ const RAPOR_PARCA = 900000;                  // D1 satır sınırı 2 MB; base64
 const RAPOR_EN_BUYUK = 20 * 1024 * 1024;     // tek PDF en fazla 20 MB
 const RAPOR_GUNLUK_SINIR = 30;               // kullanıcı başına günde en fazla bu kadar rapor kabul edilir
 const RAPOR_PDF_GUN = 90;                    // PDF'ler bu kadar gün saklanır; özetler kalıcı
-const RAPOR_MODEL = 'claude-sonnet-5-5';   // RULES: belge okuma Sonnet ile
+const RAPOR_MODEL = 'claude-sonnet-5-5';   // varsayılan (RULES: belge okuma Sonnet ile); kullanıcı Kurum Raporları'nda değiştirebilir
+// Özet modeli seçenekleri ve modelin desteklediği istek alanları (Haiku 4.5: effort ve sunucu tarafı yedek model yok)
+const RAPOR_MODELLER = {
+  'claude-sonnet-5-5': { effort: true, yedek: true },
+  'claude-haiku-4-5': { effort: false, yedek: false },
+  'claude-opus-5-5': { effort: true, yedek: true },
+  'claude-fable-5-1': { effort: true, yedek: true },
+};
+// Kullanıcının seçtiği özet modeli (users.ayar.raporModel); yoksa varsayılan
+function raporModeli(u) { let a = {}; try { a = JSON.parse((u && u.ayar) || '{}') || {}; } catch { /* yok */ } return RAPOR_MODELLER[a.raporModel] ? a.raporModel : RAPOR_MODEL; }
+// Modele göre istek gövdesi ve başlıkları
+function raporIstekGovdesi(model, govde) {
+  const ozl = RAPOR_MODELLER[model] || RAPOR_MODELLER[RAPOR_MODEL];
+  const b = { model, ...govde };
+  if (!ozl.effort && b.output_config) { delete b.output_config.effort; if (!Object.keys(b.output_config).length) delete b.output_config; }
+  if (!ozl.yedek) delete b.fallbacks;
+  return { b, beta: ozl.yedek ? 'server-side-fallback-2026-07-01' : null };
+}
 const RAPOR_KURUMLAR = [
   ['yf.com.tr', 'Yatırım Finansman'], ['akyatirim.com.tr', 'Ak Yatırım'], ['isyatirim.com.tr', 'İş Yatırım'],
   ['garantibbvayatirim.com.tr', 'Garanti BBVA Yatırım'], ['gedik.com.tr', 'Gedik Yatırım'], ['qnbinvest.com.tr', 'QNB Invest'],
@@ -420,7 +437,8 @@ async function raporOzetle(env, id) {
   };
   try {
     if (!r.pdf_var) return birak('hata', 'PDF artık saklanmıyor', false);
-    const u = await env.DB.prepare('SELECT id, role, ai_anahtar FROM users WHERE id = ?').bind(r.user_id).first();
+    const u = await env.DB.prepare('SELECT id, role, ai_anahtar, ayar FROM users WHERE id = ?').bind(r.user_id).first();
+    const model = raporModeli(u);
     let anahtar = null;
     if (u && u.role === 'admin') anahtar = env.ANTHROPIC_API_KEY || null;
     else if (u && u.ai_anahtar) { try { anahtar = await aiCoz(env, u.ai_anahtar, u.id); } catch { anahtar = null; } }
@@ -431,7 +449,7 @@ async function raporOzetle(env, id) {
     const bilgi = `Kurum: ${r.kurum}\nE-posta konusu: ${r.konu || '-'}\nDosya adı: ${r.dosya || '-'}\nE-posta tarihi: ${new Date(r.eposta_tarih || r.alindi).toISOString().slice(0, 10)}\n` +
       `Yatırımcının portföyündeki kodlar: ${kodlar.join(', ') || '(yok)'}\n\nBu raporu şemaya göre özetle.`;
     const istek = bicimli => ({
-      model: RAPOR_MODEL, max_tokens: 16000,
+      model, max_tokens: 16000,
       output_config: { effort: 'medium', ...(bicimli ? { format: { type: 'json_schema', schema: RAPOR_SEMA } } : {}) },
       fallbacks: 'default',
       system: RAPOR_SISTEM + (bicimli ? '' : '\n\nYanıtın YALNIZ şemadaki alanlara sahip tek bir JSON nesnesi olsun; markdown ya da açıklama ekleme.'),
@@ -440,9 +458,9 @@ async function raporOzetle(env, id) {
         { type: 'text', text: bicimli ? bilgi : bilgi + '\nŞema: ' + JSON.stringify(RAPOR_SEMA) },
       ] }],
     });
-    const gonder = b => fetch('https://api.anthropic.com/v1/messages', { method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': anahtar, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'server-side-fallback-2026-07-01' },
-      body: JSON.stringify(b) });
+    const gonder = govde => { const { b, beta } = raporIstekGovdesi(model, govde);   // modele göre desteklenmeyen alanlar çıkarılır
+      return fetch('https://api.anthropic.com/v1/messages', { method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anahtar, 'anthropic-version': '2023-06-01', ...(beta ? { 'anthropic-beta': beta } : {}) }, body: JSON.stringify(b) }); };
     let res = await gonder(istek(true));
     if (res.status === 400) {   // şema biçimi reddedilirse (ör. desteklenmeyen şema özelliği) talimatla JSON iste
       const m = await res.clone().text();
@@ -568,19 +586,22 @@ async function ortakOzetle(env, id) {
   try {
     const anahtar = env.ANTHROPIC_API_KEY;
     if (!anahtar) return birak('hata', 'Sunucu anahtarı yok', false);
+    const y = await env.DB.prepare("SELECT ayar FROM users WHERE role = 'admin' AND disabled = 0 ORDER BY created_at LIMIT 1").first();
+    const model = raporModeli(y);   // ortak raporlar yöneticinin seçtiği modelle (ücret sunucu anahtarından)
     const tur = AK_TURLER.find(t => t.kategori === r.kategori) || {};
     const bilgi = `Kurum: ${r.kurum}\nRapor türü: ${tur.id || r.kategori}\nBaşlık: ${r.baslik}\nTarih: ${isoGun(r.tarih)}\n` +
       (r.analist ? `Analist: ${r.analist}\n` : '') + (r.teaser ? `Kurumun kendi kısa özeti:\n${r.teaser.slice(0, 3000)}\n` : '') +
       '\nBu özet panelin BÜTÜN kullanıcılarına gösterilecek: "portfoy" alanını boş dizi bırak (kişisel portföy bilgisi yok). Bu raporu şemaya göre özetle.';
     const istek = (kaynak, bicimli) => ({
-      model: RAPOR_MODEL, max_tokens: 16000,
+      model, max_tokens: 16000,
       output_config: { effort: 'medium', ...(bicimli ? { format: { type: 'json_schema', schema: RAPOR_SEMA } } : {}) },
       fallbacks: 'default',
       system: RAPOR_SISTEM + (bicimli ? '' : '\n\nYanıtın YALNIZ şemadaki alanlara sahip tek bir JSON nesnesi olsun; markdown ya da açıklama ekleme.'),
       messages: [{ role: 'user', content: [{ type: 'document', source: kaynak }, { type: 'text', text: bicimli ? bilgi : bilgi + '\nŞema: ' + JSON.stringify(RAPOR_SEMA) }] }],
     });
-    const gonder = b => fetch('https://api.anthropic.com/v1/messages', { method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': anahtar, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'server-side-fallback-2026-07-01' }, body: JSON.stringify(b) });
+    const gonder = govde => { const { b, beta } = raporIstekGovdesi(model, govde);   // modele göre desteklenmeyen alanlar çıkarılır
+      return fetch('https://api.anthropic.com/v1/messages', { method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anahtar, 'anthropic-version': '2023-06-01', ...(beta ? { 'anthropic-beta': beta } : {}) }, body: JSON.stringify(b) }); };
     // PDF önce Worker'dan indirilir (Türkiye'deki noktadan erişim kesin); olmazsa adres Claude'a verilir
     let kaynak = null;
     try {
@@ -724,6 +745,7 @@ export default {
         if (!g.ayar || typeof g.ayar !== 'object') return json({ error: 'tercihler geçersiz' }, 400);
         const temiz = {};
         TERCIH_ALANLARI.forEach(k => { if (typeof g.ayar[k] === 'string' && g.ayar[k].length <= 40) temiz[k] = g.ayar[k]; });
+        if (temiz.raporModel && !RAPOR_MODELLER[temiz.raporModel]) delete temiz.raporModel;
         alanlar.push('ayar = ?'); degerler.push(JSON.stringify(temiz));
       }
       if (!alanlar.length) return json({ error: 'değişiklik yok' }, 400);
@@ -1069,8 +1091,9 @@ export default {
         const ay = new Date(); const bas = Date.UTC(ay.getUTCFullYear(), ay.getUTCMonth(), 1) - 3 * 3600e3;
         const { results: k1 } = await env.DB.prepare('SELECT kullanim FROM ortak_raporlar WHERE ozet_ts >= ? AND kullanim IS NOT NULL').bind(bas).all();
         const { results: k2 } = await env.DB.prepare('SELECT kullanim FROM raporlar WHERE user_id = ? AND ozet_ts >= ? AND kullanim IS NOT NULL').bind(ben.id, bas).all();
-        const m = { girdi: 0, cikti: 0, adet: 0 };
-        [...(k1 || []), ...(k2 || [])].forEach(x => { try { const u = JSON.parse(x.kullanim); m.girdi += u.girdi || 0; m.cikti += u.cikti || 0; m.adet++; } catch { /* yok */ } });
+        const m = { girdi: 0, cikti: 0, adet: 0, modeller: {} };
+        [...(k1 || []), ...(k2 || [])].forEach(x => { try { const u = JSON.parse(x.kullanim); m.girdi += u.girdi || 0; m.cikti += u.cikti || 0; m.adet++;
+          const mm = m.modeller[u.model || RAPOR_MODEL] = m.modeller[u.model || RAPOR_MODEL] || { girdi: 0, cikti: 0, adet: 0 }; mm.girdi += u.girdi || 0; mm.cikti += u.cikti || 0; mm.adet++; } catch { /* yok */ } });
         cikti.maliyet = m;
       }
       return json(cikti);

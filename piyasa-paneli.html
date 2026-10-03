@@ -2467,6 +2467,9 @@
   .kr-ara svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);pointer-events:none;}
   .kr-ara input{width:100%;box-sizing:border-box;height:34px;min-height:34px;padding:0 10px 0 32px;font-size:12.5px;}
   .kr-cubuk-sag{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12.5px;}
+  .kr-model-alan select{min-width:170px;height:34px;min-height:34px;padding:0 10px;font-size:12.5px;}
+  .kr-model-not{line-height:1.5;}
+  .kr-model-not b{color:var(--text);}
   .kr-sekmeler{flex:1 1 100%;margin-top:0;gap:6px;}
   .kr-sekmeler .sss-kat{padding:4px 10px;font-size:12px;gap:6px;}
   .kr-sekmeler .sss-kat svg{width:13px;height:13px;}
@@ -2557,7 +2560,7 @@
   .kr-dugmeler .kr-sil{color:var(--down);}
   @media (max-width:1100px){ .kr-adimlar4{grid-template-columns:repeat(2, minmax(0,1fr));} }
   @media (max-width:640px){
-    .kr-ara-alan{flex-basis:100%;max-width:none;} .kr-tumu-anahtar{flex:1 1 auto;min-width:0;} .kr-cubuk-sag{margin-left:auto;gap:10px;} .kr-kurulum-yazi{display:none;}
+    .kr-ara-alan{flex-basis:100%;max-width:none;} .kr-model-alan{flex:1 1 100%;} .kr-model-alan select{width:100%;} .kr-tumu-anahtar{flex:1 1 auto;min-width:0;} .kr-cubuk-sag{margin-left:auto;gap:10px;} .kr-kurulum-yazi{display:none;}
     .kr-kartlar{grid-template-columns:1fr;} .kr-hisse-hedef{margin-left:0;flex-basis:100%;}
     .kr-rapor-bas{padding:11px 12px;gap:10px;align-items:flex-start;} .kr-rapor-bas .kv-ikon{flex-basis:34px;width:34px;height:34px;}
     .kr-rapor-bas::after{display:none;}
@@ -4105,6 +4108,7 @@
       <p><b>Ak Yatırım raporları kendiliğinden gelir:</b> Ak Yatırım'ın sitesinde herkese açık yayımladığı Günlük Bülten, BIST Teknik Analiz Bülteni, Şirket Raporları ve yıllık Strateji Raporu saatte bir kontrol edilir ve hiçbir kurulum gerekmeden bütün kullanıcılara gelir. Teknik bültende kurumun kendi kısa özeti gösterilir; diğerleri sade Türkçeyle özetlenir. <b>PDF'i aç</b> raporu Ak Yatırım'ın kendi adresinde açar.</p>
       <p><b>E-postana gelen raporlar (kurulum, bir kez):</b> Raporu yalnız e-postayla gönderen kurumlar (ör. Yatırım Finansman) için sayfadaki <b>⚙ Kurulum</b> düğmesi adım adım anlatır: kurumun e-bültenine abone ol → rapor e-postalarının geldiği adresleri yaz → <b>Betiğimi oluştur</b> → betiği script.google.com'a yapıştırıp <b>kur</b>'u çalıştır. Betik Gmail şifreni istemez; yalnız yazdığın göndericilerden gelen PDF eklerini panele gönderir ve 15 dakikada bir kendiliğinden çalışır.</p>
       <p><b>Bildirim:</b> Portföyündeki bir hissenin tavsiyesi ya da hedef fiyatı değişirse zilde bildirim çıkar.</p>
+      <p><b>Özet modeli:</b> Üst çubuktaki <b>Özet modeli</b> seçicisi varsayılan olarak <b>Sonnet</b>'tir (kalite ve maliyet dengeli, rapor başına yaklaşık $0,10). İstersen <b>Haiku</b> (yaklaşık yarı fiyat ama hedef fiyat ve tavsiyelerde hata riski daha yüksek), <b>Opus</b> (yaklaşık 2 kat) ya da <b>Fable</b> (yaklaşık 5 kat) seçebilirsin; seçince altında uyarısı yazar. Seçim yalnız yeni özetlere ve senin e-postandan gelen raporlarına uygulanır; ücret senin Anthropic anahtarından düşer.</p>
       <p class="kv-ipucu">💡 Özet için Bay Piyasa'nın Anthropic API anahtarı gerekir (Profilim › Bay Piyasa); anahtar yokken de raporlar arşivlenir ve PDF olarak açılır, anahtarı ekleyince kendiliğinden özetlenir. PDF'ler 90 gün saklanır, özetler kalıcıdır. Raporlar yalnız senin hesabında görünür.</p>
       <button class="bolum-ekle" onclick="switchTab('kurum')">Kurum Raporları'na git →</button>
     </div></details>
@@ -4561,10 +4565,20 @@
           <input id="krAra" class="ai-input" type="search" placeholder="Hisse kodu, konu ya da kelime (ör. THYAO, enflasyon)" oninput="krAraDegisti(this.value)" autocomplete="off">
         </div>
       </div>
+      <div class="bp-tool kr-model-alan">
+        <label class="bp-lbl" for="krModel">Özet modeli</label>
+        <select id="krModel" class="ai-input" onchange="krModelDegisti(this.value)">
+          <option value="claude-sonnet-5-5">Sonnet — önerilen</option>
+          <option value="claude-haiku-4-5">Haiku — ucuz</option>
+          <option value="claude-opus-5-5">Opus — derin</option>
+          <option value="claude-fable-5-1">Fable — en güçlü</option>
+        </select>
+      </div>
       <label class="bp-toggle kr-tumu-anahtar" title="Kapalıyken yalnız portföyündeki hisseler; açıkken raporlarda geçen bütün hisseler (portföyün yine önde)">
         <input type="checkbox" id="krTumu" onchange="krTumuDegisti(this.checked)"><span class="bp-switch"></span>Raporlardaki tüm hisseler
       </label>
       <div class="kr-cubuk-sag"><a class="kap-yenile" id="krYenileBtn" onclick="krYenile()">↻ Yenile</a><button class="bolum-ekle" onclick="krKurulumAc()" title="Kurulum: e-postana gelen raporları ekle">⚙<span class="kr-kurulum-yazi"> Kurulum</span></button></div>
+      <div class="bp-ipucu kr-model-not" id="krModelNot"></div>
       <div class="sss-kategoriler kr-sekmeler" id="krSekmeler"></div>
     </div>
     <div class="bp-meter kr-istat" id="krIstat"></div>
@@ -14359,6 +14373,7 @@ function krCiz(){
   document.getElementById('krSekmeler').innerHTML = KR_KATEGORI.filter(([k]) => k === 'hepsi' || say(k)).map(([k, ad]) => `<button class="sss-kat${ay.kat === k ? ' active' : ''}" onclick="krAyarYaz({ kat: '${k}' }); krCiz()">${krSvg(KR_IKON[k])}${ad} <em>${say(k)}</em></button>`).join('');
   // Rapor yokken kategori, anahtar ve arama işe yaramaz: yalnız kurulum öne çıkar
   const bos = !!_krVeri && !L.length;
+  krModelNotCiz();
   document.getElementById('krSekmeler').hidden = bos; sayfa.querySelector('.kr-ara-alan').hidden = bos; sayfa.querySelector('.kr-tumu-anahtar').hidden = bos;
   const bekleyen = L.filter(r => r.durum === 'bekliyor' || r.durum === 'isleniyor').length;
   // Üst bilgi satırı: kaç rapor, kaç kurum, son rapor, bekleyen
@@ -14394,8 +14409,38 @@ function krCiz(){
   lst.innerHTML = anahtarlar.map(g => `<div class="kv-grup-bas kr-grup-bas">${krSvg(ay.kat === 'makro' ? KR_IKON.makro : KR_IKON.takvim)}${ay.kat === 'makro' ? escapeHtml(g) : krTarihYaz(g) + (gunFarkiS(g, bugunISO()) > 1 ? ' · ' + ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'][new Date(g + 'T00:00:00').getDay()] : '')}<small>${grup.get(g).length} rapor</small></div>` + grup.get(g).map(r => krRaporHtml(r, kodlar, ay.tum)).join('')).join('');
 }
 let _krKurulumKapandi = false, _krAraZaman = null, _krMaliyet = null, _krKurulumOto = false;
-// Özet maliyeti (Sonnet 5.5: girdi $2, çıktı $10 / milyon token) — yalnız yöneticiye, bu ay
-function krMaliyetMetni(){ const m = _krMaliyet; if(!m || !m.adet) return ''; const usd = m.girdi / 1e6 * 2 + m.cikti / 1e6 * 10; return ` · bu ay özet maliyeti <b>≈ $${fmtNumber(usd, 2)}</b> (${m.adet} özet, ort. $${fmtNumber(usd / m.adet, 3)})`; }
+// Özet modelleri: milyon token fiyatı (girdi/çıktı, $) ve kullanıcıya gösterilen not. Varsayılan Sonnet; seçim sunucuda (users.ayar.raporModel)
+const KR_MODELLER = {
+  'claude-sonnet-5-5': { ad: 'Sonnet', girdi: 2, cikti: 10, not: 'Önerilen: kalite ve maliyet dengeli. Rapor başına yaklaşık $0,10.' },
+  'claude-haiku-4-5': { ad: 'Haiku', girdi: 1, cikti: 5, uyari: true, not: "⚠ Daha ucuz (rapor başına yaklaşık $0,05) ama hedef fiyat, tavsiye ve rakamlarda eksik ya da hatalı özet riski daha yüksek; önemli kararlarda PDF'i kontrol et." },
+  'claude-opus-5-5': { ad: 'Opus', girdi: 4, cikti: 20, uyari: true, not: '⚠ Daha derin ve ayrıntılı özet, ama maliyet yaklaşık 2 kat (rapor başına yaklaşık $0,20).' },
+  'claude-fable-5-1': { ad: 'Fable', girdi: 10, cikti: 50, uyari: true, not: '⚠ En güçlü model, ama maliyet yaklaşık 5 kat (rapor başına yaklaşık $0,50). Günlük raporlar için genelde gerekmez.' },
+};
+const KR_MODEL_VARSAYILAN = 'claude-sonnet-5-5';
+function krModel(){ const k = kullaniciBilgi() || {}; const m = k.ayar && k.ayar.raporModel; return KR_MODELLER[m] ? m : KR_MODEL_VARSAYILAN; }
+function krModelNotCiz(){
+  const el = document.getElementById('krModelNot'), sel = document.getElementById('krModel'); if(!el || !sel) return;
+  const m = krModel(), d = KR_MODELLER[m], yon = (kullaniciBilgi() || {}).rol === 'admin';
+  sel.value = m;
+  const kapsam = yon ? 'Seçim e-postandan gelen raporların ve herkese açık Ak Yatırım raporlarının <b>yeni</b> özetlerine uygulanır (ücret sunucu anahtarından).'
+    : 'Seçim yalnız e-postandan gelen raporlarının <b>yeni</b> özetlerine uygulanır (ücret senin Anthropic anahtarından); Ak Yatırım raporları herkes için tek bir özetle gelir.';
+  el.innerHTML = `<span class="${d.uyari ? 'kr-amber' : ''}">${escapeHtml(d.not)}</span> ${kapsam}`;
+  el.classList.toggle('uyari', !!d.uyari);
+}
+async function krModelDegisti(m){
+  if(!KR_MODELLER[m]) return;
+  const k = kullaniciBilgi() || {};
+  const tamam = await profilKaydet({ ayar: Object.assign({}, k.ayar || {}, { raporModel: m }) }, 'Özet modeli: ' + KR_MODELLER[m].ad);
+  if(!tamam) document.getElementById('krModel').value = krModel();
+  krModelNotCiz();
+}
+// Özet maliyeti (modele göre fiyat) — yalnız yöneticiye, bu ay
+function krMaliyetMetni(){
+  const m = _krMaliyet; if(!m || !m.adet) return '';
+  let usd = 0;
+  Object.entries(m.modeller || { [KR_MODEL_VARSAYILAN]: m }).forEach(([ad, x]) => { const f = KR_MODELLER[Object.keys(KR_MODELLER).find(k => ad.startsWith(k))] || KR_MODELLER[KR_MODEL_VARSAYILAN]; usd += x.girdi / 1e6 * f.girdi + x.cikti / 1e6 * f.cikti; });
+  return ` · bu ay özet maliyeti <b>≈ $${fmtNumber(usd, 2)}</b> (${m.adet} özet, ort. $${fmtNumber(usd / m.adet, 3)})`;
+}
 function krAraDegisti(v){ _krAra = v; clearTimeout(_krAraZaman); _krAraZaman = setTimeout(krCiz, 200); }
 function krTumuDegisti(v){ krAyarYaz({ tum: !!v }); _krHisseAcik = {}; krCiz(); }
 function krRaporAc(id, degistir){
