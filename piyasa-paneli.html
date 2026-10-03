@@ -1881,6 +1881,20 @@
   .satir-alt{font-size:11px;color:var(--muted-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
   .satir-tutar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
   .satir-aksiyon{display:flex;gap:2px;flex-shrink:0;}
+  /* Satır işlem düğmeleri: her işlem kendi renginde, hafif dolgulu, her zaman görünür (fare üzerine gelmesi gerekmez) */
+  .aks-btn{--c:var(--muted);display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 9px;border-radius:7px;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:700;white-space:nowrap;
+    color:var(--c);border:1px solid color-mix(in srgb, var(--c) 45%, transparent);background:color-mix(in srgb, var(--c) 11%, transparent);transition:background .15s, border-color .15s, transform .1s;}
+  .aks-btn svg{width:14px;height:14px;flex:0 0 14px;}
+  .aks-btn:hover{background:color-mix(in srgb, var(--c) 22%, transparent);border-color:var(--c);}
+  .aks-btn:active{transform:scale(.96);}
+  .aks-btn:focus-visible{outline:2px solid var(--c);outline-offset:1px;}
+  .aks-btn.duzen{--c:var(--p-6ec3ff);}
+  .aks-btn.sil{--c:var(--down);}
+  .aks-btn.onay{--c:var(--up);}
+  .aks-btn.ekle{--c:var(--amber);}
+  .aks-btn.ayar, .aks-btn.kaynak{--c:var(--muted);}
+  .satir-aksiyon{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  @media (max-width:900px){ .aks-btn span{display:none;} .aks-btn{width:32px;height:32px;padding:0;justify-content:center;} .aks-btn svg{width:16px;height:16px;flex-basis:16px;} }
   .ikon-btn{background:transparent;border:1px solid transparent;color:var(--muted-2);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:13px;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;padding:0;}
   .ikon-btn:hover{border-color:var(--border);color:var(--text);}
   .ikon-btn.sil:hover{color:var(--down);border-color:var(--down);}
@@ -3289,7 +3303,7 @@
       <div id="varlikListContainer"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Nakit / Mevduat türünde varlığı ₺, $, € ya da gram altın olarak tutabilirsin: miktarı girersin, TL karşılığı güncel kur ya da gram 24 ayar altın fiyatıyla (ons ÷ 31,1035 × kur) canlı hesaplanır (LED yeşil: güncel fiyat, kırmızı: son bilinen). Konut, otomobil, arsa, dükkan gibi varlıklar için canlı fiyat çekilmez; girdiğin güncel değer esas alınır, ✎ ile güncellersin. Net varlık = varlıklar + yatırımlar − toplam borç. Satırdaki LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Nakit / Mevduat türünde varlığı ₺, $, € ya da gram altın olarak tutabilirsin: miktarı girersin, TL karşılığı güncel kur ya da gram 24 ayar altın fiyatıyla (ons ÷ 31,1035 × kur) canlı hesaplanır (LED yeşil: güncel fiyat, kırmızı: son bilinen). Konut, otomobil, arsa, dükkan gibi varlıklar için canlı fiyat çekilmez; girdiğin güncel değer esas alınır, satırdaki <b>Güncelle</b> ile güncellersin. Net varlık = varlıklar + yatırımlar − toplam borç. Satırdaki LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: GÜNCEL FİNANSAL DURUMUM ================= -->
 
@@ -3613,7 +3627,7 @@
       <div id="nakitKartlarContainer"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Kredi borcu canlı hesaplanır: kalan anapara × (aylık faiz ÷ 30) × geçen gün + KKDF + BSMV; ilk taksidi gelmemiş kredilerde kullandırılan anapara esas alınır. Kredi kartı tutarı otomatik hesaplanmaz, ekstredeki güncel borcu ✎ ile güncellersin. KMH'de aylık faiz girilirse borç her gün kendiliğinden artar: günlük artış = anapara × (aylık faiz ÷ 30) × (1 + %15 KKDF + %15 BSMV); ekstre kesiminde faiz anaparaya eklenince ⚙ ile anapara ve borcu güncellersin. USD/EUR elden borçların TL karşılığı güncel kurdan hesaplanır. Bir borcu kapattığında ✓ ile listeden kaldırırsın. LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Kredi borcu canlı hesaplanır: kalan anapara × (aylık faiz ÷ 30) × geçen gün + KKDF + BSMV; ilk taksidi gelmemiş kredilerde kullandırılan anapara esas alınır. Kredi kartı tutarı otomatik hesaplanmaz, ekstredeki güncel borcu satırdaki <b>Güncelle</b> ile güncellersin. KMH'de aylık faiz girilirse borç her gün kendiliğinden artar: günlük artış = anapara × (aylık faiz ÷ 30) × (1 + %15 KKDF + %15 BSMV); ekstre kesiminde faiz anaparaya eklenince <b>Faiz</b> düğmesiyle anapara ve borcu güncellersin. USD/EUR elden borçların TL karşılığı güncel kurdan hesaplanır. Bir borcu kapattığında yeşil <b>Kapattım</b> düğmesiyle listeden kaldırırsın. LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: BORÇLARIM ================= -->
 
@@ -3677,7 +3691,7 @@
         <span class="bolum-toplam" id="harcamaTabloToplam"></span>
       </div>
       <div class="ist-tablo-kap"><table class="ist-tablo harcama-tablo" id="harcamaTablo"></table></div>
-      <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Tablo, aşağıdaki harcama kayıtlarından otomatik oluşur; düzenlemek için kaydı ✎ ile değiştir ya da ✕ ile sil. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır.</div>
+      <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Tablo, aşağıdaki harcama kayıtlarından otomatik oluşur; düzenlemek için kaydı <b>Güncelle</b> ile değiştir ya da <b>Sil</b> ile kaldır. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır.</div>
     </div>
 
     <div class="bolum">
@@ -3829,7 +3843,7 @@
       <div id="gelirListe"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Kalan = gelir − harcama − kredi taksitleri. Harcamalar Harcama Takibim'den gelir; kartla yapılan harcamalar zaten orada olduğu için kart ödemeleri ayrıca gider sayılmaz. Taksitler kredilerin ödeme planından hesaplanır (anapara farkı + iki taksit arasında işleyen faiz + KKDF + BSMV). Gelecek aylar enflasyon ve satın alma gücüyle tahmin edilir: harcama tabanı (bütçe koyduysan bütçe toplamı, yoksa son 6 ayın bugünün fiyatına getirilmiş medyanı) seçtiğin enflasyon yoluyla her ay büyütülür (varsayılan TCMB Piyasa Katılımcıları Anketi: ilk 12 ay yıllık %23,70, sonra %18,32; ya da son resmi TÜFE, kendi harcamalarından hesaplanan kişisel enflasyon veya elle); aya özel bütçe koyduğun ay o tutar kullanılır; süren ay ve girilen tutar tahminden büyükse girilen kullanılır. Maaş varsayılan olarak her Ocak son 12 ayın enflasyonu kadar artar (Ocak ve Temmuz ya da artış yok seçilebilir). "Bugünün parasıyla" görünümü gelecek tutarları fiyat artışına bölerek bugünkü alım gücüne çevirir. Resmi veri ve beklentiler sayfanın içinde yazılı tarihlerdendir; bunlar tahmindir, gerçekleşme farklı olabilir. Düzenli gelirde ✎ ile girilen yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır; 0 yazarsan gelir bu aydan itibaren biter. Tasarruf oranı: <span style="color:var(--up);">%20 ve üstü</span> · <span style="color:var(--amber);">%0–20</span> · <span style="color:var(--down);">eksi</span>. KMH faizi nakit çıkışı değil borca eklendiği için burada sayılmaz (Borçlarım'da görünür).</div>
+    <div class="footnote"><b>Not:</b> Kalan = gelir − harcama − kredi taksitleri. Harcamalar Harcama Takibim'den gelir; kartla yapılan harcamalar zaten orada olduğu için kart ödemeleri ayrıca gider sayılmaz. Taksitler kredilerin ödeme planından hesaplanır (anapara farkı + iki taksit arasında işleyen faiz + KKDF + BSMV). Gelecek aylar enflasyon ve satın alma gücüyle tahmin edilir: harcama tabanı (bütçe koyduysan bütçe toplamı, yoksa son 6 ayın bugünün fiyatına getirilmiş medyanı) seçtiğin enflasyon yoluyla her ay büyütülür (varsayılan TCMB Piyasa Katılımcıları Anketi: ilk 12 ay yıllık %23,70, sonra %18,32; ya da son resmi TÜFE, kendi harcamalarından hesaplanan kişisel enflasyon veya elle); aya özel bütçe koyduğun ay o tutar kullanılır; süren ay ve girilen tutar tahminden büyükse girilen kullanılır. Maaş varsayılan olarak her Ocak son 12 ayın enflasyonu kadar artar (Ocak ve Temmuz ya da artış yok seçilebilir). "Bugünün parasıyla" görünümü gelecek tutarları fiyat artışına bölerek bugünkü alım gücüne çevirir. Resmi veri ve beklentiler sayfanın içinde yazılı tarihlerdendir; bunlar tahmindir, gerçekleşme farklı olabilir. Düzenli gelirde <b>Güncelle</b> ile girilen yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır; 0 yazarsan gelir bu aydan itibaren biter. Tasarruf oranı: <span style="color:var(--up);">%20 ve üstü</span> · <span style="color:var(--amber);">%0–20</span> · <span style="color:var(--down);">eksi</span>. KMH faizi nakit çıkışı değil borca eklendiği için burada sayılmaz (Borçlarım'da görünür).</div>
   </div>
   <!-- ================= /TAB: NAKİT AKIŞI ================= -->
 
@@ -4010,7 +4024,7 @@
 
     <details class="kv-bolum" id="kv-finansal"><summary>💼 Finansal Durumum <span>net servetin</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Sahip olduklarını ve borçlarını tek yerde toplar: <b>Net varlık = varlıklar + yatırımlar − borçlar</b>.</p>
-      <p><b>Nasıl kullanılır:</b> Varlıklarım bölümünde <b>+ Ekle</b>'ye bas, türü seç (Konut, Arsa, Otomobil, Dükkan, Nakit / Mevduat, Diğer), adını ve bugünkü değerini yaz. Değer değişince satırdaki ✎ ile güncelle.</p>
+      <p><b>Nasıl kullanılır:</b> Varlıklarım bölümünde <b>+ Ekle</b>'ye bas, türü seç (Konut, Arsa, Otomobil, Dükkan, Nakit / Mevduat, Diğer), adını ve bugünkü değerini yaz. Değer değişince satırdaki <b>Güncelle</b> ile güncelle.</p>
       <p><b>Örnek:</b> “Ev · Konut · ₺4.500.000”. Satırdaki ışık yeşilse değeri bugün güncellemişsin; kırmızıysa daha önce.</p>
       <p><b>Dövizde ya da altında duran para:</b> Türü <b>Nakit / Mevduat</b> seçince yanında birim seçici çıkar: ₺ TL, $ Dolar, € Euro ya da Gram altın. Bu durumda tutar değil <b>miktar</b> girersin (ör. $7.000 ya da 50 gram). TL karşılığı güncel kurla kendiliğinden hesaplanır: $7.000 × ₺50 = ₺350.000.</p>
       <p class="kv-ipucu">💡 Konut, arsa gibi varlıkların fiyatı internetten çekilmez; yılda bir-iki kez gerçekçi bir değerle güncellemen yeterli. Birikim Hedefleri'nde bir acil durum fonu tanımladıysan, üstteki Toplam Varlık kutusunda “Acil fon ₺… · n ay” satırı da görünür.</p>
@@ -4035,9 +4049,9 @@
 
     <details class="kv-bolum" id="kv-borclar"><summary>💳 Borçlarım <span>krediler, kartlar, KMH, elden borç</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Bütün borçlarının bugünkü toplamını gösterir. Kredi ve KMH borcu her gün işleyen faizle canlı hesaplanır.</p>
-      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; Profilim'de Anthropic anahtarın kayıtlı olmalı) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca ✓'ye bas.</p>
-      <p><b>Kredi Kartlarım:</b> Kartın bugünkü toplam borcunu yaz; ekstre gelince ✎ ile güncelle.</p>
-      <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki ⚙ ile de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
+      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; Profilim'de Anthropic anahtarın kayıtlı olmalı) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca satırdaki yeşil <b>Kapattım</b> düğmesine bas.</p>
+      <p><b>Kredi Kartlarım:</b> Kartın bugünkü toplam borcunu yaz; ekstre gelince satırdaki <b>Güncelle</b> ile güncelle.</p>
+      <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki <b>Faiz</b> düğmesiyle de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
       <p><b>Elden Nakit Borçlar:</b> Birinden aldığın borcu TL, dolar ya da euro olarak gir. Dövizliyse TL karşılığı güncel kurla hesaplanır; kur canlıyken ışık yeşil yanar.</p>
       <p class="kv-ipucu">💡 Satırdaki ışık: yeşil = bugün güncel (ya da canlı hesaplanıyor), kırmızı = son güncelleme bugünden önce.</p>
       <p><b>Çerçeve başlıkları:</b> Her çerçevenin başlığının yanında kaç kalem olduğu ve toplam borcun yüzde kaçını oluşturduğu yazar (ör. “4 kalem · %48,3”).</p>
@@ -4049,7 +4063,7 @@
       <p><b>Ne işe yarar:</b> Harcamalarını ay ve kategori bazında toplar: aylık grafik, kategoriler, aylık tablo, aylık ve yıllık ortalamalar.</p>
       <p><b>Nasıl kullanılır:</b> Harcama kayıtları bölümünde <b>+ Ekle</b> → <b>ay</b>, <b>kategori</b>, <b>tutar</b> ve istersen bir not. Ayın ilk 10 gününde form kendiliğinden bir önceki ayı seçer, çünkü Eylül'ün harcamasını genelde Ekim başında girersin. Listenin üstündeki ay seçicisi ile formdaki ay hep aynıdır: birini değiştirince diğeri de o aya geçer, böylece girdiğin kayıt baktığın listede hemen görünür.</p>
       <p><b>Örnek:</b> “Eylül 2026 · Market · ₺26.985 · not: Migros”. Aynı ay ve kategoriye birden çok kayıt girebilirsin; tabloda toplanır.</p>
-      <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan ✎ ile düzeltir ya da ✕ ile silersin.</p>
+      <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan <b>Güncelle</b> ile düzeltir ya da <b>Sil</b> ile silersin.</p>
       <p><b>₺ TL / $ Dolar / Altın:</b> Grafiğin başlığındaki seçiciyle harcamalarını dolar ya da gram altın olarak da görürsün. Her ay <b>o ayın</b> ortalama kuruyla çevrilir; böylece enflasyonun etkisini ayırırsın.</p>
       <p class="kv-ipucu">💡 ↻ işaretli kayıtlar Ödeme Takvimi'ndeki düzenli ödemelerden kendiliğinden gelir (bu ay ve gelecek ay). İstemediğini silebilirsin; silinen ay tekrar eklenmez.</p>
       <button class="bolum-ekle" onclick="switchTab('harcama')">Harcama Takibim'e git →</button>
@@ -4067,7 +4081,7 @@
 
     <details class="kv-bolum" id="kv-nakit"><summary>⇄ Nakit Akışı <span>ay sonunda ne kalıyor</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> <b>Kalan = gelir − harcama − kredi taksitleri</b>. Geçmiş 6 ayı ve önümüzdeki 11 ayı tahminle gösterir. Kart ödemeleri ayrıca sayılmaz, çünkü kartla yaptığın harcama zaten harcamalarda var.</p>
-      <p><b>Nasıl kullanılır:</b> Gelirler bölümünde maaşını <b>“Her ay”</b> olarak bir kez ekle; prim gibi gelirleri <b>“Tek seferlik”</b> ekle. Maaşın değişince ✎ ile yeni tutarı yaz; yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır.</p>
+      <p><b>Nasıl kullanılır:</b> Gelirler bölümünde maaşını <b>“Her ay”</b> olarak bir kez ekle; prim gibi gelirleri <b>“Tek seferlik”</b> ekle. Maaşın değişince <b>Güncelle</b> ile yeni tutarı yaz; yeni tutar bu aydan itibaren geçerli olur, geçmiş aylar eski tutarla kalır.</p>
       <p><b>Tahmin nasıl yapılır:</b> Gelecek ayların harcaması, son 6 ayın bugünün fiyatına getirilmiş ortası alınıp <b>enflasyonla</b> büyütülerek hesaplanır. Maaşın da varsayılan olarak her Ocak geçen yılın enflasyonu kadar artar. Grafiğin altındaki seçicilerden enflasyon kaynağını (TCMB beklentisi, resmi TÜFE, kişisel ya da elle) ve maaş artışını değiştirebilirsin.</p>
       <p><b>Örnek:</b> Son 6 ayın harcaması bugünün fiyatlarıyla ₺94.947 → 12 ay sonra ≈ ₺117.450 (TCMB beklentisi %23,7). “Bugünün parasıyla” görünümü bu gelecek tutarları bugünkü alım gücüne çevirir.</p>
       <button class="bolum-ekle" onclick="switchTab('nakitakis')">Nakit Akışı'na git →</button>
@@ -4075,7 +4089,7 @@
 
     <details class="kv-bolum" id="kv-butce"><summary>◔ Bütçe Planlaması <span>kategori başına aylık sınır</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Her kategori için aylık bir üst sınır koyarsın; harcamaların bu sınırla karşılaştırılır. Yeşil = %90'a kadar, sarı = sınıra yakın, kırmızı = aştın.</p>
-      <p><b>En kolay başlangıç:</b> Henüz bütçe yokken sayfa sana hazır bir öneri gösterir: her kategori için son 6 ayın ortası (medyan). <b>“Önerilen bütçeyi kullan”</b>a basman yeterli; sonra ✎ ile istediğini değiştirirsin.</p>
+      <p><b>En kolay başlangıç:</b> Henüz bütçe yokken sayfa sana hazır bir öneri gösterir: her kategori için son 6 ayın ortası (medyan). <b>“Önerilen bütçeyi kullan”</b>a basman yeterli; sonra <b>Güncelle</b> ile istediğini değiştirirsin.</p>
       <p><b>Satırı okumak:</b> Çubuktaki ince beyaz çizgi bütçe sınırıdır; çubuk çizgiyi geçtiyse aşmışsın. Süren ayda ikinci ince çizgi ayın ne kadarının geçtiğini gösterir.</p>
       <p><b>İleriyi planlamak:</b> Ay seçiciden gelecek ayları da seçebilirsin. Bir tutarı <b>“her ay”</b> ya da <b>“yalnız o ay”</b> için kaydedersin. <b>Örnek:</b> Kasım'da kasko ödeyeceksen Sigorta'ya “yalnız Kasım 2026” ₺20.000 koyarsın; diğer aylar etkilenmez.</p>
       <button class="bolum-ekle" onclick="switchTab('butce')">Bütçe Planlaması'na git →</button>
@@ -4161,12 +4175,12 @@
       <p><b>Ne işe yarar:</b> Bir hedef ve tarih koyarsın; ayda ne kadar ayırman gerektiğini ve planın önünde mi geride mi olduğunu gösterir. Tutarı ₺ ya da $ olarak koyabilirsin.</p>
       <p><b>Biriken para nereden izlenir:</b></p>
       <ul class="kv-liste">
-        <li><b>Elle gireceğim:</b> Biriktirdikçe satırdaki <b>+</b> ile eklersin (eksi yazıp çıkarırsın).</li>
+        <li><b>Elle gireceğim:</b> Biriktirdikçe satırdaki <b>Ekle</b> düğmesiyle eklersin (eksi yazıp çıkarırsın).</li>
         <li><b>Varlıklarımdan:</b> Finansal Durumum'daki bir varlığa bağlanır (ör. bankadaki acil fon). Orada tutarı güncelledikçe hedef de güncellenir.</li>
         <li><b>Yatırımlarımdan:</b> Bir ya da birkaç yatırımına bağlanır (ör. BTC + ETH); değeri canlı fiyatla işler.</li>
       </ul>
       <p><b>Acil durum fonu:</b> Formda “Bu bir acil durum fonu”nu işaretlersen sayfa aylık zorunlu giderini hesaplar ve 3 aylık ile 6 aylık tutarı önerir. <b>Örnek:</b> Aylık gider ≈ ₺107.730 → ₺300.000 = 2,8 aylık gider (sarı); yaygın ölçü 3–6 ay.</p>
-      <p class="kv-ipucu">💡 Kaynağı sonradan satırdaki ⇄ ile değiştirebilirsin. Aynı yatırımı iki hedefe bağlarsan iki hedefte de sayılır; aynı parayı iki kez saymamaya dikkat et.</p>
+      <p class="kv-ipucu">💡 Kaynağı sonradan satırdaki <b>Kaynak</b> düğmesiyle değiştirebilirsin. Aynı yatırımı iki hedefe bağlarsan iki hedefte de sayılır; aynı parayı iki kez saymamaya dikkat et.</p>
       <button class="bolum-ekle" onclick="switchTab('hedef')">Birikim Hedefleri'ne git →</button>
     </div></details>
 
@@ -4249,20 +4263,20 @@
       </ul></div></details>
 
     <div class="kv-grup-bas">Harcama ve bütçe</div>
-    <details class="kv-bolum kv-sss"><summary>Bir ayın harcamasını yanlış girdim, nasıl düzeltirim?</summary><div class="kv-ic"><p>Harcama Takibim'de aylık tablodaki o hücreye tıkla; o ayın o kategorideki kayıtları aşağıda açılır. Yanlış kaydı ✎ ile düzelt ya da ✕ ile sil. Tablo kendiliğinden güncellenir; tablonun kendisi elle düzenlenmez.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bir ayın harcamasını yanlış girdim, nasıl düzeltirim?</summary><div class="kv-ic"><p>Harcama Takibim'de aylık tablodaki o hücreye tıkla; o ayın o kategorideki kayıtları aşağıda açılır. Yanlış kaydı <b>Güncelle</b> ile düzelt ya da <b>Sil</b> ile sil. Tablo kendiliğinden güncellenir; tablonun kendisi elle düzenlenmez.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Eylül'ün harcamasını Ekim başında giriyorum; form hangi ayı seçer?</summary><div class="kv-ic"><p>Ayın ilk 10 gününde form kendiliğinden <b>bir önceki ayı</b> seçer (ör. 5 Ekim'de Eylül). Başka bir ay için girmek istersen formdaki ay kutusundan değiştir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Harcamalarımda ↻ işaretli kayıtlar var, bunlar nereden geldi?</summary><div class="kv-ic"><p>Ödeme Takvimi'ne eklediğin düzenli ödemeler ve abonelikler (Netflix, aidat, fatura…) Harcama Takibim'e bu ay ve gelecek ay için kendiliğinden eklenir. İstemediğin bir kaydı silersen o ay için bir daha eklenmez. Hangi kategoriye ekleneceğini Ödeme Takvimi'ndeki satırda “harcamaya:” seçiminden değiştirirsin ya da “eklenmesin” dersin.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bütçemi aştığımı nereden anlarım?</summary><div class="kv-ic"><p>Bütçe Planlaması'nda o kategorinin çubuğu kırmızı olur ve “₺… aştı” yazar; çubuktaki ince beyaz çizgi sınırdır. Aylık Rapor'un “Öne Çıkan Gelişmeler” bölümü de bütçeyi aşan kategorileri tek tek listeler.</p></div></details>
 
     <div class="kv-grup-bas">Borçlar ve kartlar</div>
-    <details class="kv-bolum kv-sss"><summary>Kredi kartımı ödedim, ne yapmalıyım?</summary><div class="kv-ic"><p>Borçlarım › Kredi Kartlarım'da kartın ✎'sine bas ve <b>kalan</b> borcu yaz. Örnek: ₺135.571 borcun vardı, ₺60.000 ödedin → ₺75.571 yaz. Ödeme Takvimi'ndeki hatırlatma kendiliğinden kaybolur.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Kredi kartımı ödedim, ne yapmalıyım?</summary><div class="kv-ic"><p>Borçlarım › Kredi Kartlarım'da kartın satırındaki <b>Güncelle</b> düğmesine bas ve <b>kalan</b> borcu yaz. Örnek: ₺135.571 borcun vardı, ₺60.000 ödedin → ₺75.571 yaz. Ödeme Takvimi'ndeki hatırlatma kendiliğinden kaybolur.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kartın tamamını değil bir kısmını ödeyeceğim, bunu nasıl gösteririm?</summary><div class="kv-ic"><p>Ödeme Takvimi › Kredi kartı son ödeme günleri'nde kartın altındaki dönem kutusuna <b>dönem borcunu</b> (ekstredeki tutar), varsa <b>asgariyi</b> ve <b>ödeyeceğim</b> tutarını yaz. Takvim ve ayın toplamı ödeyeceğin tutarı kullanır; ödemediğin kısmın sonraki döneme kalıp faiz işleyeceğini de gösterir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Bir krediyi kapattım, listeden nasıl kaldırırım?</summary><div class="kv-ic"><p>Borçlarım › Kredilerim'de kredinin satırındaki ✓'ye bas ve onayla. Toplamlardan, takvimden ve borç planından çıkar.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>KMH borcum neden her gün artıyor?</summary><div class="kv-ic"><p>KMH faizi günlük işler ve üstüne KKDF ile BSMV eklenir. Panel bunu senin girdiğin aylık faiz ve anaparayla her gün hesaplar (ör. ₺4.000 anaparada %4,25 faizle günde ≈ ₺7,37). Banka ekstresinde faizi anaparaya eklediğinde satırdaki ⚙ ile yeni borcu ve anaparayı yaz.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bir krediyi kapattım, listeden nasıl kaldırırım?</summary><div class="kv-ic"><p>Borçlarım › Kredilerim'de kredinin satırındaki yeşil <b>Kapattım</b> düğmesine bas ve onayla. Toplamlardan, takvimden ve borç planından çıkar.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>KMH borcum neden her gün artıyor?</summary><div class="kv-ic"><p>KMH faizi günlük işler ve üstüne KKDF ile BSMV eklenir. Panel bunu senin girdiğin aylık faiz ve anaparayla her gün hesaplar (ör. ₺4.000 anaparada %4,25 faizle günde ≈ ₺7,37). Banka ekstresinde faizi anaparaya eklediğinde satırdaki <b>Faiz</b> düğmesiyle yeni borcu ve anaparayı yaz.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Hangi borcumu önce kapatmalıyım?</summary><div class="kv-ic"><p>Borç Kapatma Planı bunu senin rakamlarınla hesaplar. Genel kural: önce en pahalı borç (<b>Çığ</b> yöntemi). Bu çoğu zaman KMH'dir, çünkü vergilerle aylık faizi en yüksektir. Ayda ne kadar ek ödeyebileceğini yazınca hangi borcun ne zaman biteceğini ve ne kadar faiz kazanacağını görürsün.</p></div></details>
 
     <div class="kv-grup-bas">Gelir ve tahminler</div>
-    <details class="kv-bolum kv-sss"><summary>Maaşıma zam geldi, nereden değiştiririm?</summary><div class="kv-ic"><p>Nakit Akışı › Gelirler'de maaş satırının ✎'sine bas ve yeni tutarı yaz. Yeni tutar bu aydan itibaren geçerli olur; geçmiş aylar eski maaşla kalır. Maaş bittiyse 0 yaz.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Maaşıma zam geldi, nereden değiştiririm?</summary><div class="kv-ic"><p>Nakit Akışı › Gelirler'de maaş satırındaki <b>Güncelle</b> düğmesine bas ve yeni tutarı yaz. Yeni tutar bu aydan itibaren geçerli olur; geçmiş aylar eski maaşla kalır. Maaş bittiyse 0 yaz.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Tahminler ne kadar güvenilir?</summary><div class="kv-ic"><p>Nakit Akışı, Borç Kapatma Planı ve Birikim Hedefleri geleceği hesaplar. Bu hesaplar senin geçmiş harcamalarına, kredi ödeme planlarına ve resmi enflasyon verisi ile beklentisine (TÜİK, TCMB) dayanır. Gerçekleşme farklı olabilir. Nakit Akışı'nın altındaki seçicilerden enflasyon varsayımını ve maaş artışını kendi durumuna göre değiştirirsen tahmin sana daha çok yaklaşır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
@@ -4275,7 +4289,7 @@
 
     <div class="kv-grup-bas">Hedefler ve acil fon</div>
     <details class="kv-bolum kv-sss"><summary>Acil durum fonum ne kadar olmalı?</summary><div class="kv-ic"><p>Yaygın ölçü <b>3–6 aylık zorunlu gider</b>. Panel bunu senin için hesaplar: Birikim Hedefleri'nde hedef eklerken “Bu bir acil durum fonu”nu işaretle; aylık giderini (harcama + kredi taksidi) ve 3 ile 6 aylık önerilen tutarı gösterir. Fonun kaç aylık gideri karşıladığı hedef satırında ve Finansal Durumum'da yazar.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Hedefimi bir yatırıma bağladım, birikim neden kendi kendine değişiyor?</summary><div class="kv-ic"><p>Yatırıma bağlı hedefler yatırımın <b>canlı</b> değerini izler; fiyat düşünce birikim de düşer. Sabit bir tutar izlemek istersen satırdaki ⇄ ile kaynağı “Elle gireceğim” ya da “Varlıklarımdan” yap.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Hedefimi bir yatırıma bağladım, birikim neden kendi kendine değişiyor?</summary><div class="kv-ic"><p>Yatırıma bağlı hedefler yatırımın <b>canlı</b> değerini izler; fiyat düşünce birikim de düşer. Sabit bir tutar izlemek istersen satırdaki <b>Kaynak</b> düğmesiyle kaynağı “Elle gireceğim” ya da “Varlıklarımdan” yap.</p></div></details>
 
     <details class="kv-bolum kv-sss"><summary>Bir kredinin ya da KMH borcumun bana kaça mal olacağını nasıl hesaplarım?</summary><div class="kv-ic"><p>Menüde <b>Planlama › Hesap Araçları</b>'na git. <b>Kredi</b> aracı aylık taksiti, toplam faizi ve vergileri; <b>KMH / Kart faizi</b> aracı borcun seçtiğin gün sayısındaki maliyetini; <b>Vadeli mevduat</b> aracı mevduatın net getirisini ve enflasyona göre reel getirisini hesaplar. Basit hesaplar için aynı sayfada hesap makinesi de var.</p></div></details>
 
@@ -4447,14 +4461,15 @@
           <div><div class="pf-baslik">Kayıtlı anahtar: <span id="pfAiIpucu" class="pf-anahtar"></span></div><div class="ku-ipucu" style="margin:2px 0 0;" id="pfAiTarih"></div></div>
           <div class="pf-dugmeler"><button class="bolum-ekle" onclick="aiAnahtarDegistir()">Değiştir</button><button class="bolum-ekle pf-cikis" onclick="aiAnahtarKaldir()">Kaldır</button></div>
         </div>
-        <div id="pfAiForm">
+        <!-- Kendi formunda: form dışındaki bir şifre kutusu, tarayıcının sayfadaki BÜTÜN form dışı kutulara (ör. Harcama › Not) şifre önermesine yol açıyordu -->
+        <form id="pfAiForm" autocomplete="off" onsubmit="event.preventDefault()" novalidate>
           <label class="giris-etiket" for="pfAiAnahtar">Anthropic API anahtarı</label>
           <div class="loan-add-row">
-            <input type="password" id="pfAiAnahtar" class="ai-input" style="max-width:380px;min-width:220px;" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') aiAnahtarKaydet()">
-            <button class="ai-btn" id="pfAiKaydetBtn" onclick="aiAnahtarKaydet()">Kaydet ve doğrula</button>
+            <input type="password" id="pfAiAnahtar" class="ai-input" style="max-width:380px;min-width:220px;" placeholder="sk-ant-api03-…" autocomplete="off" data-1p-ignore data-lpignore="true" spellcheck="false" onkeydown="if(event.key==='Enter'){ event.preventDefault(); aiAnahtarKaydet(); }">
+            <button type="button" class="ai-btn" id="pfAiKaydetBtn" onclick="aiAnahtarKaydet()">Kaydet ve doğrula</button>
           </div>
           <div class="giris-mesaj" id="pfAiMesaj" role="alert"></div>
-        </div>
+        </form>
         <details class="pf-yardim">
           <summary>Anahtarı nasıl alırım? Ne kadar tutar?</summary>
           <ol>
@@ -4800,7 +4815,7 @@
       <div id="hdListe"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Her hedef için tutar ve tarih girersin; ayda ayırman gereken = kalan ÷ hedef ayına kadar kalan ay (içinde bulunulan ay hariç, hedef ayı dahil). Çubuktaki ince çizgi, hedefi eklediğin günden hedef ayının sonuna doğrusal plana göre bugün ulaşman gereken yerdir: birikim çizginin önündeyse "planın önünde". Birikimi elle takip edersen + ile ekler (eksi yazıp çıkarırsın); "Yatırımlarımdan (otomatik)" seçip bir ya da birkaç yatırımını (ya da tüm yatırımlarını) işaretlersen canlı değerleri toplanıp kendiliğinden işler (↻). Birikimi Varlıklarım'daki bir varlığa da bağlayabilirsin (ör. Nakit / Mevduat türündeki acil durum fonu; Varlıklarım'da tutarı güncelledikçe hedef de güncellenir). "Acil durum fonu" olarak işaretlenen hedefte, birikimin kaç aylık zorunlu gideri karşıladığı gösterilir (aylık gider = Nakit Akışı'ndaki harcama tahmini, yani son 6 ayın bugünün fiyatına taşınmış medyanı ya da bütçe + önümüzdeki 3 ayın ortalama kredi taksidi; 1 ayın altı kırmızı, 3 ayın altı sarı, 3 ay ve üstü yeşil; yaygın ölçü 3–6 ay). Kaynağı sonradan ⇄ ile değiştirebilirsin: önceki elle değer saklanır (geri dönersen o gelir, yoksa o anki değer yazılır) ve plan çizgisi değiştirdiğin günden, o anki birikimden yeniden başlar. Enflasyona karşı hedefi dolar olarak koyabilirsin; TL karşılığı bugünkü kurla gösterilir. Kartlardaki dolar ve altın karşılıkları güncel kur ve gram 24 ayar altın fiyatıyladır (ons ÷ 31,1035 × kur) ve fiyatlar her yenilendiğinde güncellenir. Gelirini Nakit Akışı'na girdiysen, gereken tutar ay sonunda kalan ortalamayla karşılaştırılır. Hedefler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Her hedef için tutar ve tarih girersin; ayda ayırman gereken = kalan ÷ hedef ayına kadar kalan ay (içinde bulunulan ay hariç, hedef ayı dahil). Çubuktaki ince çizgi, hedefi eklediğin günden hedef ayının sonuna doğrusal plana göre bugün ulaşman gereken yerdir: birikim çizginin önündeyse "planın önünde". Birikimi elle takip edersen Ekle düğmesiyle eklersin (eksi yazıp çıkarırsın); "Yatırımlarımdan (otomatik)" seçip bir ya da birkaç yatırımını (ya da tüm yatırımlarını) işaretlersen canlı değerleri toplanıp kendiliğinden işler (↻). Birikimi Varlıklarım'daki bir varlığa da bağlayabilirsin (ör. Nakit / Mevduat türündeki acil durum fonu; Varlıklarım'da tutarı güncelledikçe hedef de güncellenir). "Acil durum fonu" olarak işaretlenen hedefte, birikimin kaç aylık zorunlu gideri karşıladığı gösterilir (aylık gider = Nakit Akışı'ndaki harcama tahmini, yani son 6 ayın bugünün fiyatına taşınmış medyanı ya da bütçe + önümüzdeki 3 ayın ortalama kredi taksidi; 1 ayın altı kırmızı, 3 ayın altı sarı, 3 ay ve üstü yeşil; yaygın ölçü 3–6 ay). Kaynağı sonradan Kaynak düğmesiyle değiştirebilirsin: önceki elle değer saklanır (geri dönersen o gelir, yoksa o anki değer yazılır) ve plan çizgisi değiştirdiğin günden, o anki birikimden yeniden başlar. Enflasyona karşı hedefi dolar olarak koyabilirsin; TL karşılığı bugünkü kurla gösterilir. Kartlardaki dolar ve altın karşılıkları güncel kur ve gram 24 ayar altın fiyatıyladır (ons ÷ 31,1035 × kur) ve fiyatlar her yenilendiğinde güncellenir. Gelirini Nakit Akışı'na girdiysen, gereken tutar ay sonunda kalan ortalamayla karşılaştırılır. Hedefler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: BİRİKİM HEDEFLERİ ================= -->
 
@@ -8572,6 +8587,18 @@ function satirDuzenIptal(el){ _duzen = { id: null, deger: '' }; const s = el.clo
 
 // o: { led, ad, alt, tutar, renk, dil, ekstra:{ onclick, baslik, ikon }, duzen:{ id, ph, kaydet }, sil:{ onclick, baslik, ikon } }
 // dil: adın dili (büyük harfe çevirmede i/İ doğru olsun; ör. 'en' → BITCOIN, varsayılan sayfa dili tr → ALTIN, GÜMÜŞ)
+// Satır işlem düğmeleri: renkli, ikonlu, masaüstünde yazılı (telefonda yalnız ikon). tur: duzen | sil | onay | ayar | ekle | kaynak
+const AKS_IKON = {
+  duzen: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  sil: '<path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6.5 7l1 13h9l1-13"/><path d="M10 11v5.5M14 11v5.5"/>',
+  onay: '<circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.8 2.8L16.2 9.6"/>',
+  ayar: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/>',
+  ekle: '<path d="M12 5v14M5 12h14"/>',
+  kaynak: '<path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/>',
+};
+function aksBtn(tur, etiket, baslik, onclick, ek){
+  return `<button type="button" class="aks-btn ${tur}" title="${escapeHtml(baslik)}" aria-label="${escapeHtml(baslik)}" onclick="${onclick}"${ek ? ' ' + ek : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AKS_IKON[tur] || ''}</svg><span>${escapeHtml(etiket)}</span></button>`;
+}
 function satirHtml(o){
   const duzenAcik = o.duzen && _duzen.id === o.duzen.id;
   const deger = duzenAcik ? escapeHtml(_duzen.deger) : '';
@@ -8591,9 +8618,9 @@ function satirHtml(o){
         <button class="ikon-btn" title="Vazgeç" onclick="satirDuzenIptal(this)">✕</button>
       </div>` : ''}
       <div class="satir-aksiyon">
-        ${o.ekstra ? `<button class="ikon-btn" title="${escapeHtml(o.ekstra.baslik)}" onclick="${o.ekstra.onclick}">${o.ekstra.ikon}</button>` : ''}
-        ${o.duzen ? `<button class="ikon-btn" title="Güncelle" onclick="satirDuzenle(this, '${o.duzen.id}')">✎</button>` : ''}
-        ${o.sil ? `<button class="ikon-btn ${o.sil.ikon === '✓' ? 'onay' : 'sil'}" title="${escapeHtml(o.sil.baslik)}" onclick="${o.sil.onclick}">${o.sil.ikon || '✕'}</button>` : ''}
+        ${o.ekstra ? aksBtn('ayar', o.ekstra.etiket || 'Faiz', o.ekstra.baslik, o.ekstra.onclick) : ''}
+        ${o.duzen ? aksBtn('duzen', 'Güncelle', 'Güncelle', `satirDuzenle(this, '${o.duzen.id}')`) : ''}
+        ${o.sil ? (o.sil.ikon === '✓' ? aksBtn('onay', o.sil.etiket || 'Kapattım', o.sil.baslik, o.sil.onclick) : aksBtn('sil', o.sil.etiket || 'Sil', o.sil.baslik, o.sil.onclick)) : ''}
       </div>
     </div>`;
 }
@@ -8640,7 +8667,7 @@ function manuelListeRender(opts){
     alt: d.alt,
     tutar: '₺' + fmtNumber(d.tutar, 2),
     renk,
-    ekstra: opts.ayar ? { onclick: `${opts.ayar}('${item.id}')`, baslik: 'Faiz ve anapara ayarı', ikon: '⚙' } : null,
+    ekstra: opts.ayar ? { onclick: `${opts.ayar}('${item.id}')`, baslik: 'Faiz ve anapara ayarı', ikon: '⚙', etiket: 'Faiz' } : null,
     duzen: { id: `${prefix}-edit-${item.id}`, ph: opts.duzenPh || 'yeni tutar (₺)', kaydet: `manuelListeGuncelle('${key}','${prefix}','${item.id}')` },
     sil: { onclick: `manuelListeSil('${key}','${prefix}','${item.id}')`, baslik: 'Borcu kapattım', ikon: '✓' },
   }); }).join('');
@@ -10803,7 +10830,7 @@ function renderButce(){
       liste.innerHTML = `<div class="butce-bos">Henüz bütçe koymadın.${onList.length ? ` Harcamalarına göre hazır bir öneri var — her kategori için son ${aySayisi} ayın medyanı:
         <div class="butce-oneri-liste">${onList.map(x => `<span><small>${escapeHtml(x.ad)}</small>₺${fmtNumber(oneri[x.k], 0)}</span>`).join('')}</div>
         <button class="ai-btn" onclick="butceOnerileriUygula()">Önerilen bütçeyi kullan · ₺${fmtNumber(oneriToplam, 0)}/ay</button>
-        <div style="margin-top:8px;font-size:12px;color:var(--muted-2);">Sonra her tutarı ✎ ile değiştirebilir ya da + Bütçe koy ile kendin girebilirsin.</div>` : ' Sağ üstteki + Bütçe koy ile başlayabilirsin.'}</div>`;
+        <div style="margin-top:8px;font-size:12px;color:var(--muted-2);">Sonra her tutarı satırdaki <b>Güncelle</b> ile değiştirebilir ya da + Bütçe koy ile kendin girebilirsin.</div>` : ' Sağ üstteki + Bütçe koy ile başlayabilirsin.'}</div>`;
     } else {
       const satir = (x, lim) => {
         const h = A.kat[x.k] || 0, oran = lim ? h / lim : 0, d = butceDurum(oran, tempo), renk = lim ? BUTCE_RENK[d] : 'var(--muted-2)';
@@ -10824,8 +10851,8 @@ function renderButce(){
             <button class="ikon-btn" title="Vazgeç" onclick="satirDuzenIptal(this)">✕</button>
           </div>
           <div class="satir-aksiyon">
-            ${lim ? `<button class="ikon-btn" title="Bütçeyi değiştir" onclick="satirDuzenle(this, '${id}')">✎</button><button class="ikon-btn sil" title="${ozel ? 'Bu aya özel bütçeyi kaldır (her ayki geçerli olur)' : 'Bütçeyi kaldır'}" onclick="butceSil('${x.k}')">✕</button>`
-                  : `<button class="ikon-btn" title="Bütçe koy" style="color:var(--amber);" onclick="satirDuzenle(this, '${id}')">+</button>`}
+            ${lim ? aksBtn('duzen', 'Güncelle', 'Bütçeyi değiştir', `satirDuzenle(this, '${id}')`) + aksBtn('sil', 'Kaldır', ozel ? 'Bu aya özel bütçeyi kaldır (her ayki geçerli olur)' : 'Bütçeyi kaldır', `butceSil('${x.k}')`)
+                  : aksBtn('ekle', 'Bütçe koy', 'Bütçe koy', `satirDuzenle(this, '${id}')`)}
           </div>
         </div>`;
       };
@@ -11316,7 +11343,7 @@ function gelirGuncelle(id){
 }
 function gelirSil(id){
   const g = gelirYukle().find(x => x.id === id);
-  showConfirmModal(g && g.tur === 'duzenli' ? 'Bu düzenli geliri tamamen silmek istediğine emin misin? Geçmiş aylardan da kalkar. (Yalnızca bu aydan itibaren bitirmek için ✎ ile 0 yaz.)' : 'Bu geliri silmek istediğine emin misin?', () => {
+  showConfirmModal(g && g.tur === 'duzenli' ? 'Bu düzenli geliri tamamen silmek istediğine emin misin? Geçmiş aylardan da kalkar. (Yalnızca bu aydan itibaren bitirmek için Güncelle ile 0 yaz.)' : 'Bu geliri silmek istediğine emin misin?', () => {
     manuelListeKaydet(GELIR_KEY, gelirYukle().filter(x => x.id !== id));
     renderNakitAkis();
   });
@@ -12517,10 +12544,10 @@ function renderHedef(){
           <div class="satir-tutar">${hedefFmt(c.birikim, h.birim)} <small style="font-weight:500;color:var(--muted-2);font-size:11.5px;">/ ${hedefFmt(c.hedef, h.birim)}</small></div>
           <div class="butce-yuzde" style="color:${renk};min-width:46px;">%${fmtNumber(Math.min(999, c.oran * 100), 0)}</div>
           <div class="satir-aksiyon">
-            ${hedefElleMi(h) ? `<button class="ikon-btn" title="Birikime ekle / çıkar" style="color:var(--up);" onclick="hedefIslemAc('${h.id}', 'katki')">+</button>` : ''}
-            <button class="ikon-btn" title="Birikim kaynağını değiştir (elle / yatırımlarımdan)" onclick="hedefIslemAc('${h.id}', 'kaynak')">⇄</button>
-            <button class="ikon-btn" title="Hedef tutarı değiştir" onclick="hedefIslemAc('${h.id}', 'hedef')">✎</button>
-            <button class="ikon-btn sil" title="Sil" onclick="hedefSil('${h.id}')">✕</button>
+            ${hedefElleMi(h) ? aksBtn('ekle', 'Ekle', 'Birikime ekle / çıkar', `hedefIslemAc('${h.id}', 'katki')`) : ''}
+            ${aksBtn('kaynak', 'Kaynak', 'Birikim kaynağını değiştir (elle / yatırımlarımdan)', `hedefIslemAc('${h.id}', 'kaynak')`)}
+            ${aksBtn('duzen', 'Güncelle', 'Hedef tutarı değiştir', `hedefIslemAc('${h.id}', 'hedef')`)}
+            ${aksBtn('sil', 'Sil', 'Hedefi sil', `hedefSil('${h.id}')`)}
           </div>
         </div>
         <div class="butce-cubuk hedef-cubuk"><i style="width:${Math.min(100, c.oran * 100).toFixed(1)}%;background:${renk};"></i>${!c.tamam && !c.gecti && c.beklenenOran > 0 && c.beklenenOran < 1 ? `<b style="left:calc(${(c.beklenenOran * 100).toFixed(1)}% - 1px);" title="Plana göre bugün olması gereken: ${hedefFmt(c.beklenen, h.birim)}"></b>` : ''}</div>
@@ -14605,6 +14632,18 @@ function krBildirimleri(bugunS){
 // Açık sayfada özetlenmeyi bekleyen rapor varsa dakikada bir tazele; açılıştan 20 sn sonra bir kez (bildirimler için)
 setInterval(() => { if(document.visibilityState === 'visible' && document.getElementById('tab-kurum').classList.contains('active') && (_krVeri || []).some(r => r.durum === 'bekliyor' || r.durum === 'isleniyor')){ krOrtakTetikle(); krYukle(true); } }, 60000);
 setTimeout(() => { if(localStorage.getItem(ERISIM_KEY)) krYukle(); }, 20000);
+
+// Tarayıcının kayıtlı şifre / otomatik doldurma önerileri yalnız giriş ekranında ve şifre değiştirme penceresinde olsun:
+// diğer bütün kutulara (sonradan çizilenler dahil) autocomplete="off" verilir
+function otoDoldurmaKapat(kok){
+  (kok || document).querySelectorAll('input:not([autocomplete]), textarea:not([autocomplete])').forEach(el => {
+    if(el.closest('.giris-kutu') || el.type === 'password' || el.type === 'checkbox' || el.type === 'radio' || el.type === 'file' || el.type === 'hidden') return;
+    el.setAttribute('autocomplete', 'off');
+  });
+}
+otoDoldurmaKapat();
+new MutationObserver(m => { for(const x of m) for(const n of x.addedNodes) if(n.nodeType === 1) otoDoldurmaKapat(n.matches && n.matches('input, textarea') ? n.parentNode || n : n); })
+  .observe(document.body, { childList: true, subtree: true });
 
 buildCards();
 updateGarantiLive();
