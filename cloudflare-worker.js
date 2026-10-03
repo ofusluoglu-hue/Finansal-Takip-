@@ -18,7 +18,9 @@
 //     /rapor-al (POST, X-Rapor-Anahtar)    -> Gmail'deki Apps Script'ten aracı kurum PDF raporu (oturum değil kişisel rapor anahtarı)
 //     /raporlar (GET) · /raporlar/:id/pdf (GET) · /raporlar/:id/ozetle (POST) · /raporlar/:id (DELETE)
 //     /raporlar/anahtar (GET: var mı, POST: yenisini üretir — düz hali yalnız bir kez gösterilir)
-//   Zamanlanmış görev (cron, wrangler.toml): bekleyen raporları Claude ile özetler, 90 günden eski PDF'leri siler.
+//   Zamanlanmış görev (cron, wrangler.toml): bekleyen raporları Claude ile özetler, 90 günden eski PDF'leri siler;
+//     saatte bir Ak Yatırım'ın herkese açık araştırma raporlarını yoklar (ortak_raporlar; bir kez özetlenir, herkes görür).
+//     /raporlar/ortak/:id/ozetle (POST, yönetici) · /raporlar/ortak/yokla (POST, yönetici: hemen yokla)
 //     /ai, /extract-loan                   -> Anthropic geçidi (yönetici: sunucunun anahtarı; diğer kullanıcılar: kendi kayıtlı anahtarı)
 //     /td, /td-series, /fh                 -> Twelve Data / Finnhub geçitleri (ortak kota için 60 sn önbellek)
 //     /fh-ara?q=                           -> ABD hisse/ETF sembol araması (Finnhub, 1 gün önbellek)
@@ -226,6 +228,9 @@ async function semaHazirla(env) {
     env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_raporlar_user ON raporlar (user_id, alindi)'),
     env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_raporlar_durum ON raporlar (durum, alindi)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS rapor_parca (rapor_id TEXT NOT NULL, sira INTEGER NOT NULL, veri TEXT NOT NULL, PRIMARY KEY (rapor_id, sira))'),
+    // Ortak kurum raporları (herkese açık yayımlananlar, ör. Ak Yatırım): bir kez özetlenir, bütün kullanıcılar görür; PDF saklanmaz
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS ortak_raporlar (id TEXT PRIMARY KEY, kaynak TEXT NOT NULL, kurum TEXT, kategori TEXT, konu TEXT, baslik TEXT, tarih INTEGER, teaser TEXT, pdf_url TEXT, hisseler TEXT, analist TEXT, durum TEXT NOT NULL, deneme INTEGER NOT NULL DEFAULT 0, islem_ts INTEGER, hata TEXT, ozet TEXT, kullanim TEXT, ozet_ts INTEGER, alindi INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_ortak_tarih ON ortak_raporlar (tarih)'),
   ]);
   // Sonradan eklenen sütunlar (profil fotoğrafı, tercihler)
   const { results: sutunlar } = await env.DB.prepare("SELECT name FROM pragma_table_info('users')").all();
@@ -360,6 +365,7 @@ Amaç: raporun işlevini bozmadan kısaltmak. Yatırımcı özeti okuyunca rapor
 
 Kurallar:
 - Yalnız raporda yazanı aktar. Rakam, tarih, hedef fiyat, tavsiye UYDURMA; raporda yoksa null ya da boş bırak.
+- Okuyucu bireysel yatırımcıdır, finans uzmanı değildir: sade ve anlaşılır Türkçe yaz. Teknik terim ya da kısaltma geçerse ilk geçtiği yerde kısaca açıkla (ör. "FAVÖK (faiz, vergi ve amortisman öncesi kâr)", "TÜFE (tüketici enflasyonu)"); devrik ve kısaltılmış cümle kurma.
 - Türkçe yaz. Sayılarda Türkçe biçim kullan: ondalık virgül, binlik nokta, yüzde işareti önde (%2,6). Para birimini yaz (₺, $).
 - Son sayfalardaki yasal uyarı, iletişim bilgisi, ödül logoları ve sorumluluk reddini özete alma.
 - maddeler: raporun ana bulguları, en önemlisi önce; her madde tek cümle, rakamlı, kendi başına anlaşılır. 3 ile 8 madde. Her maddeye bilginin geçtiği sayfa numarasını (1'den başlar) yaz.
@@ -376,7 +382,7 @@ const RAPOR_SEMA = {
   type: 'object', additionalProperties: false,
   required: ['kategori', 'konu', 'baslik', 'tarih', 'tek_cumle', 'maddeler', 'kurum_gorusu', 'hisseler', 'piyasa', 'takvim', 'portfoy'],
   properties: {
-    kategori: { type: 'string', enum: ['gunluk', 'sirket', 'makro', 'strateji', 'sektor', 'diger'] },
+    kategori: { type: 'string', enum: ['gunluk', 'sirket', 'makro', 'strateji', 'sektor', 'teknik', 'diger'] },
     konu: { type: 'string' }, baslik: { type: 'string' }, tarih: { type: 'string' }, tek_cumle: { type: 'string' },
     maddeler: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['metin', 'sayfa'], properties: { metin: { type: 'string' }, sayfa: { type: 'integer' } } } },
     kurum_gorusu: { type: 'string' },
@@ -463,6 +469,11 @@ async function raporOzetle(env, id) {
 // Zamanlanmış görev: bekleyen raporları özetle, eski PDF'leri sil
 async function raporZamanli(env) {
   await semaHazirla(env);
+  // Ortak raporlar: saatte bir yokla, bekleyenlerden en fazla 2'sini özetle (yıllık strateji raporu tek başına uzun sürebilir)
+  try { const y = await akYokla(env); if (!y.atlandi) console.log('ak yoklama', JSON.stringify(y)); } catch (e) { console.log('ak yoklama hata', e.message); }
+  const { results: ortak } = await env.DB.prepare("SELECT id FROM ortak_raporlar WHERE (durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?) ORDER BY tarih DESC LIMIT 2")
+    .bind(Date.now() - 15 * 60 * 1000).all();
+  for (const r of ortak || []) console.log('ortak özet', r.id, JSON.stringify(await ortakOzetle(env, r.id)).slice(0, 200));
   const { results } = await env.DB.prepare("SELECT id FROM raporlar WHERE (durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?) ORDER BY alindi LIMIT 4")
     .bind(Date.now() - 10 * 60 * 1000).all();
   for (const r of results || []) {
@@ -474,6 +485,128 @@ async function raporZamanli(env) {
     env.DB.prepare('DELETE FROM rapor_parca WHERE rapor_id IN (SELECT id FROM raporlar WHERE alindi < ? AND pdf_var = 1)').bind(sinir),
     env.DB.prepare('UPDATE raporlar SET pdf_var = 0 WHERE alindi < ? AND pdf_var = 1').bind(sinir),
   ]);
+}
+
+// ---------- Ortak (herkese açık) kurum raporları: Ak Yatırım Araştırma Raporları ----------
+// Ak Yatırım raporlarını sitesinde herkese açık yayımlar (liste: contentPrivacy "Public"; robots.txt izinli; PDF uyarısında dağıtım
+// yasağı yok). Saatte bir liste yoklanır; PDF panelde SAKLANMAZ (bağlantı Ak Yatırım/Akbank adresine gider). Her rapor bir kez
+// özetlenir (yönetici anahtarı) ve bütün kullanıcılara aynı özet gösterilir. Teknik bülten yapay zekâsız: kurumun kendi kısa özeti.
+const AK_SAYFA = 'https://www.akyatirim.com.tr/tr/raporlarimiz/arastirma-raporlari';
+const AK_LISTE = 'https://www.akyatirim.com.tr/umbraco/surface/api/InvestorPdfReport';
+const AK_TURLER = [
+  { id: 'Bugün:Akbank Günlük Bülten', kategori: 'gunluk', konu: 'Günlük Bülten', ai: true, gun: 14 },
+  { id: 'Bugün:BIST Teknik Analiz Bülteni', kategori: 'teknik', konu: 'BIST Teknik Analiz', ai: false, gun: 14 },
+  { id: 'Hisse Senetleri:Şirket Raporu veya Notu', kategori: 'sirket', konu: '', ai: true, gun: 45 },
+  { id: 'Hisse Senetleri:Strateji Raporları', kategori: 'strateji', konu: 'Strateji', ai: true, gun: 400 },
+];
+const AK_YOKLAMA_MS = 60 * 60 * 1000;
+const UA_PANEL = 'Mozilla/5.0 (compatible; FinansTakip/1.0)';
+
+function b64Bayt(u8) {
+  let s = '';
+  for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const isoGun = ms => new Date(ms + 3 * 3600e3).toISOString().slice(0, 10);
+
+// Teknik bülten: kurumun kendi kısa özeti maddelere bölünür (yapay zekâ kullanılmaz, ücretsiz)
+function akTeaserOzet(x, tur) {
+  const satir = String(x.contentOfTeaser || '').split(/\n+/).map(s => s.trim()).filter(s => s && !/raporun tamamı için/i.test(s));
+  const ilk = (satir[0] || x.title || '').replace(/^[^:]{0,30}:\s*/, '');
+  return { kategori: tur.kategori, konu: tur.konu, baslik: x.title || tur.konu, tarih: isoGun(x.contentDate), tek_cumle: (ilk.match(/^.*?[.!?](\s|$)/) || [ilk])[0].trim(),
+    maddeler: satir.map(m => ({ metin: m, sayfa: 1 })), kurum_gorusu: '', hisseler: [], piyasa: [], takvim: [], portfoy: [], kurum_ozeti: true };
+}
+
+// Listeyi yokla (saatte bir); yeni raporları ekle
+async function akYokla(env, zorla) {
+  const son = await env.DB.prepare("SELECT ts FROM onbellek WHERE k = 'ak_yokla'").first();
+  if (!zorla && son && Date.now() - son.ts < AK_YOKLAMA_MS) return { atlandi: true };
+  await env.DB.prepare("INSERT INTO onbellek (k, v, ts) VALUES ('ak_yokla', '', ?) ON CONFLICT(k) DO UPDATE SET ts = excluded.ts").bind(Date.now()).run();
+  const sayfa = await fetch(AK_SAYFA, { headers: { 'User-Agent': UA_PANEL, 'Accept': 'text/html' } });
+  const html = await sayfa.text();
+  const tok = (html.match(/name="__RequestVerificationToken"[^>]*value="([^"]+)"/) || [])[1];
+  if (!tok) throw new Error('Ak Yatırım sayfasında jeton yok (' + sayfa.status + ')');
+  const cerez = (sayfa.headers.getSetCookie ? sayfa.headers.getSetCookie() : [sayfa.headers.get('set-cookie') || '']).map(c => c.split(';')[0]).filter(Boolean).join('; ');
+  let yeni = 0;
+  for (const tur of AK_TURLER) {
+    const govde = new URLSearchParams({ contentType: 'All', reportTypeId: tur.id, isForeignLang: 'false', rowLimit: '15', pageNumber: '1', orderByDesc: 'true', esbConsumerName: '', __RequestVerificationToken: tok });
+    const r = await fetch(AK_LISTE, { method: 'POST', body: govde, headers: { 'User-Agent': UA_PANEL, 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest', 'Cookie': cerez } });
+    const j = await r.json().catch(() => null);
+    const liste = ((j && j.data && j.data.pdfReport) || []).filter(x => x && x.id && x.pdfDownloadUrl && x.contentPrivacy !== 'Private' && Date.now() - (x.contentDate || 0) < tur.gun * 86400000);
+    for (const x of liste) {
+      const id = 'ak_' + x.id;
+      const ozet = tur.ai ? null : JSON.stringify(akTeaserOzet(x, tur));
+      const s = await env.DB.prepare("INSERT OR IGNORE INTO ortak_raporlar (id, kaynak, kurum, kategori, konu, baslik, tarih, teaser, pdf_url, hisseler, analist, durum, deneme, ozet, alindi) VALUES (?, 'akyatirim', 'Ak Yatırım', ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)")
+        .bind(id, tur.kategori, tur.konu, String(x.title || '').slice(0, 300), x.contentDate || Date.now(), String(x.contentOfTeaser || '').slice(0, 6000), x.pdfDownloadUrl,
+          String(x.stockCodes || '').slice(0, 300), String(x.analyst || '').slice(0, 300), tur.ai ? 'bekliyor' : 'hazir', ozet, Date.now()).run();
+      if (s.meta && s.meta.changes) yeni++;
+    }
+  }
+  return { yeni };
+}
+
+// Ortak raporu özetle (yönetici anahtarı). PDF Claude'a Ak Yatırım'ın adresiyle verilir; adres okunamazsa indirilip gönderilir.
+async function ortakOzetle(env, id) {
+  const simdi = Date.now();
+  const kilit = await env.DB.prepare("UPDATE ortak_raporlar SET durum = 'isleniyor', islem_ts = ? WHERE id = ? AND (durum IN ('bekliyor', 'hata') OR (durum = 'isleniyor' AND islem_ts < ?))")
+    .bind(simdi, id, simdi - 15 * 60 * 1000).run();
+  if (!kilit.meta || !kilit.meta.changes) return { atlandi: true };
+  const r = await env.DB.prepare('SELECT * FROM ortak_raporlar WHERE id = ?').bind(id).first();
+  const birak = async (durum, hata, artir) => {
+    await env.DB.prepare('UPDATE ortak_raporlar SET durum = ?, hata = ?, deneme = deneme + ? WHERE id = ?').bind(durum, hata ? String(hata).slice(0, 400) : null, artir ? 1 : 0, id).run();
+    return { durum, hata };
+  };
+  try {
+    const anahtar = env.ANTHROPIC_API_KEY;
+    if (!anahtar) return birak('hata', 'Sunucu anahtarı yok', false);
+    const tur = AK_TURLER.find(t => t.kategori === r.kategori) || {};
+    const bilgi = `Kurum: ${r.kurum}\nRapor türü: ${tur.id || r.kategori}\nBaşlık: ${r.baslik}\nTarih: ${isoGun(r.tarih)}\n` +
+      (r.analist ? `Analist: ${r.analist}\n` : '') + (r.teaser ? `Kurumun kendi kısa özeti:\n${r.teaser.slice(0, 3000)}\n` : '') +
+      '\nBu özet panelin BÜTÜN kullanıcılarına gösterilecek: "portfoy" alanını boş dizi bırak (kişisel portföy bilgisi yok). Bu raporu şemaya göre özetle.';
+    const istek = (kaynak, bicimli) => ({
+      model: RAPOR_MODEL, max_tokens: 16000,
+      output_config: { effort: 'medium', ...(bicimli ? { format: { type: 'json_schema', schema: RAPOR_SEMA } } : {}) },
+      fallbacks: 'default',
+      system: RAPOR_SISTEM + (bicimli ? '' : '\n\nYanıtın YALNIZ şemadaki alanlara sahip tek bir JSON nesnesi olsun; markdown ya da açıklama ekleme.'),
+      messages: [{ role: 'user', content: [{ type: 'document', source: kaynak }, { type: 'text', text: bicimli ? bilgi : bilgi + '\nŞema: ' + JSON.stringify(RAPOR_SEMA) }] }],
+    });
+    const gonder = b => fetch('https://api.anthropic.com/v1/messages', { method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': anahtar, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'server-side-fallback-2026-07-01' }, body: JSON.stringify(b) });
+    let kaynak = { type: 'url', url: r.pdf_url };
+    let res = await gonder(istek(kaynak, true));
+    if (res.status === 400) {
+      const m = await res.clone().text();
+      console.log('ortak özet 400:', m.slice(0, 300));
+      if (/url|fetch|download|retriev|access/i.test(m)) {   // adres okunamadı → indirip gönder
+        const p = await fetch(r.pdf_url, { headers: { 'User-Agent': UA_PANEL } });
+        if (!p.ok) return birak((r.deneme || 0) + 1 >= 3 ? 'hata' : 'bekliyor', 'PDF indirilemedi (' + p.status + ')', true);
+        kaynak = { type: 'base64', media_type: 'application/pdf', data: b64Bayt(new Uint8Array(await p.arrayBuffer())) };
+        res = await gonder(istek(kaynak, true));
+      }
+      if (res.status === 400) res = await gonder(istek(kaynak, false));   // şema reddedildiyse talimatla JSON
+    }
+    const veri = await res.json().catch(() => ({}));
+    if (!res.ok) return birak((r.deneme || 0) + 1 >= 3 ? 'hata' : 'bekliyor', 'Anthropic ' + res.status + ': ' + ((veri.error && veri.error.message) || ''), true);
+    if (veri.stop_reason === 'refusal') return birak('hata', 'Model bu raporu özetlemeyi reddetti', true);
+    const metin = (veri.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim().replace(/^```json\s*/i, '').replace(/```\s*$/, '');
+    let oz; try { oz = JSON.parse(metin); } catch { return birak((r.deneme || 0) + 1 >= 3 ? 'hata' : 'bekliyor', 'Özet JSON olarak okunamadı' + (veri.stop_reason === 'max_tokens' ? ' (yanıt kesildi)' : ''), true); }
+    oz.kategori = r.kategori;   // tür kurumun listesinden kesin
+    if (r.kategori !== 'sirket' && tur.konu) oz.konu = tur.konu;
+    oz.portfoy = [];
+    const kullanim = veri.usage ? { girdi: veri.usage.input_tokens, cikti: veri.usage.output_tokens, model: veri.model } : null;
+    await env.DB.prepare("UPDATE ortak_raporlar SET durum = 'hazir', hata = NULL, ozet = ?, kullanim = ?, ozet_ts = ? WHERE id = ?")
+      .bind(JSON.stringify(oz), kullanim ? JSON.stringify(kullanim) : null, Date.now(), id).run();
+    return { durum: 'hazir', kullanim };
+  } catch (e) {
+    console.log('ortak özet hata', id, e.message);
+    return birak((r && (r.deneme || 0) + 1 >= 3) ? 'hata' : 'bekliyor', e.message, true);
+  }
+}
+function ortakCikti(r) {
+  let ozet = null; try { ozet = r.ozet ? JSON.parse(r.ozet) : null; } catch { /* bozuk */ }
+  return { id: r.id, ortak: true, kurum: r.kurum, konu: r.konu, dosya: '', alindi: r.alindi, epostaTarih: r.tarih, pdfVar: true, pdfUrl: r.pdf_url,
+    durum: r.durum === 'isleniyor' ? 'isleniyor' : r.durum, hata: r.durum === 'hata' ? r.hata : null, kategori: r.kategori, altKonu: ozet && ozet.konu, baslik: r.baslik,
+    raporTarih: isoGun(r.tarih), ozet };
 }
 
 // Raporun listede dönen hali (PDF içeriği hariç)
@@ -919,7 +1052,30 @@ export default {
     }
     if (url.pathname === '/raporlar' && request.method === 'GET') {
       const { results } = await env.DB.prepare('SELECT id, kurum, konu, dosya, alindi, eposta_tarih, boyut, pdf_var, durum, hata, kategori, alt_konu, baslik, rapor_tarih, ozet FROM raporlar WHERE user_id = ? ORDER BY COALESCE(eposta_tarih, alindi) DESC LIMIT 300').bind(ben.id).all();
-      return json({ raporlar: (results || []).map(raporCikti) });
+      const { results: ortak } = await env.DB.prepare('SELECT id, kurum, kategori, konu, baslik, tarih, pdf_url, durum, hata, ozet, alindi FROM ortak_raporlar ORDER BY tarih DESC LIMIT 200').all();
+      const cikti = { raporlar: (results || []).map(raporCikti).concat((ortak || []).map(ortakCikti)) };
+      if (yonetici) {   // bu ay sunucu anahtarıyla yapılan özetlerin token toplamı (ortak + yöneticinin kendi raporları)
+        const ay = new Date(); const bas = Date.UTC(ay.getUTCFullYear(), ay.getUTCMonth(), 1) - 3 * 3600e3;
+        const { results: k1 } = await env.DB.prepare('SELECT kullanim FROM ortak_raporlar WHERE ozet_ts >= ? AND kullanim IS NOT NULL').bind(bas).all();
+        const { results: k2 } = await env.DB.prepare('SELECT kullanim FROM raporlar WHERE user_id = ? AND ozet_ts >= ? AND kullanim IS NOT NULL').bind(ben.id, bas).all();
+        const m = { girdi: 0, cikti: 0, adet: 0 };
+        [...(k1 || []), ...(k2 || [])].forEach(x => { try { const u = JSON.parse(x.kullanim); m.girdi += u.girdi || 0; m.cikti += u.cikti || 0; m.adet++; } catch { /* yok */ } });
+        cikti.maliyet = m;
+      }
+      return json(cikti);
+    }
+    // Ortak raporu yeniden özetle (yalnız yönetici; maliyet sunucu anahtarından)
+    const om = url.pathname.match(/^\/raporlar\/ortak\/(ak_\d+)\/ozetle$/);
+    if (om && request.method === 'POST') {
+      if (!yonetici) return json({ error: 'yalnız yönetici' }, 403);
+      await env.DB.prepare("UPDATE ortak_raporlar SET deneme = 0, durum = CASE WHEN durum = 'hazir' THEN 'bekliyor' ELSE durum END WHERE id = ?").bind(om[1]).run();
+      const sonuc = await ortakOzetle(env, om[1]);
+      const yeni = await env.DB.prepare('SELECT * FROM ortak_raporlar WHERE id = ?').bind(om[1]).first();
+      return json({ sonuc, rapor: yeni ? ortakCikti(yeni) : null });
+    }
+    if (url.pathname === '/raporlar/ortak/yokla' && request.method === 'POST') {
+      if (!yonetici) return json({ error: 'yalnız yönetici' }, 403);
+      try { return json(await akYokla(env, true)); } catch (e) { return json({ error: e.message }, 502); }
     }
     const rm = url.pathname.match(/^\/raporlar\/(r_[A-Za-z0-9_-]+)(\/pdf|\/ozetle)?$/);
     if (rm) {
