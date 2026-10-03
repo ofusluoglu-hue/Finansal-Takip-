@@ -3684,7 +3684,7 @@
       </div>
       <div class="bolum-form" id="harcamaForm">
         <div class="loan-add-row">
-          <select id="harcamaAyInput" class="ai-input" style="max-width:170px;min-width:140px;" title="Harcamanın ait olduğu ay"></select>
+          <select id="harcamaAyInput" class="ai-input" style="max-width:170px;min-width:140px;" title="Harcamanın ait olduğu ay" onchange="harcamaFormAyDegisti(this.value)"></select>
           <select id="harcamaKatInput" class="ai-input" style="max-width:210px;min-width:170px;"></select>
           <input type="number" step="0.01" id="harcamaTutarInput" class="ai-input" style="max-width:150px;min-width:120px;" placeholder="Tutar (TL)" onkeydown="if(event.key==='Enter')addHarcama()">
           <input type="text" id="harcamaNotInput" class="ai-input" style="max-width:240px;min-width:150px;" placeholder="Not (ör. Migros, elektrik)" onkeydown="if(event.key==='Enter')addHarcama()">
@@ -3694,7 +3694,7 @@
       <div id="harcamaKayitlar"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Harcamaları ay bazında tek kalem olarak girersin (ay, kategori, tutar, not — ör. Eylül 2026 · Market · ₺32.000; ayın ilk 10 gününde varsayılan ay bir önceki aydır; aynı ay ve kategorideki kalemler toplanır); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. Aylık tablo yalnızca kayıtlardan hesaplanır ve doğrudan düzenlenmez; eski aylık toplamlar (Excel aktarımı, 2025 ve önceden tablodan yazılanlar) listede "aylık toplam" olarak görünür ve diğer kayıtlarla toplanır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Aylık harcamalar grafiğini ₺ TL, $ Dolar ya da gram Altın olarak görebilirsin (seçim bu cihazda hatırlanır). Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Harcamaları ay bazında tek kalem olarak girersin (ay, kategori, tutar, not — ör. Eylül 2026 · Market · ₺32.000; ayın ilk 10 gününde varsayılan ay bir önceki aydır; listenin ayı ile formun ayı birlikte değişir; aynı ay ve kategorideki kalemler toplanır); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. Aylık tablo yalnızca kayıtlardan hesaplanır ve doğrudan düzenlenmez; eski aylık toplamlar (Excel aktarımı, 2025 ve önceden tablodan yazılanlar) listede "aylık toplam" olarak görünür ve diğer kayıtlarla toplanır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Aylık harcamalar grafiğini ₺ TL, $ Dolar ya da gram Altın olarak görebilirsin (seçim bu cihazda hatırlanır). Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: HARCAMA İSTATİSTİKLERİ ================= -->
 
@@ -4042,7 +4042,7 @@
 
     <details class="kv-bolum" id="kv-harcama"><summary>🧾 Harcama Takibim <span>aylık harcamalar</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Harcamalarını ay ve kategori bazında toplar: aylık grafik, kategoriler, aylık tablo, aylık ve yıllık ortalamalar.</p>
-      <p><b>Nasıl kullanılır:</b> Harcama kayıtları bölümünde <b>+ Ekle</b> → <b>ay</b>, <b>kategori</b>, <b>tutar</b> ve istersen bir not. Ayın ilk 10 gününde form kendiliğinden bir önceki ayı seçer, çünkü Eylül'ün harcamasını genelde Ekim başında girersin.</p>
+      <p><b>Nasıl kullanılır:</b> Harcama kayıtları bölümünde <b>+ Ekle</b> → <b>ay</b>, <b>kategori</b>, <b>tutar</b> ve istersen bir not. Ayın ilk 10 gününde form kendiliğinden bir önceki ayı seçer, çünkü Eylül'ün harcamasını genelde Ekim başında girersin. Listenin üstündeki ay seçicisi ile formdaki ay hep aynıdır: birini değiştirince diğeri de o aya geçer, böylece girdiğin kayıt baktığın listede hemen görünür.</p>
       <p><b>Örnek:</b> “Eylül 2026 · Market · ₺26.985 · not: Migros”. Aynı ay ve kategoriye birden çok kayıt girebilirsin; tabloda toplanır.</p>
       <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan ✎ ile düzeltir ya da ✕ ile silersin.</p>
       <p><b>₺ TL / $ Dolar / Altın:</b> Grafiğin başlığındaki seçiciyle harcamalarını dolar ya da gram altın olarak da görürsün. Her ay <b>o ayın</b> ortalama kuruyla çevrilir; böylece enflasyonun etkisini ayırırsın.</p>
@@ -10036,8 +10036,11 @@ const HARCAMA_KATEGORILER = [
 const HARCAMA_KAT_AD = Object.fromEntries(HARCAMA_KATEGORILER.map(x => [x.k, x.ad]));
 const AY_KISA = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
 const AY_UZUN = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-let _harcamaYil = new Date().getFullYear();
-let _harcamaAy = new Date().getMonth();   // kayıt listesinin gösterdiği ay (-1: tüm yıl)
+// Kayıt listesinin ayı ile ekleme formunun ayı hep aynıdır (biri değişince diğeri de). Açılışta ikisi de varsayılan giriş ayı:
+// ayın ilk 10 gününde bir önceki ay (o günlerde girilen harcama çoğunlukla geçen aya ait), sonra içinde bulunulan ay.
+const _harcamaVarsayilanAy = (() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth() - (d.getDate() <= 10 ? 1 : 0), 1); })();
+let _harcamaYil = _harcamaVarsayilanAy.getFullYear();
+let _harcamaAy = _harcamaVarsayilanAy.getMonth();   // kayıt listesinin gösterdiği ay (-1: tüm yıl)
 let _harcamaHepsi = false;                // kayıt listesinde ilk 10 yerine tümü gösterilsin mi
 const HARCAMA_LISTE_ILK = 10;
 
@@ -10386,15 +10389,23 @@ function renderHarcama(){
   const ayInput = document.getElementById('harcamaAyInput');
   if(ayInput && !ayInput.options.length){
     const simdi2 = new Date();
-    const varsayilan = new Date(simdi2.getFullYear(), simdi2.getMonth() - (simdi2.getDate() <= 10 ? 1 : 0), 1);   // ay başında girilen harcama çoğunlukla önceki aya ait
+    const varsayilan = _harcamaVarsayilanAy;   // ay başında girilen harcama çoğunlukla önceki aya ait
     ayInput.innerHTML = Array.from({ length: 18 }, (_, i) => new Date(simdi2.getFullYear(), simdi2.getMonth() - i, 1))
       .map(d => { const k = ayAnahtar(d.getFullYear(), d.getMonth()); return `<option value="${k}"${d.getTime() === varsayilan.getTime() ? ' selected' : ''}>${AY_UZUN[d.getMonth()]} ${d.getFullYear()}</option>`; }).join('');
   }
+  // Form ayı = listenin ayı (liste "Tüm yıl"dayken ya da ay formun aralığında değilse form olduğu gibi kalır)
+  if(ayInput && _harcamaAy !== -1){ const k = ayAnahtar(_harcamaYil, _harcamaAy); if([...ayInput.options].some(o => o.value === k)) ayInput.value = k; }
 }
 
 // Kaydın eklenme zamanı (kimlikteki zaman damgası; Excel'den aktarılanlarda 0 → en altta)
 function harcamaEklenme(x){ const m = String(x.id).match(/^h-(\d+)/); return m ? +m[1] : 0; }
 
+// Formda ay değişince liste de o aya geçer (girilen kayıt gördüğün ayda görünsün)
+function harcamaFormAyDegisti(k){
+  if(!/^\d{4}-\d\d$/.test(k)) return;
+  _harcamaYil = +k.slice(0, 4); _harcamaAy = +k.slice(5, 7) - 1; _harcamaHepsi = false; _harcamaKatFiltre = null;
+  renderHarcama();
+}
 function addHarcama(){
   const ay = document.getElementById('harcamaAyInput').value;   // 'YYYY-MM' — harcamalar ay bazında tek kalem girilir
   const tarih = /^\d{4}-\d\d$/.test(ay) ? ay + '-01' : '';
