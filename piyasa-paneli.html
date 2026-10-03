@@ -14223,6 +14223,21 @@ async function krYukle(zorla){
     if(_krAnahtarVar == null) fetchWithTimeout(MY_WORKER + '/raporlar/anahtar', 15000).then(x => x.json()).then(j => { _krAnahtarVar = !!j.var; if(!document.getElementById('krKurulum').hidden) krKurulumCiz(); }).catch(() => {});
   }catch(e){ _krHata = (e && e.name === 'AbortError') ? 'zaman aşımı' : ((e && e.message) || 'bağlantı'); }
   finally{ _krYukleniyor = false; krCiz(); bildirimGuncelle(); }
+  krOrtakTetikle();
+}
+// Ortak raporlar (Ak Yatırım): sayfa açıkken sunucuya "yokla + bekleyen 1 raporu özetle" der (Türkiye'deki Cloudflare noktasından
+// Ak Yatırım'a erişim kesin; zamanlanmış görev yurt dışında çalışabiliyor). Aynı anda tek istek; yeni rapor ya da özet gelince liste tazelenir.
+let _krOrtakIstek = false, _krOrtakSon = 0;
+async function krOrtakTetikle(){
+  if(_krOrtakIstek || Date.now() - _krOrtakSon < 50 * 1000) return;
+  if(!document.getElementById('tab-kurum').classList.contains('active')) return;
+  _krOrtakIstek = true; _krOrtakSon = Date.now();
+  try{
+    const res = await fetchWithTimeout(MY_WORKER + '/raporlar/ortak/yokla', 240000, { method: 'POST' });
+    const j = await res.json().catch(() => ({}));
+    if((j.yoklama && j.yoklama.yeni) || (j.sonuc && j.sonuc.durum === 'hazir')){ _krOrtakIstek = false; return krYukle(true); }
+  }catch(e){ /* sonraki turda */ }
+  finally{ _krOrtakIstek = false; }
 }
 // Hazır raporlardaki hisse geçişleri (yeniden eskiye)
 function krGecisler(L){
@@ -14345,7 +14360,8 @@ function krCiz(){
   on.hidden = !pk.length;
   on.innerHTML = pk.length ? 'Portföyün raporlarda:' + pk.map(k => `<a onclick="document.getElementById('krAra').value = '${k}'; krAraDegisti('${k}')">${k} <em>${gecen[k]}</em></a>`).join('') : '';
   const kur = document.getElementById('krKurulum');
-  if(_krVeri && !L.length && kur.hidden && !_krKurulumKapandi) kur.hidden = false;
+  if(_krVeri && !L.length && kur.hidden && !_krKurulumKapandi && !_krOrtakIstek){ kur.hidden = false; _krKurulumOto = true; }
+  if(_krKurulumOto && L.length){ kur.hidden = true; _krKurulumOto = false; }   // kendiliğinden açılmıştı, raporlar geldi
   if(!kur.hidden) krKurulumCiz();
   const der = document.getElementById('krDerleme'), lst = document.getElementById('krListe');
   if(_krVeri == null){ der.innerHTML = ''; lst.innerHTML = `<div class="bos-not">${_krHata ? 'Raporlar alınamadı (' + escapeHtml(_krHata) + '). Biraz sonra yenile.' : 'Raporlar yükleniyor…'}</div>`; return; }
@@ -14364,7 +14380,7 @@ function krCiz(){
   if(ay.kat !== 'makro') anahtarlar.sort((a, b) => b.localeCompare(a)); else anahtarlar.sort((a, b) => krTarih(grup.get(b)[0]).localeCompare(krTarih(grup.get(a)[0])));
   lst.innerHTML = anahtarlar.map(g => `<div class="kv-grup-bas kr-grup-bas">${krSvg(ay.kat === 'makro' ? KR_IKON.makro : KR_IKON.takvim)}${ay.kat === 'makro' ? escapeHtml(g) : krTarihYaz(g) + (gunFarkiS(g, bugunISO()) > 1 ? ' · ' + ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'][new Date(g + 'T00:00:00').getDay()] : '')}<small>${grup.get(g).length} rapor</small></div>` + grup.get(g).map(r => krRaporHtml(r, kodlar, ay.tum)).join('')).join('');
 }
-let _krKurulumKapandi = false, _krAraZaman = null, _krMaliyet = null;
+let _krKurulumKapandi = false, _krAraZaman = null, _krMaliyet = null, _krKurulumOto = false;
 // Özet maliyeti (Sonnet 5.5: girdi $2, çıktı $10 / milyon token) — yalnız yöneticiye, bu ay
 function krMaliyetMetni(){ const m = _krMaliyet; if(!m || !m.adet) return ''; const usd = m.girdi / 1e6 * 2 + m.cikti / 1e6 * 10; return ` · bu ay özet maliyeti <b>≈ $${fmtNumber(usd, 2)}</b> (${m.adet} özet, ort. $${fmtNumber(usd / m.adet, 3)})`; }
 function krAraDegisti(v){ _krAra = v; clearTimeout(_krAraZaman); _krAraZaman = setTimeout(krCiz, 200); }
@@ -14407,7 +14423,7 @@ async function krSil(id){
   if(res && res.ok){ _krVeri = _krVeri.filter(x => x.id !== id); krCiz(); } else alert('Silinemedi.');
 }
 // Kurulum rehberi (yönlendirme): abonelik → gönderenler → Gmail betiği → bekle
-function krKurulumAc(){ const k = document.getElementById('krKurulum'); k.hidden = !k.hidden; if(k.hidden) _krKurulumKapandi = true; krCiz(); }
+function krKurulumAc(){ const k = document.getElementById('krKurulum'); k.hidden = !k.hidden; _krKurulumOto = false; if(k.hidden) _krKurulumKapandi = true; krCiz(); }
 function krBetik(anahtar, gonderenler){
   const liste = gonderenler.split(/[\s,;]+/).map(x => x.trim()).filter(x => /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(x) || /^@?[a-z0-9.-]+\.[a-z]{2,}$/i.test(x));
   const kimden = liste.map(x => x.replace(/^@/, '')).join(' OR ');
@@ -14529,7 +14545,7 @@ function krBildirimleri(bugunS){
   return out;
 }
 // Açık sayfada özetlenmeyi bekleyen rapor varsa dakikada bir tazele; açılıştan 20 sn sonra bir kez (bildirimler için)
-setInterval(() => { if(document.visibilityState === 'visible' && document.getElementById('tab-kurum').classList.contains('active') && (_krVeri || []).some(r => r.durum === 'bekliyor' || r.durum === 'isleniyor')) krYukle(true); }, 60000);
+setInterval(() => { if(document.visibilityState === 'visible' && document.getElementById('tab-kurum').classList.contains('active') && (_krVeri || []).some(r => r.durum === 'bekliyor' || r.durum === 'isleniyor')){ krOrtakTetikle(); krYukle(true); } }, 60000);
 setTimeout(() => { if(localStorage.getItem(ERISIM_KEY)) krYukle(); }, 20000);
 
 buildCards();

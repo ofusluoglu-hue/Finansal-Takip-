@@ -470,7 +470,7 @@ async function raporOzetle(env, id) {
 async function raporZamanli(env) {
   await semaHazirla(env);
   // Ortak raporlar: saatte bir yokla, bekleyenlerden en fazla 2'sini özetle (yıllık strateji raporu tek başına uzun sürebilir)
-  try { const y = await akYokla(env); if (!y.atlandi) console.log('ak yoklama', JSON.stringify(y)); } catch (e) { console.log('ak yoklama hata', e.message); }
+  try { await akYokla(env, false, 'cron'); } catch (e) { console.log('ak yoklama hata', e.message); }
   const { results: ortak } = await env.DB.prepare("SELECT id FROM ortak_raporlar WHERE (durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?) ORDER BY tarih DESC LIMIT 2")
     .bind(Date.now() - 15 * 60 * 1000).all();
   for (const r of ortak || []) console.log('ortak özet', r.id, JSON.stringify(await ortakOzetle(env, r.id)).slice(0, 200));
@@ -518,21 +518,27 @@ function akTeaserOzet(x, tur) {
 }
 
 // Listeyi yokla (saatte bir); yeni raporları ekle
-async function akYokla(env, zorla) {
-  const son = await env.DB.prepare("SELECT ts FROM onbellek WHERE k = 'ak_yokla'").first();
-  if (!zorla && son && Date.now() - son.ts < AK_YOKLAMA_MS) return { atlandi: true };
-  await env.DB.prepare("INSERT INTO onbellek (k, v, ts) VALUES ('ak_yokla', '', ?) ON CONFLICT(k) DO UPDATE SET ts = excluded.ts").bind(Date.now()).run();
+// Not: zamanlanmış görev yurt dışındaki bir Cloudflare noktasında çalışabilir; Ak Yatırım oradan boş liste verirse
+// (2026-10-03 canlıda 0 rapor) yoklama, kullanıcı sayfayı açtığında Türkiye'deki noktadan da yapılır (/raporlar/ortak/yokla).
+async function akYokla(env, zorla, nereden) {
+  const son = await env.DB.prepare("SELECT v, ts FROM onbellek WHERE k = 'ak_yokla'").first();
+  let sonSonuc = {}; try { sonSonuc = JSON.parse((son && son.v) || '{}'); } catch { /* yok */ }
+  const bekle = sonSonuc.toplam > 0 ? AK_YOKLAMA_MS : 5 * 60 * 1000;   // liste boş döndüyse kısa aralıkla yeniden dene
+  if (!zorla && son && Date.now() - son.ts < bekle) return { atlandi: true };
+  await env.DB.prepare("INSERT INTO onbellek (k, v, ts) VALUES ('ak_yokla', ?, ?) ON CONFLICT(k) DO UPDATE SET ts = excluded.ts").bind((son && son.v) || '{}', Date.now()).run();
   const sayfa = await fetch(AK_SAYFA, { headers: { 'User-Agent': UA_PANEL, 'Accept': 'text/html' } });
   const html = await sayfa.text();
   const tok = (html.match(/name="__RequestVerificationToken"[^>]*value="([^"]+)"/) || [])[1];
   if (!tok) throw new Error('Ak Yatırım sayfasında jeton yok (' + sayfa.status + ')');
   const cerez = (sayfa.headers.getSetCookie ? sayfa.headers.getSetCookie() : [sayfa.headers.get('set-cookie') || '']).map(c => c.split(';')[0]).filter(Boolean).join('; ');
-  let yeni = 0;
+  let yeni = 0, toplam = 0; const durum = [];
   for (const tur of AK_TURLER) {
     const govde = new URLSearchParams({ contentType: 'All', reportTypeId: tur.id, isForeignLang: 'false', rowLimit: '15', pageNumber: '1', orderByDesc: 'true', esbConsumerName: '', __RequestVerificationToken: tok });
     const r = await fetch(AK_LISTE, { method: 'POST', body: govde, headers: { 'User-Agent': UA_PANEL, 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest', 'Cookie': cerez } });
     const j = await r.json().catch(() => null);
-    const liste = ((j && j.data && j.data.pdfReport) || []).filter(x => x && x.id && x.pdfDownloadUrl && x.contentPrivacy !== 'Private' && Date.now() - (x.contentDate || 0) < tur.gun * 86400000);
+    const ham = (j && j.data && j.data.pdfReport) || [];
+    toplam += ham.length; durum.push(tur.kategori + ':' + r.status + '/' + ham.length);
+    const liste = ham.filter(x => x && x.id && x.pdfDownloadUrl && x.contentPrivacy !== 'Private' && Date.now() - (x.contentDate || 0) < tur.gun * 86400000);
     for (const x of liste) {
       const id = 'ak_' + x.id;
       const ozet = tur.ai ? null : JSON.stringify(akTeaserOzet(x, tur));
@@ -542,7 +548,10 @@ async function akYokla(env, zorla) {
       if (s.meta && s.meta.changes) yeni++;
     }
   }
-  return { yeni };
+  const sonuc = { yeni, toplam, durum: durum.join(' '), nereden: nereden || '-', ts: Date.now() };
+  await env.DB.prepare("UPDATE onbellek SET v = ? WHERE k = 'ak_yokla'").bind(JSON.stringify(sonuc)).run();
+  console.log('ak yoklama', JSON.stringify(sonuc));
+  return sonuc;
 }
 
 // Ortak raporu özetle (yönetici anahtarı). PDF Claude'a Ak Yatırım'ın adresiyle verilir; adres okunamazsa indirilip gönderilir.
@@ -572,18 +581,20 @@ async function ortakOzetle(env, id) {
     });
     const gonder = b => fetch('https://api.anthropic.com/v1/messages', { method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': anahtar, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'server-side-fallback-2026-07-01' }, body: JSON.stringify(b) });
-    let kaynak = { type: 'url', url: r.pdf_url };
+    // PDF önce Worker'dan indirilir (Türkiye'deki noktadan erişim kesin); olmazsa adres Claude'a verilir
+    let kaynak = null;
+    try {
+      const p = await fetch(r.pdf_url, { headers: { 'User-Agent': UA_PANEL } });
+      const tip = p.headers.get('content-type') || '';
+      if (p.ok && /pdf/i.test(tip)) kaynak = { type: 'base64', media_type: 'application/pdf', data: b64Bayt(new Uint8Array(await p.arrayBuffer())) };
+      else console.log('ortak PDF indirilemedi', id, p.status, tip);
+    } catch (e) { console.log('ortak PDF indirme hata', id, e.message); }
+    if (!kaynak) kaynak = { type: 'url', url: r.pdf_url };
     let res = await gonder(istek(kaynak, true));
     if (res.status === 400) {
       const m = await res.clone().text();
       console.log('ortak özet 400:', m.slice(0, 300));
-      if (/url|fetch|download|retriev|access/i.test(m)) {   // adres okunamadı → indirip gönder
-        const p = await fetch(r.pdf_url, { headers: { 'User-Agent': UA_PANEL } });
-        if (!p.ok) return birak((r.deneme || 0) + 1 >= 3 ? 'hata' : 'bekliyor', 'PDF indirilemedi (' + p.status + ')', true);
-        kaynak = { type: 'base64', media_type: 'application/pdf', data: b64Bayt(new Uint8Array(await p.arrayBuffer())) };
-        res = await gonder(istek(kaynak, true));
-      }
-      if (res.status === 400) res = await gonder(istek(kaynak, false));   // şema reddedildiyse talimatla JSON
+      res = await gonder(istek(kaynak, false));   // şema reddedildiyse talimatla JSON
     }
     const veri = await res.json().catch(() => ({}));
     if (!res.ok) return birak((r.deneme || 0) + 1 >= 3 ? 'hata' : 'bekliyor', 'Anthropic ' + res.status + ': ' + ((veri.error && veri.error.message) || ''), true);
@@ -1073,9 +1084,15 @@ export default {
       const yeni = await env.DB.prepare('SELECT * FROM ortak_raporlar WHERE id = ?').bind(om[1]).first();
       return json({ sonuc, rapor: yeni ? ortakCikti(yeni) : null });
     }
+    // Sayfa açılınca panel çağırır (Türkiye'deki noktadan): saatte bir yoklar (boş döndüyse 5 dk), sonra bekleyen en fazla 1 raporu özetler.
+    // Her rapor bir kez özetlenir (kilitli); maliyet yönetici anahtarından, rapor sayısıyla sınırlı.
     if (url.pathname === '/raporlar/ortak/yokla' && request.method === 'POST') {
-      if (!yonetici) return json({ error: 'yalnız yönetici' }, 403);
-      try { return json(await akYokla(env, true)); } catch (e) { return json({ error: e.message }, 502); }
+      const colo = (request.cf && request.cf.colo) || '?';
+      let y; try { y = await akYokla(env, yonetici && url.searchParams.get('zorla') === '1', 'istek:' + colo); } catch (e) { y = { hata: e.message }; }
+      let isl = null;
+      const bek = await env.DB.prepare("SELECT id FROM ortak_raporlar WHERE (durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?) ORDER BY tarih DESC LIMIT 1").bind(Date.now() - 15 * 60 * 1000).first();
+      if (bek) isl = await ortakOzetle(env, bek.id);
+      return json({ yoklama: y, islenen: bek ? bek.id : null, sonuc: isl });
     }
     const rm = url.pathname.match(/^\/raporlar\/(r_[A-Za-z0-9_-]+)(\/pdf|\/ozetle)?$/);
     if (rm) {
