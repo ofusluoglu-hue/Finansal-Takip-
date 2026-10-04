@@ -629,7 +629,7 @@
   .app-bar .status{justify-self:end;min-width:0;max-width:100%;}
   .app-bar #statusText{min-width:0;flex:0 1 auto;}   /* dar ekranda uzun durum metni "…" ile kısalır, saate binmez (tam metin ipucunda) */
   .app-bar .refresh-btn{flex-shrink:0;}
-  .st-kisa{display:none;}   /* durum metninin telefondaki kısa hali */
+  .st-kisa, .st-etiket{display:none;}   /* durum metninin telefondaki kısa hali ve noktanın solundaki etiket */
   /* Saat + Kartları düzenle: üst çubuğun ortasında tek grup. Piyasa Özeti dışında düğme görünmez ama yeri korunur (saat sekme değişince kaymasın) */
   .app-bar-orta{display:flex;align-items:stretch;gap:10px;}
   /* Geniş ekranda başlık bloğu durum bloğundan geniş: sol sütun biraz geniş tutulunca saat + düğme aradaki boşluğun ortasına gelir */
@@ -898,6 +898,7 @@
     .kart-duzen-btn{padding:0 9px;border-radius:8px;} .kart-duzen-btn span{display:none;}
     .app-bar .status{justify-self:end !important;gap:6px;font-size:12px;}
     .app-bar .st-uzun{display:none;} .app-bar .st-kisa{display:inline;}
+    .app-bar .st-etiket{display:inline;font-weight:700;color:var(--up);} .app-bar .st-etiket:empty{display:none;} .app-bar .st-etiket.eksik{color:var(--down);}
     .app-bar .refresh-btn{padding:7px 9px;} .app-bar .refresh-btn .yenile-yazi{display:none;} .app-bar .refresh-btn svg{width:15px;height:15px;}
   }
   @media (max-width:900px){
@@ -3177,6 +3178,7 @@
       </button>
     </div>
     <div class="status">
+      <span class="st-etiket" id="statusEtiket"></span>
       <span id="statusDot" class="dot loading"></span>
       <span id="statusText">Veriler alınıyor…</span>
       <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">
@@ -6604,6 +6606,7 @@ async function refreshMarketData(){
   const dot = document.getElementById('statusDot');
   const statusText = document.getElementById('statusText');
   dot.className = 'dot loading';
+  istYaz('statusEtiket', '');   // telefonda noktanın solundaki kısa durum: Güncel / Eksik
   statusText.innerHTML = '<span class="st-uzun">Veriler alınıyor…</span><span class="st-kisa">yükleniyor…</span>';
 
   let anyError = false;
@@ -6686,10 +6689,12 @@ async function refreshMarketData(){
 
   if(anyError){
     dot.className = 'dot err';
+    istYaz('statusEtiket', 'Eksik'); document.getElementById('statusEtiket').className = 'st-etiket eksik';
     statusText.innerHTML = `<span class="st-uzun">Bazı veriler alınamadı (${escapeHtml(lastErrorMsg)}) · </span>` + new Date().toLocaleTimeString('tr-TR');
     statusText.title = statusText.textContent;   // telefonda yalnız saat görünür; tam metin ipucunda
   } else {
     dot.className = 'dot';
+    istYaz('statusEtiket', 'Güncel'); document.getElementById('statusEtiket').className = 'st-etiket';
     statusText.innerHTML = '<span class="st-uzun">Canlı · güncellendi </span>' + new Date().toLocaleTimeString('tr-TR');
     statusText.title = 'Canlı · güncellendi ' + new Date().toLocaleTimeString('tr-TR');
   }
