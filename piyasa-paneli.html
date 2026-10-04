@@ -865,6 +865,7 @@
     color:var(--muted);
   }
   .app-bar-title p:empty{display:none;}
+  .app-bar-title .alt-kisa{display:none;}   /* telefonda tek satırlık kısa açıklama */
   .digital-clock-fixed{
     position:relative;
     background:var(--panel);
@@ -889,7 +890,8 @@
     .app-bar{grid-template-columns:auto minmax(0,1fr) !important;align-items:center;gap:8px 10px !important;padding:8px 0 10px;margin-bottom:10px;}
     .app-bar-title{grid-column:1 / -1;}
     .app-bar-title h1{font-size:19px;margin-bottom:2px;}
-    .app-bar-title p{font-size:12px;}
+    .app-bar-title p{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .app-bar-title .alt-uzun{display:none;} .app-bar-title .alt-kisa{display:inline;}
     .app-bar-orta{gap:6px;align-items:stretch;}
     .digital-clock-fixed{padding:4px 10px 4px 20px;border-radius:8px;}
     .digital-clock-fixed .clock-live-led{left:8px;width:6px;height:6px;margin-top:-3px;}
@@ -3164,7 +3166,7 @@
   <div class="app-bar" id="appBar">
     <div class="app-bar-title">
       <h1 id="appBarTitle">Piyasa Özeti</h1>
-      <p id="appBarSub">Endeksler, faiz, döviz, emtia, kripto ve güncel haberler</p>
+      <p id="appBarSub"><span class="alt-uzun">Endeksler, faiz, döviz, emtia, kripto ve güncel haberler</span><span class="alt-kisa">Endeks, döviz, emtia, kripto ve haberler</span></p>
     </div>
     <div class="app-bar-orta">
       <div class="digital-clock digital-clock-fixed">
@@ -13106,28 +13108,29 @@ function kilavuzIsaretle(kok, t){
 }
 
 // ---------- Sekme geçişi ----------
+// [başlık, açıklama, telefonda tek satıra sığan kısa açıklama]
 const TAB_BASLIKLARI = {
-  gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler'],
-  finansal: ['Finansal Durumum', 'Varlıklar, yatırımlar ve borçlarla net servet'],
-  yatirim:  ['Yatırımlarım', 'Canlı fiyatlarla portföy değeri ve dağılımı'],
-  istatistik: ['Portföy İstatistikleri', 'Portföyünü 100 üzerinden puanlayan göstergeler'],
-  borclar:  ['Borçlarım', 'Krediler, kartlar, KMH ve elden borçlar — canlı toplam'],
-  harcama:  ['Harcama Takibim', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar'],
-  butce:    ['Bütçe Planlaması', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın'],
-  borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın'],
-  profil:   ['Profilim', 'Fotoğrafın, adın, tercihlerin ve hesap güvenliğin'],
-  kullanicilar: ['Kullanıcılar', 'Hesap aç, geçici şifre ver, girişi kapat — yalnız yönetici görür'],
-  destek:   ['Destek ve İletişim', 'Çözemediğin bir sorun ya da önerin için bize yaz'],
-  sss:      ['Sık Sorulan Sorular', 'En sık takılınan noktaların kısa cevapları — konulara göre'],
-  kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle'],
-  kurum:    ['Kurum Raporları', 'Aracı kurum raporlarının özetleri — portföyün önde, kategori ve konuya göre'],
-  rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri'],
-  araclar:  ['Hesap Araçları', 'Hesap makinesi; kredi, KMH / kart ve vadeli mevduat faiz hesaplayıcıları'],
-  hedef:    ['Birikim Hedefleri', 'Tutar ve tarih koy — ayda ne kadar ayırman gerektiğini ve planın önünde mi olduğunu gör'],
-  netgecmis: ['Net Varlık Geçmişi', 'Net servetinin günden güne değişimi'],
-  odeme:    ['Ödeme Takvimi', 'Taksitler, kart son ödeme günleri, faturalar ve abonelikler tek takvimde'],
-  nakitakis: ['Nakit Akışı', 'Gelir − harcama − taksit: ay sonunda ne kalıyor, ileride ne kalacak'],
-  ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir'],
+  gunluk:   ['Piyasa Özeti', 'Endeksler, faiz, döviz, emtia, kripto ve güncel haberler', 'Endeks, döviz, emtia, kripto ve haberler'],
+  finansal: ['Finansal Durumum', 'Varlıklar, yatırımlar ve borçlarla net servet', 'Varlık, yatırım ve borçlarla net servetin'],
+  yatirim:  ['Yatırımlarım', 'Canlı fiyatlarla portföy değeri ve dağılımı', 'Canlı fiyatlarla portföyün ve dağılımı'],
+  istatistik: ['Portföy İstatistikleri', 'Portföyünü 100 üzerinden puanlayan göstergeler', 'Portföyünün 100 üzerinden puanı'],
+  borclar:  ['Borçlarım', 'Krediler, kartlar, KMH ve elden borçlar — canlı toplam', 'Kredi, kart, KMH ve elden borçların'],
+  harcama:  ['Harcama Takibim', 'Aylık harcamalar, kategoriler ve yıllık ortalamalar', 'Aylık harcamaların ve kategoriler'],
+  butce:    ['Bütçe Planlaması', 'Kategori başına aylık sınır — ne kadarını harcadın, nerede aştın', 'Kategori başına aylık harcama sınırı'],
+  borcplan: ['Borç Kapatma Planı', 'Ek ödemeyle borçlar hangi sırayla ve ne zaman biter — ne kadar faiz kazanırsın', 'Borçların hangi sırayla, ne zaman biter'],
+  profil:   ['Profilim', 'Fotoğrafın, adın, tercihlerin ve hesap güvenliğin', 'Fotoğraf, ad, tercihler ve güvenlik'],
+  kullanicilar: ['Kullanıcılar', 'Hesap aç, geçici şifre ver, girişi kapat — yalnız yönetici görür', 'Hesap aç, şifre ver, girişi yönet'],
+  destek:   ['Destek ve İletişim', 'Çözemediğin bir sorun ya da önerin için bize yaz', 'Sorun ya da önerin için bize yaz'],
+  sss:      ['Sık Sorulan Sorular', 'En sık takılınan noktaların kısa cevapları — konulara göre', 'Sık takılınan noktaların kısa cevapları'],
+  kilavuz:  ['Kullanım Kılavuzu', 'Her sayfa ne işe yarar, nasıl kullanılır — örneklerle', 'Her sayfa ne işe yarar, nasıl kullanılır'],
+  kurum:    ['Kurum Raporları', 'Aracı kurum raporlarının özetleri — portföyün önde, kategori ve konuya göre', 'Aracı kurum raporlarının özetleri'],
+  rapor:    ['Aylık Rapor', 'Ayın özeti: harcama, bütçe, nakit akışı, borç — ve Bay Piyasa’nın önerileri', 'Ayın özeti ve Bay Piyasa’nın önerileri'],
+  araclar:  ['Hesap Araçları', 'Hesap makinesi; kredi, KMH / kart ve vadeli mevduat faiz hesaplayıcıları', 'Hesap makinesi ve faiz hesaplayıcıları'],
+  hedef:    ['Birikim Hedefleri', 'Tutar ve tarih koy — ayda ne kadar ayırman gerektiğini ve planın önünde mi olduğunu gör', 'Hedefine ayda ne kadar ayırmalısın'],
+  netgecmis: ['Net Varlık Geçmişi', 'Net servetinin günden güne değişimi', 'Net servetinin günden güne değişimi'],
+  odeme:    ['Ödeme Takvimi', 'Taksitler, kart son ödeme günleri, faturalar ve abonelikler tek takvimde', 'Taksit, kart, fatura ve abonelikler'],
+  nakitakis: ['Nakit Akışı', 'Gelir − harcama − taksit: ay sonunda ne kalıyor, ileride ne kalacak', 'Ay sonunda ne kalıyor, ileride ne kalacak'],
+  ai:       ['Bay Piyasa', 'Piyasa sohbet asistanın — fiyatları, haberleri ve (izin verirsen) portföyünü bilir', 'Piyasayı ve portföyünü bilen asistanın'],
 };
 function switchTab(tabId){
   document.querySelectorAll('.tab-panel').forEach(el=> el.classList.remove('active'));
@@ -13140,7 +13143,7 @@ function switchTab(tabId){
   const b = TAB_BASLIKLARI[tabId];
   if(b){
     document.getElementById('appBarTitle').textContent = b[0];
-    document.getElementById('appBarSub').textContent = b[1];
+    document.getElementById('appBarSub').innerHTML = `<span class="alt-uzun">${escapeHtml(b[1])}</span><span class="alt-kisa">${escapeHtml(b[2] || b[1])}</span>`;
   }
   if(tabId === 'ai' && typeof bpTabAcildi === 'function') bpTabAcildi();
   if(tabId === 'harcama'){ renderHarcama(); aylikKurlariGuncelle(); }   // grafik görünür genişlikle çizilsin; eksik aylık kurlar çekilsin
