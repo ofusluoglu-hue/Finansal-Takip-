@@ -6606,7 +6606,7 @@ async function refreshMarketData(){
   const dot = document.getElementById('statusDot');
   const statusText = document.getElementById('statusText');
   dot.className = 'dot loading';
-  istYaz('statusEtiket', '');   // telefonda noktanın solundaki kısa durum: Güncel / Eksik
+  istYaz('statusEtiket', '');   // telefonda noktanın solundaki kısa durum: Güncel / Gecikmeli
   statusText.innerHTML = '<span class="st-uzun">Veriler alınıyor…</span><span class="st-kisa">yükleniyor…</span>';
 
   let anyError = false;
@@ -6689,7 +6689,7 @@ async function refreshMarketData(){
 
   if(anyError){
     dot.className = 'dot err';
-    istYaz('statusEtiket', 'Eksik'); document.getElementById('statusEtiket').className = 'st-etiket eksik';
+    istYaz('statusEtiket', 'Gecikmeli'); document.getElementById('statusEtiket').className = 'st-etiket eksik';
     statusText.innerHTML = `<span class="st-uzun">Bazı veriler alınamadı (${escapeHtml(lastErrorMsg)}) · </span>` + new Date().toLocaleTimeString('tr-TR');
     statusText.title = statusText.textContent;   // telefonda yalnız saat görünür; tam metin ipucunda
   } else {
