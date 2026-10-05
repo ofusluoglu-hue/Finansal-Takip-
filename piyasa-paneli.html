@@ -1914,6 +1914,14 @@
   .kz-bas.up{color:var(--up);} .kz-bas.down{color:var(--down);}
   .kz-bas-kap{font-size:12.5px;color:var(--muted-2);white-space:nowrap;} .kz-bas-kap:empty{display:none;}
   .portfoy-bas .kz-bas-kap{margin-left:4px;}
+  /* Başlıktaki kâr / zarar: masaüstünde (>900 px) satırlardaki sütunun üstünde (kzSutunHizala); tablet ve telefonda başlıkta, açıklamanın yanında */
+  .kz-sag{display:none;}
+  @media (min-width:901px){
+    #tab-yatirim .portfoy-bas, #yatirimListContainer .bolum > .bolum-bas{position:relative;}
+    #tab-yatirim .kz-sag{display:inline-block;position:absolute;top:50%;transform:translateY(-50%);font-size:13px;white-space:nowrap;}
+    #tab-yatirim .portfoy-bas .kz-sag{font-size:12.5px;}
+    #yatirimListContainer .kz-ic, #yatirimBolumKz{display:none;}
+  }
   #yatirimListContainer .satir-tutar{min-width:122px;}
   @media (min-width:1280px){ #yatirimListContainer .satir-kz{margin-right:48px;} }   /* geniş ekranda tutardan biraz ayrık, satırın ortasına doğru */
   #yatirimListContainer .satir-duzen input{width:150px;}
@@ -3382,6 +3390,7 @@
       <div class="bolum-bas portfoy-bas aciklamali">
         <span class="bolum-baslik">Portföyüm</span>
         <span class="baslik-aciklama kz-bas-kap" id="yatirimBolumKz"></span>
+        <span class="kz-sag kz-bas-kap" id="yatirimBolumKzSag"></span>
         <span class="bolum-toplam" id="yatirimBolumToplam" style="color:var(--up);"></span>
         <button class="bolum-ekle" onclick="bolumFormAc('yatirimForm')">+ Ekle</button>
       </div>
@@ -4091,7 +4100,7 @@
         <li><b>Emtia:</b> altın ve gümüş gram olarak girilir.</li>
       </ul>
       <p><b>Örnek:</b> Kripto · Bitcoin · 0,0006983 → o anki fiyat $95.000 ve kur ₺48,90 ise değer ≈ ₺3.244.</p>
-      <p><b>Ortalama maliyet ve kâr / zarar:</b> Eklerken <b>Ort. maliyet</b> kutusuna (isteğe bağlı) birim başına ortalama alış fiyatını yaz; sonradan eklemek için satırdaki <b>+ Maliyet</b>'e ya da <b>Güncelle</b>'ye dokun. Para birimi alırken baktığın birimdir: ABD hisse/ETF ve kriptoda <b>$/adet</b>, BİST'te <b>₺/adet</b>, altın ve gümüşte <b>₺/gram</b>. Satırın ortasında kâr / zarar tutarı ve yüzdesi yan yana görünür (kârda yeşil ▲, zararda kırmızı ▼); telefonda tutarın hemen altında. Her türün çerçeve başlığında o türün kâr / zararı (ABD ve kripto $, BİST ve emtia ₺), <b>Portföyüm</b> başlığında ve <b>Toplam Yatırım</b> kartında da toplam kâr / zarar ₺ olarak yazar; çerçeveyi kapatsan da başlıkta görünmeye devam eder.</p>
+      <p><b>Ortalama maliyet ve kâr / zarar:</b> Eklerken <b>Ort. maliyet</b> kutusuna (isteğe bağlı) birim başına ortalama alış fiyatını yaz; sonradan eklemek için satırdaki <b>+ Maliyet</b>'e ya da <b>Güncelle</b>'ye dokun. Para birimi alırken baktığın birimdir: ABD hisse/ETF ve kriptoda <b>$/adet</b>, BİST'te <b>₺/adet</b>, altın ve gümüşte <b>₺/gram</b>. Satırın ortasında kâr / zarar tutarı ve yüzdesi yan yana görünür (kârda yeşil ▲, zararda kırmızı ▼); telefonda tutarın hemen altında. Her türün çerçeve başlığında o türün kâr / zararı (ABD ve kripto $, BİST ve emtia ₺), <b>Portföyüm</b> başlığında ve <b>Toplam Yatırım</b> kartında da toplam kâr / zarar ₺ olarak yazar; çerçeveyi kapatsan da başlıkta görünmeye devam eder. Bilgisayarda başlıklardaki kâr / zarar, satırlardaki kâr / zarar sütununun tam üstünde durur.</p>
       <p><b>Güncelle'de iki kutu:</b> <b>yeni adet</b> ve <b>ortalama maliyet</b>. Yalnız değiştirmek istediğini yaz, boş bıraktığın değişmez; maliyeti silmek için 0 yaz. Hisse ekleyip ortalaman değiştiyse aracı kurumunun gösterdiği yeni ortalamayı yaz.</p>
       <p><b>Örnek:</b> 10 adet TUPRS, ortalama maliyet ₺150, bugün ₺182,40 → kâr <b>+₺324 · ▲ %21,6</b>. ABD hissesi ve kriptoda kâr / zarar <b>dolar bazındadır</b> (ör. +$40 · %8,3); toplam kartta bugünkü kurla TL'ye çevrilir, yani alış günündeki kur farkı hesaba katılmaz.</p>
       <p><b>Çerçeveleri kapatma:</b> Her türün (ABD ETF &amp; Hisse, Kripto, BİST, Emtia) ve KAP bölümünün sağındaki (toplamın hemen solundaki) yanıp sönen küçük sarı oka ya da başlığın kendisine dokununca o çerçeve kapanır, yalnız başlık ve toplamı kalır; tekrar dokununca açılır. Hepsi varsayılan olarak açıktır; seçimin bu cihazda hatırlanır. Kapalı çerçevedeki varlıklar toplama ve hesaplara yine dahildir.</p>
@@ -9401,8 +9410,25 @@ function yatirimKatKzHtml(katListe){
   katListe.forEach(it => { const k = yatirimKarZarar(it, yatirimDegerHesapla(it)); if(k){ kz += k.kz; maliyet += k.maliyetToplam; adet++; usd = k.usd; } });
   if(!adet || !(maliyet > 0)) return '';
   const eksik = katListe.filter(it => !(it.tur === 'bist' && !it.kod)).length - adet;
-  return ' · ' + kzBasHtml(kz, kz / maliyet * 100, usd ? '$' : '₺', 'Kâr / zarar · maliyeti girilmiş ' + adet + ' kalem' + (eksik > 0 ? ' (' + eksik + ' kalemin maliyeti yok)' : '') + (usd ? ' · dolar bazında' : ''));
+  return kzBasHtml(kz, kz / maliyet * 100, usd ? '$' : '₺', 'Kâr / zarar · maliyeti girilmiş ' + adet + ' kalem' + (eksik > 0 ? ' (' + eksik + ' kalemin maliyeti yok)' : '') + (usd ? ' · dolar bazında' : ''));
 }
+// Masaüstünde (>900 px) başlıklardaki kâr / zarar, satırlardaki kâr / zarar sütununun tam üstüne hizalanır.
+// Satırlar aynı düzende olduğundan sütunun sağ kenarı her çerçevede aynıdır; açık bir satırdan ölçülür (hepsi kapalıysa son ölçüm).
+let _kzSagBosluk = null;   // satırın sağ kenarından kâr / zarar sütununun sağ kenarına uzaklık (px)
+function kzSutunHizala(){
+  const kap = document.getElementById('yatirimListContainer');
+  if(!kap || window.innerWidth <= 900) return;
+  const ornek = [...kap.querySelectorAll('.satir:not(.duzenleniyor) .satir-kz')].find(k => k.getClientRects().length);
+  if(ornek){ const satir = ornek.closest('.satir'); _kzSagBosluk = satir.getBoundingClientRect().right - ornek.getBoundingClientRect().right; }
+  const bosluk = _kzSagBosluk != null ? _kzSagBosluk : 300;
+  document.querySelectorAll('#tab-yatirim .kz-sag').forEach(el => {
+    // Çerçeve başlığı satırlarla aynı iç kenarda; Portföyüm başlığı için ilk çerçevenin başlığı ölçüt (kapalı çerçevede satır görünmez)
+    const bas = el.parentElement, ilk = kap.querySelector('.bolum > .bolum-bas');
+    const satirSag = (bas.closest('#yatirimListContainer') ? bas : (ilk || bas)).getBoundingClientRect().right;
+    el.style.right = Math.max(0, bas.getBoundingClientRect().right - satirSag + bosluk) + 'px';
+  });
+}
+window.addEventListener('resize', () => { clearTimeout(kzSutunHizala._t); kzSutunHizala._t = setTimeout(kzSutunHizala, 120); });
 // Toplam kâr / zarar (₺; dolar bazlı kalemler bugünkü kurla) — yalnız maliyeti girilmiş kalemler
 function yatirimToplamKz(list){
   let kz = 0, maliyet = 0, adet = 0, eksik = 0;
@@ -9503,7 +9529,8 @@ function renderYatirim(){
       return `<div class="bolum cerceve-varlik${katli ? ' katli' : ''}">
         <div class="bolum-bas aciklamali">
           <span class="bolum-baslik katla-tik" style="color:${YATIRIM_KATEGORI_RENK[kat]};" onclick="yatirimKatla('${kat}')">${YATIRIM_KATEGORI_BASLIK[kat]}</span>
-          <span class="ozet-soluk baslik-aciklama" style="font-size:12px;">${katListe.length} kalem · %${fmtNumber(toplamYatirim > 0 ? kategoriToplam[kat] / toplamYatirim * 100 : 0, 1)}${yatirimKatKzHtml(katListe)}</span>
+          <span class="ozet-soluk baslik-aciklama" style="font-size:12px;">${katListe.length} kalem · %${fmtNumber(toplamYatirim > 0 ? kategoriToplam[kat] / toplamYatirim * 100 : 0, 1)}${(k => k ? '<span class="kz-ic"> · ' + k + '</span>' : '')(yatirimKatKzHtml(katListe))}</span>
+          ${(k => k ? '<span class="kz-sag">' + k + '</span>' : '')(yatirimKatKzHtml(katListe))}
           <button class="katla-ok" type="button" onclick="yatirimKatla('${kat}')" aria-expanded="${!katli}" title="${katli ? 'Göster' : 'Gizle'}" aria-label="${YATIRIM_KATEGORI_BASLIK[kat]} ${katli ? 'göster' : 'gizle'}"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <span class="bolum-toplam" style="color:var(--up);">₺${fmtNumber(kategoriToplam[kat], 0)}</span>
           <button class="bolum-ekle" title="${YATIRIM_KATEGORI_BASLIK[kat]} ekle" onclick="yatirimEkleAc('${kat}')">+</button>
@@ -9525,7 +9552,10 @@ function renderYatirim(){
     ? perfSatirHtml({ ad: 'Kâr / zarar', fark: tkz.fark, yuzde: tkz.yuzde }).replace('class="perf-satir"', `class="perf-satir kz-toplam" title="${escapeHtml('Ortalama maliyeti girilmiş ' + tkz.adet + ' kalem · toplam maliyet ₺' + fmtNumber(tkz.maliyet, 0) + (tkz.eksik ? ' · ' + tkz.eksik + ' kalemin maliyeti girilmedi' : '') + ' · dolar bazlı kalemler bugünkü kurla')}"`)
     : '<div class="kz-toplam" title="Satırdaki + Maliyet ile ortalama alış maliyetini gir"><span class="s-ad">Kâr / zarar</span><b style="color:var(--muted-2);font-weight:600;">maliyet gir</b></div>';
   const bkz = document.getElementById('yatirimBolumKz');
+  const bkzSag = document.getElementById('yatirimBolumKzSag');
   if(bkz) bkz.innerHTML = tkz && tkz.adet ? 'Kâr / zarar ' + kzBasHtml(tkz.fark, tkz.yuzde, '₺', 'Toplam kâr / zarar · maliyeti girilmiş ' + tkz.adet + ' kalem · toplam maliyet ₺' + fmtNumber(tkz.maliyet, 0) + (tkz.eksik ? ' · ' + tkz.eksik + ' kalemin maliyeti girilmedi' : '') + ' · dolar bazlı kalemler bugünkü kurla') : '';
+  if(bkzSag) bkzSag.innerHTML = bkz ? bkz.innerHTML : '';
+  kzSutunHizala();
   if(perfEl) perfEl.innerHTML = !list.length ? '' : kzSatir + (perf ? perf.map(perfSatirHtml).join('')
     : '<div><span class="s-ad">Performans</span><b style="color:var(--muted-2);">yükleniyor…</b></div>');
   perfSerileriGetir().then(yeni => { if(yeni) renderYatirim(); });
