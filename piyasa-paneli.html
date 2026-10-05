@@ -1905,11 +1905,15 @@
   .satir-alt{font-size:11px;color:var(--muted-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
   .satir-tutar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
   /* Yatırımlarım: satırın ortasında kâr / zarar (sabit genişlikli sütun; satırlar alt alta hizalı) */
-  .satir-kz{flex:0 0 112px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;line-height:1.25;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted);}
+  .satir-kz{flex:0 0 168px;display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;gap:7px;line-height:1.25;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted);}
   .satir-kz b{font-size:13px;font-weight:700;} .satir-kz small{font-size:11px;font-weight:600;}
   .satir-kz.up{color:var(--up);} .satir-kz.down{color:var(--down);}
   .kz-ekle{background:none;border:1px dashed color-mix(in srgb, var(--muted-2) 60%, transparent);color:var(--muted-2);font-family:inherit;font-size:11px;font-weight:600;border-radius:7px;padding:3px 8px;cursor:pointer;white-space:nowrap;}
   .kz-ekle:hover{color:var(--amber);border-color:var(--amber);}
+  .kz-bas{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted);} .kz-bas small{font-size:inherit;font-weight:600;}
+  .kz-bas.up{color:var(--up);} .kz-bas.down{color:var(--down);}
+  .kz-bas-kap{font-size:12.5px;color:var(--muted-2);white-space:nowrap;} .kz-bas-kap:empty{display:none;}
+  .portfoy-bas .kz-bas-kap{margin-left:4px;}
   #yatirimListContainer .satir-tutar{min-width:122px;}
   @media (min-width:1280px){ #yatirimListContainer .satir-kz{margin-right:48px;} }   /* geniş ekranda tutardan biraz ayrık, satırın ortasına doğru */
   #yatirimListContainer .satir-duzen input{width:150px;}
@@ -3375,8 +3379,9 @@
     </div>
 
     <div class="portfoy-kap">
-      <div class="bolum-bas portfoy-bas">
+      <div class="bolum-bas portfoy-bas aciklamali">
         <span class="bolum-baslik">Portföyüm</span>
+        <span class="baslik-aciklama kz-bas-kap" id="yatirimBolumKz"></span>
         <span class="bolum-toplam" id="yatirimBolumToplam" style="color:var(--up);"></span>
         <button class="bolum-ekle" onclick="bolumFormAc('yatirimForm')">+ Ekle</button>
       </div>
@@ -4086,7 +4091,7 @@
         <li><b>Emtia:</b> altın ve gümüş gram olarak girilir.</li>
       </ul>
       <p><b>Örnek:</b> Kripto · Bitcoin · 0,0006983 → o anki fiyat $95.000 ve kur ₺48,90 ise değer ≈ ₺3.244.</p>
-      <p><b>Ortalama maliyet ve kâr / zarar:</b> Eklerken <b>Ort. maliyet</b> kutusuna (isteğe bağlı) birim başına ortalama alış fiyatını yaz; sonradan eklemek için satırdaki <b>+ Maliyet</b>'e ya da <b>Güncelle</b>'ye dokun. Para birimi alırken baktığın birimdir: ABD hisse/ETF ve kriptoda <b>$/adet</b>, BİST'te <b>₺/adet</b>, altın ve gümüşte <b>₺/gram</b>. Satırın ortasında kâr / zarar tutarı ve yüzdesi görünür (kârda yeşil ▲, zararda kırmızı ▼); telefonda tutarın hemen altında. Üstteki <b>Toplam Yatırım</b> kartında maliyeti girilmiş kalemlerin toplam kâr / zararı ₺ olarak yazar.</p>
+      <p><b>Ortalama maliyet ve kâr / zarar:</b> Eklerken <b>Ort. maliyet</b> kutusuna (isteğe bağlı) birim başına ortalama alış fiyatını yaz; sonradan eklemek için satırdaki <b>+ Maliyet</b>'e ya da <b>Güncelle</b>'ye dokun. Para birimi alırken baktığın birimdir: ABD hisse/ETF ve kriptoda <b>$/adet</b>, BİST'te <b>₺/adet</b>, altın ve gümüşte <b>₺/gram</b>. Satırın ortasında kâr / zarar tutarı ve yüzdesi yan yana görünür (kârda yeşil ▲, zararda kırmızı ▼); telefonda tutarın hemen altında. Her türün çerçeve başlığında o türün kâr / zararı (ABD ve kripto $, BİST ve emtia ₺), <b>Portföyüm</b> başlığında ve <b>Toplam Yatırım</b> kartında da toplam kâr / zarar ₺ olarak yazar; çerçeveyi kapatsan da başlıkta görünmeye devam eder.</p>
       <p><b>Güncelle'de iki kutu:</b> <b>yeni adet</b> ve <b>ortalama maliyet</b>. Yalnız değiştirmek istediğini yaz, boş bıraktığın değişmez; maliyeti silmek için 0 yaz. Hisse ekleyip ortalaman değiştiyse aracı kurumunun gösterdiği yeni ortalamayı yaz.</p>
       <p><b>Örnek:</b> 10 adet TUPRS, ortalama maliyet ₺150, bugün ₺182,40 → kâr <b>+₺324 · ▲ %21,6</b>. ABD hissesi ve kriptoda kâr / zarar <b>dolar bazındadır</b> (ör. +$40 · %8,3); toplam kartta bugünkü kurla TL'ye çevrilir, yani alış günündeki kur farkı hesaba katılmaz.</p>
       <p><b>Çerçeveleri kapatma:</b> Her türün (ABD ETF &amp; Hisse, Kripto, BİST, Emtia) ve KAP bölümünün sağındaki (toplamın hemen solundaki) yanıp sönen küçük sarı oka ya da başlığın kendisine dokununca o çerçeve kapanır, yalnız başlık ve toplamı kalır; tekrar dokununca açılır. Hepsi varsayılan olarak açıktır; seçimin bu cihazda hatırlanır. Kapalı çerçevedeki varlıklar toplama ve hesaplara yine dahildir.</p>
@@ -4329,7 +4334,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
-    <details class="kv-bolum kv-sss"><summary>Yatırımlarımın kâr / zararını nasıl görürüm?</summary><div class="kv-ic"><p>Yatırımlarım'da satırdaki <b>+ Maliyet</b>'e dokun ve birim başına <b>ortalama alış maliyetini</b> yaz (ABD hisse/ETF ve kripto $/adet, BİST ₺/adet, altın ₺/gram), Enter'a bas. Kâr / zarar tutarı ve yüzdesi satırda görünür; toplamı Toplam Yatırım kartında. Değiştirmek için <b>Güncelle</b>'nin ikinci kutusunu kullan; 0 yazarsan maliyet silinir. Dolar bazlı yatırımlarda kâr / zarar dolar üzerinden hesaplanır.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Yatırımlarımın kâr / zararını nasıl görürüm?</summary><div class="kv-ic"><p>Yatırımlarım'da satırdaki <b>+ Maliyet</b>'e dokun ve birim başına <b>ortalama alış maliyetini</b> yaz (ABD hisse/ETF ve kripto $/adet, BİST ₺/adet, altın ₺/gram), Enter'a bas. Kâr / zarar tutarı ve yüzdesi satırda görünür; türün toplamı çerçeve başlığında (kapalıyken de), genel toplam Portföyüm başlığında ve Toplam Yatırım kartında. Değiştirmek için <b>Güncelle</b>'nin ikinci kutusunu kullan; 0 yazarsan maliyet silinir. Dolar bazlı yatırımlarda kâr / zarar dolar üzerinden hesaplanır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Hisselerimin KAP bildirimlerini nereden görürüm?</summary><div class="kv-ic"><p>Yatırımlarım sayfasında, portföy listesinin altındaki <b>KAP ve şirket haberleri</b> bölümünde. Yalnız senin portföyündeki BİST hisseleri için son 30 günün bildirimleri listelenir; bildirimler doğrudan KAP'ın kendisinden (kap.org.tr) gelir, ücretsizdir ve satıra dokununca bildirimin KAP sayfası açılır. Şirket haberleri (etiketsiz satırlar) Google Haberler'den eklenir; Google erişimi geçici olarak kısıtlarsa yalnız KAP bildirimleri görünür, bu bir hata değildir. Bölümü başlığındaki okla kapatabilirsin; kapalıyken yer kaplamaz, yeni bildirim gelince başlıkta sayı çıkar. Bir hisse hakkında yorum istersen Bay Piyasa'daki “KAP haberleri” sorusunu kullan.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Dövizim ya da altınım var; Yatırımlarım'a mı, Varlıklarım'a mı girmeliyim?</summary><div class="kv-ic"><p><b>Yatırım amacıyla</b> tuttuğun altın, gümüş, ETF, kripto ve hisseleri <b>Yatırımlarım</b>'a gir; portföy puanına ve yatırım/borç oranına katılır. <b>Gerektiğinde harcamak için</b> kenarda duran parayı (acil durum fonu, mevduat) <b>Finansal Durumum › Varlıklarım</b>'a <b>Nakit / Mevduat</b> türüyle gir; ₺, $, € ya da gram altın seçebilirsin. İkisi de net varlığına girer; aynı parayı iki yere girme.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Piyasa Özeti'nde istemediğim kartlar var / takip ettiğim hisse yok.</summary><div class="kv-ic"><p>Piyasa Özeti'nde en üstte saatin yanındaki <b>Kartları düzenle</b>'ye bas. ✕ ile istemediğini gizle, ↑ ↓ ile sırala. Herhangi bir ABD hissesi, ETF ya da kripto için pencerede arama kutusuna adını ya da kodunu yaz (ör. Tesla, TSM, ASML, XRP) ve listeden seç. Eklediğin hisseyi Yatırımlarım'da da seçebilirsin. BİST hisseleri de aynı kutudan aranır (ör. “aselsan”, “türk hava yolları”); kartta fiyat ₺ olarak ve 15 dakika gecikmeli görünür.</p></div></details>
@@ -9385,6 +9390,19 @@ function yatirimKzHtml(item, kz){
     + (kz.usd && kz.kzTL != null ? ' · bugünkü kurla ≈ ' + (kz.kzTL < 0 ? '−' : '+') + '₺' + fmtNumber(Math.abs(kz.kzTL), 0) + ' (dolar bazında)' : '');
   return `<div class="satir-kz ${yon}" title="${escapeHtml(ipucu)}"><b>${isaret}${p}${fmtNumber(Math.abs(kz.kz), Math.abs(kz.kz) >= 1000 ? 0 : 2)}</b><small>${yon === 'up' ? '▲' : yon === 'down' ? '▼' : '–'} %${fmtNumber(Math.abs(kz.yuzde), 2)}</small></div>`;
 }
+// Başlıklar için kısa kâr / zarar: "+$31,35 ▲ %2,10" (renkli). Kapalı çerçevede de görünür.
+function kzBasHtml(fark, yuzde, para, ipucu){
+  const yon = kzYon(yuzde), isaret = yon === 'down' ? '−' : (yon === 'up' ? '+' : '');
+  return `<span class="kz-bas ${yon}" title="${escapeHtml(ipucu)}">${isaret}${para}${fmtNumber(Math.abs(fark), Math.abs(fark) >= 1000 ? 0 : 2)} <small>${yon === 'up' ? '▲' : yon === 'down' ? '▼' : '–'} %${fmtNumber(Math.abs(yuzde), 2)}</small></span>`;
+}
+// Tür çerçevesi: o türün kâr / zararı kendi para biriminde (ABD ve kripto $, BİST ve emtia ₺)
+function yatirimKatKzHtml(katListe){
+  let kz = 0, maliyet = 0, adet = 0, usd = false;
+  katListe.forEach(it => { const k = yatirimKarZarar(it, yatirimDegerHesapla(it)); if(k){ kz += k.kz; maliyet += k.maliyetToplam; adet++; usd = k.usd; } });
+  if(!adet || !(maliyet > 0)) return '';
+  const eksik = katListe.filter(it => !(it.tur === 'bist' && !it.kod)).length - adet;
+  return ' · ' + kzBasHtml(kz, kz / maliyet * 100, usd ? '$' : '₺', 'Kâr / zarar · maliyeti girilmiş ' + adet + ' kalem' + (eksik > 0 ? ' (' + eksik + ' kalemin maliyeti yok)' : '') + (usd ? ' · dolar bazında' : ''));
+}
 // Toplam kâr / zarar (₺; dolar bazlı kalemler bugünkü kurla) — yalnız maliyeti girilmiş kalemler
 function yatirimToplamKz(list){
   let kz = 0, maliyet = 0, adet = 0, eksik = 0;
@@ -9485,7 +9503,7 @@ function renderYatirim(){
       return `<div class="bolum cerceve-varlik${katli ? ' katli' : ''}">
         <div class="bolum-bas aciklamali">
           <span class="bolum-baslik katla-tik" style="color:${YATIRIM_KATEGORI_RENK[kat]};" onclick="yatirimKatla('${kat}')">${YATIRIM_KATEGORI_BASLIK[kat]}</span>
-          <span class="ozet-soluk baslik-aciklama" style="font-size:12px;">${katListe.length} kalem · %${fmtNumber(toplamYatirim > 0 ? kategoriToplam[kat] / toplamYatirim * 100 : 0, 1)}</span>
+          <span class="ozet-soluk baslik-aciklama" style="font-size:12px;">${katListe.length} kalem · %${fmtNumber(toplamYatirim > 0 ? kategoriToplam[kat] / toplamYatirim * 100 : 0, 1)}${yatirimKatKzHtml(katListe)}</span>
           <button class="katla-ok" type="button" onclick="yatirimKatla('${kat}')" aria-expanded="${!katli}" title="${katli ? 'Göster' : 'Gizle'}" aria-label="${YATIRIM_KATEGORI_BASLIK[kat]} ${katli ? 'göster' : 'gizle'}"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <span class="bolum-toplam" style="color:var(--up);">₺${fmtNumber(kategoriToplam[kat], 0)}</span>
           <button class="bolum-ekle" title="${YATIRIM_KATEGORI_BASLIK[kat]} ekle" onclick="yatirimEkleAc('${kat}')">+</button>
@@ -9506,6 +9524,8 @@ function renderYatirim(){
   const kzSatir = !tkz ? '' : tkz.adet
     ? perfSatirHtml({ ad: 'Kâr / zarar', fark: tkz.fark, yuzde: tkz.yuzde }).replace('class="perf-satir"', `class="perf-satir kz-toplam" title="${escapeHtml('Ortalama maliyeti girilmiş ' + tkz.adet + ' kalem · toplam maliyet ₺' + fmtNumber(tkz.maliyet, 0) + (tkz.eksik ? ' · ' + tkz.eksik + ' kalemin maliyeti girilmedi' : '') + ' · dolar bazlı kalemler bugünkü kurla')}"`)
     : '<div class="kz-toplam" title="Satırdaki + Maliyet ile ortalama alış maliyetini gir"><span class="s-ad">Kâr / zarar</span><b style="color:var(--muted-2);font-weight:600;">maliyet gir</b></div>';
+  const bkz = document.getElementById('yatirimBolumKz');
+  if(bkz) bkz.innerHTML = tkz && tkz.adet ? 'Kâr / zarar ' + kzBasHtml(tkz.fark, tkz.yuzde, '₺', 'Toplam kâr / zarar · maliyeti girilmiş ' + tkz.adet + ' kalem · toplam maliyet ₺' + fmtNumber(tkz.maliyet, 0) + (tkz.eksik ? ' · ' + tkz.eksik + ' kalemin maliyeti girilmedi' : '') + ' · dolar bazlı kalemler bugünkü kurla') : '';
   if(perfEl) perfEl.innerHTML = !list.length ? '' : kzSatir + (perf ? perf.map(perfSatirHtml).join('')
     : '<div><span class="s-ad">Performans</span><b style="color:var(--muted-2);">yükleniyor…</b></div>');
   perfSerileriGetir().then(yeni => { if(yeni) renderYatirim(); });
