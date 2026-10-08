@@ -1906,6 +1906,9 @@
   .satir-tutar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
   /* Yatırımlarım: satırın ortasında kâr / zarar (sabit genişlikli sütun; satırlar alt alta hizalı) */
   .kart-etiket{color:var(--p-c9a6ff);font-weight:600;}
+  .ay-ozel{color:var(--amber);font-weight:600;}
+  #odemeDuzenli .satir-duzen .duzen-sayi{width:155px;}
+  @media (max-width:640px){ #odemeDuzenli .satir-duzen{flex-wrap:wrap;} #odemeDuzenli .satir-duzen input{flex:1 1 calc(50% - 4px);} #odemeDuzenli .satir-duzen select{flex:1 1 0;} }   /* telefonda: tutar + gün üstte, kapsam + Kaydet altta */
   .mini-secim.odeme-kart.kartli{color:var(--p-c9a6ff);border-color:color-mix(in srgb, var(--p-c9a6ff) 55%, transparent);}
   .satir-kz{flex:0 0 168px;display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;gap:7px;line-height:1.25;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted);}
   .satir-kz b{font-size:13px;font-weight:700;} .satir-kz small{font-size:11px;font-weight:600;}
@@ -4147,6 +4150,8 @@
       <p><b>Ne işe yarar:</b> Kredi taksitleri, kart son ödeme günleri, kira, aidat, fatura ve abonelikler tek takvimde görünür. Üstteki ilk iki kutu seçtiğin ayı gösterir (ör. <b>“Ekim ödemeleri”</b> ve <b>“Ekim kalan”</b>): birincisi ayın bütün ödemelerinin toplamıdır ve gün geçtikçe değişmez, ikincisi bugünden sonra ödeyeceklerindir.</p>
       <p><b>Düzenli ödemeler:</b> <b>+ Ekle</b> → ad (ör. Netflix), tutar, tür (abonelik, fatura, kira…), her ay ya da her yıl, ödeme günü. Her ödemenin “harcamaya:” seçimiyle Harcama Takibim'e hangi kategoriyle ekleneceğini belirlersin.</p>
       <p><b>Kartla ödenen fatura / abonelik:</b> Formdaki ya da satırdaki <b>ödeme:</b> seçiminden kartı seç (varsayılan “hesaptan / talimat”). Her ay <b>ödeme günü geldiğinde</b> o ayın tutarı kartın borcuna bir kez eklenir. Kartı seçtiğin günden önceki ödemeler ve kartı ödeme gününden sonra bankadaki rakamla güncellediysen o ayki ödeme eklenmez (rakam zaten içerir). Tutarı değiştirirsen ya da ödemeyi silersen bu ay karta yazılan tutar da düzelir.</p>
+      <p><b>Her ay değişen faturalar (elektrik, doğalgaz, su…):</b> Fatura gelince satırdaki <b>Güncelle</b>'ye bas: <b>tutar</b> ve <b>son ödeme günü</b> yaz, yanındaki kutuda <b>“yalnız Ekim”</b> seçili kalsın (faturalarda varsayılan sıradaki aydır). O ay takvimde, Harcama Takibim'de ve kartla ödeniyorsa kart borcunda bu tutar ve tarih kullanılır; satırda turuncu “Ekim: 17 Ekim · ₺1.234” yazar. Sonraki aylar düzenli tutar ve günle devam eder. Kalıcı bir değişiklikse (ör. abonelik zammı, kira artışı) kutudan <b>“her ay (bundan sonra)”</b>u seç; aboneliklerde varsayılan budur. Boş bıraktığın kutu değişmez.</p>
+      <p><b>Örnek:</b> Enerjisa Elektrik, her ayın 13'ü, ₺800 → Ekim faturası ₺1.234, son ödeme 10 Ekim → Güncelle: 1234, 10, “yalnız Ekim” → takvimde 10 Ekim ₺1.234; Kasım yine 13 Kasım ₺800 görünür.</p>
       <p><b>Kredi kartları:</b> Kartın son ödeme gününü bir kez yaz. Sıradaki dönem için <b>dönem borcu</b> (ekstre), <b>asgari</b> ve <b>ödeyeceğim</b> tutarını girebilirsin. Takvim önce “ödeyeceğim” tutarını kullanır.</p>
       <p><b>Örnek:</b> Kartının toplam borcu ₺135.571, dönem borcu ₺95.000, ödeyeceğin ₺60.000 → takvimde ₺60.000 görünür; altında “ödeme sonrası kalan borç ≈ ₺75.571” ve “₺35.000 sonraki döneme kalır (faiz işler)” yazar.</p>
       <p class="kv-ipucu">💡 Ödeme günü geçtiği halde kartın borcunu Borçlarım'da güncellemediysen satırda bir hatırlatma çıkar. Bugünden önceki ödemeler “✓ ödendi” sayılır.</p>
@@ -4356,6 +4361,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
+    <details class="kv-bolum kv-sss"><summary>Elektrik / doğalgaz faturam her ay farklı; tutarı ve tarihi nasıl girerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde faturayı bir kez düzenli ödeme olarak ekle (yaklaşık tutar ve genelde son ödeme günü). Her ay fatura gelince satırdaki <b>Güncelle</b>'ye bas, o ayın <b>tutarını</b> ve <b>son ödeme gününü</b> yaz, kapsamı <b>“yalnız &lt;ay&gt;”</b> bırak ve Kaydet. Yalnız o ay değişir: takvim, Harcama Takibim ve (kartla ödeniyorsa) kart borcu o ayın tutarıyla güncellenir; sonraki aylar düzenli değerle devam eder.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kartla yaptığım harcama kart borcuma eklenir mi?</summary><div class="kv-ic"><p>Evet, istersen. Harcama Takibim'de harcamayı eklerken <b>Nasıl ödendi?</b> kutusundan kartı seç (yalnız içinde bulunulan ayda çıkar); tutar o kartın borcuna eklenir. Faturalar ve abonelikler için Ödeme Takvimi'nde ödemenin <b>ödeme:</b> seçiminden kartı seç; her ay ödeme günü geldiğinde karta eklenir. Seçmeyi unuttuysan ya da yanlış kartı seçtiysen harcamanın <b>Güncelle</b>'sinden kartı (ve adını) değiştir; eski karttan düşülür, yenisine eklenir. Ekstre gelince kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getir: o rakam önceki harcamaları içerdiği için aynı harcama iki kez sayılmaz. Taksitli alışverişlerde şimdilik tutarın tamamı eklenir (bankanın “toplam borç” rakamıyla aynı).</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Yatırımlarımın kâr / zararını nasıl görürüm?</summary><div class="kv-ic"><p>Yatırımlarım'da satırdaki <b>+ Maliyet</b>'e dokun ve birim başına <b>ortalama alış maliyetini</b> yaz (ABD hisse/ETF ve kripto $/adet, BİST ₺/adet, altın ₺/gram), Enter'a bas. Kâr / zarar tutarı ve yüzdesi satırda görünür; türün toplamı çerçeve başlığında (kapalıyken de), genel toplam Portföyüm başlığında ve Toplam Yatırım kartında. Değiştirmek için <b>Güncelle</b>'nin ikinci kutusunu kullan; 0 yazarsan maliyet silinir. Dolar bazlı yatırımlarda kâr / zarar dolar üzerinden hesaplanır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Hisselerimin KAP bildirimlerini nereden görürüm?</summary><div class="kv-ic"><p>Yatırımlarım sayfasında, portföy listesinin altındaki <b>KAP ve şirket haberleri</b> bölümünde. Yalnız senin portföyündeki BİST hisseleri için son 30 günün bildirimleri listelenir; bildirimler doğrudan KAP'ın kendisinden (kap.org.tr) gelir, ücretsizdir ve satıra dokununca bildirimin KAP sayfası açılır. Şirket haberleri (etiketsiz satırlar) Google Haberler'den eklenir; Google erişimi geçici olarak kısıtlarsa yalnız KAP bildirimleri görünür, bu bir hata değildir. Bölümü başlığındaki okla kapatabilirsin; kapalıyken yer kaplamaz, yeni bildirim gelince başlıkta sayı çıkar. Bir hisse hakkında yorum istersen Bay Piyasa'daki “KAP haberleri” sorusunu kullan.</p></div></details>
@@ -11905,6 +11911,23 @@ function odemeYukle(){ return manuelListeYukle(ODEME_KEY); }
 function isoGun(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function ayinGunu(yil, ay, gun){ return new Date(yil, ay, Math.min(gun, new Date(yil, ay + 1, 0).getDate())); }   // 31'i olmayan ayda son gün
 function yillikTutar(o){ return o.periyot === 'yillik' ? Number(o.tutar) || 0 : (Number(o.tutar) || 0) * 12; }
+// Değişken faturalar (elektrik, doğalgaz…): aya özel tutar / son ödeme günü — o.aylik = { 'YYYY-MM': { tutar?, gun? } }.
+// O ayda yoksa düzenli ödemenin kendi tutarı ve günü geçerlidir.
+function odemeAyBilgi(o, ay){
+  const a = (o.aylik || {})[ay] || null;
+  return { tutar: a && a.tutar != null ? Number(a.tutar) : Number(o.tutar) || 0, gun: a && a.gun != null ? +a.gun : (+o.gun || 1), ozel: !!a };
+}
+// Sıradaki ödemenin ayı (bu ayın ödeme günü geçmediyse bu ay)
+function odemeSiradakiAy(o){
+  const bugunS = bugunISO(), buAy = buAyAnahtar();
+  for(let i = 0; i < 14; i++){
+    const k = ayKaydir(buAy, i);
+    if(!odemeAydaVar(o, k)) continue;
+    if(isoGun(ayinGunu(+k.slice(0, 4), +k.slice(5, 7) - 1, odemeAyBilgi(o, k).gun)) >= bugunS) return k;
+  }
+  return buAy;
+}
+function ayAdiKisa(ay){ return AY_UZUN[+ay.slice(5, 7) - 1] + (ay.slice(0, 4) !== String(new Date().getFullYear()) ? ' ' + ay.slice(0, 4) : ''); }
 
 // [bas, bit] arasındaki bütün ödemeler (tarih sırasıyla)
 function odemeOlaylari(bas, bit){
@@ -11931,9 +11954,10 @@ function odemeOlaylari(bas, bit){
         out.push({ tarih: g, ad: (k.ad || 'Kart') + ' kartı', alt: 'Son ödeme günü' + (ilk ? ' · ' + dt.kaynak : ''), tutar, tur: 'kart' });
       } else if(o.tur === 'duzenli'){
         if(o.periyot === 'yillik' && +o.ay !== d.getMonth() + 1) return;
-        const g = isoGun(ayinGunu(d.getFullYear(), d.getMonth(), +o.gun || 1));
+        const ab = odemeAyBilgi(o, isoGun(d).slice(0, 7));
+        const g = isoGun(ayinGunu(d.getFullYear(), d.getMonth(), ab.gun));
         if(g < basS || g > bitS) return;
-        out.push({ tarih: g, ad: o.ad, alt: (ODEME_KAT[o.kat] || 'Düzenli') + (o.periyot === 'yillik' ? ' · yıllık' : ''), tutar: Number(o.tutar) || 0, tur: o.kat || 'diger', id: o.id });
+        out.push({ tarih: g, ad: o.ad, alt: (ODEME_KAT[o.kat] || 'Düzenli') + (o.periyot === 'yillik' ? ' · yıllık' : '') + (ab.ozel ? ' · bu aya özel' : ''), tutar: ab.tutar, tur: o.kat || 'diger', id: o.id });
       }
     });
   }
@@ -12048,11 +12072,16 @@ function renderOdeme(){
     const kartVar = kkKartlari().length > 0;
     dz.innerHTML = sira.length ? sira.map(o => satirHtml({
       ad: o.ad,
-      alt: escapeHtml((ODEME_KAT[o.kat] || 'Düzenli') + ' · ' + (o.periyot === 'yillik' ? 'her yıl ' + (+o.gun || 1) + ' ' + AY_UZUN[(+o.ay || 1) - 1] : 'her ayın ' + (+o.gun || 1) + '’i') + (o.periyot === 'yillik' ? ' · ayda ₺' + fmtNumber(yillikTutar(o) / 12, 0) : ' · yılda ₺' + fmtNumber(yillikTutar(o), 0)))
+      alt: (s => { const b = odemeAyBilgi(o, s); return b.ozel ? `<span class="ay-ozel" title="Bu aya özel tutar / son ödeme günü (Güncelle ile girildi); sonraki aylar düzenli tutar ve günle devam eder">${escapeHtml(ayAdiKisa(s))}: ${ayinGunu(+s.slice(0, 4), +s.slice(5, 7) - 1, b.gun).getDate()} ${escapeHtml(AY_UZUN[+s.slice(5, 7) - 1])} · ₺${fmtNumber(b.tutar, 0)}</span> · ` : ''; })(odemeSiradakiAy(o))
+        + escapeHtml((ODEME_KAT[o.kat] || 'Düzenli') + ' · ' + (o.periyot === 'yillik' ? 'her yıl ' + (+o.gun || 1) + ' ' + AY_UZUN[(+o.ay || 1) - 1] : 'her ayın ' + (+o.gun || 1) + '’i') + (o.periyot === 'yillik' ? ' · ayda ₺' + fmtNumber(yillikTutar(o) / 12, 0) : ' · yılda ₺' + fmtNumber(yillikTutar(o), 0)))
         + ` · harcamaya: <select class="mini-secim" title="Harcama Takibim'e hangi kategoriyle eklensin" onchange="odemeHarcamaKatSec('${o.id}', this.value)">${HARCAMA_KATEGORILER.filter(x => !x.gizli).map(x => `<option value="${x.k}"${odemeHarcamaKat(o) === x.k ? ' selected' : ''}>${escapeHtml(x.ad)}</option>`).join('')}<option value="yok"${odemeHarcamaKat(o) === 'yok' ? ' selected' : ''}>eklenmesin</option></select>`
         + (kartVar ? ` · ödeme: <select class="mini-secim odeme-kart${o.odemeKartId ? ' kartli' : ''}" title="Nasıl ödeniyor? Kart seçersen her ay ödeme günü tutar o kartın borcuna eklenir (Borçlarım)" onchange="odemeKartSec('${o.id}', this.value)">${kartSecenekleri(o.odemeKartId || '', 'hesaptan / talimat')}</select>` : ''),
-      tutar: '₺' + fmtNumber(o.tutar, 0), renk: ODEME_RENK[o.kat] || 'var(--text)',
-      duzen: { id: 'odeme-edit-' + o.id, ph: 'yeni tutar (₺)', kaydet: `odemeGuncelle('${o.id}')` },
+      tutar: '₺' + fmtNumber(odemeAyBilgi(o, odemeSiradakiAy(o)).tutar, 0), renk: ODEME_RENK[o.kat] || 'var(--text)',
+      duzen: (() => { const s1 = odemeSiradakiAy(o), b = odemeAyBilgi(o, s1), s2 = o.periyot === 'yillik' ? null : ayKaydir(s1, 1);
+        const kapsam = [[s1, 'yalnız ' + ayAdiKisa(s1)]].concat(s2 ? [[s2, 'yalnız ' + ayAdiKisa(s2)]] : []).concat([['hep', o.periyot === 'yillik' ? 'her yıl' : 'her ay (bundan sonra)']]);
+        return { id: 'odeme-edit-' + o.id, ph: 'tutar: ₺' + fmtNumber(b.tutar, 2), kaydet: `odemeGuncelle('${o.id}')`,
+          ekler: [{ id: 'odeme-gun-' + o.id, ph: 'son ödeme günü: ' + b.gun, tip: 'sayi' },
+            { id: 'odeme-kapsam-' + o.id, tip: 'secim', ph: 'Değişiklik hangi ay(lar)a uygulansın', deger: o.kat === 'fatura' ? s1 : 'hep', secenekler: kapsam }] }; })(),
       sil: { onclick: `odemeSil('${o.id}')`, baslik: 'Sil', ikon: '✕' },
     })).join('') : '<div class="bos-not">Kira, aidat, fatura, sigorta ve abonelikleri (Netflix, Spotify, internet…) bir kez ekle; her ay ya da her yıl takvime kendiliğinden düşer.</div>';
   }
@@ -12166,7 +12195,7 @@ function duzenliHarcamaEkle(){
     [buAy, ayKaydir(buAy, 1)].forEach(ay => odemeler.forEach(o => {
       const id = 'od-' + o.id + '-' + ay;
       if(idler.has(id) || !odemeAydaVar(o, ay) || (o.atla || []).includes(ay)) return;
-      list.push({ id, tur: 'kayit', tarih: ay + '-01', kat: odemeHarcamaKat(o), tutar: Number(o.tutar), not: o.ad + ' — düzenli ödeme', kaynak: 'odeme', odemeId: o.id });
+      list.push({ id, tur: 'kayit', tarih: ay + '-01', kat: odemeHarcamaKat(o), tutar: odemeAyBilgi(o, ay).tutar, not: o.ad + ' — düzenli ödeme', kaynak: 'odeme', odemeId: o.id });
       idler.add(id); eklendi++;
     }));
     if(!eklendi) return;
@@ -12184,7 +12213,7 @@ function duzenliHarcamaUyarla(o, silindi){
   if(silindi || odemeHarcamaKat(o) === 'yok'){
     list.filter(hedef).forEach(x => { if(harcamaKartUyarla(x, 0)) kartDegisti = true; });
     const once = list.length; list = list.filter(x => !hedef(x)); degisti = list.length !== once;
-  } else list.forEach(x => { if(hedef(x)){ if(harcamaKartUyarla(x, Number(o.tutar))) kartDegisti = true; x.tutar = Number(o.tutar); x.kat = odemeHarcamaKat(o); x.not = o.ad + ' — düzenli ödeme'; degisti = true; } });
+  } else list.forEach(x => { if(hedef(x)){ const t = odemeAyBilgi(o, x.tarih.slice(0, 7)).tutar; if(harcamaKartUyarla(x, t)) kartDegisti = true; x.tutar = t; x.kat = odemeHarcamaKat(o); x.not = o.ad + ' — düzenli ödeme'; degisti = true; } });
   if(degisti) harcamaKaydet(list);
   if(kartDegisti) kartlariYenidenCiz();
   if(!silindi){ duzenliHarcamaEkle(); duzenliKartaYansit(); }
@@ -12202,7 +12231,7 @@ function duzenliKartaYansit(){
       if(x.kaynak !== 'odeme' || x.kartEk) return;
       const o = odemeler.find(q => q.id === x.odemeId);
       if(!o) return;
-      const ay = String(x.tarih).slice(0, 7), gunS = isoGun(ayinGunu(+ay.slice(0, 4), +ay.slice(5, 7) - 1, +o.gun || 1));
+      const ay = String(x.tarih).slice(0, 7), gunS = isoGun(ayinGunu(+ay.slice(0, 4), +ay.slice(5, 7) - 1, odemeAyBilgi(o, ay).gun));
       if(gunS > bugunS || gunS < isoGun(new Date(o.odemeKartTs || 0))) return;   // ödeme günü gelmedi / kart seçilmeden önceki ödeme
       const k = kkKartlari().find(c => c.id === o.odemeKartId);
       if(!k) return;
@@ -12256,15 +12285,30 @@ function odemeEkle(){
   renderOdeme();
   document.getElementById('odemeAdInput').focus();
 }
+// Güncelle: tutar ve / veya son ödeme günü (boş = değişmez); kapsam: yalnız seçilen ay (değişken faturalar) ya da her ay
 function odemeGuncelle(id){
-  const inp = document.getElementById('odeme-edit-' + id);
-  const t = parseFloat(String(inp && inp.value).replace(',', '.'));
-  if(!(t > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  const tIn = document.getElementById('odeme-edit-' + id), gIn = document.getElementById('odeme-gun-' + id), kIn = document.getElementById('odeme-kapsam-' + id);
+  const tStr = tIn ? String(tIn.value).trim() : '', gStr = gIn ? String(gIn.value).trim() : '';
+  const t = tStr ? parseFloat(tStr.replace(',', '.')) : null, g = gStr ? parseInt(gStr, 10) : null;
+  if(!tStr && !gStr){ showAlertModal('Yeni tutar ya da son ödeme günü gir (boş bırakılan değişmez).'); return; }
+  if(tStr && !(t > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  if(gStr && !(g >= 1 && g <= 31)){ showAlertModal('Son ödeme günü 1 ile 31 arasında olmalı.'); return; }
   const list = odemeYukle(), o = list.find(x => x.id === id);
   if(!o) return;
-  o.tutar = t;
+  const kapsam = kIn ? kIn.value : 'hep';
+  if(/^\d{4}-\d\d$/.test(kapsam)){
+    o.aylik = o.aylik || {};
+    const a = Object.assign({}, o.aylik[kapsam]);
+    if(t != null) a.tutar = t;
+    if(g != null) a.gun = g;
+    o.aylik[kapsam] = a;
+    Object.keys(o.aylik).sort().slice(0, Math.max(0, Object.keys(o.aylik).length - 24)).forEach(k => delete o.aylik[k]);   // son 24 ay
+  } else {
+    if(t != null) o.tutar = t;
+    if(g != null) o.gun = g;
+  }
   manuelListeKaydet(ODEME_KEY, list);
-  duzenliHarcamaUyarla(o, false);   // bu ay ve sonrasının harcama kayıtları yeni tutarla
+  duzenliHarcamaUyarla(o, false);   // bu ay ve sonrasının harcama kayıtları (o ayın tutarıyla) ve karta yazılanlar
   renderOdeme();
 }
 function odemeSil(id){
