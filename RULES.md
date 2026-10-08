@@ -47,7 +47,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 ## Veri
 
 1. Yeni bir senkron anahtarı eklenirse **hem** ön yüzdeki `SENKRON_ANAHTARLARI` **hem** Worker'daki `IZINLI_ANAHTARLAR` güncellenir.
-2. Veri anahtarları `ft_<ad>_v<sürüm>` biçimindedir (istisna: yalnızca yerelde tutulan `ft_erisim`, `ft_kullanici`, `ft_senkron_meta` ve görünüm tercihleri `ft_rapor_yorum_kapali`, `ft_bildirim_durum`, `ft_araclar`, `ft_kurulum_gizli`, `ft_tema`, `ft_kap_durum`, `ft_kurum_rapor`, `ft_yatirim_kapali` ve `ft_borc_kapali`). Veri yapısı geriye uyumsuz değişirse sürüm artırılır (`_v2`) ve eski veriden taşıma yazılır.
+2. Veri anahtarları `ft_<ad>_v<sürüm>` biçimindedir (istisna: yalnızca yerelde tutulan `ft_erisim`, `ft_kullanici`, `ft_senkron_meta` ve görünüm tercihleri `ft_rapor_yorum_kapali`, `ft_bildirim_durum`, `ft_araclar`, `ft_kurulum_gizli`, `ft_tema`, `ft_kap_durum`, `ft_kurum_rapor`, `ft_yatirim_kapali` ve `ft_borc_kapali`, `ft_harcama_tablo_kapali`). Veri yapısı geriye uyumsuz değişirse sürüm artırılır (`_v2`) ve eski veriden taşıma yazılır.
 3. Tek kayıt 1,5 MB'ı geçemez (D1 sınırı).
 3b. Nakit Akışı'nın enflasyon verisi (`ENFLASYON_VERI`: TÜİK aylık TÜFE ve TCMB Piyasa Katılımcıları Anketi) her yeni açıklamada kaynağıyla birlikte güncellenir; değerler uydurulmaz, derleme ayı ve kaynak yorumda yazılır.
 4. Kullanıcı verisi (kredi, borç, portföy) koddan sabit değer olarak üretilmez veya uydurulmaz.

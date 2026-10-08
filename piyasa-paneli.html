@@ -3748,13 +3748,16 @@
       </div>
     </div>
 
-    <div class="bolum">
+    <div class="bolum" id="harcamaTabloBolum">
       <div class="bolum-bas">
-        <span class="bolum-baslik">Aylık tablo</span>
+        <span class="bolum-baslik katla-tik" onclick="harcamaTabloKatla()">Aylık tablo</span>
+        <button class="katla-ok" type="button" id="harcamaTabloOk" onclick="harcamaTabloKatla()" aria-expanded="true" title="Gizle" aria-label="Aylık tabloyu göster / gizle"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         <span class="bolum-toplam" id="harcamaTabloToplam"></span>
       </div>
+      <div class="katla-ic">
       <div class="ist-tablo-kap"><table class="ist-tablo harcama-tablo" id="harcamaTablo"></table></div>
       <div class="ozet-not" style="margin:8px 0 6px;white-space:normal;">Tablo, aşağıdaki harcama kayıtlarından otomatik oluşur; düzenlemek için kaydı <b>Güncelle</b> ile değiştir ya da <b>Sil</b> ile kaldır. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır.</div>
+      </div>
     </div>
 
     <div class="bolum">
@@ -4134,7 +4137,7 @@
       <p><b>Örnek:</b> “Eylül 2026 · Market · ₺26.985 · not: Migros”. Aynı ay ve kategoriye birden çok kayıt girebilirsin; tabloda toplanır.</p>
       <p><b>Kartla ödediysen:</b> İçinde bulunduğun ayda formda <b>Nasıl ödendi?</b> kutusu çıkar (kayıtlı kredi kartın varsa). Kartı seçersen tutar o kartın borcuna eklenir (Borçlarım); harcama satırında <b>💳 kart adı</b> yazar. Sonradan satırdaki <b>Güncelle</b> ile <b>tutarı</b> (boş bırakırsan değişmez), <b>adı</b> ve <b>hangi kartla ödendiğini</b> değiştirebilirsin: kartı değiştirince eski kartın borcundan düşülür, yenisine eklenir; “Nakit / hesaptan” seçersen karttan düşülür. Harcamayı düzeltir ya da silersen kart borcu da aynı farkla düzelir. Kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getirdiğinde o rakam önceki harcamaları zaten içerir; bu yüzden güncellemeden önce girilmiş harcamaları düzeltmek ya da silmek karta dokunmaz. Geçmiş aylarda kart seçilmez (o harcama bankanın rakamında zaten var).</p>
       <p><b>Örnek:</b> Akbank borcun ₺135.571 → Market ₺1.000, “💳 Akbank” → borç ₺136.571; Borçlarım'da “₺135.571 + karta yazılan ₺1.000 (1 harcama)” yazar. Ekstre gelince kartı bankadaki rakamla güncelle, döküm sıfırlanır.</p>
-      <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan <b>Güncelle</b> ile düzeltir ya da <b>Sil</b> ile silersin.</p>
+      <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan <b>Güncelle</b> ile düzeltir ya da <b>Sil</b> ile silersin. Tabloyu başlığındaki küçük sarı okla (ya da başlığa dokunarak) kapatabilirsin; kapalıyken yalnız başlık ve yıllık toplam kalır. Varsayılan olarak açıktır, seçimin bu cihazda hatırlanır.</p>
       <p><b>₺ TL / $ Dolar / Altın:</b> Grafiğin başlığındaki seçiciyle harcamalarını dolar ya da gram altın olarak da görürsün. Her ay <b>o ayın</b> ortalama kuruyla çevrilir; böylece enflasyonun etkisini ayırırsın.</p>
       <p class="kv-ipucu">💡 ↻ işaretli kayıtlar Ödeme Takvimi'ndeki düzenli ödemelerden kendiliğinden gelir (bu ay ve gelecek ay). İstemediğini silebilirsin; silinen ay tekrar eklenmez.</p>
       <button class="bolum-ekle" onclick="switchTab('harcama')">Harcama Takibim'e git →</button>
@@ -10695,6 +10698,21 @@ function renderHarcama(){
 
 // Kaydın eklenme zamanı (kimlikteki zaman damgası; Excel'den aktarılanlarda 0 → en altta)
 function harcamaEklenme(x){ const m = String(x.id).match(/^h-(\d+)/); return m ? +m[1] : 0; }
+
+// Aylık tablo: başlıktaki okla kapanır (varsayılan açık; seçim bu cihazda hatırlanır)
+const HARCAMA_TABLO_KATLI_KEY = 'ft_harcama_tablo_kapali';
+function harcamaTabloKatlaUygula(){
+  let k = false; try{ k = localStorage.getItem(HARCAMA_TABLO_KATLI_KEY) === '1'; }catch(e){ /* yok */ }
+  const b = document.getElementById('harcamaTabloBolum'), ok = document.getElementById('harcamaTabloOk');
+  if(b) b.classList.toggle('katli', k);
+  if(ok){ ok.setAttribute('aria-expanded', String(!k)); ok.title = k ? 'Göster' : 'Gizle'; }
+}
+function harcamaTabloKatla(){
+  let k = false; try{ k = localStorage.getItem(HARCAMA_TABLO_KATLI_KEY) === '1'; }catch(e){ /* yok */ }
+  try{ if(k) localStorage.removeItem(HARCAMA_TABLO_KATLI_KEY); else localStorage.setItem(HARCAMA_TABLO_KATLI_KEY, '1'); }catch(e){ /* yok */ }
+  harcamaTabloKatlaUygula();
+}
+harcamaTabloKatlaUygula();
 
 // Formda ay değişince liste de o aya geçer (girilen kayıt gördüğün ayda görünsün)
 function harcamaFormAyDegisti(k){
