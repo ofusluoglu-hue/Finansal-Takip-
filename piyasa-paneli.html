@@ -1905,6 +1905,8 @@
   .satir-alt{font-size:11px;color:var(--muted-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
   .satir-tutar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
   /* Yatırımlarım: satırın ortasında kâr / zarar (sabit genişlikli sütun; satırlar alt alta hizalı) */
+  .kart-etiket{color:var(--p-c9a6ff);font-weight:600;}
+  .mini-secim.odeme-kart.kartli{color:var(--p-c9a6ff);border-color:color-mix(in srgb, var(--p-c9a6ff) 55%, transparent);}
   .satir-kz{flex:0 0 168px;display:flex;flex-direction:row;align-items:baseline;justify-content:flex-end;gap:7px;line-height:1.25;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted);}
   .satir-kz b{font-size:13px;font-weight:700;} .satir-kz small{font-size:11px;font-weight:600;}
   .satir-kz.up{color:var(--up);} .satir-kz.down{color:var(--down);}
@@ -3765,6 +3767,7 @@
           <select id="harcamaAyInput" class="ai-input" style="max-width:170px;min-width:140px;" title="Harcamanın ait olduğu ay" onchange="harcamaFormAyDegisti(this.value)"></select>
           <select id="harcamaKatInput" class="ai-input" style="max-width:210px;min-width:170px;"></select>
           <input type="number" step="0.01" id="harcamaTutarInput" class="ai-input" style="max-width:150px;min-width:120px;" placeholder="Tutar (TL)" onkeydown="if(event.key==='Enter')addHarcama()">
+          <select id="harcamaKartInput" class="ai-input" style="max-width:210px;min-width:160px;display:none;" title="Nasıl ödendi? Kart seçersen tutar o kartın borcuna eklenir (Borçlarım)"></select>
           <input type="text" id="harcamaNotInput" class="ai-input" style="max-width:240px;min-width:150px;" placeholder="Not (ör. Migros, elektrik)" onkeydown="if(event.key==='Enter')addHarcama()">
           <button class="ai-btn" onclick="addHarcama()">Harcama Ekle</button>
         </div>
@@ -4031,6 +4034,7 @@
             <option value="abonelik">Abonelik</option><option value="fatura">Fatura</option><option value="kira">Kira / aidat</option><option value="sigorta">Sigorta / vergi</option><option value="diger">Diğer</option>
           </select>
           <select id="odemeHarcamaKatInput" class="ai-input" style="max-width:220px;min-width:150px;" title="Harcama Takibim'e hangi kategoriyle eklensin"></select>
+          <select id="odemeKartInput" class="ai-input" style="max-width:210px;min-width:150px;display:none;" title="Nasıl ödeniyor? Kart seçersen her ay ödeme günü tutar o kartın borcuna eklenir"></select>
           <select id="odemePeriyotInput" class="ai-input" style="max-width:120px;min-width:100px;" onchange="odemeFormTurDegisti()">
             <option value="aylik">Her ay</option><option value="yillik">Her yıl</option>
           </select>
@@ -4113,6 +4117,7 @@
       <p><b>Ne işe yarar:</b> Bütün borçlarının bugünkü toplamını gösterir. Kredi ve KMH borcu her gün işleyen faizle canlı hesaplanır.</p>
       <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; Profilim'de Anthropic anahtarın kayıtlı olmalı) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca satırdaki yeşil <b>Kapattım</b> düğmesine bas.</p>
       <p><b>Kredi Kartlarım:</b> Kartın bugünkü toplam borcunu yaz; ekstre gelince satırdaki <b>Güncelle</b> ile güncelle.</p>
+      <p><b>Kartla yapılan harcamalar:</b> Harcama Takibim'de ya da Ödeme Takvimi'nde bir kart seçersen tutar o kartın borcuna kendiliğinden eklenir. Kart satırında son güncellemedeki borç ve sonrasında karta yazılanlar ayrı görünür (ör. “₺135.571 + karta yazılan ₺1.500 (2 harcama)”). <b>Güncelle</b> ile bankadaki rakamı yazınca döküm sıfırlanır ve oradan devam eder.</p>
       <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki <b>Faiz</b> düğmesiyle de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
       <p><b>Elden Nakit Borçlar:</b> Birinden aldığın borcu TL, dolar ya da euro olarak gir. Dövizliyse TL karşılığı güncel kurla hesaplanır; kur canlıyken ışık yeşil yanar.</p>
       <p class="kv-ipucu">💡 Satırdaki ışık: yeşil = bugün güncel (ya da canlı hesaplanıyor), kırmızı = son güncelleme bugünden önce.</p>
@@ -4125,6 +4130,8 @@
       <p><b>Ne işe yarar:</b> Harcamalarını ay ve kategori bazında toplar: aylık grafik, kategoriler, aylık tablo, aylık ve yıllık ortalamalar.</p>
       <p><b>Nasıl kullanılır:</b> Harcama kayıtları bölümünde <b>+ Ekle</b> → <b>ay</b>, <b>kategori</b>, <b>tutar</b> ve istersen bir not. Form ve liste her zaman içinde bulunduğun ayla açılır; geçen ayın harcamasını girmek istersen ay kutusundan o ayı seç. Listenin üstündeki ay seçicisi ile formdaki ay hep aynıdır: birini değiştirince diğeri de o aya geçer, böylece girdiğin kayıt baktığın listede hemen görünür.</p>
       <p><b>Örnek:</b> “Eylül 2026 · Market · ₺26.985 · not: Migros”. Aynı ay ve kategoriye birden çok kayıt girebilirsin; tabloda toplanır.</p>
+      <p><b>Kartla ödediysen:</b> İçinde bulunduğun ayda formda <b>Nasıl ödendi?</b> kutusu çıkar (kayıtlı kredi kartın varsa). Kartı seçersen tutar o kartın borcuna eklenir (Borçlarım); harcama satırında <b>💳 kart adı</b> yazar. Harcamayı düzeltir ya da silersen kart borcu da aynı farkla düzelir. Kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getirdiğinde o rakam önceki harcamaları zaten içerir; bu yüzden güncellemeden önce girilmiş harcamaları düzeltmek ya da silmek karta dokunmaz. Geçmiş aylarda kart seçilmez (o harcama bankanın rakamında zaten var).</p>
+      <p><b>Örnek:</b> Akbank borcun ₺135.571 → Market ₺1.000, “💳 Akbank” → borç ₺136.571; Borçlarım'da “₺135.571 + karta yazılan ₺1.000 (1 harcama)” yazar. Ekstre gelince kartı bankadaki rakamla güncelle, döküm sıfırlanır.</p>
       <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan <b>Güncelle</b> ile düzeltir ya da <b>Sil</b> ile silersin.</p>
       <p><b>₺ TL / $ Dolar / Altın:</b> Grafiğin başlığındaki seçiciyle harcamalarını dolar ya da gram altın olarak da görürsün. Her ay <b>o ayın</b> ortalama kuruyla çevrilir; böylece enflasyonun etkisini ayırırsın.</p>
       <p class="kv-ipucu">💡 ↻ işaretli kayıtlar Ödeme Takvimi'ndeki düzenli ödemelerden kendiliğinden gelir (bu ay ve gelecek ay). İstemediğini silebilirsin; silinen ay tekrar eklenmez.</p>
@@ -4134,6 +4141,7 @@
     <details class="kv-bolum" id="kv-odeme"><summary>📅 Ödeme Takvimi <span>ne zaman, ne kadar ödeyeceksin</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Kredi taksitleri, kart son ödeme günleri, kira, aidat, fatura ve abonelikler tek takvimde görünür. Üstteki ilk iki kutu seçtiğin ayı gösterir (ör. <b>“Ekim ödemeleri”</b> ve <b>“Ekim kalan”</b>): birincisi ayın bütün ödemelerinin toplamıdır ve gün geçtikçe değişmez, ikincisi bugünden sonra ödeyeceklerindir.</p>
       <p><b>Düzenli ödemeler:</b> <b>+ Ekle</b> → ad (ör. Netflix), tutar, tür (abonelik, fatura, kira…), her ay ya da her yıl, ödeme günü. Her ödemenin “harcamaya:” seçimiyle Harcama Takibim'e hangi kategoriyle ekleneceğini belirlersin.</p>
+      <p><b>Kartla ödenen fatura / abonelik:</b> Formdaki ya da satırdaki <b>ödeme:</b> seçiminden kartı seç (varsayılan “hesaptan / talimat”). Her ay <b>ödeme günü geldiğinde</b> o ayın tutarı kartın borcuna bir kez eklenir. Kartı seçtiğin günden önceki ödemeler ve kartı ödeme gününden sonra bankadaki rakamla güncellediysen o ayki ödeme eklenmez (rakam zaten içerir). Tutarı değiştirirsen ya da ödemeyi silersen bu ay karta yazılan tutar da düzelir.</p>
       <p><b>Kredi kartları:</b> Kartın son ödeme gününü bir kez yaz. Sıradaki dönem için <b>dönem borcu</b> (ekstre), <b>asgari</b> ve <b>ödeyeceğim</b> tutarını girebilirsin. Takvim önce “ödeyeceğim” tutarını kullanır.</p>
       <p><b>Örnek:</b> Kartının toplam borcu ₺135.571, dönem borcu ₺95.000, ödeyeceğin ₺60.000 → takvimde ₺60.000 görünür; altında “ödeme sonrası kalan borç ≈ ₺75.571” ve “₺35.000 sonraki döneme kalır (faiz işler)” yazar.</p>
       <p class="kv-ipucu">💡 Ödeme günü geçtiği halde kartın borcunu Borçlarım'da güncellemediysen satırda bir hatırlatma çıkar. Bugünden önceki ödemeler “✓ ödendi” sayılır.</p>
@@ -4343,6 +4351,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
+    <details class="kv-bolum kv-sss"><summary>Kartla yaptığım harcama kart borcuma eklenir mi?</summary><div class="kv-ic"><p>Evet, istersen. Harcama Takibim'de harcamayı eklerken <b>Nasıl ödendi?</b> kutusundan kartı seç (yalnız içinde bulunulan ayda çıkar); tutar o kartın borcuna eklenir. Faturalar ve abonelikler için Ödeme Takvimi'nde ödemenin <b>ödeme:</b> seçiminden kartı seç; her ay ödeme günü geldiğinde karta eklenir. Ekstre gelince kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getir: o rakam önceki harcamaları içerdiği için aynı harcama iki kez sayılmaz. Taksitli alışverişlerde şimdilik tutarın tamamı eklenir (bankanın “toplam borç” rakamıyla aynı).</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Yatırımlarımın kâr / zararını nasıl görürüm?</summary><div class="kv-ic"><p>Yatırımlarım'da satırdaki <b>+ Maliyet</b>'e dokun ve birim başına <b>ortalama alış maliyetini</b> yaz (ABD hisse/ETF ve kripto $/adet, BİST ₺/adet, altın ₺/gram), Enter'a bas. Kâr / zarar tutarı ve yüzdesi satırda görünür; türün toplamı çerçeve başlığında (kapalıyken de), genel toplam Portföyüm başlığında ve Toplam Yatırım kartında. Değiştirmek için <b>Güncelle</b>'nin ikinci kutusunu kullan; 0 yazarsan maliyet silinir. Dolar bazlı yatırımlarda kâr / zarar dolar üzerinden hesaplanır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Hisselerimin KAP bildirimlerini nereden görürüm?</summary><div class="kv-ic"><p>Yatırımlarım sayfasında, portföy listesinin altındaki <b>KAP ve şirket haberleri</b> bölümünde. Yalnız senin portföyündeki BİST hisseleri için son 30 günün bildirimleri listelenir; bildirimler doğrudan KAP'ın kendisinden (kap.org.tr) gelir, ücretsizdir ve satıra dokununca bildirimin KAP sayfası açılır. Şirket haberleri (etiketsiz satırlar) Google Haberler'den eklenir; Google erişimi geçici olarak kısıtlarsa yalnız KAP bildirimleri görünür, bu bir hata değildir. Bölümü başlığındaki okla kapatabilirsin; kapalıyken yer kaplamaz, yeni bildirim gelince başlıkta sayı çıkar. Bir hisse hakkında yorum istersen Bay Piyasa'daki “KAP haberleri” sorusunu kullan.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Dövizim ya da altınım var; Yatırımlarım'a mı, Varlıklarım'a mı girmeliyim?</summary><div class="kv-ic"><p><b>Yatırım amacıyla</b> tuttuğun altın, gümüş, ETF, kripto ve hisseleri <b>Yatırımlarım</b>'a gir; portföy puanına ve yatırım/borç oranına katılır. <b>Gerektiğinde harcamak için</b> kenarda duran parayı (acil durum fonu, mevduat) <b>Finansal Durumum › Varlıklarım</b>'a <b>Nakit / Mevduat</b> türüyle gir; ₺, $, € ya da gram altın seçebilirsin. İkisi de net varlığına girer; aynı parayı iki yere girme.</p></div></details>
@@ -5561,6 +5570,7 @@ async function senkronBaslat(){
   }
   _senkronHazir = true;
   if(typeof duzenliHarcamaEkle === 'function') duzenliHarcamaEkle();   // düzenli ödemeler → bu ay ve gelecek ayın harcamaları
+  if(typeof duzenliKartaYansit === 'function') duzenliKartaYansit();   // kartla ödenen düzenli ödemeler → ödeme günü kart borcuna
   if(Object.keys(_snMeta.bekleyen).length) senkronGonder(); else if(_snSonCekme) senkronDurumYaz('ok');
 }
 
@@ -8824,7 +8834,50 @@ function renderKKKartlari(){
     prefix: 'kk',
     renk: 'var(--p-c9a6ff)',
     bTotalKey: 'kk',
+    canli: item => {
+      const y = kartaYazilanlar(item); if(!y.length) return null;
+      const ek = y.reduce((t, x) => t + (Number(x.kartEk.tutar) || 0), 0);
+      return { tutar: Number(item.tutar) || 0, led: ledRengi(item.tarih),
+        alt: `Güncelleme ${tarihSaatStr(item.tarih)} · <span title="Son güncellemedeki borç + o tarihten sonra bu kartla ödenen ${y.length} harcama (Harcama Takibim / Ödeme Takvimi)">₺${fmtNumber(Math.max(0, (Number(item.tutar) || 0) - ek), 0)} + karta yazılan <b style="color:var(--p-c9a6ff);">₺${fmtNumber(ek, 0)}</b> (${y.length} harcama)</span>` };
+    },
   });
+}
+
+// ---------- Kartla ödenen harcamalar → kart borcu ----------
+// Kural: kart borcu = son elle güncellenen tutar (kart.tarih) + o andan sonra karta yazılan harcamalar.
+// Harcamada kartEk: { kartId, tutar, ts } — karta eklenen tutar ve zamanı (atlandi: true → eklenmedi, kart zaten güncellenmişti).
+// Kart sonradan Güncelle ile bankanın rakamına çekildiyse (kart.tarih > ts) o rakam bu harcamayı zaten içerir:
+// harcamanın düzeltilmesi / silinmesi karta dokunmaz. Kartın tarih alanı yalnız elle güncellemede değişir.
+function kkKartlari(){ return manuelListeYukle(KK_KARTLARI_KEY); }
+function kartAdi(id){ const k = kkKartlari().find(c => c.id === id); return k ? k.ad : null; }
+function kartaYaz(kartId, fark){
+  const list = kkKartlari(), k = list.find(x => x.id === kartId);
+  if(!k || !fark) return false;
+  k.tutar = Math.max(0, Math.round(((Number(k.tutar) || 0) + fark) * 100) / 100);
+  manuelListeKaydet(KK_KARTLARI_KEY, list);
+  return true;
+}
+function kartEkGecerli(x){
+  if(!x || !x.kartEk || x.kartEk.atlandi) return false;
+  const k = kkKartlari().find(c => c.id === x.kartEk.kartId);
+  return !!k && new Date(k.tarih).getTime() <= x.kartEk.ts;
+}
+// Harcamanın karttaki payını yeni tutara çek (silmede 0). Kart o harcamadan sonra elle güncellendiyse dokunmaz.
+function harcamaKartUyarla(x, yeni){
+  if(!kartEkGecerli(x)) return false;
+  const fark = yeni - (Number(x.kartEk.tutar) || 0);
+  if(fark && kartaYaz(x.kartEk.kartId, fark)){ x.kartEk.tutar = yeni; return true; }
+  return false;
+}
+function kartlariYenidenCiz(){ if(typeof renderKKKartlari === 'function') renderKKKartlari(); }
+// Kartın son güncellemesinden sonra karta yazılan harcamalar (kart satırındaki döküm için)
+function kartaYazilanlar(k){
+  const t = new Date(k.tarih).getTime();
+  return harcamaYukle().filter(x => x.kartEk && !x.kartEk.atlandi && x.kartEk.kartId === k.id && x.kartEk.ts >= t);
+}
+// Seçim kutusu seçenekleri: "" = nakit / hesaptan
+function kartSecenekleri(secili, bosAd){
+  return `<option value="">${escapeHtml(bosAd)}</option>` + kkKartlari().map(k => `<option value="${escapeHtml(k.id)}"${k.id === secili ? ' selected' : ''}>💳 ${escapeHtml(k.ad)}</option>`).join('');
 }
 
 // ---------- KMH Borçlarım ----------
@@ -10582,6 +10635,7 @@ function renderHarcama(){
       + (kayitlar.length ? kayitlar.slice(0, _harcamaHepsi ? kayitlar.length : HARCAMA_LISTE_ILK).map(x => satirHtml({
           ad: x.not ? String(x.not).split(' — ')[0] : (HARCAMA_KAT_AD[x.kat] || x.kat),
           alt: (x.kaynak === 'odeme' ? '<span title="Ödeme Takvimi\'ndeki düzenli ödemeden otomatik eklendi" style="color:var(--p-6ec3ff);">↻</span> ' : '')
+            + (x.kartEk && x.kartEk.kartId ? (n => n ? `<span class="kart-etiket" title="${x.kartEk.atlandi ? 'Bu kartla ödendi; kart borcu o gün zaten güncellenmişti, ayrıca eklenmedi' : 'Bu kartla ödendi; tutar kartın borcuna eklendi (Borçlarım)'}">💳 ${escapeHtml(n)}</span> · ` : '')(kartAdi(x.kartEk.kartId)) : '')
             // Ad kategoriyle aynıysa (notsuz kalem) kategori alt satırda tekrar yazılmaz
             + escapeHtml([x.not ? (HARCAMA_KAT_AD[x.kat] || x.kat) : null, x.tur === 'aylik' ? 'aylık toplam' + (x.kaynak === 'excel' ? ' (Excel aktarımı)' : '') : null, x.not && x.not.includes(' — ') ? x.not.split(' — ').slice(1).join(' — ') : null, AY_UZUN[+harcamaKalemAyi(x).slice(5, 7) - 1] + ' ' + harcamaKalemAyi(x).slice(0, 4)].filter(Boolean).join(' · ')),
           tutar: '₺' + fmtNumber(x.tutar, 2),
@@ -10605,6 +10659,13 @@ function renderHarcama(){
   }
   // Form ayı = listenin ayı (liste "Tüm yıl"dayken ya da ay formun aralığında değilse form olduğu gibi kalır)
   if(ayInput && _harcamaAy !== -1){ const k = ayAnahtar(_harcamaYil, _harcamaAy); if([...ayInput.options].some(o => o.value === k)) ayInput.value = k; }
+  // Nasıl ödendi: yalnız içinde bulunulan ay ve kayıtlı kart varsa (seçim korunur; sayfa açılışında nakit / hesaptan)
+  const kartIn = document.getElementById('harcamaKartInput');
+  if(kartIn){
+    const onceki = kartIn.value, kartlar = kkKartlari();
+    kartIn.innerHTML = kartSecenekleri(kartlar.some(k => k.id === onceki) ? onceki : '', 'Nakit / hesaptan');
+    kartIn.style.display = kartlar.length && ayInput && ayInput.value === buAyAnahtar() ? '' : 'none';
+  }
 }
 
 // Kaydın eklenme zamanı (kimlikteki zaman damgası; Excel'den aktarılanlarda 0 → en altta)
@@ -10624,9 +10685,15 @@ function addHarcama(){
   const not = document.getElementById('harcamaNotInput').value.trim();
   if(!/^\d{4}-\d\d-\d\d$/.test(tarih)){ showAlertModal('Lütfen bir ay seç.'); return; }
   if(!(tutar > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
-  const list = harcamaYukle();
-  list.push({ id: 'h-' + Date.now(), tur: 'kayit', tarih, kat, tutar, not });
+  // Kart yalnız içinde bulunulan ayda seçilir (geçmiş ayın harcaması bankanın rakamında zaten vardır)
+  const kartSec = document.getElementById('harcamaKartInput');
+  const kartId = kartSec && kartSec.style.display !== 'none' && ay === buAyAnahtar() ? kartSec.value : '';
+  const list = harcamaYukle(), simdi = Date.now();
+  const kayit = { id: 'h-' + simdi, tur: 'kayit', tarih, kat, tutar, not };
+  if(kartId && kartaYaz(kartId, tutar)) kayit.kartEk = { kartId, tutar, ts: simdi };
+  list.push(kayit);
   harcamaKaydet(list);
+  if(kayit.kartEk) kartlariYenidenCiz();
   document.getElementById('harcamaTutarInput').value = '';
   document.getElementById('harcamaNotInput').value = '';
   // Eklenen harcamanın ayı görünsün; form açık kalır (art arda giriş için), tutar kutusuna odaklanır
@@ -10642,16 +10709,20 @@ function harcamaGuncelle(id){
   const list = harcamaYukle();
   const x = list.find(k => k.id === id);
   if(!x) return;
+  const kartDegisti = harcamaKartUyarla(x, val);   // kartla ödendiyse kart borcu da aynı farkla
   x.tutar = val;
   if(x.kaynak === 'odeme') x.elle = true;   // düzenli ödemeden gelen kayıt elle değişti: artık kendiliğinden güncellenmez
   harcamaKaydet(list);
+  if(kartDegisti) kartlariYenidenCiz();
   renderHarcama();
 }
 
 function harcamaSil(id){
   const x = harcamaYukle().find(k => k.id === id);
   showConfirmModal(x && x.kaynak === 'odeme' ? 'Bu kayıt Ödeme Takvimi\'ndeki düzenli ödemeden geldi. Silersen bu ay için tekrar eklenmez. Emin misin?' : 'Bu harcama kaydını silmek istediğine emin misin?', () => {
+    const kartDegisti = x ? harcamaKartUyarla(x, 0) : false;   // kartla ödendiyse kart borcundan düş
     harcamaKaydet(harcamaYukle().filter(k => k.id !== id));
+    if(kartDegisti) kartlariYenidenCiz();
     if(x && x.kaynak === 'odeme'){   // bu ay için atla
       const ol = odemeYukle(), o = ol.find(q => q.id === x.odemeId);
       if(o){ o.atla = Array.from(new Set([...(o.atla || []), x.tarih.slice(0, 7)])).sort().slice(-24); manuelListeKaydet(ODEME_KEY, ol); }
@@ -11920,16 +11991,20 @@ function renderOdeme(){
   if(dz){
     istYaz('odemeDuzenliToplam', duzenli.length ? '₺' + fmtNumber(aylikSabit, 0) + '/ay' : '');
     const sira = duzenli.slice().sort((a, b) => (a.kat === 'abonelik') - (b.kat === 'abonelik') || yillikTutar(b) - yillikTutar(a));
+    const kartVar = kkKartlari().length > 0;
     dz.innerHTML = sira.length ? sira.map(o => satirHtml({
       ad: o.ad,
       alt: escapeHtml((ODEME_KAT[o.kat] || 'Düzenli') + ' · ' + (o.periyot === 'yillik' ? 'her yıl ' + (+o.gun || 1) + ' ' + AY_UZUN[(+o.ay || 1) - 1] : 'her ayın ' + (+o.gun || 1) + '’i') + (o.periyot === 'yillik' ? ' · ayda ₺' + fmtNumber(yillikTutar(o) / 12, 0) : ' · yılda ₺' + fmtNumber(yillikTutar(o), 0)))
-        + ` · harcamaya: <select class="mini-secim" title="Harcama Takibim'e hangi kategoriyle eklensin" onchange="odemeHarcamaKatSec('${o.id}', this.value)">${HARCAMA_KATEGORILER.filter(x => !x.gizli).map(x => `<option value="${x.k}"${odemeHarcamaKat(o) === x.k ? ' selected' : ''}>${escapeHtml(x.ad)}</option>`).join('')}<option value="yok"${odemeHarcamaKat(o) === 'yok' ? ' selected' : ''}>eklenmesin</option></select>`,
+        + ` · harcamaya: <select class="mini-secim" title="Harcama Takibim'e hangi kategoriyle eklensin" onchange="odemeHarcamaKatSec('${o.id}', this.value)">${HARCAMA_KATEGORILER.filter(x => !x.gizli).map(x => `<option value="${x.k}"${odemeHarcamaKat(o) === x.k ? ' selected' : ''}>${escapeHtml(x.ad)}</option>`).join('')}<option value="yok"${odemeHarcamaKat(o) === 'yok' ? ' selected' : ''}>eklenmesin</option></select>`
+        + (kartVar ? ` · ödeme: <select class="mini-secim odeme-kart${o.odemeKartId ? ' kartli' : ''}" title="Nasıl ödeniyor? Kart seçersen her ay ödeme günü tutar o kartın borcuna eklenir (Borçlarım)" onchange="odemeKartSec('${o.id}', this.value)">${kartSecenekleri(o.odemeKartId || '', 'hesaptan / talimat')}</select>` : ''),
       tutar: '₺' + fmtNumber(o.tutar, 0), renk: ODEME_RENK[o.kat] || 'var(--text)',
       duzen: { id: 'odeme-edit-' + o.id, ph: 'yeni tutar (₺)', kaydet: `odemeGuncelle('${o.id}')` },
       sil: { onclick: `odemeSil('${o.id}')`, baslik: 'Sil', ikon: '✕' },
     })).join('') : '<div class="bos-not">Kira, aidat, fatura, sigorta ve abonelikleri (Netflix, Spotify, internet…) bir kez ekle; her ay ya da her yıl takvime kendiliğinden düşer.</div>';
   }
 
+  const okIn = document.getElementById('odemeKartInput');
+  if(okIn){ const onceki = okIn.value, kartlar = kkKartlari(); okIn.innerHTML = kartSecenekleri(kartlar.some(k => k.id === onceki) ? onceki : '', 'Ödeme: hesaptan / talimat'); okIn.style.display = kartlar.length ? '' : 'none'; }
   const hkIn = document.getElementById('odemeHarcamaKatInput');
   if(hkIn && !hkIn.options.length) hkIn.innerHTML = '<option value="varsayilan">Harcamaya: türüne göre</option>' + HARCAMA_KATEGORILER.filter(x => !x.gizli).map(x => `<option value="${x.k}">Harcamaya: ${escapeHtml(x.ad)}</option>`).join('') + '<option value="yok">Harcamaya eklenmesin</option>';
 
@@ -12047,15 +12122,52 @@ function duzenliHarcamaEkle(){
   }catch(e){ /* bir sonraki tazelemede tekrar denenir */ }
 }
 // Ödeme değişince bu ay ve sonrasının (elle değiştirilmemiş) otomatik kayıtlarını uyarla; kat 'yok' ya da silme → kaldır
+// Karta yazılmış kayıtlarda kart borcu da aynı farkla düzelir (kart o günden sonra elle güncellenmediyse).
 function duzenliHarcamaUyarla(o, silindi){
   const buAy = buAyAnahtar(), onek = 'od-' + o.id + '-';
-  let list = harcamaYukle(), degisti = false;
+  let list = harcamaYukle(), degisti = false, kartDegisti = false;
   const hedef = x => x.id.startsWith(onek) && x.tarih.slice(0, 7) >= buAy && !x.elle;
   if(silindi || odemeHarcamaKat(o) === 'yok'){
+    list.filter(hedef).forEach(x => { if(harcamaKartUyarla(x, 0)) kartDegisti = true; });
     const once = list.length; list = list.filter(x => !hedef(x)); degisti = list.length !== once;
-  } else list.forEach(x => { if(hedef(x)){ x.tutar = Number(o.tutar); x.kat = odemeHarcamaKat(o); x.not = o.ad + ' — düzenli ödeme'; degisti = true; } });
+  } else list.forEach(x => { if(hedef(x)){ if(harcamaKartUyarla(x, Number(o.tutar))) kartDegisti = true; x.tutar = Number(o.tutar); x.kat = odemeHarcamaKat(o); x.not = o.ad + ' — düzenli ödeme'; degisti = true; } });
   if(degisti) harcamaKaydet(list);
-  if(!silindi) duzenliHarcamaEkle();
+  if(kartDegisti) kartlariYenidenCiz();
+  if(!silindi){ duzenliHarcamaEkle(); duzenliKartaYansit(); }
+}
+// Kartla ödenen düzenli ödeme: ödeme günü geldiğinde (karta yansıdığı gün) o ayın tutarı kart borcuna bir kez eklenir.
+// Yalnız kartın seçildiği günden sonraki ödemeler; kart ödeme gününden sonra elle güncellendiyse eklenmez (rakam zaten içerir).
+function duzenliKartaYansit(){
+  try{
+    if(!_senkronHazir) return;
+    const odemeler = odemeYukle().filter(o => o.tur === 'duzenli' && o.odemeKartId);
+    if(!odemeler.length) return;
+    const list = harcamaYukle(), bugunS = bugunISO();
+    let degisti = false, kartDegisti = false;
+    list.forEach(x => {
+      if(x.kaynak !== 'odeme' || x.kartEk) return;
+      const o = odemeler.find(q => q.id === x.odemeId);
+      if(!o) return;
+      const ay = String(x.tarih).slice(0, 7), gunS = isoGun(ayinGunu(+ay.slice(0, 4), +ay.slice(5, 7) - 1, +o.gun || 1));
+      if(gunS > bugunS || gunS < isoGun(new Date(o.odemeKartTs || 0))) return;   // ödeme günü gelmedi / kart seçilmeden önceki ödeme
+      const k = kkKartlari().find(c => c.id === o.odemeKartId);
+      if(!k) return;
+      const gunBas = new Date(gunS + 'T00:00:00').getTime();
+      if(new Date(k.tarih).getTime() > gunBas){ x.kartEk = { kartId: k.id, atlandi: true }; degisti = true; return; }
+      const t = Number(x.tutar) || 0;
+      if(t > 0 && kartaYaz(k.id, t)){ x.kartEk = { kartId: k.id, tutar: t, ts: Date.now() }; degisti = kartDegisti = true; }
+    });
+    if(degisti) harcamaKaydet(list);
+    if(kartDegisti){ kartlariYenidenCiz(); const h = document.getElementById('tab-harcama'); if(h && h.classList.contains('active')) renderHarcama(); }
+  }catch(e){ /* bir sonraki tazelemede tekrar denenir */ }
+}
+function odemeKartSec(id, kartId){
+  const list = odemeYukle(), o = list.find(x => x.id === id);
+  if(!o) return;
+  if(kartId){ o.odemeKartId = kartId; o.odemeKartTs = Date.now(); } else { delete o.odemeKartId; delete o.odemeKartTs; }
+  manuelListeKaydet(ODEME_KEY, list);
+  duzenliKartaYansit();
+  renderOdeme();
 }
 function odemeHarcamaKatSec(id, kat){
   const list = odemeYukle(), o = list.find(x => x.id === id);
@@ -12081,9 +12193,11 @@ function odemeEkle(){
   if(!(gun >= 1 && gun <= 31)){ showAlertModal('Ödeme günü 1 ile 31 arasında olmalı.'); return; }
   const list = odemeYukle();
   const hk = document.getElementById('odemeHarcamaKatInput');
-  list.push(Object.assign({ id: 'o-' + Date.now(), tur: 'duzenli', ad, tutar, gun, periyot, ay: periyot === 'yillik' ? ay : null, kat }, hk && hk.value !== 'varsayilan' ? { harcamaKat: hk.value } : {}));
+  const kIn = document.getElementById('odemeKartInput'), kartId = kIn && kIn.style.display !== 'none' ? kIn.value : '';
+  list.push(Object.assign({ id: 'o-' + Date.now(), tur: 'duzenli', ad, tutar, gun, periyot, ay: periyot === 'yillik' ? ay : null, kat }, hk && hk.value !== 'varsayilan' ? { harcamaKat: hk.value } : {}, kartId ? { odemeKartId: kartId, odemeKartTs: Date.now() } : {}));
   manuelListeKaydet(ODEME_KEY, list);
   duzenliHarcamaEkle();
+  duzenliKartaYansit();
   ['odemeAdInput', 'odemeTutarInput', 'odemeGunInput'].forEach(id => { document.getElementById(id).value = ''; });
   renderOdeme();
   document.getElementById('odemeAdInput').focus();

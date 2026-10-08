@@ -35,6 +35,7 @@ Panel çok kullanıcılıdır. Kayıt ekranı yoktur; hesapları yönetici açar
 
 | Anahtar | İçerik |
 |---|---|
+| `ft_harcamalar_v1` (ek alan) | Kartla ödenen harcamada `kartEk: { kartId, tutar, ts }` (karta eklenen tutar; `atlandi: true` → eklenmedi) |
 | `ft_yatirimlar_v1` | Yatırımlar (portföy); kalemde isteğe bağlı `maliyet` = birim başına ortalama maliyet (ABD/kripto $/adet, BİST ₺/adet, emtia ₺/gram) |
 | `ft_varliklarim_v1` | Varlıklar |
 | `ft_custom_loans_v1` | Kullanıcının eklediği krediler |
@@ -413,6 +414,7 @@ Worker'daki `ALLOWED_MODELS` listesi ile ön yüzdeki model listesi (`BP_MODEL_I
 | 2026-10-05 | **Yatırımlarım: ortalama maliyet → kâr / zarar.** Kalemde isteğe bağlı `maliyet` (birim başına; ABD hisse/ETF ve kripto $, BİST ₺, altın/gümüş ₺/gram). Satırın ortasında kâr / zarar tutarı + yüzdesi (`.satir-kz`, sabit 112 px sütun, satırlar hizalı; telefonda tutarın altında tek satır, ızgara düzeni). Maliyet yoksa "+ Maliyet" (Güncelle'yi maliyet kutusunda açar). Ekleme formunda maliyet kutusu (türe göre birim), Güncelle'de ikinci kutu (`satirHtml` `duzen.ekler`; boş kalan değişmez, 0 siler). Toplam Yatırım kartında toplam kâr / zarar (₺; dolar bazlılar bugünkü kurla). Bay Piyasa bağlamına maliyet ve kâr / zarar eklendi. Kılavuz + SSS |
 | 2026-10-05 | **Kâr / zarar yan yana ve başlıklarda:** satırda tutar ve yüzde tek satırda yan yana (168 px sütun). Her tür çerçevesinin başlığında o türün kâr / zararı kendi para biriminde (`yatirimKatKzHtml`; ABD/kripto $, BİST/emtia ₺), Portföyüm başlığında toplam (₺, `#yatirimBolumKz`) — çerçeve kapalıyken de görünür; telefonda başlığın alt satırında |
 | 2026-10-05 | **Başlıklardaki kâr / zarar sütuna hizalı** (>900 px): tür çerçeveleri ve Portföyüm başlığındaki kâr / zarar, satırlardaki kâr / zarar sütununun tam üstünde (`.kz-sag`, `kzSutunHizala`: açık bir satırdan ölçülür, hepsi kapalıysa son ölçüm; pencere boyutu değişince yeniden). 1440 / 1100 px'te ±0 px, çerçeveler kapalıyken de; tablet ve telefonda başlık satırında (`.kz-ic`) |
+| 2026-10-08 | **Kartla ödenen harcama ve düzenli ödemeler → kart borcu.** Harcama formunda "Nasıl ödendi?" (yalnız içinde bulunulan ay; nakit / kayıtlı kart); kart seçilirse tutar kart borcuna eklenir, harcamada `kartEk: { kartId, tutar, ts }`. Düzeltme / silme kart borcunu aynı farkla düzeltir — kart o harcamadan sonra elle güncellenmediyse (`kart.tarih <= kartEk.ts`; güncelleme banka rakamını esas alır, çift sayım yok). Ödeme Takvimi'nde düzenli ödemeye `odemeKartId` / `odemeKartTs` (formda ve satırda "ödeme:" seçimi): ödeme günü gelince o ayın otomatik harcama kaydı karta bir kez yazılır (`duzenliKartaYansit`; kart seçilmeden önceki ödemeler ve kart ödeme gününden sonra güncellendiyse `atlandi`). Borçlarım kart satırında döküm ("₺X + karta yazılan ₺Y (N harcama)"), harcama satırında "💳 kart". Taksit sonraki aşama. Kılavuz + SSS |
 | 2026-09-30 | Bütçe Planlaması: gelecek 12 ay seçilebilir; tutar "her ay" ya da "yalnız o ay" için kaydedilir (aya özel bütçe), ısı tablosunda gelecek aylar "plan" |
 | 2026-09-30 | "Bütçe" sayfasının adı "Bütçe Planlaması" oldu |
 | 2026-09-30 | Nakit Akışı her açılışta içinde bulunulan ayla açılır |
