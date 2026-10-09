@@ -11957,7 +11957,7 @@ function odemeOlaylari(bas, bit){
         const ab = odemeAyBilgi(o, isoGun(d).slice(0, 7));
         const g = isoGun(ayinGunu(d.getFullYear(), d.getMonth(), ab.gun));
         if(g < basS || g > bitS) return;
-        const hk = harcamaMap().get('od-' + o.id + '-' + isoGun(d).slice(0, 7)), kartla = hk && hk.kartEk ? kartAdi(hk.kartEk.kartId) || 'kart' : null;
+        const hk = harcamaMap().get('od-' + o.id + '-' + isoGun(d).slice(0, 7)), kartla = hk && hk.kartEk && g <= bugunISO() ? kartAdi(hk.kartEk.kartId) || 'kart' : null;
         out.push({ tarih: g, ad: o.ad, alt: (ODEME_KAT[o.kat] || 'Düzenli') + (o.periyot === 'yillik' ? ' · yıllık' : '') + (ab.ozel ? ' · bu aya özel' : ''), tutar: ab.tutar, tur: o.kat || 'diger', id: o.id, odendi: !!kartla, kartla });
       }
     });
@@ -11965,7 +11965,7 @@ function odemeOlaylari(bas, bit){
   return out.sort((a, b) => a.tarih.localeCompare(b.tarih) || (b.tutar || 0) - (a.tutar || 0));
 }
 // Ödendi mi: tarihi geçmiş ya da (kartla ödenen düzenli ödemede) o günün tutarı karta yazılmış
-function olayOdendi(x, bugunS){ return x.tarih < bugunS || !!x.odendi; }
+function olayOdendi(x, bugunS){ return x.tarih < bugunS || (!!x.odendi && x.tarih <= bugunS); }   // günü gelmemiş ödeme hiçbir zaman ödendi sayılmaz
 // Harcama kayıtları kimliğe göre (takvim çiziminde her olay için tekrar okunmasın; kayıt değişince yenilenir)
 let _harcamaMapOnbellek = { ham: null, map: new Map() };
 function harcamaMap(){
@@ -12238,10 +12238,15 @@ function duzenliKartaYansit(){
     const list = harcamaYukle(), bugunS = bugunISO();
     let degisti = false, kartDegisti = false;
     list.forEach(x => {
-      if(x.kaynak !== 'odeme' || x.kartEk) return;
+      if(x.kaynak !== 'odeme') return;
       const o = odemeler.find(q => q.id === x.odemeId);
       if(!o) return;
       const ay = String(x.tarih).slice(0, 7), gunS = isoGun(ayinGunu(+ay.slice(0, 4), +ay.slice(5, 7) - 1, odemeAyBilgi(o, ay).gun));
+      if(x.kartEk){
+        // Ödeme günü sonradan ileri alındıysa (ör. faturanın son ödeme günü 12'si girildi) karta erken yazılmış: geri al, yeni gününde yeniden yazılır
+        if(gunS > bugunS && x.kartEk.kartId === o.odemeKartId){ if(harcamaKartUyarla(x, 0)) kartDegisti = true; delete x.kartEk; degisti = true; }
+        return;
+      }
       if(gunS > bugunS || gunS < isoGun(new Date(o.odemeKartTs || 0))) return;   // ödeme günü gelmedi / kart seçilmeden önceki ödeme
       const k = kkKartlari().find(c => c.id === o.odemeKartId);
       if(!k) return;
