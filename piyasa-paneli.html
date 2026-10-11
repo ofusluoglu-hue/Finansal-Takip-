@@ -1907,6 +1907,11 @@
   /* Yatırımlarım: satırın ortasında kâr / zarar (sabit genişlikli sütun; satırlar alt alta hizalı) */
   .kart-etiket{color:var(--p-c9a6ff);font-weight:600;}
   .ay-ozel{color:var(--amber);font-weight:600;}
+  @media (max-width:900px){ .aks-btn.yazili{width:auto;padding:0 8px;} .aks-btn.yazili span{display:inline;} }   /* önemli işlem: telefonda da yazılı (ör. Erken öde) */
+  .geri-al-btn{flex:0 0 auto;background:none;border:none;color:var(--muted-2);font-family:inherit;font-size:11px;text-decoration:underline;cursor:pointer;padding:2px 4px;}
+  .geri-al-btn:hover{color:var(--amber);}
+  .kart-erken-acik{flex-wrap:wrap;} .kart-erken-acik .satir-duzen input{width:150px;}
+  @media (max-width:640px){ .kart-erken-acik .satir-duzen{flex:1 1 100%;} .odeme-satir .satir-aksiyon{flex-shrink:0;} }
   #odemeDuzenli .satir-duzen .duzen-sayi{width:155px;}
   @media (max-width:640px){ #odemeDuzenli .satir-duzen{flex-wrap:wrap;} #odemeDuzenli .satir-duzen input{flex:1 1 calc(50% - 4px);} #odemeDuzenli .satir-duzen select{flex:1 1 0;} }   /* telefonda: tutar + gün üstte, kapsam + Kaydet altta */
   .mini-secim.odeme-kart.kartli{color:var(--p-c9a6ff);border-color:color-mix(in srgb, var(--p-c9a6ff) 55%, transparent);}
@@ -4148,7 +4153,8 @@
 
     <details class="kv-bolum" id="kv-odeme"><summary>📅 Ödeme Takvimi <span>ne zaman, ne kadar ödeyeceksin</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Kredi taksitleri, kart son ödeme günleri, kira, aidat, fatura ve abonelikler tek takvimde görünür. Üstteki ilk iki kutu seçtiğin ayı gösterir (ör. <b>“Ekim ödemeleri”</b> ve <b>“Ekim kalan”</b>): birincisi ayın bütün ödemelerinin toplamıdır ve gün geçtikçe değişmez, ikincisi bugünden sonra ödeyeceklerindir.</p>
-      <p><b>Düzenli ödemeler:</b> <b>+ Ekle</b> → ad (ör. Netflix), tutar, tür (abonelik, fatura, kira…), her ay ya da her yıl, ödeme günü. Her ödemenin “harcamaya:” seçimiyle Harcama Takibim'e hangi kategoriyle ekleneceğini belirlersin.</p>
+            <p><b>Erken ödeme:</b> Yaklaşan ödemelerde kredi taksitinin ve kartın son ödeme gününün yanında <b>Erken öde</b> (o günse <b>Ödedim</b>) düğmesi var. <b>Kredide</b> onaylayınca o taksit ödenmiş sayılır, Kredilerim'deki kalan borç hemen taksitten sonraki tutara iner (banka erken ödenen taksiti de aynı tutarla alır; faiz taksitin asıl tarihinden işlemeye devam eder). Taksitler sırayla ödenir: önce sıradaki taksit, sonra bir sonraki. <b>Kartta</b> tutar kutusu belirlediğin “ödeyeceğim” tutarıyla dolu açılır; ödediğin tutarı yazıp <b>Ödedim</b> de, kartın borcundan düşülür. İkisinde de satırda “✓ ödendi · erken (11 Eki)” yazar; yanlış işaretlediysen <b>Geri al</b>.</p>
+<p><b>Düzenli ödemeler:</b> <b>+ Ekle</b> → ad (ör. Netflix), tutar, tür (abonelik, fatura, kira…), her ay ya da her yıl, ödeme günü. Her ödemenin “harcamaya:” seçimiyle Harcama Takibim'e hangi kategoriyle ekleneceğini belirlersin.</p>
       <p><b>Kartla ödenen fatura / abonelik:</b> Formdaki ya da satırdaki <b>ödeme:</b> seçiminden kartı seç (varsayılan “hesaptan / talimat”). Her ay <b>ödeme günü geldiğinde</b> o ayın tutarı kartın borcuna bir kez eklenir. Kartı seçtiğin günden önceki ödemeler ve kartı ödeme gününden sonra bankadaki rakamla güncellediysen o ayki ödeme eklenmez (rakam zaten içerir). Tutarı değiştirirsen ya da ödemeyi silersen bu ay karta yazılan tutar da düzelir. Kartı Harcama Takibim'deki otomatik kaydın <b>Güncelle</b>'sinden seçsen de aynı ayar değişir; tarihi gelmemiş ödeme hiçbir zaman karta önceden yazılmaz, satırda “💳 kart · ödeme gününde” yazar.</p>
       <p><b>Her ay değişen faturalar (elektrik, doğalgaz, su…):</b> Fatura gelince satırdaki <b>Güncelle</b>'ye bas: <b>tutar</b> ve <b>son ödeme günü</b> yaz, yanındaki kutuda <b>“yalnız Ekim”</b> seçili kalsın (faturalarda varsayılan sıradaki aydır). O ay takvimde, Harcama Takibim'de ve kartla ödeniyorsa kart borcunda bu tutar ve tarih kullanılır; satırda turuncu “Ekim: 17 Ekim · ₺1.234” yazar. Sonraki aylar düzenli tutar ve günle devam eder. Kalıcı bir değişiklikse (ör. abonelik zammı, kira artışı) kutudan <b>“her ay (bundan sonra)”</b>u seç; aboneliklerde varsayılan budur. Boş bıraktığın kutu değişmez.</p>
       <p><b>Örnek:</b> Enerjisa Elektrik, her ayın 13'ü, ₺800 → Ekim faturası ₺1.234, son ödeme 10 Ekim → Güncelle: 1234, 10, “yalnız Ekim” → takvimde 10 Ekim ₺1.234; Kasım yine 13 Kasım ₺800 görünür.</p>
@@ -4361,6 +4367,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
+    <details class="kv-bolum kv-sss"><summary>Kredi taksitimi ya da kart borcumu erken ödedim, nasıl işaretlerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde, yaklaşan ödemelerde o taksitin ya da kartın satırındaki <b>Erken öde</b>'ye bas (son günündeysen düğme <b>Ödedim</b> olur). Kredide taksit ödenmiş sayılır ve Kredilerim'deki kalan borç hemen düşer; kartta ödediğin tutarı yazarsın, kart borcundan düşülür. Satırda “✓ ödendi · erken” yazar, o ödeme için hatırlatma ve bildirim gelmez. Yanlışlıkla bastıysan aynı satırdaki <b>Geri al</b> ile eski hâline döner.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Elektrik / doğalgaz faturam her ay farklı; tutarı ve tarihi nasıl girerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde faturayı bir kez düzenli ödeme olarak ekle (yaklaşık tutar ve genelde son ödeme günü). Her ay fatura gelince satırdaki <b>Güncelle</b>'ye bas, o ayın <b>tutarını</b> ve <b>son ödeme gününü</b> yaz, kapsamı <b>“yalnız &lt;ay&gt;”</b> bırak ve Kaydet. Yalnız o ay değişir: takvim, Harcama Takibim ve (kartla ödeniyorsa) kart borcu o ayın tutarıyla güncellenir; sonraki aylar düzenli değerle devam eder.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kartla yaptığım harcama kart borcuma eklenir mi?</summary><div class="kv-ic"><p>Evet, istersen. Harcama Takibim'de harcamayı eklerken <b>Nasıl ödendi?</b> kutusundan kartı seç (yalnız içinde bulunulan ayda çıkar); tutar o kartın borcuna eklenir. Faturalar ve abonelikler için Ödeme Takvimi'nde ödemenin <b>ödeme:</b> seçiminden kartı seç; her ay ödeme günü geldiğinde karta eklenir. Seçmeyi unuttuysan ya da yanlış kartı seçtiysen harcamanın <b>Güncelle</b>'sinden kartı (ve adını) değiştir; eski karttan düşülür, yenisine eklenir. Ekstre gelince kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getir: o rakam önceki harcamaları içerdiği için aynı harcama iki kez sayılmaz. Taksitli alışverişlerde şimdilik tutarın tamamı eklenir (bankanın “toplam borç” rakamıyla aynı).</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Yatırımlarımın kâr / zararını nasıl görürüm?</summary><div class="kv-ic"><p>Yatırımlarım'da satırdaki <b>+ Maliyet</b>'e dokun ve birim başına <b>ortalama alış maliyetini</b> yaz (ABD hisse/ETF ve kripto $/adet, BİST ₺/adet, altın ₺/gram), Enter'a bas. Kâr / zarar tutarı ve yüzdesi satırda görünür; türün toplamı çerçeve başlığında (kapalıyken de), genel toplam Portföyüm başlığında ve Toplam Yatırım kartında. Değiştirmek için <b>Güncelle</b>'nin ikinci kutusunu kullan; 0 yazarsan maliyet silinir. Dolar bazlı yatırımlarda kâr / zarar dolar üzerinden hesaplanır.</p></div></details>
@@ -8425,7 +8432,7 @@ function loanGuncelBorc(loan, now = new Date()){
     const sch = loan.schedule;
     let baseIdx = -1;
     for(let i=0;i<sch.length;i++){
-      if(new Date(sch[i].tarih + 'T00:00:00') <= bugun) baseIdx = i; else break;
+      if(new Date(sch[i].tarih + 'T00:00:00') <= bugun || krediErkenOdendi(loan, sch[i].tarih)) baseIdx = i; else break;   // erken ödenen taksit de ödenmiş
     }
     if(baseIdx === -1){
       // İlk taksit henüz gelmedi: borç = kullandırılan anapara. Belgede yoksa ilk iki satırın farkından tahmin edilir.
@@ -8494,6 +8501,58 @@ function loadFixedLoans(){
     if(raw) return JSON.parse(raw);
   }catch(e){ /* bozuk kayıt */ }
   return [];
+}
+
+// Erken ödenen taksitler: loan.erken = { 'taksit tarihi': 'ödendiği gün' }. Taksitler sırayla ödenir.
+// Banka erken ödenen taksiti de aynı tutarla tahsil eder: kalan borç o taksitten sonraki anapara olur, faiz taksitin asıl tarihinden işler.
+function krediErkenOdendi(loan, tarihS){ return !!(loan && loan.erken && loan.erken[tarihS]); }
+function krediKaydiGuncelle(id, fn){
+  const c = loadCustomLoans(), i = c.findIndex(l => l.id === id);
+  if(i >= 0){ fn(c[i]); saveCustomLoans(c); return true; }
+  const f = loadFixedLoans(), j = f.findIndex(l => l.id === id);
+  if(j >= 0){ fn(f[j]); try{ localStorage.setItem(FIXED_LOANS_KEY, JSON.stringify(f)); }catch(e){ /* yok */ } return true; }
+  return false;
+}
+function odemeSonrasiCiz(){ if(typeof updateGarantiLive === 'function') updateGarantiLive(); if(typeof renderOdeme === 'function') renderOdeme(); }
+function krediErkenOde(id, tarihS){
+  const l = getAllLoans().find(x => x.id === id), t = l ? krediTaksitleri(l).find(x => x.tarih === tarihS) : null;
+  if(!l || !t) return;
+  const d = new Date(tarihS + 'T00:00:00'), bugun = tarihS === bugunISO();
+  showConfirmModal(`${l.ad} kredisinin ${d.getDate()} ${AY_UZUN[d.getMonth()]} taksitini (₺${fmtNumber(t.tutar, 2)}) ${bugun ? 'bugün' : 'erken'} ödedin mi? Kredilerim'deki kalan borç hemen bu taksitten sonraki tutara iner.`, () => {
+    krediKaydiGuncelle(id, x => { x.erken = x.erken || {}; x.erken[tarihS] = bugunISO(); });
+    odemeSonrasiCiz();
+  });
+}
+function krediErkenGeriAl(id, tarihS){
+  krediKaydiGuncelle(id, x => { if(x.erken) Object.keys(x.erken).forEach(k => { if(k >= tarihS) delete x.erken[k]; }); });   // sonraki erken taksitler de (sıra bozulmasın)
+  odemeSonrasiCiz();
+}
+
+// ---- Kredi kartı: belirlenen tutarı erken öde → kart borcundan düşülür. o.odendi = { 'YYYY-MM': { tutar, dusulen, gun } }
+let _kartErkenAcik = null;   // satırda tutar kutusu açık olan kart ödemesi 'kartId|YYYY-MM'
+function kartErkenAc(kartId, ay){ _kartErkenAcik = kartId + '|' + ay; renderOdeme(); const i = document.getElementById('kartErkenTutar'); if(i){ i.focus(); i.select(); } }
+function kartErkenOde(kartId, ay){
+  const i = document.getElementById('kartErkenTutar'), t = parseFloat(String(i ? i.value : '').replace(',', '.'));
+  if(!(t > 0)){ showAlertModal('Ödediğin tutarı yaz.'); return; }
+  const L = odemeYukle(), o = L.find(x => x.id === 'kart-' + kartId), k = kkKartlari().find(x => x.id === kartId);
+  if(!o || !k) return;
+  const once = Number(k.tutar) || 0;
+  kartaYaz(kartId, -t);
+  const dusulen = Math.round((once - (Number((kkKartlari().find(x => x.id === kartId) || {}).tutar) || 0)) * 100) / 100;
+  o.odendi = o.odendi || {}; o.odendi[ay] = { tutar: t, dusulen, gun: bugunISO() };
+  Object.keys(o.odendi).sort().slice(0, Math.max(0, Object.keys(o.odendi).length - 24)).forEach(a => delete o.odendi[a]);
+  manuelListeKaydet(ODEME_KEY, L);
+  _kartErkenAcik = null;
+  kartlariYenidenCiz(); odemeSonrasiCiz();
+}
+function kartErkenGeriAl(kartId, ay){
+  const L = odemeYukle(), o = L.find(x => x.id === 'kart-' + kartId);
+  if(!o || !o.odendi || !o.odendi[ay]) return;
+  const p = o.odendi[ay];
+  kartaYaz(kartId, Number(p.dusulen != null ? p.dusulen : p.tutar) || 0);
+  delete o.odendi[ay];
+  manuelListeKaydet(ODEME_KEY, L);
+  kartlariYenidenCiz(); odemeSonrasiCiz();
 }
 
 function getAllLoans(){
@@ -11953,7 +12012,14 @@ function odemeOlaylari(bas, bit){
   const basS = isoGun(bas), bitS = isoGun(bit), out = [];
   getAllLoans().forEach(l => {
     const t = krediTaksitleri(l);
-    t.forEach((x, i) => { if(x.tarih >= basS && x.tarih <= bitS) out.push({ tarih: x.tarih, ad: l.ad + ' kredisi', alt: 'Taksit ' + (i + 1) + '/' + t.length + (x.sonMu ? ' · son taksit' : ''), tutar: x.tutar, tur: 'kredi' }); });
+    const bugunK = bugunISO();
+    t.forEach((x, i) => {
+      if(x.tarih < basS || x.tarih > bitS) return;
+      const erken = l.erken && l.erken[x.tarih] && x.tarih >= bugunK ? l.erken[x.tarih] : null;
+      // Erken ödenebilir: günü gelmemiş (ya da bugün) ve önceki bütün taksitler ödenmiş — sırayla
+      const sirada = !erken && x.tarih >= bugunK && t.slice(0, i).every(y => y.tarih < bugunK || krediErkenOdendi(l, y.tarih));
+      out.push({ tarih: x.tarih, ad: l.ad + ' kredisi', alt: 'Taksit ' + (i + 1) + '/' + t.length + (x.sonMu ? ' · son taksit' : ''), tutar: x.tutar, tur: 'kredi', kredi: l.id, odendi: !!erken, erken, erkenOdenebilir: sirada });
+    });
   });
   const liste = odemeYukle(), kartlar = manuelListeYukle(KK_KARTLARI_KEY), bugunS = bugunISO();
   for(let d = new Date(bas.getFullYear(), bas.getMonth(), 1); d <= bit; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)){
@@ -11969,8 +12035,10 @@ function odemeOlaylari(bas, bit){
         const dt = ilk ? kartDonemTutari(o, k, g.slice(0, 7)) : null;
         // Geçmiş ya da kaydedilmiş dönem: o dönemin son ödemesine kadar kaydedilen kart borcu (ay toplamı sabit kalsın)
         const donem = o.donem && o.donem[g.slice(0, 7)] != null ? Number(o.donem[g.slice(0, 7)]) : null;
-        const tutar = ilk ? dt.tutar : (g < bugunS ? donem : null);
-        out.push({ tarih: g, ad: (k.ad || 'Kart') + ' kartı', alt: 'Son ödeme günü' + (ilk ? ' · ' + dt.kaynak : ''), tutar, tur: 'kart' });
+        const odenen = o.odendi && o.odendi[g.slice(0, 7)];
+        const tutar = odenen ? Number(odenen.tutar) : ilk ? dt.tutar : (g < bugunS ? donem : null);
+        out.push({ tarih: g, ad: (k.ad || 'Kart') + ' kartı', alt: 'Son ödeme günü' + (ilk && !odenen ? ' · ' + dt.kaynak : ''), tutar, tur: 'kart', kartId: k.id, ay: g.slice(0, 7),
+          odendi: !!odenen, erken: odenen ? odenen.gun : null, erkenOdenebilir: !odenen && g >= bugunS, planTutar: ilk ? dt.tutar : null });
       } else if(o.tur === 'duzenli'){
         if(o.periyot === 'yillik' && +o.ay !== d.getMonth() + 1) return;
         const ab = odemeAyBilgi(o, isoGun(d).slice(0, 7));
@@ -11984,7 +12052,7 @@ function odemeOlaylari(bas, bit){
   return out.sort((a, b) => a.tarih.localeCompare(b.tarih) || (b.tutar || 0) - (a.tutar || 0));
 }
 // Ödendi mi: tarihi geçmiş ya da (kartla ödenen düzenli ödemede) o günün tutarı karta yazılmış
-function olayOdendi(x, bugunS){ return x.tarih < bugunS || (!!x.odendi && x.tarih <= bugunS); }   // günü gelmemiş ödeme hiçbir zaman ödendi sayılmaz
+function olayOdendi(x, bugunS){ return x.tarih < bugunS || (!!x.odendi && (x.tarih <= bugunS || !!x.erken)); }   // günü gelmemiş ödeme yalnız elle erken ödendiyse ödendi
 // Harcama kayıtları kimliğe göre (takvim çiziminde her olay için tekrar okunmasın; kayıt değişince yenilenir)
 let _harcamaMapOnbellek = { ham: null, map: new Map() };
 function harcamaMap(){
@@ -12057,14 +12125,27 @@ function renderOdeme(){
       if(olayOdendi(x, bugunS)) return `<div class="satir odeme-satir odendi">
         <div class="odeme-tarih"><b>${d.getDate()}</b><span>${AY_KISA[d.getMonth()]} · ${GUN_KISA[d.getDay()]}</span></div>
         <span class="odeme-nokta" style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></span>
-        <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt"><span style="color:var(--up);">✓ ödendi${x.kartla ? ' · 💳 ' + escapeHtml(x.kartla) : ''}</span> · ${escapeHtml(x.alt.replace(/ · (toplam borç|dönem borcu|ödeyeceğim)$/, ''))}</div></div>
+        <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt"><span style="color:var(--up);">✓ ödendi${x.kartla ? ' · 💳 ' + escapeHtml(x.kartla) : ''}${x.erken ? ' · ' + (x.erken === x.tarih ? 'son gününde' : 'erken (' + new Date(x.erken + 'T00:00:00').getDate() + ' ' + AY_KISA[new Date(x.erken + 'T00:00:00').getMonth()] + ')') : ''}</span> · ${escapeHtml(x.alt.replace(/ · (toplam borç|dönem borcu|ödeyeceğim)$/, ''))}</div></div>
         <div class="satir-tutar">${x.tutar != null ? '₺' + fmtNumber(x.tutar, 0) : '—'}</div>
+        ${x.erken ? `<button type="button" class="geri-al-btn" title="Ödemeyi geri al (yanlış işaretlediysen)" onclick="${x.kredi ? `krediErkenGeriAl('${x.kredi}', '${x.tarih}')` : `kartErkenGeriAl('${x.kartId}', '${x.ay}')`}">Geri al</button>` : ''}
+      </div>`;
+      const kartAcik = x.tur === 'kart' && x.erkenOdenebilir && _kartErkenAcik === x.kartId + '|' + x.ay;
+      const odeBtn = (!x.erkenOdenebilir ? '' : x.tur === 'kredi'
+        ? aksBtn('onay', n === 0 ? 'Ödedim' : 'Erken öde', n === 0 ? 'Bu taksiti bugün ödedim' : 'Bu taksiti erken ödedim — Kredilerim\'deki kalan borç hemen düşer', `krediErkenOde('${x.kredi}', '${x.tarih}')`)
+        : x.tur === 'kart' && !kartAcik ? aksBtn('onay', n === 0 ? 'Ödedim' : 'Erken öde', 'Kart borcunu ödedim — ödediğin tutar kartın borcundan düşülür', `kartErkenAc('${x.kartId}', '${x.ay}')`) : '').replace('class="aks-btn onay"', 'class="aks-btn onay yazili"');   // telefonda da yazılı
+      if(kartAcik) return `<div class="satir odeme-satir kart-erken-acik">
+        <div class="odeme-tarih"><b>${d.getDate()}</b><span>${AY_KISA[d.getMonth()]} · ${GUN_KISA[d.getDay()]}</span></div>
+        <span class="odeme-nokta" style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></span>
+        <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt">Ödediğin tutar kartın borcundan düşülür</div></div>
+        <div class="satir-duzen" style="display:flex;"><input type="number" step="0.01" min="0" id="kartErkenTutar" value="${x.planTutar != null ? Math.round(x.planTutar * 100) / 100 : ''}" placeholder="ödediğin tutar (₺)" title="Ödediğin tutar" onkeydown="if(event.key==='Enter') kartErkenOde('${x.kartId}', '${x.ay}'); if(event.key==='Escape'){ _kartErkenAcik = null; renderOdeme(); }">
+          <button class="loan-btn-save" onclick="kartErkenOde('${x.kartId}', '${x.ay}')">Ödedim</button><button class="ikon-btn" title="Vazgeç" onclick="_kartErkenAcik = null; renderOdeme();">✕</button></div>
       </div>`;
       return `<div class="satir odeme-satir${n <= 2 ? ' yakin' : ''}">
         <div class="odeme-tarih"><b>${d.getDate()}</b><span>${AY_KISA[d.getMonth()]} · ${GUN_KISA[d.getDay()]}</span></div>
         <span class="odeme-nokta" style="background:${ODEME_RENK[x.tur] || 'var(--muted)'};"></span>
         <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt"><span style="color:${n <= 2 ? 'var(--amber)' : 'inherit'};">${goreceliGun(x.tarih)}</span> · ${escapeHtml(x.alt)}</div></div>
         <div class="satir-tutar">${x.tutar != null ? '₺' + fmtNumber(x.tutar, 0) : '<span class="ozet-soluk" style="font-size:12px;">ekstreye göre</span>'}</div>
+        ${odeBtn ? `<div class="satir-aksiyon">${odeBtn}</div>` : ''}
       </div>`;
     }).join('') : `<div class="bos-not">${ayAdi(_odemeAy)} için ödeme yok. Kart son ödeme günlerini ve faturalarını aşağıdan ekleyebilirsin.</div>`;
   }
@@ -12182,6 +12263,7 @@ function odemeKartDonemKaydet(){
       const k = kartlar.find(x => x.id === o.kartId);
       if(!k) return;
       const ay = kartSiradakiTarih(o, bugunS).slice(0, 7), t = Math.round(kartDonemTutari(o, k, ay).tutar * 100) / 100;
+      if(o.odendi && o.odendi[ay]) return;   // ödendi olarak işaretlenmiş dönem: tutar ödenenle sabit
       o.donem = o.donem || {};
       if(o.donem[ay] !== t){
         o.donem[ay] = t;
@@ -12367,6 +12449,7 @@ function kartGuncelleHatirlat(o, k){
   let onceki = ayinGunu(bD.getFullYear(), bD.getMonth(), o.gun);
   if(isoGun(onceki) >= bugunS) onceki = ayinGunu(bD.getFullYear(), bD.getMonth() - 1, o.gun);
   const oS = isoGun(onceki), ay = oS.slice(0, 7);
+  if(o.odendi && o.odendi[ay]) return '';   // ödemeyi işaretlediysen kart borcu zaten düşüldü, hatırlatma yok
   const odenen = o.plan && o.plan[ay] != null ? Number(o.plan[ay]) : (o.ekstre && o.ekstre[ay] != null ? Number(o.ekstre[ay]) : null);
   if(odenen == null || gunFarkiS(oS, bugunS) > 20) return '';
   const guncelleme = k.tarih ? isoGun(new Date(k.tarih)) : '';
