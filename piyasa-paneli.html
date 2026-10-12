@@ -13066,7 +13066,7 @@ function renderHedef(){
   ozetDetayYaz('hdToplamDetay', list.length ? [kk(topHedef), hes.filter(x => x.c.tamam).length ? ['Tamamlanan', hes.filter(x => x.c.tamam).length + ''] : null] : []);
   istYaz('hdBirikim', list.length ? '₺' + fmtNumber(topBirikim, 0) : '—');
   const bAlt = document.getElementById('hdBirikimAlt');
-  if(bAlt) bAlt.innerHTML = topHedef ? `%${fmtNumber(topBirikim / topHedef * 100, 0)} tamam` : '';
+  if(bAlt) bAlt.innerHTML = topHedef ? `%${fmtNumber(topBirikim / topHedef * 100, 2)} tamam` : '';   // büyük hedeflerde küçük ilerleme de görünsün (%0,37)
   ozetDetayYaz('hdBirikimDetay', topHedef ? [kk(topBirikim), ['Kalan', '₺' + fmtNumber(Math.max(0, topHedef - topBirikim), 0)]] : []);
   istYaz('hdAylik', aktif.length ? '₺' + fmtNumber(aylik, 0) : '—');
   // Nakit Akışı'ndaki son ayların ortalama "kalan"ı ile kıyas (gelir girildiyse)
@@ -13100,7 +13100,7 @@ function renderHedef(){
           <div class="satir-ana"><div class="satir-ad">${escapeHtml(h.ad)}</div>
             <div class="satir-alt">${ayAdi(h.ay)}${c.tamam || c.gecti ? '' : ' · ' + c.ay + ' ay kaldı · ayda ' + hedefFmt(c.aylik, h.birim)} · <span style="color:${renk};">${durum}</span>${acilAy} · <span class="ozet-soluk">${hedefElleMi(h) ? 'elle takip' : '↻ ' + escapeHtml(hedefKaynakAd(h))}</span></div></div>
           <div class="satir-tutar">${hedefFmt(c.birikim, h.birim)} <small style="font-weight:500;color:var(--muted-2);font-size:11.5px;">/ ${hedefFmt(c.hedef, h.birim)}</small></div>
-          <div class="butce-yuzde" style="color:${renk};min-width:46px;">%${fmtNumber(Math.min(999, c.oran * 100), 0)}</div>
+          <div class="butce-yuzde" style="color:${renk};min-width:62px;">%${fmtNumber(Math.min(999, c.oran * 100), 2)}</div>
           <div class="satir-aksiyon">
             ${hedefElleMi(h) ? aksBtn('ekle', 'Ekle', 'Birikime ekle / çıkar', `hedefIslemAc('${h.id}', 'katki')`) : ''}
             ${aksBtn('kaynak', 'Kaynak', 'Birikim kaynağını değiştir (elle / yatırımlarımdan)', `hedefIslemAc('${h.id}', 'kaynak')`)}
