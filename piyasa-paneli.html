@@ -2892,7 +2892,7 @@
   #raporYorumBtn:disabled{opacity:.55;cursor:default;}
   @media print{
     body{background:#fff !important;}
-    .sidebar, .app-bar, .nav-panel, .odeme-serit, #raporYorumBtn, #raporAy, .no-print{display:none !important;}
+    .sidebar, .app-bar, .nav-panel, .odeme-serit, .rapor-serit, #raporYorumBtn, #raporAy, .no-print{display:none !important;}
     .tab-panel{display:none !important;}
     #tab-rapor{display:block !important;}
     .layout{display:block !important;}
@@ -2944,6 +2944,14 @@
   /* Ödeme Takvimi */
   .odeme-serit{display:none;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(231,168,59,.08);border:1px solid rgba(231,168,59,.35);border-radius:10px;padding:9px 14px;margin-bottom:12px;font-size:12.5px;color:var(--text);cursor:pointer;}
   .odeme-serit:hover{border-color:var(--amber);}
+  .rapor-serit{background:color-mix(in srgb, var(--p-6ec3ff) 9%, transparent);border-color:color-mix(in srgb, var(--p-6ec3ff) 40%, transparent);}
+  .rapor-serit:hover{border-color:var(--p-6ec3ff);}
+  .odeme-serit.rapor-serit b:first-child{color:var(--p-6ec3ff);}
+  .rapor-serit-oku{margin-left:auto;font-weight:700;color:var(--p-6ec3ff);white-space:nowrap;}
+  .rapor-serit-kapat{background:none;border:none;color:var(--muted-2);font-size:17px;line-height:1;cursor:pointer;padding:0 2px;}
+  .rapor-serit-kapat:hover{color:var(--text);}
+  .rs-kisa{display:none;}
+  @media (max-width:640px){ .rapor-serit{flex-wrap:nowrap;gap:6px;padding:8px 10px;font-size:12px;} .rapor-serit .rs-uzun{display:none;} .rapor-serit .rs-kisa{display:inline;} .rapor-serit > b{white-space:nowrap;} }
   .odeme-serit b:first-child{color:var(--amber);}
   .odeme-ikili{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;}
   .odeme-ikili > .bolum{margin-bottom:14px;min-width:0;}
@@ -3283,6 +3291,7 @@
   </div>
 
   <div class="odeme-serit" id="odemeSerit" onclick="switchTab('odeme')" title="Ödeme Takvimi'ni aç"></div>
+  <div class="odeme-serit rapor-serit" id="raporSerit" title="Aylık raporu aç" role="button" tabindex="0" onkeydown="if(event.key==='Enter') this.click();"></div>
 
   <div class="grid" id="grid"></div>
 
@@ -4194,7 +4203,7 @@
       <p><b>Örnek:</b> Kartının toplam borcu ₺135.571, ekstre borcu ₺95.000, ödeyeceğin ₺60.000 → takvimde ₺60.000 görünür; kutuda “16 Ekim'de ₺60.000 ödeyeceksin; sonrasında kart borcu ≈ ₺75.571. Ekstrenin ₺35.000'i ödenmezse ona faiz işler.” yazar. <b>Tamamını öde</b>'ye basarsan “Ekstrenin tamamı ödeniyor, faiz yok.” olur.</p>
       <p><b>Takvim:</b> Ödenmemiş ödemelerin noktaları kendi renginde (kredi mor, kart kırmızı, fatura sarı…) LED gibi yanar; ödenenler soluklaşır. Bir günde hem ödenen hem ödenmeyen varsa hücrede kalan tutar belirgin, ödenen tutar üstü çizili ve soluk görünür.</p>
       <p class="kv-ipucu">💡 Ödeme günü geçtiği halde kartın borcunu Borçlarım'da güncellemediysen satırda bir hatırlatma çıkar. Bugünden önceki ödemeler “✓ ödendi” sayılır; kartla ödenen fatura ve abonelikler ise ödeme günü karta yazıldığı anda “✓ ödendi · 💳 kart” görünür, o gün için bildirim ve hatırlatma çıkmaz.</p>
-      <p><b>Bildirimler (🔔):</b> Sağ üstteki zil (telefonda en üstteki satırın sağında) yaklaşan ödemeleri iki kez hatırlatır: son günden <b>bir gün önce</b> (“Yarın ödenecek”, sarı) ve <b>son gün</b> (“Bugün ödenecek”, kırmızı). Örnek: 6 Ekim'deki kira 5 Ekim'de ve 6 Ekim'de bildirim olarak gelir. Uyarılar da buradadır: bütçesi aşılan ya da %90'ı dolan kategori, asgarinin altında planlanan kart ödemesi. Yöneticiden gelen mesajlar zilin solundaki <b>✉ zarfta</b> sayılır (zilde ikinci kez görünmez); zarfa dokununca son mesajların listesi açılır, birine dokununca Profilim › Mesaj kutusu'nda o mesaj açılır. Zildeki kırmızı sayı okunmamış bildirim sayısıdır; bildirime dokununca ilgili sayfa açılır, × ile kaldırırsın, başlıktaki <b>✓✓</b> simgesi hepsini okundu sayar. Ödeme ve uyarıların okundu bilgisi bu cihazda, mesajlarınki hesabında tutulur.</p>
+      <p><b>Bildirimler (🔔):</b> Sağ üstteki zil (telefonda en üstteki satırın sağında) yaklaşan ödemeleri iki kez hatırlatır: son günden <b>bir gün önce</b> (“Yarın ödenecek”, sarı) ve <b>son gün</b> (“Bugün ödenecek”, kırmızı). Örnek: 6 Ekim'deki kira 5 Ekim'de ve 6 Ekim'de bildirim olarak gelir. Uyarılar da buradadır: bütçesi aşılan ya da %90'ı dolan kategori, asgarinin altında planlanan kart ödemesi. Yöneticiden gelen mesajlar zilin solundaki <b>✉ zarfta</b> sayılır (zilde ikinci kez görünmez); zarfa dokununca son mesajların listesi açılır, birine dokununca Profilim › Mesaj kutusu'nda o mesaj açılır. Zildeki kırmızı sayı okunmamış bildirim sayısıdır; bildirime dokununca ilgili sayfa açılır, × ile kaldırırsın, başlıktaki <b>✓✓</b> simgesi hepsini okundu sayar. Ödeme ve uyarıların okundu bilgisi bu cihazda, mesajlarınki hesabında tutulur. Ay bitince geçen ayın <b>raporu hazır</b> bildirimi de burada, “Raporlar” altında çıkar.</p>
       <button class="bolum-ekle" onclick="switchTab('odeme')">Ödeme Takvimi'ne git →</button>
     </div></details>
 
@@ -4228,6 +4237,7 @@
 
     <details class="kv-bolum" id="kv-rapor"><summary>📄 Aylık Rapor <span>ayın özeti tek sayfada</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Seçtiğin ayın harcamasını (önceki aya ve son 6 aya göre), bütçe uyumunu, ay sonu kalanı, kredi anaparasındaki azalışı ve net varlık değişimini tek sayfada özetler. “Öne Çıkan Gelişmeler” kendiliğinden yazılır ve ücretsizdir.</p>
+      <p><b>Rapor hazır bildirimi:</b> Ay bitince (yeni ayın ilk gününden itibaren) geçen ayın raporu hazır olur: zilde <b>Raporlar</b> altında “Eylül 2026 raporun hazır” ve Piyasa Özeti'nin üstünde mavi bir şerit çıkar (harcama tutarı ve önceki aya göre değişimiyle). Dokununca o ayın raporu açılır; raporu açtığında ikisi de kendiliğinden kalkar. Okumak istemezsen şeridi × ile kapatabilirsin, rapor Aylık Rapor'da durur. Geçen ay için harcama girilmediyse bildirim çıkmaz.</p>
       <p><b>Bay Piyasa yorumu:</b> Özet kutularının hemen altındadır, “Öne Çıkan Gelişmeler” ondan sonra gelir. Başlığın hemen yanındaki yanıp sönen sarı oka (ya da başlığın kendisine) dokunarak yorumu kapatıp açabilirsin; varsayılan açıktır, kapattıysan bu cihazda kapalı kalır. <b>“Bay Piyasa yorumlasın”</b>a basarsan bir kişisel finans danışmanı gibi ayın bütün rakamlarına bakar: harcama (enflasyondan arındırılmış), gelir ve tasarruf oranı, kredi taksitlerinin gelire oranı, kart/KMH borçlarının vergiler dahil gerçek faizi, net varlığın ay sonu değişimi (TL, dolar, altın), yatırım dağılımı, acil fon ve gelecek ay. Sonuçta bir <b>finansal sağlık tablosu</b> ve rakamlı bir <b>gelecek ay planı</b> yazar; eksik veri varsa (ör. gelir girilmemişse) uydurmaz, söyler. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez, <b>↻ Yeniden yorumla</b> ile tazelersin.</p>
       <p class="kv-ipucu">💡 Rapor ne kadar eksiksizse yorum o kadar isabetli olur: Nakit Akışı'nda gelirini, Borç Kapatma Planı'nda faizli kartlarını, Birikim Hedefleri'nde acil durum fonunu tanımla.</p>
       <p><b>Yazdır / PDF:</b> Raporu yazdırabilir ya da PDF olarak kaydedebilirsin.</p>
@@ -4400,6 +4410,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
+    <details class="kv-bolum kv-sss"><summary>Aylık raporumun hazır olduğunu nasıl anlarım?</summary><div class="kv-ic"><p>Her ay bittiğinde geçen ayın raporu hazır olur ve sana iki yerden haber verilir: sağ üstteki zilde “Raporlar” altında “… raporun hazır” bildirimi ve Piyasa Özeti'nin üstünde mavi bir şerit. Dokununca o ayın raporu açılır; okuduktan sonra ikisi de kalkar. Bildirim, o ay için harcama girdiysen çıkar.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kredi taksitimi ya da kart borcumu erken ödedim, nasıl işaretlerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde, yaklaşan ödemelerde o taksitin ya da kartın satırındaki <b>Erken öde</b>'ye bas (son günündeysen düğme <b>Ödedim</b> olur). Kredide taksit ödenmiş sayılır ve Kredilerim'deki kalan borç hemen düşer; kartta ödediğin tutarı yazarsın, kart borcundan düşülür. Satırda “✓ ödendi · erken” yazar, o ödeme için hatırlatma ve bildirim gelmez. Yanlışlıkla bastıysan aynı satırdaki <b>Geri al</b> ile eski hâline döner.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Elektrik / doğalgaz faturam her ay farklı; tutarı ve tarihi nasıl girerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde faturayı bir kez düzenli ödeme olarak ekle (yaklaşık tutar ve genelde son ödeme günü). Her ay fatura gelince satırdaki <b>Güncelle</b>'ye bas, o ayın <b>tutarını</b> ve <b>son ödeme gününü</b> yaz, kapsamı <b>“yalnız &lt;ay&gt;”</b> bırak ve Kaydet. Yalnız o ay değişir: takvim, Harcama Takibim ve (kartla ödeniyorsa) kart borcu o ayın tutarıyla güncellenir; sonraki aylar düzenli değerle devam eder.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kartla yaptığım harcama kart borcuma eklenir mi?</summary><div class="kv-ic"><p>Evet, istersen. Harcama Takibim'de harcamayı eklerken <b>Nasıl ödendi?</b> kutusundan kartı seç (yalnız içinde bulunulan ayda çıkar); tutar o kartın borcuna eklenir. Faturalar ve abonelikler için Ödeme Takvimi'nde ödemenin <b>ödeme:</b> seçiminden kartı seç; her ay ödeme günü geldiğinde karta eklenir. Seçmeyi unuttuysan ya da yanlış kartı seçtiysen harcamanın <b>Güncelle</b>'sinden kartı (ve adını) değiştir; eski karttan düşülür, yenisine eklenir. Ekstre gelince kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getir: o rakam önceki harcamaları içerdiği için aynı harcama iki kez sayılmaz. Taksitli alışverişlerde şimdilik tutarın tamamı eklenir (bankanın “toplam borç” rakamıyla aynı).</p></div></details>
@@ -13318,6 +13329,9 @@ function renderRapor(){
   if(sec) sec.innerHTML = Array.from({ length: 24 }, (_, i) => ayKaydir(simdiK, -i)).map(k => `<option value="${k}"${k === _raporAy ? ' selected' : ''}>${ayAdi(k)}${k === simdiK ? ' (sürüyor)' : ''}</option>`).join('');
   const R = raporVerisi(_raporAy);
   istYaz('raporBaslik', ayAdi(_raporAy) + ' raporu');
+  // Geçen ayın raporu açıldı: bildirim ve şerit okundu
+  const rpTab = document.getElementById('tab-rapor');
+  if(rpTab && rpTab.classList.contains('active')){ const rid = 'rapor|' + _raporAy; if(!bildirimDurum().okundu[rid] && _raporAy === ayKaydir(simdiK, -1)){ bildirimIsaretle(rid, 'okundu'); bildirimGuncelle(); } }
 
   // ---- Kartlar
   istYaz('rpHarcama', R.A.toplam ? '₺' + fmtNumber(R.A.toplam, 0) : '—');
@@ -13766,10 +13780,40 @@ function bildirimUret(bugunS){
       }
     });
   }catch(e){ /* kart yok */ }
-  // 4) Kurum raporları: portföydeki hissede tavsiye/hedef değişikliği (rapor listesi yüklendiyse)
+  // 4) Aylık rapor: ay bitince geçen ayın raporu hazır — rapor açılınca okundu sayılır
+  try{ const rb = raporBildirimi(bugunS); if(rb) out.push(rb); }catch(e){ /* rapor verisi yok */ }
+  // 5) Kurum raporları: portföydeki hissede tavsiye/hedef değişikliği (rapor listesi yüklendiyse)
   try{ out.push(...krBildirimleri(bugunS)); }catch(e){ /* rapor yok */ }
-  return out.sort((a, b) => (a.grup === b.grup ? 0 : a.grup === 'odeme' ? -1 : 1) || a.sira - b.sira || (a.seviye === 'acil' ? -1 : 1));
+  const grupSira = { odeme: 0, rapor: 1, uyari: 2 };
+  return out.sort((a, b) => (grupSira[a.grup] ?? 3) - (grupSira[b.grup] ?? 3) || a.sira - b.sira || (a.seviye === 'acil' ? -1 : 1));
 }
+// Geçen ayın raporu (yalnız o ay harcama girildiyse): zilde "Raporlar" grubunda ve Piyasa Özeti'nin üstündeki şeritte
+function raporBildirimi(bugunS){
+  const ay = ayKaydir((bugunS || bugunISO()).slice(0, 7), -1), A = butceAyHarcama({}, ay);
+  if(!(A.toplam > 0)) return null;
+  const onceki = butceAyHarcama({}, ayKaydir(ay, -1)).toplam, fark = onceki > 0 ? (A.toplam / onceki - 1) * 100 : null;
+  const ayAd = AY_UZUN[+ay.slice(5, 7) - 1];
+  return { id: 'rapor|' + ay, grup: 'rapor', seviye: 'bilgi', hedef: 'rapor', raporAy: ay, ikon: 'rapor',
+    baslik: ayAdi(ay) + ' raporun hazır',
+    metin: `${ayAd} harcaman ₺${fmtNumber(A.toplam, 0)}${fark != null && isFinite(fark) ? ' · önceki aya göre ' + (fark >= 0 ? '▲' : '▼') + ' %' + fmtNumber(Math.abs(fark), 0) : ''}. Kategoriler, bütçe, nakit akışı ve Bay Piyasa'nın önerileri raporda.`,
+    zaman: 'Aylık rapor', sira: 5, ozet: { ay, toplam: A.toplam, fark } };
+}
+// Piyasa Özeti'nin üstündeki şerit: rapor okunmadıysa ve kaldırılmadıysa
+function raporSeritGuncelle(){
+  const el = document.getElementById('raporSerit');
+  if(!el) return;
+  let b = null; try{ b = raporBildirimi(bugunISO()); }catch(e){ b = null; }
+  const d = bildirimDurum();
+  if(!b || d.okundu[b.id] || d.kaldir[b.id]){ el.style.display = 'none'; return; }
+  const o = b.ozet, ayAd = AY_UZUN[+o.ay.slice(5, 7) - 1];
+  el.innerHTML = `<b>📊 <span class="rs-uzun">${escapeHtml(ayAdi(o.ay))}</span><span class="rs-kisa">${escapeHtml(ayAd)}</span> raporun hazır<span class="rs-uzun">:</span></b> <span><span class="rs-uzun">harcama </span>₺${fmtNumber(o.toplam, 0)}${o.fark != null && isFinite(o.fark) ? ` <span style="color:${o.fark > 0 ? 'var(--down)' : 'var(--up)'};">${o.fark >= 0 ? '▲' : '▼'} %${fmtNumber(Math.abs(o.fark), 0)}</span><span class="ozet-soluk rs-uzun"> önceki aya göre</span>` : ''}</span>
+    <span class="rapor-serit-oku"><span class="rs-uzun">${escapeHtml(ayAd)} raporunu oku</span><span class="rs-kisa">Oku</span> ›</span>
+    <button type="button" class="rapor-serit-kapat" title="Kapat (rapor Aylık Rapor'da durur)" aria-label="Kapat" onclick="event.stopPropagation(); bildirimIsaretle('${b.id}', 'kaldir'); bildirimGuncelle();">×</button>`;
+  el.onclick = () => raporAc(o.ay);
+  el.style.display = 'flex';
+}
+function raporAc(ay){ _raporAy = ay; switchTab('rapor'); }
+
 var _bildirimler = [];
 const BILDIRIM_IKON = {
   takvim: '<rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
@@ -13794,6 +13838,7 @@ function bildirimGuncelle(){
   });
   const p = document.getElementById('bildirimPanel');
   if(p && !p.hidden) bildirimPanelCiz();
+  raporSeritGuncelle();
 }
 function bildirimPanelCiz(){
   const p = document.getElementById('bildirimPanel'); if(!p) return;
@@ -13804,11 +13849,11 @@ function bildirimPanelCiz(){
       ${b.okundu ? '' : '<span class="bildirim-nokta" aria-label="okunmadı"></span>'}
       <button class="bildirim-kaldir" title="Kaldır" aria-label="Bildirimi kaldır" onclick="event.stopPropagation();bildirimKaldir('${encodeURIComponent(b.id)}')">×</button>
     </div>`;
-  const od = _bildirimler.filter(b => b.grup === 'odeme'), uy = _bildirimler.filter(b => b.grup === 'uyari');
+  const od = _bildirimler.filter(b => b.grup === 'odeme'), uy = _bildirimler.filter(b => b.grup === 'uyari'), rp = _bildirimler.filter(b => b.grup === 'rapor');
   p.innerHTML = `<div class="bildirim-bas"><b>Bildirimler</b><span class="bildirim-sayi">${okunmadi ? okunmadi + ' okunmamış' : ''}</span><button class="bildirim-hepsi" onclick="bildirimHepsiOkundu()"${okunmadi ? '' : ' disabled'} title="Tümünü okundu olarak işaretle" aria-label="Tümünü okundu olarak işaretle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg></button></div>
     <div class="bildirim-liste">${!_bildirimler.length
       ? '<div class="bildirim-bos"><div class="ikon">🔔</div><b>Yeni bildirim yok</b><br>Ödemeler son günden bir gün önce ve son gün; bütçe ve kart uyarıları da oluştuğu anda burada görünür. Mesajlar yandaki ✉ zarftadır.</div>'
-      : (od.length ? '<div class="bildirim-grup">Yaklaşan ödemeler</div>' + od.map(oge).join('') : '') + (uy.length ? '<div class="bildirim-grup">Uyarılar</div>' + uy.map(oge).join('') : '')}</div>
+      : (od.length ? '<div class="bildirim-grup">Yaklaşan ödemeler</div>' + od.map(oge).join('') : '') + (rp.length ? '<div class="bildirim-grup">Raporlar</div>' + rp.map(oge).join('') : '') + (uy.length ? '<div class="bildirim-grup">Uyarılar</div>' + uy.map(oge).join('') : '')}</div>
     <div class="bildirim-alt"><a onclick="bildirimPanelKapat();switchTab('odeme')">Ödeme Takvimi ›</a><a onclick="bildirimPanelKapat();switchTab('butce')">Bütçe ›</a></div>`;
 }
 // Açılır paneli düğmenin altına yerleştir (telefonda tam genişlik)
@@ -13839,6 +13884,7 @@ function bildirimTikla(idK){
   const id = decodeURIComponent(idK), b = _bildirimler.find(x => x.id === id);
   bildirimPanelKapat();
   bildirimIsaretle(id, 'okundu'); bildirimGuncelle();
+  if(b && b.raporAy) _raporAy = b.raporAy;   // aylık rapor bildirimi: o ayın raporu açılsın
   if(b && b.hedef) switchTab(b.hedef);
 }
 // Zilde × : bildirim bu cihazda kaldırılır
