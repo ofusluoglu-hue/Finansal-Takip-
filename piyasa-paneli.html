@@ -2858,8 +2858,8 @@
   @media (max-width:640px){
     #tab-yatirim, #tab-borclar{--katla-toplam:140px;--katla-aralik:8px;}
     #kapBolum .kap-bas .bolum-baslik{flex:1 1 0;min-width:0;white-space:normal;line-height:1.25;}
-    #tab-borclar .ad-uzun{display:none;}
-    #tab-borclar .ad-kisa{display:inline;}
+    #tab-borclar .ad-uzun, #tab-rapor .ad-uzun{display:none;}
+    #tab-borclar .ad-kisa, #tab-rapor .ad-kisa{display:inline;}
     #tab-borclar .ekle-yazi{display:none;}   /* telefonda "+ Ekle" → "+" (başlıklara yer kalsın) */
     #tab-borclar .cerceve-borc > .bolum-bas .bolum-ekle{min-width:32px;padding-left:0;padding-right:0;}   /* başlık daralsın, ok ve boşluk ilk satırda kalsın */
   }
@@ -2950,6 +2950,17 @@
   .rapor-serit-oku{margin-left:auto;font-weight:700;color:var(--p-6ec3ff);white-space:nowrap;}
   .rapor-serit-kapat{background:none;border:none;color:var(--muted-2);font-size:17px;line-height:1;cursor:pointer;padding:0 2px;}
   .rapor-serit-kapat:hover{color:var(--text);}
+  #raporYorumBtn.vurgu{border-color:var(--amber);color:var(--amber);box-shadow:0 0 0 0 color-mix(in srgb, var(--amber) 50%, transparent);animation:rapor-vurgu 1.8s ease-out infinite;}
+  @keyframes rapor-vurgu{70%{box-shadow:0 0 0 8px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
+  @media (prefers-reduced-motion:reduce){ #raporYorumBtn.vurgu{animation:none;} }
+  @media (min-width:901px){ .tab-panel .bolum{scroll-margin-top:150px;} }   /* kaydırınca yapışık üst çubuğun altında kalmasın */
+  .rk-ozet{font-size:13px;margin:2px 0 8px;} .rk-baslik{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px;}
+  .rk-hisse{padding:8px 0;border-bottom:1px solid var(--border);} .rk-hisse:last-of-type{border-bottom:none;}
+  .rk-hisse-ust{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13.5px;} .rk-hisse-alt{font-size:12.5px;margin-top:3px;} .rk-hisse-not{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45;}
+  .rk-etiket{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;} .rk-etiket.up{color:var(--up);background:color-mix(in srgb, var(--up) 14%, transparent);} .rk-etiket.down{color:var(--down);background:color-mix(in srgb, var(--down) 14%, transparent);}
+  .rk-piyasa{display:flex;flex-wrap:wrap;gap:6px;} .rk-cip{font-size:12px;border:1px solid var(--border);border-radius:999px;padding:3px 10px;display:inline-flex;gap:5px;align-items:center;}
+  .rk-yon{font-weight:700;font-size:11.5px;} .rk-yon.up{color:var(--up);} .rk-yon.down{color:var(--down);} .rk-yon.notr{color:var(--muted);}
+  .rk-takvim{margin:0;padding-left:18px;font-size:12.5px;line-height:1.7;}
   .rs-kisa{display:none;}
   @media (max-width:640px){ .rapor-serit{flex-wrap:nowrap;gap:6px;padding:8px 10px;font-size:12px;} .rapor-serit .rs-uzun{display:none;} .rapor-serit .rs-kisa{display:inline;} .rapor-serit > b{white-space:nowrap;} }
   .odeme-serit b:first-child{color:var(--amber);}
@@ -4237,7 +4248,8 @@
 
     <details class="kv-bolum" id="kv-rapor"><summary>📄 Aylık Rapor <span>ayın özeti tek sayfada</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Seçtiğin ayın harcamasını (önceki aya ve son 6 aya göre), bütçe uyumunu, ay sonu kalanı, kredi anaparasındaki azalışı ve net varlık değişimini tek sayfada özetler. “Öne Çıkan Gelişmeler” kendiliğinden yazılır ve ücretsizdir.</p>
-      <p><b>Rapor hazır bildirimi:</b> Ay bitince (yeni ayın ilk gününden itibaren) geçen ayın raporu hazır olur: zilde <b>Raporlar</b> altında “Eylül 2026 raporun hazır” ve Piyasa Özeti'nin üstünde mavi bir şerit çıkar (harcama tutarı ve önceki aya göre değişimiyle). Dokununca o ayın raporu açılır; raporu açtığında ikisi de kendiliğinden kalkar. Okumak istemezsen şeridi × ile kapatabilirsin, rapor Aylık Rapor'da durur. Geçen ay için harcama girilmediyse bildirim çıkmaz.</p>
+      <p><b>Rapor hazır bildirimi:</b> Ay bitince (yeni ayın ilk gününden itibaren) geçen ayın raporu hazır olur: zilde <b>Raporlar</b> altında ve Piyasa Özeti'nin üstünde mavi bir şeritte haber verilir. Bay Piyasa yorumu kendiliğinden yazılmaz (ücretlidir, onayını ister); bu yüzden hatırlatma “<b>Eylül 2026 raporun hazır · Bay Piyasa yorumunu çıkar</b>” der ve sen yorumu çıkarana kadar kalır. Dokununca rapor açılır, doğrudan yorum bölümüne gelir ve “✨ Bay Piyasa yorumlasın” düğmesi öne çıkar. Yorumu çıkarınca bildirim “değerlendirme hazır, incele”ye döner ve okunmuş sayılır. İstemezsen şeridi × ile kapatabilirsin. Bay Piyasa'yı kullanmıyorsan yalnız “raporun hazır” der, raporu açınca kalkar. Geçen ay için harcama girilmediyse bildirim çıkmaz.</p>
+      <p><b>Kurum raporlarından ayın özeti:</b> Raporda, Kurum Raporları'ndaki o ayın özetlenmiş raporlarından bir bölüm var: kaç rapor ve kurum; <b>portföyündeki hisselerde</b> ayın son tavsiyesi, hedef fiyatı (öncekiyle), potansiyeli ve ay içindeki yükseltme / düşürme / hedef değişiklikleri; <b>piyasa görüşü</b> (varlık başına kaç rapor olumlu ▲, olumsuz ▼, nötr); <b>önümüzdeki takvim</b>. Bu özet Bay Piyasa yorumuna da girer; yorumda “Kurumlar bu ay ne dedi?” diye ayrı bir paragraf olur. Bunlar aracı kurumların görüşleridir, yatırım tavsiyesi değildir.</p>
       <p><b>Bay Piyasa yorumu:</b> Özet kutularının hemen altındadır, “Öne Çıkan Gelişmeler” ondan sonra gelir. Başlığın hemen yanındaki yanıp sönen sarı oka (ya da başlığın kendisine) dokunarak yorumu kapatıp açabilirsin; varsayılan açıktır, kapattıysan bu cihazda kapalı kalır. <b>“Bay Piyasa yorumlasın”</b>a basarsan bir kişisel finans danışmanı gibi ayın bütün rakamlarına bakar: harcama (enflasyondan arındırılmış), gelir ve tasarruf oranı, kredi taksitlerinin gelire oranı, kart/KMH borçlarının vergiler dahil gerçek faizi, net varlığın ay sonu değişimi (TL, dolar, altın), yatırım dağılımı, acil fon ve gelecek ay. Sonuçta bir <b>finansal sağlık tablosu</b> ve rakamlı bir <b>gelecek ay planı</b> yazar; eksik veri varsa (ör. gelir girilmemişse) uydurmaz, söyler. Yorum o ay için kaydedilir; tekrar açınca yeniden ücret ödenmez, <b>↻ Yeniden yorumla</b> ile tazelersin.</p>
       <p class="kv-ipucu">💡 Rapor ne kadar eksiksizse yorum o kadar isabetli olur: Nakit Akışı'nda gelirini, Borç Kapatma Planı'nda faizli kartlarını, Birikim Hedefleri'nde acil durum fonunu tanımla.</p>
       <p><b>Yazdır / PDF:</b> Raporu yazdırabilir ya da PDF olarak kaydedebilirsin.</p>
@@ -4410,7 +4422,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
-    <details class="kv-bolum kv-sss"><summary>Aylık raporumun hazır olduğunu nasıl anlarım?</summary><div class="kv-ic"><p>Her ay bittiğinde geçen ayın raporu hazır olur ve sana iki yerden haber verilir: sağ üstteki zilde “Raporlar” altında “… raporun hazır” bildirimi ve Piyasa Özeti'nin üstünde mavi bir şerit. Dokununca o ayın raporu açılır; okuduktan sonra ikisi de kalkar. Bildirim, o ay için harcama girdiysen çıkar.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Aylık raporumun hazır olduğunu nasıl anlarım?</summary><div class="kv-ic"><p>Her ay bittiğinde geçen ayın raporu hazır olur ve sana iki yerden haber verilir: sağ üstteki zilde “Raporlar” altında ve Piyasa Özeti'nin üstünde mavi bir şeritte. Bay Piyasa yorumunu henüz çıkarmadıysan hatırlatma “Bay Piyasa yorumunu çıkar” der ve yorumu çıkarana kadar kalır; dokununca rapor yorum bölümünde açılır. Raporda Kurum Raporları'ndan ayın özeti de vardır (portföyündeki hisselerde tavsiye / hedef değişiklikleri, piyasa görüşü, takvim). Bildirim, o ay için harcama girdiysen çıkar.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kredi taksitimi ya da kart borcumu erken ödedim, nasıl işaretlerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde, yaklaşan ödemelerde o taksitin ya da kartın satırındaki <b>Erken öde</b>'ye bas (son günündeysen düğme <b>Ödedim</b> olur). Kredide taksit ödenmiş sayılır ve Kredilerim'deki kalan borç hemen düşer; kartta ödediğin tutarı yazarsın, kart borcundan düşülür. Satırda “✓ ödendi · erken” yazar, o ödeme için hatırlatma ve bildirim gelmez. Yanlışlıkla bastıysan aynı satırdaki <b>Geri al</b> ile eski hâline döner.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Elektrik / doğalgaz faturam her ay farklı; tutarı ve tarihi nasıl girerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde faturayı bir kez düzenli ödeme olarak ekle (yaklaşık tutar ve genelde son ödeme günü). Her ay fatura gelince satırdaki <b>Güncelle</b>'ye bas, o ayın <b>tutarını</b> ve <b>son ödeme gününü</b> yaz, kapsamı <b>“yalnız &lt;ay&gt;”</b> bırak ve Kaydet. Yalnız o ay değişir: takvim, Harcama Takibim ve (kartla ödeniyorsa) kart borcu o ayın tutarıyla güncellenir; sonraki aylar düzenli değerle devam eder.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kartla yaptığım harcama kart borcuma eklenir mi?</summary><div class="kv-ic"><p>Evet, istersen. Harcama Takibim'de harcamayı eklerken <b>Nasıl ödendi?</b> kutusundan kartı seç (yalnız içinde bulunulan ayda çıkar); tutar o kartın borcuna eklenir. Faturalar ve abonelikler için Ödeme Takvimi'nde ödemenin <b>ödeme:</b> seçiminden kartı seç; her ay ödeme günü geldiğinde karta eklenir. Seçmeyi unuttuysan ya da yanlış kartı seçtiysen harcamanın <b>Güncelle</b>'sinden kartı (ve adını) değiştir; eski karttan düşülür, yenisine eklenir. Ekstre gelince kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getir: o rakam önceki harcamaları içerdiği için aynı harcama iki kez sayılmaz. Taksitli alışverişlerde şimdilik tutarın tamamı eklenir (bankanın “toplam borç” rakamıyla aynı).</p></div></details>
@@ -4791,6 +4803,11 @@
     <div class="bolum">
       <div class="bolum-bas"><span class="bolum-baslik">Öne Çıkan Gelişmeler</span></div>
       <ul class="rapor-one" id="raporOne"></ul>
+    </div>
+
+    <div class="bolum" id="raporKurumBolum">
+      <div class="bolum-bas"><span class="bolum-baslik"><span class="ad-uzun">Kurum raporlarından ayın özeti</span><span class="ad-kisa">Kurum raporları</span></span><span class="bolum-toplam" id="raporKurumSayi" style="font-size:13px;color:var(--muted);"></span><button class="bolum-ekle no-print" onclick="switchTab('kurum')">Kurum Raporları ›</button></div>
+      <div id="raporKurum"></div>
     </div>
 
     <div class="bolum">
@@ -13329,9 +13346,7 @@ function renderRapor(){
   if(sec) sec.innerHTML = Array.from({ length: 24 }, (_, i) => ayKaydir(simdiK, -i)).map(k => `<option value="${k}"${k === _raporAy ? ' selected' : ''}>${ayAdi(k)}${k === simdiK ? ' (sürüyor)' : ''}</option>`).join('');
   const R = raporVerisi(_raporAy);
   istYaz('raporBaslik', ayAdi(_raporAy) + ' raporu');
-  // Geçen ayın raporu açıldı: bildirim ve şerit okundu
   const rpTab = document.getElementById('tab-rapor');
-  if(rpTab && rpTab.classList.contains('active')){ const rid = 'rapor|' + _raporAy; if(!bildirimDurum().okundu[rid] && _raporAy === ayKaydir(simdiK, -1)){ bildirimIsaretle(rid, 'okundu'); bildirimGuncelle(); } }
 
   // ---- Kartlar
   istYaz('rpHarcama', R.A.toplam ? '₺' + fmtNumber(R.A.toplam, 0) : '—');
@@ -13366,6 +13381,9 @@ function renderRapor(){
         <td class="sag" style="color:${Math.abs(f) < 1 ? 'var(--muted)' : f > 0 ? 'var(--down)' : 'var(--up)'};">${Math.abs(f) < 1 ? '—' : isaretliTL(f)}</td><td class="sag" style="color:var(--muted);">${k.ort ? '₺' + fmtNumber(k.ort, 0) : '—'}</td></tr>`;
     }).join('')}</tbody><tfoot><tr><td>Toplam</td><td class="sag">₺${fmtNumber(R.A.toplam, 0)}</td><td></td><td class="sag">₺${fmtNumber(R.onceki.toplam, 0)}</td><td class="sag">${isaretliTL(R.A.toplam - R.onceki.toplam)}</td><td class="sag">${R.ort ? '₺' + fmtNumber(R.ort, 0) : '—'}</td></tr></tfoot>` : '<tbody><tr><td style="color:var(--muted-2);">Bu ay harcama yok.</td></tr></tbody>';
   }
+  // ---- Kurum raporlarından ayın özeti (liste yoksa bir kez yüklenir, sonra yeniden çizilir)
+  raporKurumCiz(_raporAy);
+  if(!_krVeri && !_krYukleniyor) krYukle().then(() => { if(document.getElementById('tab-rapor').classList.contains('active')) raporKurumCiz(_raporAy); });
   // ---- Bay Piyasa yorumu (başlıkta karakter ve "danışmanın · <ay> değerlendirmesi")
   const av = document.getElementById('raporAvatar'); if(av && !av.firstChild) av.innerHTML = BP_AVATAR_SVG;
   istYaz('raporYorumAlt', 'Kişisel finans danışmanın · ' + ayAdi(_raporAy) + ' değerlendirmesi');
@@ -13375,7 +13393,13 @@ function renderRapor(){
   if(yEl) yEl.innerHTML = _raporMesgul ? '<div class="bos-not">Bay Piyasa raporu okuyor…</div>'
     : kayit ? `<div class="bp-md rapor-yorum">${bpMd(kayit.metin)}</div><div class="ozet-not" style="margin-top:6px;">${escapeHtml((BP_FIYAT[kayit.model] || {}).ad || kayit.model)} · ${new Date(kayit.ts).toLocaleString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} · ${bpPara(kayit.maliyet || 0)}</div>`
     : '<div class="bos-not">Bay Piyasa, bir kişisel finans danışmanı gibi bu ayın tüm rakamlarına (harcama, gelir, borç ve faiz maliyeti, net varlık, yatırımlar, acil fon, gelecek ay) bakıp finansal sağlık tablosu ve rakamlı bir gelecek ay planı yazar. Yorum bu ay için kaydedilir; tekrar açınca yeniden ücret ödenmez.</div>';
-  if(btn){ btn.disabled = _raporMesgul || !R.A.toplam; btn.textContent = _raporMesgul ? 'Yazıyor…' : kayit ? '↻ Yeniden yorumla' : '✨ Bay Piyasa yorumlasın'; }
+  if(btn){ btn.disabled = _raporMesgul || !R.A.toplam; btn.textContent = _raporMesgul ? 'Yazıyor…' : kayit ? '↻ Yeniden yorumla' : '✨ Bay Piyasa yorumlasın';
+    btn.classList.toggle('vurgu', !kayit && !_raporMesgul && !!R.A.toplam && _raporAy < simdiK && aiKullanilabilir()); }   // ay bitti, yorum çıkarılmadı: düğme öne çıkar
+  // Okundu: yorum çıkarıldıysa "değerlendirme hazır" bildirimi; Bay Piyasa kullanılamıyorsa rapor açılınca
+  if(rpTab && rpTab.classList.contains('active') && _raporAy === ayKaydir(simdiK, -1)){
+    const d = bildirimDurum(), idler = kayit ? ['rapor|' + _raporAy, 'rapor|' + _raporAy + '|yorum'] : aiKullanilabilir() ? [] : ['rapor|' + _raporAy];
+    if(idler.some(id => !d.okundu[id])){ idler.forEach(id => bildirimIsaretle(id, 'okundu')); bildirimGuncelle(); }
+  }
 }
 
 // ---------- Aylık rapor "uzmanlık paketi": kişisel finans danışmanı talimatı (Türkiye koşulları) ----------
@@ -13383,6 +13407,7 @@ function renderRapor(){
 const RAPOR_SISTEM = `Sen "Bay Piyasa"sın; bu görevde Türkiye'de çalışan deneyimli bir **kişisel finans danışmanı** gibi bir aylık rapor yazıyorsun. Okuyucu finans uzmanı değil; sade Türkçe, "sen" diliyle, kısa cümlelerle yaz.
 
 ## Kesin kurallar
+- "KURUM RAPORLARI" bölümü doluysa ayrı kısa bir paragrafta ("Kurumlar bu ay ne dedi?") aracı kurumların portföydeki hisseler ve piyasa hakkındaki görüşlerini özetle; tavsiye / hedef değişikliklerini vurgula. Bunların kurumların görüşü olduğunu belirt, kendi al/sat tavsiyene çevirme.
 - Rakamları sıralamakla yetinme: bir danışman gibi kendi görüşünü söyle ("Bence bu ayın asıl sorunu …"), önceliği sen belirle ve gerekçelendir; insan gibi, akıcı yaz.
 - Yalnızca <finans_dosyasi> içindeki rakamları kullan. Rakam uydurma, tahmin edilmiş bir veriyi gerçekmiş gibi sunma. Bir hesap yaparsan kısaca göster (ör. "₺4.000 × %5,5 ≈ ₺220/ay").
 - "VERİ DURUMU" bölümünde eksik olarak işaretlenen konularda yorum yapma; eksikliği ve nasıl tamamlanacağını tek cümleyle söyle.
@@ -13443,6 +13468,74 @@ function raporSaglik(R){
 }
 
 // Yapay zekâya giden "finans dosyası" (yalnızca rakamlar ve kategori adları; isim, e-posta, banka hesap bilgisi yok)
+// Ayın kurum raporu özeti (Kurum Raporları'nın özetlenmiş raporlarından): portföydeki hisselerde ayın son görüşü ve değişiklikleri,
+// piyasa görüşlerinin yönü, önümüzdeki takvim. _krVeri yüklenmediyse null.
+function raporKurumOzeti(ayK){
+  if(!_krVeri) return null;
+  const L = _krVeri.filter(r => r.ozet && krTarih(r).slice(0, 7) === ayK).sort((a, b) => krTarih(a).localeCompare(krTarih(b)));
+  const kodlar = krKodlar(), hisse = new Map(), piyasa = new Map(), takvim = new Map(), etki = new Map();
+  const sonrakiAy = ayKaydir(ayK, 1) + '-01';
+  L.forEach(r => {
+    const o = r.ozet, t = krTarih(r);
+    (o.hisseler || []).forEach(h => {
+      const kod = String(h.kod || '').toUpperCase().trim(); if(!kodlar.has(kod)) return;
+      const onceki = hisse.get(kod), degisim = (onceki ? onceki.degisimler : []).slice();
+      if(KR_DEGISIM[h.degisiklik]) degisim.push({ tur: h.degisiklik, kurum: r.kurum, tarih: t });
+      hisse.set(kod, Object.assign({}, h, { kod, kurum: r.kurum, tarih: t, degisimler: degisim, rapor: (onceki ? onceki.rapor : 0) + 1 }));
+    });
+    (o.portfoy || []).forEach(p => {
+      const kod = String(p.kod || '').toUpperCase().trim(); if(!kodlar.has(kod)) return;
+      const e = etki.get(kod) || { olumlu: 0, olumsuz: 0, notr: 0, son: '' }; e[p.etki] = (e[p.etki] || 0) + 1; if(p.not) e.son = p.not; etki.set(kod, e);
+    });
+    (o.piyasa || []).forEach(p => {
+      const ad = String(p.varlik || '').trim(); if(!ad) return;
+      const k = ad.toLocaleLowerCase('tr-TR').replace(/[\s\-]+/g, ' ');
+      const e = piyasa.get(k) || { ad, olumlu: 0, olumsuz: 0, notr: 0, n: 0 }; e[p.yon] = (e[p.yon] || 0) + 1; e.n++; piyasa.set(k, e);
+    });
+    (o.takvim || []).forEach(x => { const tr = String(x.tarih || '').slice(0, 10); if(/^\d{4}-\d\d-\d\d$/.test(tr) && tr >= sonrakiAy && !takvim.has(tr + x.olay)) takvim.set(tr + x.olay, { tarih: tr, olay: x.olay }); });
+  });
+  return { adet: L.length, kurumlar: [...new Set(L.map(r => r.kurum).filter(Boolean))],
+    hisseler: [...hisse.values()].map(h => Object.assign(h, { etki: etki.get(h.kod) || null })).sort((a, b) => b.degisimler.length - a.degisimler.length || a.kod.localeCompare(b.kod)),
+    etkiYalniz: [...etki.entries()].filter(([k]) => !hisse.has(k)).map(([kod, e]) => ({ kod, etki: e })),
+    piyasa: [...piyasa.values()].sort((a, b) => b.n - a.n).slice(0, 8),
+    takvim: [...takvim.values()].sort((a, b) => a.tarih.localeCompare(b.tarih)).slice(0, 6) };
+}
+// Bay Piyasa yorumu için düz metin
+function raporKurumMetni(ayK){
+  const k = raporKurumOzeti(ayK);
+  if(!k) return '\n## KURUM RAPORLARI\n- (kurum raporları yüklenemedi)';
+  if(!k.adet) return '\n## KURUM RAPORLARI\n- Bu ay kurum raporu yok';
+  const s = ['\n## KURUM RAPORLARI (aracı kurumların bu ayki görüşleri — kurumların görüşüdür, kesin değildir)', `- ${k.adet} rapor, ${k.kurumlar.length} kurum: ${k.kurumlar.join(', ')}`];
+  if(k.hisseler.length){
+    s.push('- Portföydeki hisseler (ayın son görüşü):');
+    k.hisseler.forEach(h => s.push(`  - ${h.kod}${h.ad ? ' (' + h.ad + ')' : ''}: ${[h.tavsiye ? 'tavsiye ' + h.tavsiye + (h.onceki_tavsiye && h.onceki_tavsiye !== h.tavsiye ? ' (önce ' + h.onceki_tavsiye + ')' : '') : '', h.hedef_fiyat != null ? 'hedef ' + krPara(h.hedef_fiyat) + (h.onceki_hedef != null && h.onceki_hedef !== h.hedef_fiyat ? ' (önce ' + krPara(h.onceki_hedef) + ')' : '') : '', h.potansiyel_yuzde != null ? 'potansiyel %' + fmtNumber(h.potansiyel_yuzde, 0) : ''].filter(Boolean).join(', ')} — ${h.kurum}, ${h.tarih}${h.degisimler.length ? '; ay içindeki değişiklikler: ' + h.degisimler.map(d => KR_DEGISIM[d.tur][0].toLocaleLowerCase('tr-TR') + ' (' + d.kurum + ')').join(', ') : ''}${h.ozet ? '. ' + h.ozet : ''}`));
+  } else s.push('- Portföydeki hisselerle ilgili görüş yok');
+  k.etkiYalniz.forEach(x => s.push(`  - ${x.kod}: portföye etkisi ${x.etki.olumlu} olumlu, ${x.etki.olumsuz} olumsuz${x.etki.son ? ' — ' + x.etki.son : ''}`));
+  if(k.piyasa.length) s.push('- Piyasa görüşleri (olumlu/olumsuz/nötr sayısı): ' + k.piyasa.map(p => `${p.ad} ${p.olumlu}/${p.olumsuz}/${p.notr}`).join('; '));
+  if(k.takvim.length) s.push('- Önümüzdeki takvim: ' + k.takvim.map(x => x.tarih + ' ' + x.olay).join('; '));
+  return s.join('\n');
+}
+function raporKurumCiz(ayK){
+  const el = document.getElementById('raporKurum'); if(!el) return;
+  const k = raporKurumOzeti(ayK), ayAd = AY_UZUN[+ayK.slice(5, 7) - 1];
+  istYaz('raporKurumSayi', k && k.adet ? k.adet + ' rapor' : '');
+  if(!k){ el.innerHTML = '<div class="bos-not">Kurum raporları yükleniyor…</div>'; return; }
+  if(!k.adet){ el.innerHTML = `<div class="bos-not">${escapeHtml(ayAd)} ayında kurum raporu yok. Kurum Raporları'nda aracı kurum raporlarını bağladığında burada ayın özeti çıkar ve Bay Piyasa yorumuna da girer.</div>`; return; }
+  const yon = (e, kisa) => [e.olumlu ? `<span class="rk-yon up">▲${e.olumlu}</span>` : '', e.olumsuz ? `<span class="rk-yon down">▼${e.olumsuz}</span>` : '', e.notr && !kisa ? `<span class="rk-yon notr">–${e.notr}</span>` : ''].join('');
+  const hisseHtml = k.hisseler.length ? k.hisseler.map(h => {
+    const hd = h.hedef_fiyat != null ? `hedef <b>${krPara(h.hedef_fiyat)}</b>${h.onceki_hedef != null && h.onceki_hedef !== h.hedef_fiyat ? ` <span class="ozet-soluk">(önce ${krPara(h.onceki_hedef)})</span>` : ''}` : '';
+    const deg = h.degisimler.map(d => `<span class="rk-etiket ${KR_DEGISIM[d.tur][1]}">${escapeHtml(KR_DEGISIM[d.tur][0])}</span>`).join('');
+    return `<div class="rk-hisse"><div class="rk-hisse-ust"><b>${escapeHtml(h.kod)}</b>${h.ad ? ` <span class="ozet-soluk">${escapeHtml(h.ad)}</span>` : ''}${deg}</div>
+      <div class="rk-hisse-alt">${[h.tavsiye ? `<b>${escapeHtml(h.tavsiye)}</b>${h.onceki_tavsiye && h.onceki_tavsiye !== h.tavsiye ? ` <span class="ozet-soluk">(önce ${escapeHtml(h.onceki_tavsiye)})</span>` : ''}` : '', hd, h.potansiyel_yuzde != null ? `potansiyel %${fmtNumber(h.potansiyel_yuzde, 0)}` : ''].filter(Boolean).join(' · ')} <span class="ozet-soluk">· ${escapeHtml(h.kurum || '')}, ${escapeHtml(krTarihYaz(h.tarih))}${h.rapor > 1 ? ' · ' + h.rapor + ' raporda' : ''}</span></div>
+      ${h.ozet ? `<div class="rk-hisse-not">${escapeHtml(h.ozet)}</div>` : ''}</div>`;
+  }).join('') : '<div class="ozet-not" style="padding:4px 0;">Portföyündeki hisselerle ilgili bu ay görüş yok.</div>';
+  el.innerHTML = `<div class="rk-ozet">${escapeHtml(ayAd)}'de <b>${k.adet}</b> rapor · <b>${k.kurumlar.length}</b> kurum <span class="ozet-soluk">(${escapeHtml(k.kurumlar.join(', '))})</span></div>
+    <div class="rk-baslik">Portföyündeki hisseler</div>${hisseHtml}
+    ${k.piyasa.length ? `<div class="rk-baslik">Piyasa görüşü <span class="ozet-soluk">(rapor sayısı: ▲ olumlu ▼ olumsuz – nötr)</span></div><div class="rk-piyasa">${k.piyasa.map(p => `<span class="rk-cip">${escapeHtml(p.ad)} ${yon(p)}</span>`).join('')}</div>` : ''}
+    ${k.takvim.length ? `<div class="rk-baslik">Önümüzdeki takvim</div><ul class="rk-takvim">${k.takvim.map(x => `<li><b>${escapeHtml(krTarihYaz(x.tarih))}</b> ${escapeHtml(x.olay)}</li>`).join('')}</ul>` : ''}
+    <div class="ozet-not" style="margin-top:6px;white-space:normal;">Aracı kurumların görüşleridir; yatırım tavsiyesi değildir. Ayrıntı için Kurum Raporları.</div>`;
+}
+
 function raporMetni(R){
   const S = raporSaglik(R), tl = v => '₺' + fmtNumber(v, 0), yz = v => (v < 0 ? '−%' : '%') + fmtNumber(Math.abs(v), 1);
   const simdiK = buAyAnahtar(), suren = R.ayK === simdiK, onb = {}, s = [];
@@ -13531,6 +13624,7 @@ function raporMetni(R){
   // Makro
   s.push('\n## MAKRO');
   s.push(`- TÜFE (${ENFLASYON_VERI.tufe.ay}): yıllık %${fmtNumber(ENFLASYON_VERI.tufe.yillik, 2)}, aylık %${fmtNumber(ENFLASYON_VERI.tufe.aylik, 2)} · TCMB piyasa beklentisi 12 ay sonrası %${fmtNumber(ENFLASYON_VERI.pka.ay12, 2)}`);
+  s.push(raporKurumMetni(R.ayK));   // aracı kurumların bu ayki görüşleri (varsa)
   return s.join('\n');
 }
 // Bay Piyasa yorumunu aç/kapa (yalnız bu cihazda hatırlanır; varsayılan açık)
@@ -13558,6 +13652,7 @@ function raporYorumla(){
     try{ localStorage.removeItem(RAPOR_YORUM_KAPALI); }catch(e){ /* yok */ }
     _raporMesgul = true; renderRapor();
     try{
+      if(!_krVeri){ try{ await krYukle(); }catch(e){ /* kurum raporu olmadan da yazar */ } }   // ayın kurum raporu özeti de yoruma girsin
       // Rapor danışmanlık işi: Haiku seçiliyse bile en az Sonnet (rakam üzerinden akıl yürütme kalitesi için)
       const model = /haiku/i.test(bp.ayar.model) ? 'claude-sonnet-5' : bp.ayar.model;
       // Bütçe geniş: model yazmadan önce düşünür ve düşünme de max_tokens'tan harcar (3000'de rapor yarıda kesiliyordu).
@@ -13588,6 +13683,7 @@ function raporYorumla(){
       const list = raporYukle().filter(x => x.id !== ayK);
       list.push({ id: ayK, metin, model, maliyet: Math.round(maliyet * 10000) / 10000, ts: Date.now() });
       manuelListeKaydet(RAPOR_KEY, list.sort((a, b) => a.id.localeCompare(b.id)).slice(-36));
+      setTimeout(bildirimGuncelle, 0);   // "yorumu çıkar" hatırlatması kalksın
     }catch(e){
       showAlertModal('Yorum alınamadı: ' + (e.message || e));
     }finally{
@@ -13793,10 +13889,18 @@ function raporBildirimi(bugunS){
   if(!(A.toplam > 0)) return null;
   const onceki = butceAyHarcama({}, ayKaydir(ay, -1)).toplam, fark = onceki > 0 ? (A.toplam / onceki - 1) * 100 : null;
   const ayAd = AY_UZUN[+ay.slice(5, 7) - 1];
-  return { id: 'rapor|' + ay, grup: 'rapor', seviye: 'bilgi', hedef: 'rapor', raporAy: ay, ikon: 'rapor',
-    baslik: ayAdi(ay) + ' raporun hazır',
-    metin: `${ayAd} harcaman ₺${fmtNumber(A.toplam, 0)}${fark != null && isFinite(fark) ? ' · önceki aya göre ' + (fark >= 0 ? '▲' : '▼') + ' %' + fmtNumber(Math.abs(fark), 0) : ''}. Kategoriler, bütçe, nakit akışı ve Bay Piyasa'nın önerileri raporda.`,
-    zaman: 'Aylık rapor', sira: 5, ozet: { ay, toplam: A.toplam, fark } };
+  // Aşama: Bay Piyasa yorumu çıkarılmadıysa (ve Bay Piyasa kullanılabiliyorsa) "yorumu çıkar" — yorum çıkarılana kadar kalır;
+  // çıkarıldıysa "değerlendirme hazır, incele"; Bay Piyasa yoksa yalnız "rapor hazır" (açınca kalkar)
+  const yorumVar = raporYukle().some(x => x.id === ay), ai = aiKullanilabilir(), kr = raporKurumOzeti(ay);
+  const harcamaMetni = `${ayAd} harcaman ₺${fmtNumber(A.toplam, 0)}${fark != null && isFinite(fark) ? ' · önceki aya göre ' + (fark >= 0 ? '▲' : '▼') + ' %' + fmtNumber(Math.abs(fark), 0) : ''}.`;
+  const kurumMetni = kr && kr.adet ? ` ${kr.adet} kurum raporunun özeti de raporda.` : '';
+  const asama = yorumVar ? 'incele' : ai ? 'cikar' : 'hazir';
+  return { id: 'rapor|' + ay + (asama === 'incele' ? '|yorum' : ''), grup: 'rapor', seviye: 'bilgi', hedef: 'rapor', raporAy: ay, ikon: 'rapor', asama,
+    baslik: asama === 'incele' ? `Bay Piyasa'nın ${ayAdi(ay)} değerlendirmesi hazır` : asama === 'cikar' ? `${ayAdi(ay)} raporun hazır · Bay Piyasa yorumunu çıkar` : ayAdi(ay) + ' raporun hazır',
+    metin: asama === 'incele' ? `Harcama, bütçe, borç${kr && kr.adet ? ' ve kurum raporları' : ''} üzerinden yazdığı değerlendirmeyi ve gelecek ay planını incele.`
+      : asama === 'cikar' ? harcamaMetni + kurumMetni + ' Raporu aç, “✨ Bay Piyasa yorumlasın”a bas ve değerlendirmeyi incele.'
+      : harcamaMetni + kurumMetni + ' Kategoriler, bütçe ve nakit akışı raporda.',
+    zaman: 'Aylık rapor', sira: 5, ozet: { ay, toplam: A.toplam, fark, asama } };
 }
 // Piyasa Özeti'nin üstündeki şerit: rapor okunmadıysa ve kaldırılmadıysa
 function raporSeritGuncelle(){
@@ -13806,13 +13910,17 @@ function raporSeritGuncelle(){
   const d = bildirimDurum();
   if(!b || d.okundu[b.id] || d.kaldir[b.id]){ el.style.display = 'none'; return; }
   const o = b.ozet, ayAd = AY_UZUN[+o.ay.slice(5, 7) - 1];
-  el.innerHTML = `<b>📊 <span class="rs-uzun">${escapeHtml(ayAdi(o.ay))}</span><span class="rs-kisa">${escapeHtml(ayAd)}</span> raporun hazır<span class="rs-uzun">:</span></b> <span><span class="rs-uzun">harcama </span>₺${fmtNumber(o.toplam, 0)}${o.fark != null && isFinite(o.fark) ? ` <span style="color:${o.fark > 0 ? 'var(--down)' : 'var(--up)'};">${o.fark >= 0 ? '▲' : '▼'} %${fmtNumber(Math.abs(o.fark), 0)}</span><span class="ozet-soluk rs-uzun"> önceki aya göre</span>` : ''}</span>
-    <span class="rapor-serit-oku"><span class="rs-uzun">${escapeHtml(ayAd)} raporunu oku</span><span class="rs-kisa">Oku</span> ›</span>
-    <button type="button" class="rapor-serit-kapat" title="Kapat (rapor Aylık Rapor'da durur)" aria-label="Kapat" onclick="event.stopPropagation(); bildirimIsaretle('${b.id}', 'kaldir'); bildirimGuncelle();">×</button>`;
-  el.onclick = () => raporAc(o.ay);
+  const sag = o.asama === 'cikar' ? `<span class="rs-uzun">✨ Bay Piyasa yorumunu çıkar</span><span class="rs-kisa">Yorumu çıkar</span> ›` : o.asama === 'incele' ? `<span class="rs-uzun">Değerlendirmeyi incele</span><span class="rs-kisa">İncele</span> ›` : `<span class="rs-uzun">${escapeHtml(ayAd)} raporunu oku</span><span class="rs-kisa">Oku</span> ›`;
+  el.innerHTML = (o.asama === 'incele'
+    ? `<b>📊 <span class="rs-uzun">Bay Piyasa'nın ${escapeHtml(ayAdi(o.ay))} değerlendirmesi hazır</span><span class="rs-kisa">${escapeHtml(ayAd)} değerlendirmesi hazır</span></b>`
+    : `<b>📊 <span class="rs-uzun">${escapeHtml(ayAdi(o.ay))}</span><span class="rs-kisa">${escapeHtml(ayAd)}</span> raporun hazır<span class="rs-uzun">:</span></b> <span><span class="rs-uzun">harcama </span>₺${fmtNumber(o.toplam, 0)}${o.fark != null && isFinite(o.fark) ? ` <span style="color:${o.fark > 0 ? 'var(--down)' : 'var(--up)'};">${o.fark >= 0 ? '▲' : '▼'} %${fmtNumber(Math.abs(o.fark), 0)}</span><span class="ozet-soluk rs-uzun"> önceki aya göre</span>` : ''}</span>`)
+    + `<span class="rapor-serit-oku">${sag}</span>`;
+  el.innerHTML += `<button type="button" class="rapor-serit-kapat" title="Kapat (rapor Aylık Rapor'da durur)" aria-label="Kapat" onclick="event.stopPropagation(); bildirimIsaretle('${b.id}', 'kaldir'); bildirimGuncelle();">×</button>`;
+  el.onclick = () => raporAc(o.ay, o.asama);
   el.style.display = 'flex';
 }
-function raporAc(ay){ _raporAy = ay; switchTab('rapor'); }
+function raporAc(ay, asama){ _raporAy = ay; switchTab('rapor'); if(asama === 'cikar' || asama === 'incele') raporYorumaKaydir(); }
+function raporYorumaKaydir(){ setTimeout(() => { const e = document.getElementById('raporYorum'); if(e) e.closest('.bolum').scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); }
 
 var _bildirimler = [];
 const BILDIRIM_IKON = {
@@ -13886,6 +13994,7 @@ function bildirimTikla(idK){
   bildirimIsaretle(id, 'okundu'); bildirimGuncelle();
   if(b && b.raporAy) _raporAy = b.raporAy;   // aylık rapor bildirimi: o ayın raporu açılsın
   if(b && b.hedef) switchTab(b.hedef);
+  if(b && b.raporAy && (b.asama === 'cikar' || b.asama === 'incele')) raporYorumaKaydir();
 }
 // Zilde × : bildirim bu cihazda kaldırılır
 function bildirimKaldir(idK){ const id = decodeURIComponent(idK); bildirimIsaretle(id, 'kaldir'); bildirimGuncelle(); bildirimPanelCiz(); }
