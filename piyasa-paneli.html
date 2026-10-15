@@ -1906,6 +1906,12 @@
   .satir-tutar{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
   /* Yatırımlarım: satırın ortasında kâr / zarar (sabit genişlikli sütun; satırlar alt alta hizalı) */
   .kart-etiket{color:var(--p-c9a6ff);font-weight:600;}
+  .alacak-tarih-etiket{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+  .alacak-geldi-acik{flex-wrap:wrap;} .alacak-geldi-acik .satir-duzen input{width:140px;} .alacak-geldi-acik .satir-duzen select{width:auto;max-width:220px;}
+  @media (max-width:640px){ .alacak-geldi-acik .satir-duzen{flex:1 1 100%;flex-wrap:wrap;} .alacak-geldi-acik .satir-duzen select{flex:1 1 100%;max-width:none;} }
+  .alacak-yonlendir{padding:6px 2px 2px;white-space:normal;} .alacak-yonlendir a{color:var(--up);font-weight:600;}
+  .odeme-satir.gelen .satir-ad{color:var(--up);}
+  .tk-tutar.tk-gelen{color:var(--up);}
   .ay-ozel{color:var(--amber);font-weight:600;}
   @media (max-width:900px){ .aks-btn.yazili{width:auto;padding:0 8px;} .aks-btn.yazili span{display:inline;} }   /* önemli işlem: telefonda da yazılı (ör. Erken öde) */
   .geri-al-btn{flex:0 0 auto;background:none;border:none;color:var(--muted-2);font-family:inherit;font-size:11px;text-decoration:underline;cursor:pointer;padding:2px 4px;}
@@ -3423,6 +3429,24 @@
       <div id="varlikListContainer"></div>
     </div>
 
+    <div class="bolum cerceve-varlik" id="alacakBolum">
+      <div class="bolum-bas aciklamali">
+        <span class="bolum-baslik">Alacaklarım</span>
+        <span class="ozet-soluk baslik-aciklama" id="alacakBolumAlt" style="font-size:12px;">sana borçlu olanlar</span>
+        <span class="bolum-toplam" id="alacakToplam" style="color:var(--up);" title="Gelecek alacakların toplamı"></span>
+        <button class="bolum-ekle" onclick="bolumFormAc('alacakForm')">+ Ekle</button>
+      </div>
+      <div class="bolum-form" id="alacakForm">
+        <div class="loan-add-row">
+          <input type="text" id="alacakAdInput" class="ai-input" style="max-width:220px;min-width:150px;" maxlength="60" placeholder="Kimden (ör. Ahmet)" onkeydown="if(event.key==='Enter')addAlacak()">
+          <input type="number" step="0.01" min="0" id="alacakTutarInput" class="ai-input" style="max-width:150px;min-width:120px;" placeholder="Tutar (₺)" onkeydown="if(event.key==='Enter')addAlacak()">
+          <label class="alacak-tarih-etiket">Ne zaman gelecek <input type="date" id="alacakTarihInput" class="ai-input" style="max-width:170px;min-width:140px;" title="Paranın gelmesini beklediğin gün (biliyorsan)"></label>
+          <button class="ai-btn" onclick="addAlacak()">Alacak Ekle</button>
+        </div>
+      </div>
+      <div id="alacakListe"></div>
+    </div>
+
     <div class="footnote"><b>Not:</b> Nakit / Mevduat türünde varlığı ₺, $, € ya da gram altın olarak tutabilirsin: miktarı girersin, TL karşılığı güncel kur ya da gram 24 ayar altın fiyatıyla (ons ÷ 31,1035 × kur) canlı hesaplanır (LED yeşil: güncel fiyat, kırmızı: son bilinen). Konut, otomobil, arsa, dükkan gibi varlıklar için canlı fiyat çekilmez; girdiğin güncel değer esas alınır, satırdaki <b>Güncelle</b> ile güncellersin. Net varlık = varlıklar + yatırımlar − toplam borç. Satırdaki LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: GÜNCEL FİNANSAL DURUMUM ================= -->
@@ -3748,6 +3772,7 @@
         </div>
       </div>
       <div id="nakitKartlarContainer"></div>
+      <div class="ozet-not alacak-yonlendir">Sana borcu olan biri mi var? <a href="#" onclick="event.preventDefault(); alacakBolumeGit();">Finansal Durumum › Alacaklarım</a>'a ekle; net servetine ve Ödeme Takvimi'ne gelen para olarak girer.</div>
     </div>
 
     <div class="footnote"><b>Not:</b> Kredi borcu canlı hesaplanır: kalan anapara × (aylık faiz ÷ 30) × geçen gün + KKDF + BSMV; ilk taksidi gelmemiş kredilerde kullandırılan anapara esas alınır. Kredi kartı tutarı otomatik hesaplanmaz, ekstredeki güncel borcu satırdaki <b>Güncelle</b> ile güncellersin. KMH'de aylık faiz girilirse borç her gün kendiliğinden artar: günlük artış = anapara × (aylık faiz ÷ 30) × (1 + %15 KKDF + %15 BSMV); ekstre kesiminde faiz anaparaya eklenince <b>Faiz</b> düğmesiyle anapara ve borcu güncellersin. USD/EUR elden borçların TL karşılığı güncel kurdan hesaplanır. Bir borcu kapattığında yeşil <b>Kapattım</b> düğmesiyle listeden kaldırırsın. LED: yeşil bugün güncellendi, kırmızı daha önce. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
@@ -4081,7 +4106,7 @@
         </div>
         <div class="odeme-takvim" id="odemeTakvim"></div>
         <div id="odemeGunDetay"></div>
-        <div class="nakit-lejant" style="margin-top:6px;"><span><i style="background:var(--p-c9a6ff);border-radius:50%;"></i>Kredi</span><span><i style="background:var(--p-ff8a8a);border-radius:50%;"></i>Kart</span><span><i style="background:var(--amber);border-radius:50%;"></i>Fatura</span><span><i style="background:var(--p-5eead4);border-radius:50%;"></i>Kira</span><span><i style="background:var(--p-6ec3ff);border-radius:50%;"></i>Abonelik</span></div>
+        <div class="nakit-lejant" style="margin-top:6px;"><span><i style="background:var(--up);border-radius:50%;"></i>Gelen para</span><span><i style="background:var(--p-c9a6ff);border-radius:50%;"></i>Kredi</span><span><i style="background:var(--p-ff8a8a);border-radius:50%;"></i>Kart</span><span><i style="background:var(--amber);border-radius:50%;"></i>Fatura</span><span><i style="background:var(--p-5eead4);border-radius:50%;"></i>Kira</span><span><i style="background:var(--p-6ec3ff);border-radius:50%;"></i>Abonelik</span></div>
       </div>
     </div>
 
@@ -4153,6 +4178,8 @@
     <details class="kv-bolum" id="kv-finansal"><summary>💼 Finansal Durumum <span>net servetin</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Sahip olduklarını ve borçlarını tek yerde toplar: <b>Net varlık = varlıklar + yatırımlar − borçlar</b>.</p>
       <p><b>Nasıl kullanılır:</b> Varlıklarım bölümünde <b>+ Ekle</b>'ye bas, türü seç (Konut, Arsa, Otomobil, Dükkan, Nakit / Mevduat, Diğer), adını ve bugünkü değerini yaz. Değer değişince satırdaki <b>Güncelle</b> ile güncelle.</p>
+      <p><b>Alacaklarım:</b> Sana borcu olan biri varsa (ör. elden borç verdin, 20'sinde geri gelecek) <b>Alacaklarım</b>'da <b>+ Ekle</b> → kimden, tutar ve ne zaman geleceği (biliyorsan). Alacak <b>net servetine</b> varlık olarak sayılır; <b>Ödeme Takvimi</b>'nde o gün yeşil “gelen para” olarak görünür (ödeme toplamlarına karışmaz); <b>Nakit Akışı</b>'nda o ayın gelirine girer; zil bir gün önce ve o gün hatırlatır, günü geçip gelmezse “gecikti” der. Para gelince <b>Geldi</b>'ye bas: gelen tutarı yaz (kısmen geldiyse kalan alacak olarak durur), istersen bir nakit / mevduat hesabına eklensin; gelen tutar o ayın tek seferlik geliri olur. Tarihi ya da kalanı <b>Güncelle</b> ile değiştirirsin.</p>
+      <p><b>Örnek:</b> Ahmet · ₺20.000 · 20 Ekim → takvimde 20 Ekim'de “Ahmet (alacak) +₺20.000”, 19 Ekim'de zilde “Yarın gelecek para: Ahmet”. ₺5.000 gelince Geldi → 5.000, “Hesaba ekle: Ziraat hesabı” → kalan ₺15.000, hesabın ₺5.000 artar, net servetin değişmez.</p>
       <p><b>Örnek:</b> “Ev · Konut · ₺4.500.000”. Satırdaki ışık yeşilse değeri bugün güncellemişsin; kırmızıysa daha önce.</p>
       <p><b>Dövizde ya da altında duran para:</b> Türü <b>Nakit / Mevduat</b> seçince yanında birim seçici çıkar: ₺ TL, $ Dolar, € Euro ya da Gram altın. Bu durumda tutar değil <b>miktar</b> girersin (ör. $7.000 ya da 50 gram). TL karşılığı güncel kurla kendiliğinden hesaplanır: $7.000 × ₺50 = ₺350.000.</p>
       <p class="kv-ipucu">💡 Konut, arsa gibi varlıkların fiyatı internetten çekilmez; yılda bir-iki kez gerçekçi bir değerle güncellemen yeterli. Birikim Hedefleri'nde bir acil durum fonu tanımladıysan, üstteki Toplam Varlık kutusunda “Acil fon ₺… · n ay” satırı da görünür.</p>
@@ -4422,6 +4449,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
+    <details class="kv-bolum kv-sss"><summary>Birine borç verdim, geri ödeyecek; nasıl eklerim?</summary><div class="kv-ic"><p>Finansal Durumum'da <b>Alacaklarım</b> → <b>+ Ekle</b>: kimden, tutar ve ne zaman geleceği. Net servetine sayılır, Ödeme Takvimi'nde o gün yeşil “gelen para” olarak görünür, Nakit Akışı'nda o ayın gelirine girer ve bir gün önce hatırlatılır. Para gelince <b>Geldi</b> de (kısmen geldiyse kalan durur); istersen tutar nakit / mevduat hesabına eklenir. Sana borç veren biri varsa o da Borçlarım › Elden Nakit Borçlar'a girer.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Aylık raporumun hazır olduğunu nasıl anlarım?</summary><div class="kv-ic"><p>Her ay bittiğinde geçen ayın raporu hazır olur ve sana iki yerden haber verilir: sağ üstteki zilde “Raporlar” altında ve Piyasa Özeti'nin üstünde mavi bir şeritte. Bay Piyasa yorumunu henüz çıkarmadıysan hatırlatma “Bay Piyasa yorumunu çıkar” der ve yorumu çıkarana kadar kalır; dokununca rapor yorum bölümünde açılır. Raporda Kurum Raporları'ndan ayın özeti de vardır (portföyündeki hisselerde tavsiye / hedef değişiklikleri, piyasa görüşü, takvim). Bildirim, o ay için harcama girdiysen çıkar.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kredi taksitimi ya da kart borcumu erken ödedim, nasıl işaretlerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde, yaklaşan ödemelerde o taksitin ya da kartın satırındaki <b>Erken öde</b>'ye bas (son günündeysen düğme <b>Ödedim</b> olur). Kredide taksit ödenmiş sayılır ve Kredilerim'deki kalan borç hemen düşer; kartta ödediğin tutarı yazarsın, kart borcundan düşülür. Satırda “✓ ödendi · erken” yazar, o ödeme için hatırlatma ve bildirim gelmez. Yanlışlıkla bastıysan aynı satırdaki <b>Geri al</b> ile eski hâline döner.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Elektrik / doğalgaz faturam her ay farklı; tutarı ve tarihi nasıl girerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde faturayı bir kez düzenli ödeme olarak ekle (yaklaşık tutar ve genelde son ödeme günü). Her ay fatura gelince satırdaki <b>Güncelle</b>'ye bas, o ayın <b>tutarını</b> ve <b>son ödeme gününü</b> yaz, kapsamı <b>“yalnız &lt;ay&gt;”</b> bırak ve Kaydet. Yalnız o ay değişir: takvim, Harcama Takibim ve (kartla ödeniyorsa) kart borcu o ayın tutarıyla güncellenir; sonraki aylar düzenli değerle devam eder.</p></div></details>
@@ -5124,7 +5152,7 @@ const SENKRON_ANAHTARLARI = new Set([
   'ft_kredi_kartlari_v1', 'ft_kmh_v1', 'ft_elden_nakit_v1', 'ft_sabit_krediler_v1',
   'ft_bay_piyasa_v1', 'ft_haber_ceviri_v1', 'ft_harcamalar_v1',
   'ft_butce_v1', 'ft_gelirler_v1', 'ft_odemeler_v1', 'ft_borc_plan_v1', 'ft_hedefler_v1', 'ft_net_gecmis_v1', 'ft_raporlar_v1',
-  'ft_kartlar_v1',
+  'ft_kartlar_v1', 'ft_alacaklar_v1',
 ]);
 
 const _depoSetItem = Storage.prototype.setItem;
@@ -7602,7 +7630,7 @@ function istPuanlariHesapla(){
 
   // 3) Borç karşılama: yatırımlar ÷ toplam borç
   const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
-  const varlik = manuelListeYukle(VARLIK_KEY).reduce((t, v) => t + varlikDegerTL(v), 0);
+  const varlik = manuelListeYukle(VARLIK_KEY).reduce((t, v) => t + varlikDegerTL(v), 0) + alacakToplamTL();
   if(gruplar.length){
     sonuc.borc = {
       borc, yatirim: tumTl, varlik,
@@ -7992,6 +8020,8 @@ function bpSnapshotOlustur(paylas, haber){
     s.push('Varlıklar (toplam ₺' + fmtNumber(vToplam, 0) + '):');
     if(!vList.length) s.push('- (varlık girilmemiş)');
     vList.forEach(v => s.push('- ' + v.tur + ' | ' + v.ad + ' | ₺' + fmtNumber(varlikDegerTL(v), 0) + (v.birim && v.birim !== 'TL' ? ' (' + varlikMiktarStr(v) + ')' : '')));
+    const aList = alacakYukle();
+    if(aList.length){ s.push('Alacaklar (kullanıcıya borçlu olanlar, toplam ₺' + fmtNumber(alacakToplamTL(), 0) + '):'); aList.forEach(a => s.push('- ' + a.ad + ' | ₺' + fmtNumber(a.tutar, 0) + ' | ' + (a.tarih ? (a.tarih < bugunISO() ? 'gecikti, ' + a.tarih + ' gelecekti' : a.tarih + ' gelecek') : 'tarih belli değil'))); }
 
     // Borçlar
     s.push('Borçlar:');
@@ -8829,13 +8859,14 @@ function satirHtml(o){
           const ekD = (_duzen.ek || {})[e.id], v = duzenAcik && ekD != null ? ekD : (e.deger != null ? String(e.deger) : '');
           const ortak = `id="${e.id}" title="${escapeHtml(e.ph)}" class="duzen-${e.tip || 'sayi'}" onkeydown="if(event.key==='Enter') this.parentElement.querySelector('.loan-btn-save').click(); if(event.key==='Escape') satirDuzenIptal(this);"`;
           if(e.tip === 'secim') return `<select ${ortak} onchange="(_duzen.ek = _duzen.ek || {})['${e.id}'] = this.value">${e.secenekler.map(([d, et]) => `<option value="${escapeHtml(d)}"${d === v ? ' selected' : ''}>${escapeHtml(et)}</option>`).join('')}</select>`;
-          return `<input type="${e.tip === 'metin' ? 'text' : 'number'}"${e.tip === 'metin' ? ' maxlength="80" autocomplete="off"' : ' step="any" min="0"'} ${ortak} placeholder="${escapeHtml(e.ph)}" value="${escapeHtml(v)}"
+          return `<input type="${e.tip === 'metin' ? 'text' : e.tip === 'tarih' ? 'date' : 'number'}"${e.tip === 'metin' ? ' maxlength="80" autocomplete="off"' : e.tip === 'tarih' ? '' : ' step="any" min="0"'} ${ortak} placeholder="${escapeHtml(e.ph)}" value="${escapeHtml(v)}"
           oninput="(_duzen.ek = _duzen.ek || {})['${e.id}'] = this.value">`;
         }).join('')}
         <button class="loan-btn-save" onclick="_duzen.id = null; ${o.duzen.kaydet}">Kaydet</button>
         <button class="ikon-btn" title="Vazgeç" onclick="satirDuzenIptal(this)">✕</button>
       </div>` : ''}
       <div class="satir-aksiyon">
+        ${o.aksiyonOn || ''}
         ${o.ekstra ? aksBtn('ayar', o.ekstra.etiket || 'Faiz', o.ekstra.baslik, o.ekstra.onclick) : ''}
         ${o.duzen ? aksBtn('duzen', 'Güncelle', 'Güncelle', `satirDuzenle(this, '${o.duzen.id}')`) : ''}
         ${o.sil ? (o.sil.ikon === '✓' ? aksBtn('onay', o.sil.etiket || 'Kapattım', o.sil.baslik, o.sil.onclick) : aksBtn('sil', o.sil.etiket || 'Sil', o.sil.baslik, o.sil.onclick)) : ''}
@@ -9913,6 +9944,7 @@ function renderVarlik(){
   document.getElementById('varlikBolumAlt').textContent = list.length ? list.length + ' kalem · servetin %' + fmtNumber(servet > 0 ? toplam / servet * 100 : 0, 1) : '';
 
   renderFinansalOzet(toplam, list);
+  renderAlacak();
 }
 
 const VARLIK_KATEGORI_RENK = {
@@ -9923,6 +9955,7 @@ const VARLIK_KATEGORI_RENK = {
   Diğer: 'var(--p-5eead4)',
   'Yatırımlar': 'var(--p-ff8a65)',
   'Nakit / Mevduat': 'var(--p-e879f9)',
+  Alacaklar: 'var(--p-a3e635)',
 };
 
 // Halka (donut) grafik — SVG. Dilimler arasında her yerde aynı kalınlıkta aralık (kart zemini rengi, 2 px).
@@ -9960,6 +9993,8 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
   if(!varlikEl || !borcEl || !netEl) return; // bu sekme henüz DOM'da değilse sessizce çık
 
   const toplamYatirim = _toplamYatirimTL || 0;
+  const alacakTL = alacakToplamTL();   // alacaklar varlık sayılır
+  toplamVarlikListesi += alacakTL;
   const toplamBorc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
   const netDeger = toplamVarlikListesi + toplamYatirim - toplamBorc;
 
@@ -10004,6 +10039,7 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
     kategoriToplam[item.tur] = (kategoriToplam[item.tur] || 0) + varlikDegerTL(item);
   });
   if(toplamYatirim > 0) kategoriToplam['Yatırımlar'] = toplamYatirim;
+  if(alacakTL > 0) kategoriToplam['Alacaklar'] = alacakTL;
   const kategoriler = Object.keys(kategoriToplam).filter(k => kategoriToplam[k] > 0);
   const pastaToplam = toplamVarlikListesi + toplamYatirim;
 
@@ -10019,6 +10055,102 @@ function renderFinansalOzet(toplamVarlikListesi, varlikListesi){
     const yuzde = kategoriToplam[kat] / pastaToplam * 100;
     return `<span class="pl-oge" title="${escapeHtml(kat)} · ₺${fmtNumber(kategoriToplam[kat], 0)}"><i style="background:${VARLIK_KATEGORI_RENK[kat] || '#888'};"></i><span class="pl-ad">${escapeHtml(kat === 'Nakit / Mevduat' ? 'Nakit' : kat)}</span><b>%${fmtNumber(yuzde,1)}</b></span>`;
   }).join('');
+}
+
+// ---------- Alacaklarım: sana borçlu olanlar (elden verdiğin borç, gelecek para) ----------
+// ft_alacaklar_v1: [{ id, ad (kimden), tutar (kalan ₺), ilk (ilk tutar), tarih:'YYYY-MM-DD'|null (beklenen gün), eklendi }]
+// Net servete varlık olarak girer; Ödeme Takvimi'nde gelen para (toplamlara karışmaz); Nakit Akışı'nda beklendiği ayın geliri
+// (tarihi geçip gelmediyse bu ayın); bildirim bir gün önce, o gün ve gecikince. "Geldi" → kalan düşer, o ayın tek seferlik geliri olur, istersen nakit varlığına eklenir.
+const ALACAK_KEY = 'ft_alacaklar_v1';
+let _alacakGeldi = null;   // "Geldi" kutusu açık olan alacak
+function alacakYukle(){ return manuelListeYukle(ALACAK_KEY).filter(x => x && Number(x.tutar) > 0); }
+function alacakToplamTL(){ return alacakYukle().reduce((t, x) => t + (Number(x.tutar) || 0), 0); }
+function alacakAyi(a){ const b = buAyAnahtar(), m = String(a.tarih || '').slice(0, 7); return !m ? null : m > b ? m : b; }   // gecikmiş → bu ay
+function alacakAyToplam(ay){ return alacakYukle().filter(a => alacakAyi(a) === ay).reduce((t, a) => t + (Number(a.tutar) || 0), 0); }
+// Takvim için [bas, bit] arasındaki beklenen alacaklar; tarihi geçmiş (gelmemiş) olanlar bugünde gösterilir
+function alacakOlaylari(bas, bit){
+  const basS = isoGun(bas), bitS = isoGun(bit), bugunS = bugunISO();
+  return alacakYukle().filter(a => a.tarih).map(a => { const gec = a.tarih < bugunS; return { tarih: gec ? bugunS : a.tarih, beklenen: a.tarih, gecikti: gec, ad: a.ad + ' (alacak)', kim: a.ad, tutar: Number(a.tutar) || 0, id: a.id, tur: 'alacak' }; })
+    .filter(x => x.tarih >= basS && x.tarih <= bitS).sort((a, b) => a.tarih.localeCompare(b.tarih));
+}
+function alacakTarihYaz(t){ const d = new Date(t + 'T00:00:00'); return d.getDate() + ' ' + AY_UZUN[d.getMonth()] + (d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : ''); }
+function addAlacak(){
+  const ad = document.getElementById('alacakAdInput').value.trim(), tutar = parseFloat(String(document.getElementById('alacakTutarInput').value).replace(',', '.')), tarih = document.getElementById('alacakTarihInput').value;
+  if(!ad){ showAlertModal('Kimden alacaklı olduğunu yaz (ör. Ahmet).'); return; }
+  if(!(tutar > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
+  const list = manuelListeYukle(ALACAK_KEY);
+  list.push({ id: 'al-' + Date.now(), ad, tutar, ilk: tutar, tarih: /^\d{4}-\d\d-\d\d$/.test(tarih) ? tarih : null, eklendi: new Date().toISOString() });
+  manuelListeKaydet(ALACAK_KEY, list);
+  ['alacakAdInput', 'alacakTutarInput', 'alacakTarihInput'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('alacakForm').classList.remove('acik');
+  alacakDegisti();
+}
+function alacakDegisti(){
+  renderAlacak(); if(typeof renderVarlik === 'function') renderVarlik(); bildirimGuncelle();
+  const od = document.getElementById('tab-odeme'); if(od && od.classList.contains('active')) renderOdeme();
+  const na = document.getElementById('tab-nakitakis'); if(na && na.classList.contains('active')) renderNakitAkis();
+}
+function alacakGuncelle(id){
+  const tIn = document.getElementById('alacak-edit-' + id), dIn = document.getElementById('alacak-tarih-' + id);
+  const tStr = tIn ? String(tIn.value).trim() : '', t = tStr ? parseFloat(tStr.replace(',', '.')) : null;
+  if(tStr && !(t > 0)){ showAlertModal('Kalan tutar pozitif olmalı (tamamı geldiyse “Geldi”, vazgeçtiysen “Sil”).'); return; }
+  const list = manuelListeYukle(ALACAK_KEY), a = list.find(x => x.id === id); if(!a) return;
+  if(t != null){ a.tutar = t; if(!(a.ilk >= t)) a.ilk = t; }
+  if(dIn) a.tarih = /^\d{4}-\d\d-\d\d$/.test(dIn.value) ? dIn.value : null;
+  manuelListeKaydet(ALACAK_KEY, list);
+  alacakDegisti();
+}
+function alacakSil(id){
+  showConfirmModal('Bu alacağı silmek istediğine emin misin? (Para geldiyse “Geldi”yi kullan; o ayın gelirine yazılır.)', () => {
+    manuelListeKaydet(ALACAK_KEY, manuelListeYukle(ALACAK_KEY).filter(x => x.id !== id)); alacakDegisti();
+  });
+}
+function alacakGeldiAc(id){ _alacakGeldi = id; renderAlacak(); const i = document.getElementById('alacakGeldiTutar'); if(i){ i.focus(); i.select(); } }
+// Ödeme Takvimi'nden "Geldi": Finansal Durumum'daki alacağa götürür ve kutuyu açar
+function alacakBolumeGit(id){
+  switchTab('finansal');
+  if(id) alacakGeldiAc(id);
+  setTimeout(() => { const b = document.getElementById('alacakBolum'); if(b) b.scrollIntoView({ block: 'start', behavior: 'smooth' }); const i = document.getElementById('alacakGeldiTutar'); if(i) i.focus({ preventScroll: true }); }, 60);
+}
+function alacakGeldiKaydet(id){
+  const t = parseFloat(String((document.getElementById('alacakGeldiTutar') || {}).value || '').replace(',', '.'));
+  const nereye = (document.getElementById('alacakGeldiNereye') || {}).value || '';
+  const list = manuelListeYukle(ALACAK_KEY), a = list.find(x => x.id === id); if(!a) return;
+  if(!(t > 0)){ showAlertModal('Gelen tutarı yaz.'); return; }
+  if(t > Number(a.tutar) + 0.009){ showAlertModal('Gelen tutar kalan alacaktan (₺' + fmtNumber(a.tutar, 2) + ') büyük olamaz.'); return; }
+  a.tutar = Math.round((Number(a.tutar) - t) * 100) / 100;
+  manuelListeKaydet(ALACAK_KEY, a.tutar > 0.009 ? list : list.filter(x => x.id !== id));
+  // Bu ayın nakit akışına tek seferlik gelir olarak
+  const gl = gelirYukle(); gl.push({ id: 'g-' + Date.now(), tur: 'tek', ad: a.ad + ' (alacak)', tutar: t, ay: buAyAnahtar(), kaynak: 'alacak' }); manuelListeKaydet(GELIR_KEY, gl);
+  // İstenirse nakit / mevduat varlığına eklenir (net servet değişmez: alacak nakde döner)
+  if(nereye){ const vl = manuelListeYukle(VARLIK_KEY), v = vl.find(x => x.id === nereye); if(v){ v.deger = Math.round(((Number(v.deger) || 0) + t) * 100) / 100; v.tarih = new Date().toISOString(); manuelListeKaydet(VARLIK_KEY, vl); } }
+  _alacakGeldi = null;
+  alacakDegisti();
+}
+function renderAlacak(){
+  const el = document.getElementById('alacakListe'); if(!el) return;
+  const list = alacakYukle().sort((a, b) => (a.tarih || '9999').localeCompare(b.tarih || '9999')), bugunS = bugunISO();
+  const toplam = list.reduce((t, a) => t + Number(a.tutar), 0);
+  istYaz('alacakToplam', list.length ? '₺' + fmtNumber(toplam, 0) : '');
+  const yakin = list.find(a => a.tarih && a.tarih >= bugunS), gec = list.filter(a => a.tarih && a.tarih < bugunS).length;
+  istYaz('alacakBolumAlt', !list.length ? 'sana borçlu olanlar' : list.length + ' kişi' + (gec ? ' · ' + gec + ' gecikmiş' : yakin ? ' · sıradaki ' + alacakTarihYaz(yakin.tarih) : ''));
+  const nakitler = manuelListeYukle(VARLIK_KEY).filter(v => v.tur === 'Nakit / Mevduat' && (!v.birim || v.birim === 'TL'));
+  el.innerHTML = list.length ? list.map(a => {
+    if(_alacakGeldi === a.id) return `<div class="satir alacak-geldi-acik">
+        <div class="satir-ana"><div class="satir-ad">${escapeHtml(a.ad)}</div><div class="satir-alt">Gelen tutarı yaz; kısmen geldiyse kalan alacak olarak durur</div></div>
+        <div class="satir-duzen" style="display:flex;">
+          <input type="number" step="0.01" min="0" id="alacakGeldiTutar" value="${Number(a.tutar)}" title="Gelen tutar" placeholder="gelen tutar (₺)" onkeydown="if(event.key==='Enter') alacakGeldiKaydet('${a.id}'); if(event.key==='Escape'){ _alacakGeldi = null; renderAlacak(); }">
+          <select id="alacakGeldiNereye" title="Para nereye girdi? Seçersen o nakit / mevduat varlığına eklenir">${nakitler.map((v, i) => `<option value="${escapeHtml(v.id)}"${i === 0 ? ' selected' : ''}>Hesaba ekle: ${escapeHtml(v.ad)}</option>`).join('')}<option value="">Hiçbir hesaba ekleme</option></select>
+          <button class="loan-btn-save" onclick="alacakGeldiKaydet('${a.id}')">Kaydet</button><button class="ikon-btn" title="Vazgeç" onclick="_alacakGeldi = null; renderAlacak();">✕</button>
+        </div></div>`;
+    const gecikti = a.tarih && a.tarih < bugunS, n = a.tarih ? gunFarkiS(bugunS, a.tarih) : null;
+    const alt = (a.tarih ? (gecikti ? `<span style="color:var(--amber);font-weight:600;">gecikti · ${-n} gün (${escapeHtml(alacakTarihYaz(a.tarih))})</span>` : `${escapeHtml(alacakTarihYaz(a.tarih))}'de gelecek · ${goreceliGun(a.tarih)}`) : 'tarih belli değil')
+      + (Number(a.ilk) > Number(a.tutar) + 0.009 ? ` · ₺${fmtNumber(a.ilk - a.tutar, 0)}'si geldi` : '');
+    return satirHtml({ led: gecikti ? 'red' : 'green', ad: a.ad, alt, tutar: '₺' + fmtNumber(a.tutar, 0), renk: 'var(--up)',
+      aksiyonOn: aksBtn('onay', 'Geldi', 'Para geldi — kalan düşer, bu ayın gelirine yazılır', `alacakGeldiAc('${a.id}')`),
+      duzen: { id: 'alacak-edit-' + a.id, ph: 'kalan: ₺' + fmtNumber(a.tutar, 0), kaydet: `alacakGuncelle('${a.id}')`, ekler: [{ id: 'alacak-tarih-' + a.id, tip: 'tarih', ph: 'Ne zaman gelecek', deger: a.tarih || '' }] },
+      sil: { onclick: `alacakSil('${a.id}')`, baslik: 'Sil', ikon: '✕' } });
+  }).join('') : '<div class="bos-not">Sana borcu olan biri var mı? Kimden, ne kadar ve ne zaman geleceğini ekle (ör. Ahmet · ₺20.000 · 20 Ekim): net servetine sayılır, Ödeme Takvimi\'nde gelen para olarak görünür, gününde hatırlatılır.</div>';
 }
 
 // ---------- Elden Nakit Borçlar ----------
@@ -11434,7 +11566,8 @@ function ayGeliri(anahtar, liste){
     if(g.tur === 'duzenli' && g.baslangic <= anahtar && (!g.bitis || g.bitis >= anahtar)) duzenli += t;
     else if(g.tur === 'tek' && g.ay === anahtar) tek += t;
   });
-  return { duzenli, tek, toplam: duzenli + tek };
+  const alacak = alacakAyToplam(anahtar);   // beklenen alacaklar (gecikmişler bu ay); "Geldi" denince tek seferlik gelire dönüşür
+  return { duzenli, tek: tek + alacak, alacak, toplam: duzenli + tek + alacak };
 }
 // ---------- Enflasyon ve satın alma gücü: Nakit Akışı tahminleri ----------
 // Resmi veri ve beklentiler (30.09.2026'da derlendi; yeni veri açıklandıkça güncellenmeli):
@@ -11605,7 +11738,8 @@ function renderNakitAkis(){
     const aktif = g => g.tur === 'duzenli' ? (!g.bitis || g.bitis >= simdiK) : true;
     const sira = gelirler.slice().sort((a, b) => (aktif(b) - aktif(a)) || ((a.tur === 'duzenli' ? 0 : 1) - (b.tur === 'duzenli' ? 0 : 1)) || String(b.ay || b.baslangic).localeCompare(String(a.ay || a.baslangic)));
     istYaz('gelirBolumToplam', ayGeliri(simdiK, gelirler).toplam ? '₺' + fmtNumber(ayGeliri(simdiK, gelirler).toplam, 0) + '/bu ay' : '');
-    liste.innerHTML = sira.length ? sira.map(g => {
+    const alacakSatir = alacakYukle().filter(a => a.tarih && alacakAyi(a) >= simdiK).map(a => satirHtml({ led: 'green', ad: a.ad + ' (alacak)', alt: 'Beklenen · ' + escapeHtml(alacakTarihYaz(a.tarih)) + (a.tarih < bugunISO() ? ' · gecikti, bu aya sayılıyor' : '') + ' · <a href="#" onclick="event.preventDefault(); alacakBolumeGit();">Alacaklarım\'dan yönet</a>', tutar: '₺' + fmtNumber(a.tutar, 0), renk: 'var(--up)' })).join('');
+    liste.innerHTML = alacakSatir + (sira.length || alacakSatir ? '' : '') + (sira.length ? sira.map(g => {
       const bitti = g.tur === 'duzenli' && g.bitis && g.bitis < simdiK;
       const alt = g.tur === 'duzenli'
         ? 'Her ay · ' + ayAdi(g.baslangic) + (g.bitis ? ' – ' + ayAdi(g.bitis) : '’dan beri')
@@ -11618,7 +11752,7 @@ function renderNakitAkis(){
         sil: { onclick: `gelirSil('${g.id}')`, baslik: 'Sil', ikon: '✕' },
       });
     }).join('') : `<div class="butce-bos">Henüz gelir girmedin. Maaşını (ve varsa kira gibi düzenli gelirlerini) bir kez “Her ay” olarak eklemen yeter; her ay kendiliğinden sayılır. Prim, ikramiye gibi gelirleri “Tek seferlik” olarak ekle.
-        <br><button class="ai-btn" style="margin-top:10px;" onclick="bolumFormAc('gelirForm')">+ Gelir ekle</button></div>`;
+        <br><button class="ai-btn" style="margin-top:10px;" onclick="bolumFormAc('gelirForm')">+ Gelir ekle</button></div>`);
   }
   // Form: ay seçenekleri (son 24 ay … gelecek 12 ay), varsayılan bu ay
   const ayInput = document.getElementById('gelirAyInput');
@@ -12154,7 +12288,8 @@ function renderOdeme(){
   istYaz('odemeKalan', '₺' + fmtNumber(top(kalanOlay), 0));
   istYaz('odemeKalanAlt', !secAyOlay.length ? 'bu ay ödeme yok' : !kalanOlay.length ? 'hepsi ödendi ✓' : kalanOlay.length + ' ödeme kaldı' + (kartBelirsiz ? ' (' + kartBelirsiz + ' kart ekstreye göre)' : ''));
   const sira = kalanOlay[0];
-  ozetDetayYaz('odemeKalanDetay', [odendi.length ? ['Ödendi ✓', '₺' + fmtNumber(top(odendi), 0) + ' · ' + odendi.length + ' ödeme'] : null,
+  const gelenSec = alacakOlaylari(new Date(sY, sA, 1), new Date(sY, sA + 1, 0)), gelenTop = gelenSec.reduce((t, x) => t + x.tutar, 0);
+  ozetDetayYaz('odemeKalanDetay', [gelenTop ? ['Gelecek', `<span style="color:var(--up);">+₺${fmtNumber(gelenTop, 0)}</span>`] : null, odendi.length ? ['Ödendi ✓', '₺' + fmtNumber(top(odendi), 0) + ' · ' + odendi.length + ' ödeme'] : null,
     sira ? ['Sıradaki', escapeHtml(sira.ad.replace(/ (kartı|kredisi)$/, '')) + ' · ' + goreceliGun(sira.tarih)] : null]);
   const kalanKart = document.getElementById('odemeKalanKart');
   if(kalanKart) kalanKart.className = 'ozet-kart ' + (!kalanOlay.length ? 'yesil' : gunFarkiS(bugunS, sira.tarih) <= 2 ? 'kirmizi' : 'sari');
@@ -12179,9 +12314,18 @@ function renderOdeme(){
   if(yak){
     const yY = +_odemeAy.slice(0, 4), yA = +_odemeAy.slice(5, 7) - 1;
     const listeOlay = odemeOlaylari(new Date(yY, yA, 1), new Date(yY, yA + 1, 0));
+    const gelenL = alacakOlaylari(new Date(yY, yA, 1), new Date(yY, yA + 1, 0));   // gelen para: ayrı, yeşil, toplamlara girmez
     const kalanL = listeOlay.filter(x => !olayOdendi(x, bugunS));
     istYaz('odemeYaklasanToplam', kalanL.length ? '₺' + fmtNumber(top(kalanL), 0) : (listeOlay.length ? 'ödendi ✓' : ''));
-    yak.innerHTML = listeOlay.length ? listeOlay.map(x => {
+    const gelenHtml = x => { const d = new Date(x.tarih + 'T00:00:00'); return `<div class="satir odeme-satir gelen">
+        <div class="odeme-tarih"><b>${d.getDate()}</b><span>${AY_KISA[d.getMonth()]} · ${GUN_KISA[d.getDay()]}</span></div>
+        <span class="odeme-nokta led" style="--c:var(--up);background:var(--c);"></span>
+        <div class="satir-ana"><div class="satir-ad">${escapeHtml(x.ad)}</div><div class="satir-alt"><span style="color:${x.gecikti ? 'var(--amber)' : 'var(--up)'};font-weight:600;">${x.gecikti ? 'gecikti · ' + escapeHtml(alacakTarihYaz(x.beklenen)) + ' gelecekti' : 'gelecek para · ' + goreceliGun(x.tarih)}</span></div></div>
+        <div class="satir-tutar" style="color:var(--up);">+₺${fmtNumber(x.tutar, 0)}</div>
+        <div class="satir-aksiyon">${aksBtn('onay', 'Geldi', 'Para geldi — Alacaklarım\'da kaydet', `alacakBolumeGit('${x.id}')`).replace('class="aks-btn onay"', 'class="aks-btn onay yazili"')}</div>
+      </div>`; };
+    const birlesik = listeOlay.map(x => ({ x })).concat(gelenL.map(x => ({ x, gelen: true }))).sort((a, b) => a.x.tarih.localeCompare(b.x.tarih));
+    yak.innerHTML = birlesik.length ? birlesik.map(({ x, gelen }) => { if(gelen) return gelenHtml(x);
       const n = gunFarkiS(bugunS, x.tarih), d = new Date(x.tarih + 'T00:00:00');
       if(olayOdendi(x, bugunS)) return `<div class="satir odeme-satir odendi">
         <div class="odeme-tarih"><b>${d.getDate()}</b><span>${AY_KISA[d.getMonth()]} · ${GUN_KISA[d.getDay()]}</span></div>
@@ -12215,6 +12359,7 @@ function renderOdeme(){
   const yil = +_odemeAy.slice(0, 4), ay = +_odemeAy.slice(5, 7) - 1;
   const ayOlay = odemeOlaylari(new Date(yil, ay, 1), new Date(yil, ay + 1, 0));
   const takvimKalan = ayOlay.filter(x => !olayOdendi(x, bugunS));
+  const gelenAy = alacakOlaylari(new Date(yil, ay, 1), new Date(yil, ay + 1, 0));
   istYaz('odemeTakvimToplam', takvimKalan.length ? '₺' + fmtNumber(top(takvimKalan), 0) + (takvimKalan.length < ayOlay.length ? ' kalan' : '') : (ayOlay.length ? 'ödendi ✓' : ''));
   const takvim = document.getElementById('odemeTakvim');
   if(takvim){
@@ -12222,21 +12367,24 @@ function renderOdeme(){
     let h = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map(g => `<div class="tk-bas">${g}</div>`).join('');
     for(let i = 0; i < ilkGun; i++) h += '<div class="tk-gun bos"></div>';
     for(let g = 1; g <= gunSay; g++){
-      const s = isoGun(new Date(yil, ay, g)), o = ayOlay.filter(x => x.tarih === s), t = top(o);
-      h += `<div class="tk-gun${s === bugunS ? ' bugun' : ''}${s < bugunS ? ' gecmis' : ''}${o.length ? ' dolu' : ''}${s === _odemeGun ? ' secili' : ''}" ${o.length ? `onclick="_odemeGun='${s}'; renderOdeme();" title="${escapeHtml(o.map(x => x.ad + (x.tutar != null ? ' ₺' + fmtNumber(x.tutar, 0) : '')).join(' · '))}"` : ''}>
+      const s = isoGun(new Date(yil, ay, g)), o = ayOlay.filter(x => x.tarih === s), t = top(o), gO = gelenAy.filter(x => x.tarih === s);
+      const hepsi = o.concat(gO);
+      h += `<div class="tk-gun${s === bugunS ? ' bugun' : ''}${s < bugunS ? ' gecmis' : ''}${hepsi.length ? ' dolu' : ''}${s === _odemeGun ? ' secili' : ''}" ${hepsi.length ? `onclick="_odemeGun='${s}'; renderOdeme();" title="${escapeHtml(o.map(x => x.ad + (x.tutar != null ? ' ₺' + fmtNumber(x.tutar, 0) : '')).concat(gO.map(x => x.ad + ' +₺' + fmtNumber(x.tutar, 0))).join(' · '))}"` : ''}>
         <span class="tk-no">${g}${o.length && o.every(x => olayOdendi(x, bugunS)) ? ' <span class="tk-odendi">✓</span>' : ''}</span>${o.length ? (() => {
           const kalanO = o.filter(x => !olayOdendi(x, bugunS)), tK = top(kalanO), tO = top(o.filter(x => olayOdendi(x, bugunS)));
-          return `<span class="tk-noktalar">${o.slice(0, 4).map(x => `<i class="${olayOdendi(x, bugunS) ? 'odenmis' : 'led'}" style="--c:${ODEME_RENK[x.tur] || 'var(--muted)'};"></i>`).join('')}</span>`
+          return `<span class="tk-noktalar">${o.slice(0, 4).map(x => `<i class="${olayOdendi(x, bugunS) ? 'odenmis' : 'led'}" style="--c:${ODEME_RENK[x.tur] || 'var(--muted)'};"></i>`).join('')}${gO.slice(0, 2).map(() => '<i class="led" style="--c:var(--up);"></i>').join('')}</span>`
             + (tK || kalanO.length ? `<span class="tk-tutar">${tK ? kisaTL(tK) : '·'}</span>` : '') + (tO ? `<span class="tk-tutar odenmis" title="ödendi">${kisaTL(tO)}</span>` : '');
-        })() : ''}</div>`;
+        })() : ''}${gO.length ? `${o.length ? '' : `<span class="tk-noktalar">${gO.slice(0, 2).map(() => '<i class="led" style="--c:var(--up);"></i>').join('')}</span>`}<span class="tk-tutar tk-gelen" title="gelecek para">+${kisaTL(gO.reduce((t, x) => t + x.tutar, 0))}</span>` : ''}</div>`;
     }
     takvim.innerHTML = h;
   }
   const secEl = document.getElementById('odemeGunDetay');
   if(secEl){
     const o = _odemeGun && _odemeGun.slice(0, 7) === _odemeAy ? ayOlay.filter(x => x.tarih === _odemeGun) : [];
-    secEl.innerHTML = o.length ? `<div class="bolum-alt-baslik"><span>${new Date(_odemeGun + 'T00:00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</span><span>₺${fmtNumber(top(o), 0)}</span></div>`
-      + o.map(x => satirHtml({ ad: x.ad, alt: (olayOdendi(x, bugunS) ? `<span style="color:var(--up);">✓ ödendi${x.kartla ? ' · 💳 ' + escapeHtml(x.kartla) : ''}</span> · ` : '') + escapeHtml(x.alt), tutar: x.tutar != null ? '₺' + fmtNumber(x.tutar, 0) : 'ekstreye göre' })).join('') : '';
+    const gG = _odemeGun && _odemeGun.slice(0, 7) === _odemeAy ? gelenAy.filter(x => x.tarih === _odemeGun) : [];
+    secEl.innerHTML = (gG.length && !o.length ? `<div class="bolum-alt-baslik"><span>${new Date(_odemeGun + 'T00:00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</span><span style="color:var(--up);">+₺${fmtNumber(gG.reduce((t, x) => t + x.tutar, 0), 0)}</span></div>` : '')
+      + gG.map(x => satirHtml({ ad: x.ad, alt: '<span style="color:var(--up);">gelecek para</span>', tutar: '+₺' + fmtNumber(x.tutar, 0), renk: 'var(--up)' })).join('') + (o.length ? `<div class="bolum-alt-baslik"><span>${new Date(_odemeGun + 'T00:00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</span><span>₺${fmtNumber(top(o), 0)}</span></div>`
+      + o.map(x => satirHtml({ ad: x.ad, alt: (olayOdendi(x, bugunS) ? `<span style="color:var(--up);">✓ ödendi${x.kartla ? ' · 💳 ' + escapeHtml(x.kartla) : ''}</span> · ` : '') + escapeHtml(x.alt), tutar: x.tutar != null ? '₺' + fmtNumber(x.tutar, 0) : 'ekstreye göre' })).join('') : '');
   }
 
   // ---- Düzenli ödemeler ve abonelikler
@@ -12634,7 +12782,7 @@ function netBirimSec(b){ _netBirim = b; renderNetGecmis(); }
 function netGecmisYukle(){ return manuelListeYukle(NET_GECMIS_KEY).filter(x => x && /^\d{4}-\d\d-\d\d$/.test(x.id)).sort((a, b) => a.id.localeCompare(b.id)); }
 // Finansal Durumum'daki hesabın aynısı
 function netDurum(){
-  const varlik = manuelListeYukle(VARLIK_KEY).reduce((s, x) => s + varlikDegerTL(x), 0);
+  const varlik = manuelListeYukle(VARLIK_KEY).reduce((s, x) => s + varlikDegerTL(x), 0) + alacakToplamTL();   // alacaklar dahil
   const yatirim = _toplamYatirimTL || 0;
   const borc = (_bTotals.loans || 0) + (_bTotals.kk || 0) + (_bTotals.kmh || 0) + (_bTotals.nakit || 0);
   return { varlik, yatirim, borc, net: varlik + yatirim - borc };
@@ -13851,6 +13999,16 @@ function bildirimUret(bugunS){
       });
     });
   }catch(e){ /* ödeme verisi yok */ }
+  // 1b) Gelecek para (Alacaklarım): yarın ve bugün beklenen; günü geçip gelmeyen
+  try{
+    alacakYukle().filter(a => a.tarih).forEach(a => {
+      const n = gunFarkiS(bugunS, a.tarih), tutar = tl(a.tutar), tarihY = alacakTarihYaz(a.tarih);
+      if(n === 0 || n === 1) out.push({ id: 'alacak|' + a.id + '|' + a.tarih + '|' + n, grup: 'alacak', seviye: 'bilgi', hedef: 'finansal', alacak: a.id, ikon: 'takvim',
+        baslik: (n === 0 ? 'Bugün' : 'Yarın') + ' gelecek para: ' + a.ad, metin: `${a.ad}: ${tutar} alacağın ${n === 0 ? 'bugün gelecek. Geldiğinde “Geldi” de; gelmezse yeni tarih ver.' : 'yarın gelecek.'}`, zaman: (n === 0 ? 'Bugün · ' : 'Yarın · ') + tarihY, sira: n });
+      else if(n < 0) out.push({ id: 'alacak|' + a.id + '|' + a.tarih + '|gecikti', grup: 'alacak', seviye: 'uyari', hedef: 'finansal', alacak: a.id, ikon: 'uyari',
+        baslik: a.ad + ' alacağı gecikti', metin: `${tutar}, ${tarihY}'de gelecekti (${-n} gün geçti). Geldiyse “Geldi” de; gelmediyse yeni bir tarih ver.`, zaman: tarihY + ' · Alacaklarım', sira: 2 });
+    });
+  }catch(e){ /* alacak yok */ }
   // 2) Uyarılar — bu ayın bütçesi
   try{
     const ayK = bugunS.slice(0, 7), lim = butceLimitleri(ayK), A = butceAyHarcama({}, ayK);
@@ -13880,7 +14038,7 @@ function bildirimUret(bugunS){
   try{ const rb = raporBildirimi(bugunS); if(rb) out.push(rb); }catch(e){ /* rapor verisi yok */ }
   // 5) Kurum raporları: portföydeki hissede tavsiye/hedef değişikliği (rapor listesi yüklendiyse)
   try{ out.push(...krBildirimleri(bugunS)); }catch(e){ /* rapor yok */ }
-  const grupSira = { odeme: 0, rapor: 1, uyari: 2 };
+  const grupSira = { odeme: 0, alacak: 1, rapor: 2, uyari: 3 };
   return out.sort((a, b) => (grupSira[a.grup] ?? 3) - (grupSira[b.grup] ?? 3) || a.sira - b.sira || (a.seviye === 'acil' ? -1 : 1));
 }
 // Geçen ayın raporu (yalnız o ay harcama girildiyse): zilde "Raporlar" grubunda ve Piyasa Özeti'nin üstündeki şeritte
@@ -13957,11 +14115,11 @@ function bildirimPanelCiz(){
       ${b.okundu ? '' : '<span class="bildirim-nokta" aria-label="okunmadı"></span>'}
       <button class="bildirim-kaldir" title="Kaldır" aria-label="Bildirimi kaldır" onclick="event.stopPropagation();bildirimKaldir('${encodeURIComponent(b.id)}')">×</button>
     </div>`;
-  const od = _bildirimler.filter(b => b.grup === 'odeme'), uy = _bildirimler.filter(b => b.grup === 'uyari'), rp = _bildirimler.filter(b => b.grup === 'rapor');
+  const od = _bildirimler.filter(b => b.grup === 'odeme'), uy = _bildirimler.filter(b => b.grup === 'uyari'), rp = _bildirimler.filter(b => b.grup === 'rapor'), al = _bildirimler.filter(b => b.grup === 'alacak');
   p.innerHTML = `<div class="bildirim-bas"><b>Bildirimler</b><span class="bildirim-sayi">${okunmadi ? okunmadi + ' okunmamış' : ''}</span><button class="bildirim-hepsi" onclick="bildirimHepsiOkundu()"${okunmadi ? '' : ' disabled'} title="Tümünü okundu olarak işaretle" aria-label="Tümünü okundu olarak işaretle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg></button></div>
     <div class="bildirim-liste">${!_bildirimler.length
       ? '<div class="bildirim-bos"><div class="ikon">🔔</div><b>Yeni bildirim yok</b><br>Ödemeler son günden bir gün önce ve son gün; bütçe ve kart uyarıları da oluştuğu anda burada görünür. Mesajlar yandaki ✉ zarftadır.</div>'
-      : (od.length ? '<div class="bildirim-grup">Yaklaşan ödemeler</div>' + od.map(oge).join('') : '') + (rp.length ? '<div class="bildirim-grup">Raporlar</div>' + rp.map(oge).join('') : '') + (uy.length ? '<div class="bildirim-grup">Uyarılar</div>' + uy.map(oge).join('') : '')}</div>
+      : (od.length ? '<div class="bildirim-grup">Yaklaşan ödemeler</div>' + od.map(oge).join('') : '') + (al.length ? '<div class="bildirim-grup">Gelecek paralar</div>' + al.map(oge).join('') : '') + (rp.length ? '<div class="bildirim-grup">Raporlar</div>' + rp.map(oge).join('') : '') + (uy.length ? '<div class="bildirim-grup">Uyarılar</div>' + uy.map(oge).join('') : '')}</div>
     <div class="bildirim-alt"><a onclick="bildirimPanelKapat();switchTab('odeme')">Ödeme Takvimi ›</a><a onclick="bildirimPanelKapat();switchTab('butce')">Bütçe ›</a></div>`;
 }
 // Açılır paneli düğmenin altına yerleştir (telefonda tam genişlik)
@@ -13995,6 +14153,7 @@ function bildirimTikla(idK){
   if(b && b.raporAy) _raporAy = b.raporAy;   // aylık rapor bildirimi: o ayın raporu açılsın
   if(b && b.hedef) switchTab(b.hedef);
   if(b && b.raporAy && (b.asama === 'cikar' || b.asama === 'incele')) raporYorumaKaydir();
+  if(b && b.alacak) alacakBolumeGit();
 }
 // Zilde × : bildirim bu cihazda kaldırılır
 function bildirimKaldir(idK){ const id = decodeURIComponent(idK); bildirimIsaretle(id, 'kaldir'); bildirimGuncelle(); bildirimPanelCiz(); }
