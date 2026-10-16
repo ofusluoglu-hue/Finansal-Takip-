@@ -10,6 +10,8 @@
 //     /auth/login (POST) · /auth/logout (POST) · /auth/me (GET) · /auth/sifre (POST, kendi şifresini değiştirir)
 //     /auth/profil (POST: ad, fotoğraf, tercihler) · /auth/cikis-diger (POST: diğer cihazlardaki oturumları kapatır)
 //     /auth/ai-anahtar (POST: kullanıcının Anthropic anahtarını doğrulayıp şifreli saklar · DELETE: siler)
+//     /auth/passkey/giris-baslat, /auth/passkey/giris (POST, oturumsuz) — parmak izi / Face ID (WebAuthn) ile giriş
+//     /auth/passkey (GET: bu hesabın cihazları) · /auth/passkey/kayit-baslat, /auth/passkey/kayit (POST) · /auth/passkey/:id (DELETE)
 //     /admin/kullanicilar (GET, POST) · /admin/kullanicilar/:id/sifre (POST) · /admin/kullanicilar/:id/durum (POST)
 //     /admin/kullanicilar/:id (DELETE)                                   — yalnız yönetici
 //     /data (GET), /data/:anahtar (PUT)    -> kullanıcının verileri (cihazlar arası senkron)
@@ -176,6 +178,59 @@ async function esitMi(a, b) {                // sabit zamanlı karşılaştırma
   for (let i = 0; i < x.length; i++) fark |= x[i] ^ y[i];
   return fark === 0;
 }
+// ---------- WebAuthn (passkey) doğrulama: kütüphanesiz, Web Crypto ile ----------
+// Kayıtta tarayıcı açık anahtarı SPKI olarak verir (getPublicKey); girişte imza = authenticatorData ‖ SHA-256(clientDataJSON).
+// Doğrulananlar: tek kullanımlık sınama (5 dk), tür, kaynak (izinli origin), alan adı özeti (rpIdHash), kullanıcı varlığı (UP)
+// ve kullanıcı doğrulaması (UV = parmak izi / yüz / cihaz kilidi gerçekten soruldu), imza ve imza sayacı (kopyalanmış anahtar).
+const PASSKEY_SINAMA_MS = 5 * 60 * 1000;
+const b64urlCoz = s => { s = String(s || '').replace(/-/g, '+').replace(/_/g, '/'); return Uint8Array.from(atob(s + '='.repeat((4 - s.length % 4) % 4)), c => c.charCodeAt(0)); };
+const baytBirlestir = (a, b) => { const c = new Uint8Array(a.length + b.length); c.set(a, 0); c.set(b, a.length); return c; };
+async function sha256Bayt(b) { return new Uint8Array(await crypto.subtle.digest('SHA-256', b)); }
+function izinliOrigin(request, env) {
+  const izinli = ((env && env.ALLOWED_ORIGIN) || VARSAYILAN_ORIGIN).split(',').map(x => x.trim());
+  const o = request.headers.get('Origin');
+  return o && izinli.includes(o) ? o : null;
+}
+function derImzaHam(der) {   // ECDSA imzası: DER (SEQUENCE{INTEGER r, INTEGER s}) → r ‖ s (64 bayt)
+  if (der[0] !== 0x30) throw new Error('imza biçimi');
+  let i = 2;
+  const oku = () => { if (der[i++] !== 0x02) throw new Error('imza biçimi'); const n = der[i++]; let b = der.slice(i, i + n); i += n; while (b.length > 32 && b[0] === 0) b = b.slice(1); const o = new Uint8Array(32); o.set(b, 32 - b.length); return o; };
+  const r = oku(), sx = oku(), ham = new Uint8Array(64); ham.set(r, 0); ham.set(sx, 32); return ham;
+}
+async function passkeyAnahtar(spki, alg) {
+  if (alg === -7) return crypto.subtle.importKey('spki', spki, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+  if (alg === -257) return crypto.subtle.importKey('spki', spki, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
+  throw new Error('desteklenmeyen anahtar türü');
+}
+async function passkeyImzaDogru(spki, alg, authData, clientDataBayt, imza) {
+  const veri = baytBirlestir(authData, await sha256Bayt(clientDataBayt)), k = await passkeyAnahtar(spki, alg);
+  return alg === -7 ? crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, k, derImzaHam(imza), veri) : crypto.subtle.verify('RSASSA-PKCS1-v1_5', k, imza, veri);
+}
+async function passkeySinamaUret(env, tur, userId) {
+  const sinama = b64url(crypto.getRandomValues(new Uint8Array(32))), simdi = Date.now();
+  await env.DB.batch([
+    env.DB.prepare('DELETE FROM webauthn_sinama WHERE expires_at < ?').bind(simdi),
+    env.DB.prepare('INSERT INTO webauthn_sinama (sinama, user_id, tur, expires_at) VALUES (?, ?, ?, ?)').bind(sinama, userId || null, tur, simdi + PASSKEY_SINAMA_MS),
+  ]);
+  return sinama;
+}
+// clientDataJSON + authenticatorData ortak denetimi; sınama tek kullanımlıktır (bulunursa silinir). Hata → Error(mesaj)
+async function passkeyIstemciDenetle(env, request, tur, clientDataBayt, authData, userId) {
+  const origin = izinliOrigin(request, env);
+  if (!origin) throw new Error('izinsiz kaynak');
+  let cd; try { cd = JSON.parse(new TextDecoder().decode(clientDataBayt)); } catch { throw new Error('istemci verisi okunamadı'); }
+  if (cd.type !== (tur === 'kayit' ? 'webauthn.create' : 'webauthn.get')) throw new Error('tür uyuşmuyor');
+  if (cd.origin !== origin) throw new Error('kaynak uyuşmuyor');
+  const sil = await env.DB.prepare('DELETE FROM webauthn_sinama WHERE sinama = ? AND tur = ? AND expires_at > ?' + (userId ? ' AND user_id = ?' : '')).bind(...[String(cd.challenge || ''), tur, Date.now()].concat(userId ? [userId] : [])).run();
+  if (!sil.meta || !sil.meta.changes) throw new Error('sınama geçersiz ya da süresi doldu');
+  if (authData.length < 37) throw new Error('doğrulayıcı verisi kısa');
+  const rpIdHash = await sha256Bayt(new TextEncoder().encode(new URL(origin).hostname));
+  for (let i = 0; i < 32; i++) if (authData[i] !== rpIdHash[i]) throw new Error('alan adı uyuşmuyor');
+  const bayrak = authData[32];
+  if (!(bayrak & 0x01) || !(bayrak & 0x04)) throw new Error('kullanıcı doğrulaması yapılmadı');   // UP + UV
+  return { bayrak, sayac: ((authData[33] << 24) | (authData[34] << 16) | (authData[35] << 8) | authData[36]) >>> 0 };
+}
+
 async function sifreOzeti(sifre, tuzB64, iter) {
   const tuz = Uint8Array.from(atob(tuzB64), c => c.charCodeAt(0));
   const anahtar = await crypto.subtle.importKey('raw', new TextEncoder().encode(sifre), 'PBKDF2', false, ['deriveBits']);
@@ -231,6 +286,10 @@ async function semaHazirla(env) {
     // Ortak kurum raporları (herkese açık yayımlananlar, ör. Ak Yatırım): bir kez özetlenir, bütün kullanıcılar görür; PDF saklanmaz
     env.DB.prepare('CREATE TABLE IF NOT EXISTS ortak_raporlar (id TEXT PRIMARY KEY, kaynak TEXT NOT NULL, kurum TEXT, kategori TEXT, konu TEXT, baslik TEXT, tarih INTEGER, teaser TEXT, pdf_url TEXT, hisseler TEXT, analist TEXT, durum TEXT NOT NULL, deneme INTEGER NOT NULL DEFAULT 0, islem_ts INTEGER, hata TEXT, ozet TEXT, kullanim TEXT, ozet_ts INTEGER, alindi INTEGER NOT NULL)'),
     env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_ortak_tarih ON ortak_raporlar (tarih)'),
+    // Biyometrik giriş (WebAuthn / passkey): cihazın açık anahtarı (parmak izi / yüz verisi asla gelmez) ve tek kullanımlık sınamalar
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS passkeys (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, public_key TEXT NOT NULL, alg INTEGER NOT NULL, sign_count INTEGER NOT NULL DEFAULT 0, ad TEXT, created_at INTEGER NOT NULL, last_used INTEGER)'),
+    env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_passkeys_user ON passkeys (user_id)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS webauthn_sinama (sinama TEXT PRIMARY KEY, user_id TEXT, tur TEXT NOT NULL, expires_at INTEGER NOT NULL)'),
   ]);
   // Sonradan eklenen sütunlar (profil fotoğrafı, tercihler)
   const { results: sutunlar } = await env.DB.prepare("SELECT name FROM pragma_table_info('users')").all();
@@ -685,6 +744,34 @@ export default {
       return json({ token, kullanici: kullaniciCikti(u) });
     }
 
+    // ---------- BİYOMETRİK GİRİŞ (WebAuthn / passkey): cihaz kendi kilidini (parmak izi, yüz) sorar, sunucu imzayı doğrular ----------
+    if (url.pathname === '/auth/passkey/giris-baslat' && request.method === 'POST') {
+      if (await kilitliMi(env, ip)) return json({ error: 'çok fazla hatalı deneme — 15 dakika sonra tekrar dene' }, 429, { 'Retry-After': '900' });
+      if (!izinliOrigin(request, env)) return json({ error: 'izinsiz kaynak' }, 403);
+      return json({ sinama: await passkeySinamaUret(env, 'giris', null) });
+    }
+    if (url.pathname === '/auth/passkey/giris' && request.method === 'POST') {
+      if (await kilitliMi(env, ip)) return json({ error: 'çok fazla hatalı deneme — 15 dakika sonra tekrar dene' }, 429, { 'Retry-After': '900' });
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      const red = async (mesaj, kod) => { await hataliDeneme(env, ip); return json({ error: mesaj }, kod || 401); };
+      try {
+        const cdBayt = b64urlCoz(g.clientDataJSON), authData = b64urlCoz(g.authenticatorData), imza = b64urlCoz(g.signature);
+        const pk = await env.DB.prepare('SELECT p.*, u.disabled FROM passkeys p JOIN users u ON u.id = p.user_id WHERE p.id = ?').bind(String(g.id || '').slice(0, 512)).first();
+        if (!pk) return await red('bu cihazın kaydı bulunamadı', 404);
+        if (pk.disabled) return await red('hesap kapalı', 403);
+        const d = await passkeyIstemciDenetle(env, request, 'giris', cdBayt, authData, null);
+        if (!(await passkeyImzaDogru(b64urlCoz(pk.public_key), pk.alg, authData, cdBayt, imza))) return await red('imza doğrulanamadı');
+        if (d.sayac && pk.sign_count && d.sayac <= pk.sign_count) return await red('güvenlik anahtarı kopyalanmış görünüyor — bu cihazı Profilim\'den silip yeniden ekle');
+        const simdi = Date.now();
+        await env.DB.batch([
+          env.DB.prepare('UPDATE passkeys SET sign_count = ?, last_used = ? WHERE id = ?').bind(d.sayac, simdi, pk.id),
+          env.DB.prepare('UPDATE users SET last_login = ? WHERE id = ?').bind(simdi, pk.user_id),
+        ]);
+        const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(pk.user_id).first();
+        return json({ token: await oturumAc(env, u.id), kullanici: kullaniciCikti(u) });
+      } catch (e) { return await red('doğrulanamadı: ' + (e.message || 'hata')); }
+    }
+
     // ---------- KURUM RAPORU ALMA (Gmail Apps Script; oturum değil, kişisel rapor anahtarı) ----------
     if (url.pathname === '/rapor-al' && request.method === 'POST') {
       const anahtar = (request.headers.get('X-Rapor-Anahtar') || '').trim();
@@ -782,6 +869,38 @@ export default {
       await env.DB.prepare("UPDATE raporlar SET durum = 'bekliyor', deneme = 0 WHERE user_id = ? AND durum = 'anahtar_yok'").bind(ben.id).run();
       const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(ben.id).first();
       return json({ ok: true, kullanici: kullaniciCikti(u) });
+    }
+
+    // ---------- Biyometrik giriş: cihaz ekle / listele / sil (oturum gerekir) ----------
+    if (url.pathname === '/auth/passkey' && request.method === 'GET') {
+      const { results } = await env.DB.prepare('SELECT id, ad, created_at, last_used FROM passkeys WHERE user_id = ? ORDER BY created_at').bind(ben.id).all();
+      return json({ cihazlar: (results || []).map(x => ({ id: x.id, ad: x.ad, eklendi: x.created_at, sonKullanim: x.last_used })) });
+    }
+    if (url.pathname === '/auth/passkey/kayit-baslat' && request.method === 'POST') {
+      if (!izinliOrigin(request, env)) return json({ error: 'izinsiz kaynak' }, 403);
+      const { results } = await env.DB.prepare('SELECT id FROM passkeys WHERE user_id = ?').bind(ben.id).all();
+      if ((results || []).length >= 10) return json({ error: 'en fazla 10 cihaz eklenebilir — kullanmadığını sil' }, 400);
+      return json({ sinama: await passkeySinamaUret(env, 'kayit', ben.id), kullaniciId: b64url(new TextEncoder().encode(ben.id)), ad: ben.email, gorunenAd: ben.ad || ben.email, mevcut: (results || []).map(x => x.id) });
+    }
+    if (url.pathname === '/auth/passkey/kayit' && request.method === 'POST') {
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      try {
+        const cdBayt = b64urlCoz(g.clientDataJSON), authData = b64urlCoz(g.authenticatorData), spki = b64urlCoz(g.publicKey), alg = Number(g.alg);
+        const d = await passkeyIstemciDenetle(env, request, 'kayit', cdBayt, authData, ben.id);
+        if (!(d.bayrak & 0x40)) throw new Error('anahtar bilgisi yok');
+        // authenticatorData içindeki kimlik, gönderilen kimlikle aynı olmalı (37: AAGUID 16 bayt, uzunluk 2 bayt, kimlik)
+        const n = (authData[53] << 8) | authData[54], kimlik = b64url(authData.slice(55, 55 + n));
+        if (!n || kimlik !== String(g.id || '')) throw new Error('kimlik uyuşmuyor');
+        await passkeyAnahtar(spki, alg);   // açık anahtar okunabiliyor mu
+        await env.DB.prepare('INSERT INTO passkeys (id, user_id, public_key, alg, sign_count, ad, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+          .bind(kimlik, ben.id, b64url(spki), alg, d.sayac, String(g.ad || 'Cihaz').slice(0, 60), Date.now()).run();
+        return json({ ok: true, id: kimlik });
+      } catch (e) { return json({ error: 'cihaz eklenemedi: ' + (e.message || 'hata') }, 400); }
+    }
+    if (url.pathname.startsWith('/auth/passkey/') && request.method === 'DELETE') {
+      const id = decodeURIComponent(url.pathname.slice('/auth/passkey/'.length));
+      const r2 = await env.DB.prepare('DELETE FROM passkeys WHERE id = ? AND user_id = ?').bind(id, ben.id).run();
+      return json({ ok: true, silinen: (r2.meta && r2.meta.changes) || 0 });
     }
 
     if (url.pathname === '/auth/cikis-diger' && request.method === 'POST') {

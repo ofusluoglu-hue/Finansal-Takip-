@@ -2194,6 +2194,13 @@
   .giris-btn{width:100%;background:var(--up);color:var(--t-08220f);border:none;border-radius:10px;padding:13px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;margin-top:4px;transition:filter .15s;}
   .giris-btn:hover{filter:brightness(1.08);}
   .giris-btn:disabled{opacity:.6;cursor:default;filter:none;}
+  .giris-biyo{display:flex;flex-direction:column;}
+  .giris-biyo.one{margin-bottom:10px;}
+  .giris-ayrac{display:flex;align-items:center;gap:10px;margin:14px 0 10px;font-size:11.5px;color:var(--muted-2);} .giris-ayrac::before, .giris-ayrac::after{content:'';flex:1;height:1px;background:var(--border);}
+  .giris-biyo.one .giris-ayrac{order:2;margin:14px 0 4px;}
+  .giris-biyo-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;background:transparent;color:var(--text);border:1.5px solid var(--up);border-radius:10px;padding:12px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;}
+  .giris-biyo-btn svg{color:var(--up);} .giris-biyo-btn:hover{background:color-mix(in srgb, var(--up) 10%, transparent);} .giris-biyo-btn:disabled{opacity:.6;cursor:default;}
+  .giris-biyo.one .giris-biyo-btn{background:var(--up);color:var(--t-08220f);} .giris-biyo.one .giris-biyo-btn svg{color:currentColor;}
   .giris-mesaj{margin-top:12px;min-height:18px;font-size:13px;color:var(--down);}
   .giris-alt{margin-top:6px;padding-top:14px;border-top:1px solid var(--border);font-size:11.5px;line-height:1.55;color:var(--muted-2);}
   @media (max-width:640px){ .giris-kutu{padding:22px 18px 18px;} }
@@ -2902,7 +2909,7 @@
   #raporYorumBtn:disabled{opacity:.55;cursor:default;}
   @media print{
     body{background:#fff !important;}
-    .sidebar, .app-bar, .nav-panel, .odeme-serit, .rapor-serit, #raporYorumBtn, #raporAy, .no-print{display:none !important;}
+    .sidebar, .app-bar, .nav-panel, .odeme-serit, .rapor-serit, .biyo-teklif, #raporYorumBtn, #raporAy, .no-print{display:none !important;}
     .tab-panel{display:none !important;}
     #tab-rapor{display:block !important;}
     .layout{display:block !important;}
@@ -2960,6 +2967,12 @@
   .rapor-serit-oku{margin-left:auto;font-weight:700;color:var(--p-6ec3ff);white-space:nowrap;}
   .rapor-serit-kapat{background:none;border:none;color:var(--muted-2);font-size:17px;line-height:1;cursor:pointer;padding:0 2px;}
   .rapor-serit-kapat:hover{color:var(--text);}
+  .biyo-teklif{cursor:default;background:color-mix(in srgb, var(--up) 9%, transparent);border-color:color-mix(in srgb, var(--up) 40%, transparent);}
+  .odeme-serit.biyo-teklif b:first-child{color:var(--up);display:inline-flex;align-items:center;gap:6px;}
+  .biyo-teklif-ac{margin-left:auto;background:var(--up);color:var(--t-08220f);border:none;border-radius:8px;padding:5px 14px;font-weight:700;font-family:inherit;cursor:pointer;}
+  .pf-biyo{align-items:flex-start;}
+  .pf-biyo-oge{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--border);font-size:12.5px;margin-top:6px;}
+  .pf-biyo-oge > span{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;min-width:0;} .pf-biyo-oge svg{width:15px;height:15px;color:var(--up);} .pf-biyo-oge small{flex-basis:100%;color:var(--muted-2);font-size:11.5px;}
   #raporYorumBtn.vurgu{border-color:var(--amber);color:var(--amber);box-shadow:0 0 0 0 color-mix(in srgb, var(--amber) 50%, transparent);animation:rapor-vurgu 1.8s ease-out infinite;}
   @keyframes rapor-vurgu{70%{box-shadow:0 0 0 8px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
   @media (prefers-reduced-motion:reduce){ #raporYorumBtn.vurgu{animation:none;} }
@@ -3150,6 +3163,10 @@
       <button type="button" class="giris-goz" id="girisGoz" title="Şifreyi göster" aria-label="Şifreyi göster" onclick="girisSifreGoster()">👁</button>
     </div>
     <button type="submit" id="girisBtn" class="giris-btn">Giriş</button>
+    <div class="giris-biyo" id="girisBiyo" hidden>
+      <div class="giris-ayrac"><span>ya da</span></div>
+      <button type="button" class="giris-biyo-btn" id="girisBiyoBtn" onclick="girisBiyometrik()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 11v3a8 8 0 0 1-1.2 4.2"/><path d="M8.6 7.4A5 5 0 0 1 17 11v2.5a12 12 0 0 1-.6 3.8"/><path d="M5.6 9.8A7 7 0 0 1 12 4a7 7 0 0 1 7 7v1"/><path d="M7 11a5 5 0 0 1 .1-1M7 13.5V15a9 9 0 0 1-1 4"/><path d="M14.6 20.5l.4-1.5"/></svg><span>Parmak izi / Face ID ile giriş</span></button>
+    </div>
     <div class="giris-mesaj" id="girisMesaj" role="alert"></div>
     <div class="giris-alt">Hesapları yönetici açar; şifreni unuttuysan yöneticine yaz. 8 hatalı denemede giriş 15 dakika kilitlenir. Giriş yaptıktan sonra oturumun bu cihazda açık kalır; verilerin yalnızca senin hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </form>
@@ -3305,6 +3322,9 @@
   <div class="bildirim-panel" id="mesajPanel" role="dialog" aria-label="Mesajlar" hidden></div>
 
   <!-- ================= TAB: GÜNLÜK MAKRO ÖZET ================= -->
+  <div class="odeme-serit biyo-teklif" id="biyoTeklif"><b><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 11v3a8 8 0 0 1-1.2 4.2"/><path d="M8.6 7.4A5 5 0 0 1 17 11v2.5a12 12 0 0 1-.6 3.8"/><path d="M5.6 9.8A7 7 0 0 1 12 4a7 7 0 0 1 7 7v1"/><path d="M7 11a5 5 0 0 1 .1-1M7 13.5V15a9 9 0 0 1-1 4"/><path d="M14.6 20.5l.4-1.5"/></svg> Bir dahaki sefere şifre yazmadan gir:</b> <span>bu telefonda parmak izi / Face ID ile giriş açılsın mı?</span>
+    <button type="button" class="biyo-teklif-ac" onclick="event.stopPropagation(); biyoCihazEkle();">Aç</button>
+    <button type="button" class="rapor-serit-kapat" title="Şimdi değil (bir daha sorulmaz; Profilim › Güvenlik'ten açabilirsin)" aria-label="Şimdi değil" onclick="event.stopPropagation(); biyoTeklifGizle(true);">×</button></div>
   <div class="tab-panel active" id="tab-gunluk">
 
   <div class="file-warning" id="fileWarning">
@@ -4367,6 +4387,7 @@
         <li><b>Tema (açık / koyu):</b> sağ üstteki anahtarla değiştirirsin (telefonda en üstteki satırda): sol taraf ☀ açık tema, sağ taraf ☾ koyu tema. Varsayılan koyu temadır; seçimin bu cihazda hatırlanır.</li>
         <li><b>Açılış sayfası:</b> panel açılınca ilk hangi sayfanın geleceğini seç (ör. her gün harcama giriyorsan Harcama Takibim).</li>
         <li><b>Bay Piyasa (yapay zekâ):</b> kendi Anthropic API anahtarını ekle, değiştir ya da kaldır. Anahtar doğrulanır ve şifreli saklanır; yönetici hesabında gerekmez.</li>
+        <li><b>Parmak izi / Face ID ile giriş:</b> Güvenlik bölümünde <b>👆 Bu cihazı ekle</b>'ye bas, telefonun parmak izini ya da yüzünü sorar; bundan sonra giriş ekranında <b>Parmak izi / Face ID ile giriş</b>'e dokunman yeter, şifre gerekmez. Telefonda şifreyle girince bunu bir kez kendiliğinden de önerir (“Aç” ya da ×). Parmak izi ya da yüz verin telefondan hiç çıkmaz; telefon yalnızca şifreli bir imza üretir, sunucu onu doğrular. Eklediğin cihazlar listede görünür; kaybettiğin ya da kullanmadığın cihazı <b>Kaldır</b> ile silebilirsin (o cihazda yine şifrenle girersin). Şifre her zaman çalışmaya devam eder.</li>
         <li><b>Güvenlik:</b> 🔑 <b>Şifremi değiştir</b> (mevcut şifre + en az 8 karakterlik yeni şifre; diğer cihazlardaki oturumlar kapanır), <b>Diğer cihazlardan çıkış yap</b> (ör. iş bilgisayarında açık unuttuysan) ve bu cihazdan <b>Çıkış yap</b>. Kaç cihazda açık olduğun da yazar.</li>
       </ul>
       <p>Profil bilgilerin hesabında saklanır; bütün cihazlarında aynı görünür.</p>
@@ -4454,6 +4475,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
+    <details class="kv-bolum kv-sss"><summary>Parmak izi ya da Face ID ile nasıl giriş yaparım?</summary><div class="kv-ic"><p>Telefonundan bir kez şifrenle gir; çıkan “parmak izi / Face ID ile giriş açılsın mı?” önerisinde <b>Aç</b>'a bas (ya da Profilim › Güvenlik › <b>Bu cihazı ekle</b>). Telefon parmak izini ya da yüzünü sorar, cihaz eklenir. Bundan sonra giriş ekranında en üstteki <b>Parmak izi / Face ID ile giriş</b>'e dokunman yeter. Parmak izi ve yüz verisi telefondan çıkmaz; panel yalnızca telefonun ürettiği imzayı doğrular. Telefonu kaybedersen Profilim › Güvenlik'ten o cihazı <b>Kaldır</b>. Şifren her zaman geçerlidir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Birine borç verdim, geri ödeyecek; nasıl eklerim?</summary><div class="kv-ic"><p>Finansal Durumum'da <b>Alacaklarım</b> → <b>+ Ekle</b>: kimden, tutar ve ne zaman geleceği. Net servetine sayılır, Ödeme Takvimi'nde o gün yeşil “gelen para” olarak görünür, Nakit Akışı'nda o ayın gelirine girer ve bir gün önce hatırlatılır. Para gelince <b>Geldi</b> de (kısmen geldiyse kalan durur); istersen tutar nakit / mevduat hesabına eklenir. Sana borç veren biri varsa o da Borçlarım › Elden Nakit Borçlar'a girer.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Aylık raporumun hazır olduğunu nasıl anlarım?</summary><div class="kv-ic"><p>Her ay bittiğinde geçen ayın raporu hazır olur ve sana iki yerden haber verilir: sağ üstteki zilde “Raporlar” altında ve Piyasa Özeti'nin üstünde mavi bir şeritte. Bay Piyasa yorumunu henüz çıkarmadıysan hatırlatma “Bay Piyasa yorumunu çıkar” der ve yorumu çıkarana kadar kalır; dokununca rapor yorum bölümünde açılır. Raporda Kurum Raporları'ndan ayın özeti de vardır (portföyündeki hisselerde tavsiye / hedef değişiklikleri, piyasa görüşü, takvim). Bildirim, o ay için harcama girdiysen çıkar.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kredi taksitimi ya da kart borcumu erken ödedim, nasıl işaretlerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde, yaklaşan ödemelerde o taksitin ya da kartın satırındaki <b>Erken öde</b>'ye bas (son günündeysen düğme <b>Ödedim</b> olur). Kredide taksit ödenmiş sayılır ve Kredilerim'deki kalan borç hemen düşer; kartta ödediğin tutarı yazarsın, kart borcundan düşülür. Satırda “✓ ödendi · erken” yazar, o ödeme için hatırlatma ve bildirim gelmez. Yanlışlıkla bastıysan aynı satırdaki <b>Geri al</b> ile eski hâline döner.</p></div></details>
@@ -4666,6 +4688,10 @@
       <div class="pf-satir">
         <div><div class="pf-baslik">Şifre</div><div class="ku-ipucu" style="margin:2px 0 0;">En az 8 karakter. Değişince diğer cihazlardaki oturumlar kapanır.</div></div>
         <button class="bolum-ekle" onclick="sifreDegistirAc()">🔑 Şifremi değiştir</button>
+      </div>
+      <div class="pf-satir pf-biyo">
+        <div style="flex:1;min-width:0;"><div class="pf-baslik">Parmak izi / Face ID ile giriş</div><div class="ku-ipucu" style="margin:2px 0 0;" id="pfBiyoDurum">Kontrol ediliyor…</div><div id="pfBiyoListe"></div></div>
+        <button class="bolum-ekle" id="pfBiyoEkle" onclick="biyoCihazEkle()" hidden>👆 Bu cihazı ekle</button>
       </div>
       <div class="pf-satir">
         <div><div class="pf-baslik">Açık oturumlar</div><div class="ku-ipucu" style="margin:2px 0 0;" id="pfOturum"></div></div>
@@ -5191,6 +5217,7 @@ function girisGoster(mesaj){
   const k = document.getElementById('girisKod'), ep = document.getElementById('girisEposta');
   if(ep && !ep.value) ep.value = localStorage.getItem(GIRIS_EPOSTA_KEY) || '';
   if(k){ k.value = ''; setTimeout(() => (ep && !ep.value ? ep : k).focus(), 50); }
+  biyoGirisHazirla();
 }
 const GIRIS_EPOSTA_KEY = 'ft_giris_eposta';   // yalnızca bu cihazda: son girilen e-posta (kolaylık için)
 function girisSifreGoster(){
@@ -5216,7 +5243,7 @@ async function girisYap(){
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: eposta, password: kod }),
     });
-    if(res.ok){ const d = await res.json(); oturumKaydet(d.token, d.kullanici); location.reload(); return; }
+    if(res.ok){ const d = await res.json(); oturumKaydet(d.token, d.kullanici); try{ sessionStorage.setItem(SIFRE_GIRIS_OTURUM, '1'); }catch(e){ /* yok */ } location.reload(); return; }
     msj.textContent = res.status === 429 ? 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.'
                     : res.status === 503 ? 'Sunucu kurulumu eksik (Cloudflare\'da veritabanı bağlı değil).'
                     : 'E-posta veya şifre hatalı.';
@@ -5224,6 +5251,119 @@ async function girisYap(){
   }catch(e){ msj.textContent = 'Sunucuya ulaşılamadı. İnternetini kontrol et.'; }
   btn.disabled = false; btn.textContent = 'Giriş';
 }
+// ---------- Biyometrik giriş (WebAuthn / passkey): parmak izi, Face ID, cihaz kilidi ----------
+// Parmak izi ya da yüz verisi cihazdan hiç çıkmaz; cihaz bir imza üretir, sunucu kayıtlı açık anahtarla doğrular.
+// Yalnızca bu cihazda: ft_passkey_id (bu cihazda eklenen anahtarın kimliği), ft_passkey_teklif (öneri kapatıldı)
+const PASSKEY_ID_KEY = 'ft_passkey_id', PASSKEY_TEKLIF_KEY = 'ft_passkey_teklif', SIFRE_GIRIS_OTURUM = 'ft_sifre_giris';
+const b64uYaz = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64uOku = s => { s = String(s).replace(/-/g, '+').replace(/_/g, '/'); return Uint8Array.from(atob(s + '='.repeat((4 - s.length % 4) % 4)), c => c.charCodeAt(0)); };
+let _biyoVar = null;   // bu cihazda parmak izi / yüz / cihaz kilidiyle doğrulama var mı (önbellek)
+async function biyoDestekli(){
+  if(_biyoVar != null) return _biyoVar;
+  try{ _biyoVar = !!(window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }
+  catch(e){ _biyoVar = false; }
+  return _biyoVar;
+}
+function biyoCihazAdi(){
+  const u = navigator.userAgent || '';
+  return /iPhone/.test(u) ? 'iPhone' : /iPad/.test(u) ? 'iPad' : /Android/.test(u) ? (/Mobile/.test(u) ? 'Android telefon' : 'Android tablet') : /Macintosh/.test(u) ? 'Mac' : /Windows/.test(u) ? 'Windows bilgisayar' : 'Cihaz';
+}
+function biyoBuCihazdaVar(){ try{ return !!localStorage.getItem(PASSKEY_ID_KEY); }catch(e){ return false; } }
+// Giriş ekranı: destekliyse düğmeyi göster; bu cihazda daha önce eklendiyse düğme öne (şifre alanlarının üstüne) çıkar
+async function biyoGirisHazirla(){
+  const k = document.getElementById('girisBiyo'); if(!k) return;
+  const var_ = await biyoDestekli();
+  k.hidden = !var_;
+  if(!var_) return;
+  // Bu cihazda daha önce eklendiyse düğme şifre alanlarının üstünde ve dolu; değilse "Giriş"in altında
+  const one = biyoBuCihazdaVar(), form = k.parentElement, ilk = form.querySelector('.giris-etiket'), giris = document.getElementById('girisBtn');
+  k.classList.toggle('one', one);
+  if(one && ilk && k.nextElementSibling !== ilk) form.insertBefore(k, ilk);
+  else if(!one && giris && giris.nextElementSibling !== k) giris.after(k);
+}
+async function girisBiyometrik(){
+  const btn = document.getElementById('girisBiyoBtn'), msj = document.getElementById('girisMesaj');
+  if(btn.disabled) return;
+  btn.disabled = true; msj.textContent = '';
+  try{
+    const b = await _orijinalFetch(MY_WORKER + '/auth/passkey/giris-baslat', { method: 'POST' });
+    if(!b.ok){ msj.textContent = b.status === 429 ? 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.' : 'Sunucuya ulaşılamadı. İnternetini kontrol et.'; return; }
+    const { sinama } = await b.json();
+    const c = await navigator.credentials.get({ publicKey: { challenge: b64uOku(sinama), rpId: location.hostname, userVerification: 'required', timeout: 60000 } });
+    const yan = c.response;
+    const res = await _orijinalFetch(MY_WORKER + '/auth/passkey/giris', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: c.id, clientDataJSON: b64uYaz(yan.clientDataJSON), authenticatorData: b64uYaz(yan.authenticatorData), signature: b64uYaz(yan.signature) }) });
+    if(res.ok){ const d = await res.json(); oturumKaydet(d.token, d.kullanici); try{ localStorage.setItem(PASSKEY_ID_KEY, c.id); }catch(e){ /* yok */ } location.reload(); return; }
+    msj.textContent = res.status === 404 ? 'Bu cihaz için parmak izi / Face ID girişi açık değil (ya da kaldırılmış). Şifrenle gir, sonra Profilim › Güvenlik\'ten bu cihazı ekle.'
+      : res.status === 429 ? 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.' : res.status === 403 ? 'Hesabın kapalı; yöneticine yaz.' : 'Doğrulanamadı. Tekrar dene ya da şifrenle gir.';
+    if(res.status === 404){ try{ localStorage.removeItem(PASSKEY_ID_KEY); }catch(e){ /* yok */ } biyoGirisHazirla(); }
+  }catch(e){
+    msj.textContent = e && e.name === 'NotAllowedError' ? 'Vazgeçildi ya da süre doldu. Tekrar dene ya da şifrenle gir.' : 'Biyometrik giriş başarısız: ' + ((e && e.message) || e);
+  }finally{ btn.disabled = false; }
+}
+// Profilim › Güvenlik: bu cihazı ekle (oturum açıkken)
+async function biyoCihazEkle(){
+  const btn = document.getElementById('pfBiyoEkle');
+  if(!(await biyoDestekli())){ showAlertModal('Bu cihazda parmak izi / yüz tanıma (ya da cihaz kilidi) ile doğrulama kullanılamıyor.'); return; }
+  if(btn) btn.disabled = true;
+  try{
+    const b = await fetch(MY_WORKER + '/auth/passkey/kayit-baslat', { method: 'POST' });
+    const j = await b.json().catch(() => ({}));
+    if(!b.ok){ showAlertModal(j.error || 'Sunucuya ulaşılamadı.'); return; }
+    const c = await navigator.credentials.create({ publicKey: {
+      challenge: b64uOku(j.sinama), rp: { id: location.hostname, name: 'Finansal Takip' },
+      user: { id: b64uOku(j.kullaniciId), name: j.ad, displayName: j.gorunenAd },
+      pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+      authenticatorSelection: { authenticatorAttachment: 'platform', residentKey: 'required', requireResidentKey: true, userVerification: 'required' },
+      attestation: 'none', timeout: 60000, excludeCredentials: (j.mevcut || []).map(id => ({ type: 'public-key', id: b64uOku(id) })) } });
+    const yan = c.response;
+    if(!yan.getPublicKey || !yan.getAuthenticatorData){ showAlertModal('Bu tarayıcı biyometrik girişi tam desteklemiyor. Telefonunda güncel Safari ya da Chrome ile dene.'); return; }
+    const res = await fetch(MY_WORKER + '/auth/passkey/kayit', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: c.id, clientDataJSON: b64uYaz(yan.clientDataJSON), authenticatorData: b64uYaz(yan.getAuthenticatorData()), publicKey: b64uYaz(yan.getPublicKey()), alg: yan.getPublicKeyAlgorithm(), ad: biyoCihazAdi() }) });
+    const d = await res.json().catch(() => ({}));
+    if(!res.ok){ showAlertModal(d.error || 'Cihaz eklenemedi.'); return; }
+    try{ localStorage.setItem(PASSKEY_ID_KEY, d.id); localStorage.setItem(PASSKEY_TEKLIF_KEY, '1'); }catch(e){ /* yok */ }
+    biyoTeklifGizle();
+    showAlertModal('Bu cihaz eklendi ✓ Bir dahaki girişte “Parmak izi / Face ID ile giriş”e dokunman yeter; şifre gerekmez.');
+    biyoListeCiz();
+  }catch(e){
+    showAlertModal(e && e.name === 'InvalidStateError' ? 'Bu cihaz zaten ekli.' : e && e.name === 'NotAllowedError' ? 'Vazgeçildi ya da süre doldu.' : 'Cihaz eklenemedi: ' + ((e && e.message) || e));
+  }finally{ if(btn) btn.disabled = false; }
+}
+async function biyoListeCiz(){
+  const el = document.getElementById('pfBiyoListe'), durum = document.getElementById('pfBiyoDurum'), btn = document.getElementById('pfBiyoEkle');
+  if(!el) return;
+  const var_ = await biyoDestekli();
+  let liste = [];
+  try{ const r = await fetch(MY_WORKER + '/auth/passkey'); if(r.ok) liste = (await r.json()).cihazlar || []; }catch(e){ /* çevrimdışı */ }
+  const buId = (() => { try{ return localStorage.getItem(PASSKEY_ID_KEY); }catch(e){ return null; } })();
+  const buEkli = !!buId && liste.some(x => x.id === buId);
+  if(buId && !buEkli && liste.length){ try{ localStorage.removeItem(PASSKEY_ID_KEY); }catch(e){ /* yok */ } }
+  if(durum) durum.textContent = buEkli ? 'Bu cihazda açık: girişte şifre yerine parmak izi / Face ID.' : var_ ? 'Bu cihazı ekle: girişte şifre yerine parmak izi / Face ID kullan.' : 'Bu cihazda parmak izi / yüz tanıma kullanılamıyor; telefonundan ekleyebilirsin.';
+  if(btn){ btn.hidden = !var_ || buEkli; }
+  const tarih = ms => ms ? new Date(ms).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+  el.innerHTML = liste.map(x => `<div class="pf-biyo-oge"><span>${PARMAK_SVG}<b>${escapeHtml(x.ad || 'Cihaz')}</b>${x.id === buId ? ' <span class="pf-rozet">bu cihaz</span>' : ''}<small>eklendi ${tarih(x.eklendi)}${x.sonKullanim ? ' · son giriş ' + kisaTarihSaat(new Date(x.sonKullanim)) : ''}</small></span><button class="geri-al-btn" onclick="biyoCihazSil('${encodeURIComponent(x.id)}')">Kaldır</button></div>`).join('');
+}
+const PARMAK_SVG = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 11v3a8 8 0 0 1-1.2 4.2"/><path d="M8.6 7.4A5 5 0 0 1 17 11v2.5a12 12 0 0 1-.6 3.8"/><path d="M5.6 9.8A7 7 0 0 1 12 4a7 7 0 0 1 7 7v1"/><path d="M7 11a5 5 0 0 1 .1-1M7 13.5V15a9 9 0 0 1-1 4"/><path d="M14.6 20.5l.4-1.5"/></svg>';
+function biyoCihazSil(idK){
+  const id = decodeURIComponent(idK);
+  showConfirmModal('Bu cihazla parmak izi / Face ID girişi kaldırılsın mı? O cihazda yine şifrenle girebilirsin.', async () => {
+    try{ await fetch(MY_WORKER + '/auth/passkey/' + encodeURIComponent(id), { method: 'DELETE' }); }catch(e){ /* yok */ }
+    try{ if(localStorage.getItem(PASSKEY_ID_KEY) === id) localStorage.removeItem(PASSKEY_ID_KEY); }catch(e){ /* yok */ }
+    biyoListeCiz();
+  });
+}
+// Şifreyle giriş yapılan telefonda bir kez öner (ft_passkey_teklif: kapatıldı / eklendi)
+async function biyoTeklifGoster(){
+  const el = document.getElementById('biyoTeklif'); if(!el) return;
+  let sifreyle = false; try{ sifreyle = sessionStorage.getItem(SIFRE_GIRIS_OTURUM) === '1'; sessionStorage.removeItem(SIFRE_GIRIS_OTURUM); }catch(e){ /* yok */ }
+  let reddedildi = false; try{ reddedildi = !!localStorage.getItem(PASSKEY_TEKLIF_KEY); }catch(e){ /* yok */ }
+  const telefon = matchMedia('(max-width: 900px)').matches || matchMedia('(pointer: coarse)').matches;
+  if(!sifreyle || reddedildi || biyoBuCihazdaVar() || !telefon || !(await biyoDestekli())) return;
+  el.style.display = 'flex';
+}
+function biyoTeklifGizle(kalici){ const el = document.getElementById('biyoTeklif'); if(el) el.style.display = 'none'; if(kalici){ try{ localStorage.setItem(PASSKEY_TEKLIF_KEY, '1'); }catch(e){ /* yok */ } } }
+
 function kullaniciBilgi(){ try{ return JSON.parse(localStorage.getItem(KULLANICI_KEY) || 'null'); }catch(e){ return null; } }
 function benYonetici(){ const k = kullaniciBilgi(); return !!k && k.rol === 'admin'; }
 // Bu cihazdaki hesap verilerini sil (çıkışta ve cihazda başka biri giriş yapınca) — veriler sunucuda kalır
@@ -13957,7 +14097,7 @@ function switchTab(tabId){
   if(tabId === 'kurum') krYukle();
   if(tabId === 'kullanicilar'){ renderKullanicilar(); renderGonderilen(); }
   if(tabId === 'destek') destekHazirla();
-  if(tabId === 'profil'){ renderProfil(); profilYenile(); renderMesajKutusu(); }
+  if(tabId === 'profil'){ renderProfil(); profilYenile(); renderMesajKutusu(); biyoListeCiz(); }
   const pk = document.getElementById('profilKutu'); if(pk) pk.classList.toggle('active', tabId === 'profil');
   const kdb = document.getElementById('kartDuzenBtn'); if(kdb) kdb.classList.toggle('gizli', tabId !== 'gunluk');
   bildirimPanelKapat(); bildirimGuncelle();   // veri başka sayfada değişmiş olabilir
@@ -15525,6 +15665,7 @@ new MutationObserver(m => { for(const x of m) for(const n of x.addedNodes) if(n.
 
 buildCards();
 updateGarantiLive();
+if(localStorage.getItem(ERISIM_KEY)) setTimeout(biyoTeklifGoster, 1500);   // şifreyle giriş yapılan telefonda bir kez: parmak izi / Face ID önerisi
 renderKKKartlari();
 renderKMH();
 renderNakit();
