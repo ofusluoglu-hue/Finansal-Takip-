@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E7A83B' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M7 14l4-5 3 3 5-7'/%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0A0D12">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Piyasa Özeti</title>
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="referrer" content="no-referrer">
@@ -4429,6 +4433,7 @@
         <li><b>Yılda bir-iki kez:</b> ev, arsa, araba gibi varlıkların değeri.</li>
         <li><b>Hiç gerekmez:</b> fiyatlar, kurlar, kredi ve KMH faizi, net varlık kaydı; bunlar kendiliğinden işler.</li>
       </ul></div></details>
+    <details class="kv-bolum kv-sss"><summary>Paneli telefonuma uygulama olarak yükleyebilir miyim?</summary><div class="kv-ic"><p>Evet. Android'de paneli <b>Chrome</b>'da aç, sağ üstteki <b>⋮</b> menüsünden <b>Uygulamayı yükle</b>'ye (ya da <b>Ana ekrana ekle</b>'ye) bas. Ana ekrana kendi simgesiyle gelir, adres çubuğu olmadan tam ekran açılır. iPhone'da Safari'de <b>Paylaş › Ana Ekrana Ekle</b>. Uygulama aynı panelin kendisidir: aynı hesapla girersin, bilgisayarda girdiğin her şey telefonda da görünür, tersi de. Güncellemeler kendiliğinden gelir, yeniden yüklemen gerekmez.</p></div></details>
 
     <div class="kv-grup-bas">Harcama ve bütçe</div>
     <details class="kv-bolum kv-sss"><summary>Bir ayın harcamasını yanlış girdim, nasıl düzeltirim?</summary><div class="kv-ic"><p>Harcama Takibim'de aylık tablodaki o hücreye tıkla; o ayın o kategorideki kayıtları aşağıda açılır. Yanlış kaydı <b>Güncelle</b> ile düzelt ya da <b>Sil</b> ile sil. Tablo kendiliğinden güncellenir; tablonun kendisi elle düzenlenmez.</p></div></details>
@@ -15573,6 +15578,8 @@ bpBaslat();   // Bay Piyasa: kayıtlı sohbetleri/ayarları yükle
   if(oge && !oge.hidden && (t !== 'kullanicilar' || benYonetici())) switchTab(t);
 })();
 senkronBaslat();   // D1 ile senkron: sunucudaki değişiklikleri çek, bekleyenleri gönder
+// Telefona "uygulama olarak yükle" (sw.js): sayfa her açılışta ağdan taze gelir, API'ye dokunmaz
+if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
 </html>

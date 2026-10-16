@@ -1,0 +1,18 @@
+{
+  "id": "./piyasa-paneli.html",
+  "name": "Finansal Takip",
+  "short_name": "Finansal Takip",
+  "description": "Kişisel finans ve piyasa takip paneli",
+  "lang": "tr",
+  "start_url": "./piyasa-paneli.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0D12",
+  "theme_color": "#0A0D12",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

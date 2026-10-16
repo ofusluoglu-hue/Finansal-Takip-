@@ -36,6 +36,8 @@ Kişisel finans ve piyasa takip paneli: canlı piyasa fiyatları, yatırım port
 
 Telefonda da kullanılabilir: menü alta sabit sekme çubuğuna dönüşür; çubukta yer almayan sayfalar ve hesap işlemleri (şifre değiştirme, çıkış) **Diğer** menüsündedir.
 
+**Uygulama olarak yükleme (PWA):** Android'de Chrome › ⋮ › **Uygulamayı yükle** (iPhone'da Safari › Paylaş › Ana Ekrana Ekle). Ana ekrana kendi simgesiyle gelir, adres çubuğu olmadan açılır. Aynı sayfa ve aynı hesaptır: veri bilgisayarla senkron, güncellemeler kendiliğinden gelir. Dosyalar: `manifest.webmanifest`, `sw.js`, `icons/`.
+
 ## Mimari (özet)
 
 ```
@@ -54,6 +56,7 @@ Ayrıntılar için [PROJECT.md](PROJECT.md).
 |---|---|
 | [piyasa-paneli.html](piyasa-paneli.html) | Uygulamanın tamamı (HTML + CSS + JS, derleme adımı yok) |
 | [cloudflare-worker.js](cloudflare-worker.js) | Arka uç: kimlik doğrulama, API geçitleri, veri senkronu |
+| [manifest.webmanifest](manifest.webmanifest), [sw.js](sw.js), [icons/](icons/) | Telefona uygulama olarak yükleme (PWA): ad, simgeler, önce-ağ service worker |
 | [wrangler.toml](wrangler.toml) | Worker deploy ayarları |
 | [kredi-odeme-plani-sablon.xlsx](kredi-odeme-plani-sablon.xlsx) | Excel'den kredi eklemek için ödeme planı şablonu |
 | [PROJECT.md](PROJECT.md) | Teknik dokümantasyon |
