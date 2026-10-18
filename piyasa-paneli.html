@@ -4202,8 +4202,8 @@
     <details class="kv-bolum" id="kv-finansal"><summary>💼 Finansal Durumum <span>net servetin</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Sahip olduklarını ve borçlarını tek yerde toplar: <b>Net varlık = varlıklar + yatırımlar − borçlar</b>.</p>
       <p><b>Nasıl kullanılır:</b> Varlıklarım bölümünde <b>+ Ekle</b>'ye bas, türü seç (Konut, Arsa, Otomobil, Dükkan, Nakit / Mevduat, Diğer), adını ve bugünkü değerini yaz. Değer değişince satırdaki <b>Güncelle</b> ile güncelle.</p>
-      <p><b>Alacaklarım:</b> Sana borcu olan biri varsa (ör. elden borç verdin, 20'sinde geri gelecek) <b>Alacaklarım</b>'da <b>+ Ekle</b> → kimden, tutar ve ne zaman geleceği (biliyorsan). Alacak <b>net servetine</b> varlık olarak sayılır; <b>Ödeme Takvimi</b>'nde o gün yeşil “gelen para” olarak görünür (ödeme toplamlarına karışmaz); <b>Nakit Akışı</b>'nda o ayın gelirine girer; zil bir gün önce ve o gün hatırlatır, günü geçip gelmezse “gecikti” der. Para gelince <b>Geldi</b>'ye bas: gelen tutarı yaz (kısmen geldiyse kalan alacak olarak durur), istersen bir nakit / mevduat hesabına eklensin; gelen tutar o ayın tek seferlik geliri olur. Tarihi ya da kalanı <b>Güncelle</b> ile değiştirirsin.</p>
-      <p><b>Örnek:</b> Ahmet · ₺20.000 · 20 Ekim → takvimde 20 Ekim'de “Ahmet (alacak) +₺20.000”, 19 Ekim'de zilde “Yarın gelecek para: Ahmet”. ₺5.000 gelince Geldi → 5.000, “Hesaba ekle: Ziraat hesabı” → kalan ₺15.000, hesabın ₺5.000 artar, net servetin değişmez.</p>
+      <p><b>Alacaklarım:</b> Sana borcu olan biri varsa (ör. elden borç verdin, 20'sinde geri gelecek) <b>Alacaklarım</b>'da <b>+ Ekle</b> → kimden, tutar ve ne zaman geleceği (biliyorsan). Alacak <b>net servetine</b> varlık olarak sayılır; <b>Ödeme Takvimi</b>'nde o gün yeşil “gelen para” olarak görünür (ödeme toplamlarına karışmaz); <b>Nakit Akışı</b>'nda o ayın gelirine girer; zil bir gün önce ve o gün hatırlatır, günü geçip gelmezse “gecikti” der. Para gelince <b>Geldi</b>'ye bas: gelen tutarı yaz (kısmen geldiyse kalan alacak olarak durur) ve <b>nereye gittiğini</b> seç: <b>KMH borcundan düş</b> (para KMH'li hesaba girince banka önce eksiyi kapatır; KMH borcun varsa varsayılan budur), <b>nakit / mevduat hesabına ekle</b> (ya da <b>yeni nakit hesabı aç</b>), <b>kart borcuna öde</b>, <b>elden borca öde</b> ya da <b>elde tuttum / harcadım</b>. Borçlara en fazla borç kadar düşülür, artanı söylenir. Net servetin değişmez (alacak azalır, karşılığında borç azalır ya da nakit artar). Gelen tutar o ayın tek seferlik geliri olur, adında nereye gittiği yazar. Tarihi ya da kalanı <b>Güncelle</b> ile değiştirirsin.</p>
+      <p><b>Örnek:</b> Ahmet · ₺20.000 · 20 Ekim → takvimde 20 Ekim'de “Ahmet (alacak) +₺20.000”, 19 Ekim'de zilde “Yarın gelecek para: Ahmet”. ₺5.000 gelince Geldi → 5.000, “Enpara KMH” → kalan alacak ₺15.000, Enpara KMH borcun ₺5.000 azalır (faizi bugünden yeniden işler), net servetin değişmez.</p>
       <p><b>Örnek:</b> “Ev · Konut · ₺4.500.000”. Satırdaki ışık yeşilse değeri bugün güncellemişsin; kırmızıysa daha önce.</p>
       <p><b>Dövizde ya da altında duran para:</b> Türü <b>Nakit / Mevduat</b> seçince yanında birim seçici çıkar: ₺ TL, $ Dolar, € Euro ya da Gram altın. Bu durumda tutar değil <b>miktar</b> girersin (ör. $7.000 ya da 50 gram). TL karşılığı güncel kurla kendiliğinden hesaplanır: $7.000 × ₺50 = ₺350.000.</p>
       <p class="kv-ipucu">💡 Konut, arsa gibi varlıkların fiyatı internetten çekilmez; yılda bir-iki kez gerçekçi bir değerle güncellemen yeterli. Birikim Hedefleri'nde bir acil durum fonu tanımladıysan, üstteki Toplam Varlık kutusunda “Acil fon ₺… · n ay” satırı da görünür.</p>
@@ -4476,7 +4476,7 @@
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
     <details class="kv-bolum kv-sss"><summary>Parmak izi ya da Face ID ile nasıl giriş yaparım?</summary><div class="kv-ic"><p>Telefonundan bir kez şifrenle gir; çıkan “parmak izi / Face ID ile giriş açılsın mı?” önerisinde <b>Aç</b>'a bas (ya da Profilim › Güvenlik › <b>Bu cihazı ekle</b>). Telefon parmak izini ya da yüzünü sorar, cihaz eklenir. Bundan sonra giriş ekranında en üstteki <b>Parmak izi / Face ID ile giriş</b>'e dokunman yeter. Parmak izi ve yüz verisi telefondan çıkmaz; panel yalnızca telefonun ürettiği imzayı doğrular. Telefonu kaybedersen Profilim › Güvenlik'ten o cihazı <b>Kaldır</b>. Şifren her zaman geçerlidir.</p></div></details>
-    <details class="kv-bolum kv-sss"><summary>Birine borç verdim, geri ödeyecek; nasıl eklerim?</summary><div class="kv-ic"><p>Finansal Durumum'da <b>Alacaklarım</b> → <b>+ Ekle</b>: kimden, tutar ve ne zaman geleceği. Net servetine sayılır, Ödeme Takvimi'nde o gün yeşil “gelen para” olarak görünür, Nakit Akışı'nda o ayın gelirine girer ve bir gün önce hatırlatılır. Para gelince <b>Geldi</b> de (kısmen geldiyse kalan durur); istersen tutar nakit / mevduat hesabına eklenir. Sana borç veren biri varsa o da Borçlarım › Elden Nakit Borçlar'a girer.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Birine borç verdim, geri ödeyecek; nasıl eklerim?</summary><div class="kv-ic"><p>Finansal Durumum'da <b>Alacaklarım</b> → <b>+ Ekle</b>: kimden, tutar ve ne zaman geleceği. Net servetine sayılır, Ödeme Takvimi'nde o gün yeşil “gelen para” olarak görünür, Nakit Akışı'nda o ayın gelirine girer ve bir gün önce hatırlatılır. Para gelince <b>Geldi</b> de (kısmen geldiyse kalan durur) ve nereye gittiğini seç: KMH borcundan düş, nakit hesabına ekle, kart ya da elden borca öde, ya da elde tuttum. Sana borç veren biri varsa o da Borçlarım › Elden Nakit Borçlar'a girer.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Aylık raporumun hazır olduğunu nasıl anlarım?</summary><div class="kv-ic"><p>Her ay bittiğinde geçen ayın raporu hazır olur ve sana iki yerden haber verilir: sağ üstteki zilde “Raporlar” altında ve Piyasa Özeti'nin üstünde mavi bir şeritte. Bay Piyasa yorumunu henüz çıkarmadıysan hatırlatma “Bay Piyasa yorumunu çıkar” der ve yorumu çıkarana kadar kalır; dokununca rapor yorum bölümünde açılır. Raporda Kurum Raporları'ndan ayın özeti de vardır (portföyündeki hisselerde tavsiye / hedef değişiklikleri, piyasa görüşü, takvim). Bildirim, o ay için harcama girdiysen çıkar.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Kredi taksitimi ya da kart borcumu erken ödedim, nasıl işaretlerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde, yaklaşan ödemelerde o taksitin ya da kartın satırındaki <b>Erken öde</b>'ye bas (son günündeysen düğme <b>Ödedim</b> olur). Kredide taksit ödenmiş sayılır ve Kredilerim'deki kalan borç hemen düşer; kartta ödediğin tutarı yazarsın, kart borcundan düşülür. Satırda “✓ ödendi · erken” yazar, o ödeme için hatırlatma ve bildirim gelmez. Yanlışlıkla bastıysan aynı satırdaki <b>Geri al</b> ile eski hâline döner.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Elektrik / doğalgaz faturam her ay farklı; tutarı ve tarihi nasıl girerim?</summary><div class="kv-ic"><p>Ödeme Takvimi'nde faturayı bir kez düzenli ödeme olarak ekle (yaklaşık tutar ve genelde son ödeme günü). Her ay fatura gelince satırdaki <b>Güncelle</b>'ye bas, o ayın <b>tutarını</b> ve <b>son ödeme gününü</b> yaz, kapsamı <b>“yalnız &lt;ay&gt;”</b> bırak ve Kaydet. Yalnız o ay değişir: takvim, Harcama Takibim ve (kartla ödeniyorsa) kart borcu o ayın tutarıyla güncellenir; sonraki aylar düzenli değerle devam eder.</p></div></details>
@@ -10257,6 +10257,51 @@ function alacakBolumeGit(id){
   if(id) alacakGeldiAc(id);
   setTimeout(() => { const b = document.getElementById('alacakBolum'); if(b) b.scrollIntoView({ block: 'start', behavior: 'smooth' }); const i = document.getElementById('alacakGeldiTutar'); if(i) i.focus({ preventScroll: true }); }, 60);
 }
+// Gelen para nereye gitti: nakit / mevduat hesabı (ya da yeni hesap), KMH borcu, kart borcu, elden borç, ya da elde tutuldu.
+// Değer biçimi: 'v:<varlık>', 'yeni', 'kmh:<id>', 'kk:<id>', 'nb:<id>', '' (elde tuttum / harcadım). Net servet hiçbirinde değişmez.
+function kmhGuncelTutar(x){ const c = kmhCanli(x); return c ? c.tutar : Number(x.tutar) || 0; }
+function alacakHedefleri(){
+  const nakit = manuelListeYukle(VARLIK_KEY).filter(v => v.tur === 'Nakit / Mevduat' && (!v.birim || v.birim === 'TL'));
+  const kmh = manuelListeYukle(KMH_KEY).map(x => ({ x, b: kmhGuncelTutar(x) })).filter(o => o.b > 0.009);
+  const kk = kkKartlari().filter(x => Number(x.tutar) > 0.009);
+  const nb = manuelListeYukle(NAKIT_KEY).map(x => ({ x, b: nakitTLHesapla(x).tutarTL })).filter(o => o.b > 0.009);
+  return { nakit, kmh, kk, nb };
+}
+function alacakHedefSecenekleri(){
+  const H = alacakHedefleri(), tl = v => '₺' + fmtNumber(v, 0);
+  // Varsayılan: KMH borcu varsa ilki (para KMH'li hesaba girince banka önce eksiyi kapatır), yoksa ilk nakit hesabı, yoksa "elde tuttum"
+  const varsayilan = H.kmh.length ? 'kmh:' + H.kmh[0].x.id : H.nakit.length ? 'v:' + H.nakit[0].id : '';
+  const o = (v, t) => `<option value="${escapeHtml(v)}"${v === varsayilan ? ' selected' : ''}>${escapeHtml(t)}</option>`;
+  const grup = (ad, ic) => ic ? `<optgroup label="${escapeHtml(ad)}">${ic}</optgroup>` : '';
+  return grup('KMH borcundan düş', H.kmh.map(k => o('kmh:' + k.x.id, k.x.ad + ' KMH (' + tl(k.b) + ')')).join(''))
+    + grup('Nakit / mevduat hesabına ekle', H.nakit.map(v => o('v:' + v.id, v.ad + ' (' + tl(varlikDegerTL(v)) + ')')).join('') + o('yeni', 'Yeni nakit hesabı aç'))
+    + grup('Kart borcuna öde', H.kk.map(k => o('kk:' + k.id, k.ad + ' (' + tl(k.tutar) + ')')).join(''))
+    + grup('Elden borca öde', H.nb.map(k => o('nb:' + k.x.id, k.x.ad + ' (' + tl(k.b) + ')')).join(''))
+    + o('', 'Elde tuttum / harcadım');
+}
+// Gelen tutarı seçilen yere uygular; borçlara en fazla borç kadar düşülür. Dönen: { uygulanan, artan, ad }
+function alacakHedefeUygula(nereye, t){
+  const simdiISO = new Date().toISOString(), y2 = v => Math.round(v * 100) / 100;
+  const [tur, id] = nereye.includes(':') ? [nereye.slice(0, nereye.indexOf(':')), nereye.slice(nereye.indexOf(':') + 1)] : [nereye, ''];
+  if(tur === 'v'){ const vl = manuelListeYukle(VARLIK_KEY), v = vl.find(x => x.id === id); if(!v) return { uygulanan: 0, artan: t }; v.deger = y2((Number(v.deger) || 0) + t); v.tarih = simdiISO; manuelListeKaydet(VARLIK_KEY, vl); return { uygulanan: t, artan: 0, ad: v.ad + ' hesabına eklendi' }; }
+  if(tur === 'yeni'){ const vl = manuelListeYukle(VARLIK_KEY); vl.push({ id: 'v-' + Date.now(), tur: 'Nakit / Mevduat', ad: 'Nakit hesabı', deger: y2(t), birim: 'TL', tarih: simdiISO }); manuelListeKaydet(VARLIK_KEY, vl); return { uygulanan: t, artan: 0, ad: 'yeni “Nakit hesabı” açıldı' }; }
+  if(tur === 'kmh'){
+    const l = manuelListeYukle(KMH_KEY), x = l.find(q => q.id === id); if(!x) return { uygulanan: 0, artan: t };
+    const borc = kmhGuncelTutar(x), u = Math.min(t, borc);
+    x.tutar = y2(borc - u); x.tarih = simdiISO;   // bugünkü borçtan (işlemiş faiz dahil) düşülür; faiz bugünden yeniden işler
+    if(Number(x.anapara) > 0) x.anapara = y2(Math.max(0, Number(x.anapara) - u));
+    manuelListeKaydet(KMH_KEY, l); return { uygulanan: u, artan: y2(t - u), ad: x.ad + ' KMH borcundan düşüldü' };
+  }
+  if(tur === 'kk'){ const k = kkKartlari().find(q => q.id === id); if(!k) return { uygulanan: 0, artan: t }; const u = Math.min(t, Number(k.tutar) || 0); kartaYaz(id, -u); return { uygulanan: u, artan: y2(t - u), ad: k.ad + ' kart borcuna ödendi' }; }
+  if(tur === 'nb'){
+    const l = manuelListeYukle(NAKIT_KEY), x = l.find(q => q.id === id); if(!x) return { uygulanan: 0, artan: t };
+    const n = nakitTLHesapla(x), u = Math.min(t, n.tutarTL), kur = n.kur || 1;
+    const kalan = n.girilenTutar - u / ((x.paraBirimi && x.paraBirimi !== 'TL') ? kur : 1);
+    const yeniL = kalan > 0.009 ? l.map(q => q.id === id ? Object.assign(q, { girilenTutar: y2(kalan), tarih: simdiISO }) : q) : l.filter(q => q.id !== id);   // tamamı ödendiyse borç kapanır
+    manuelListeKaydet(NAKIT_KEY, yeniL); return { uygulanan: u, artan: y2(t - u), ad: x.ad + (kalan > 0.009 ? ' borcuna ödendi' : ' borcu kapandı') };
+  }
+  return { uygulanan: 0, artan: t, ad: null };
+}
 function alacakGeldiKaydet(id){
   const t = parseFloat(String((document.getElementById('alacakGeldiTutar') || {}).value || '').replace(',', '.'));
   const nereye = (document.getElementById('alacakGeldiNereye') || {}).value || '';
@@ -10265,12 +10310,14 @@ function alacakGeldiKaydet(id){
   if(t > Number(a.tutar) + 0.009){ showAlertModal('Gelen tutar kalan alacaktan (₺' + fmtNumber(a.tutar, 2) + ') büyük olamaz.'); return; }
   a.tutar = Math.round((Number(a.tutar) - t) * 100) / 100;
   manuelListeKaydet(ALACAK_KEY, a.tutar > 0.009 ? list : list.filter(x => x.id !== id));
-  // Bu ayın nakit akışına tek seferlik gelir olarak
-  const gl = gelirYukle(); gl.push({ id: 'g-' + Date.now(), tur: 'tek', ad: a.ad + ' (alacak)', tutar: t, ay: buAyAnahtar(), kaynak: 'alacak' }); manuelListeKaydet(GELIR_KEY, gl);
-  // İstenirse nakit / mevduat varlığına eklenir (net servet değişmez: alacak nakde döner)
-  if(nereye){ const vl = manuelListeYukle(VARLIK_KEY), v = vl.find(x => x.id === nereye); if(v){ v.deger = Math.round(((Number(v.deger) || 0) + t) * 100) / 100; v.tarih = new Date().toISOString(); manuelListeKaydet(VARLIK_KEY, vl); } }
+  // Nereye gitti (net servet değişmez: alacak azalır, borç azalır ya da nakit artar)
+  const s = alacakHedefeUygula(nereye, t);
+  // Bu ayın nakit akışına tek seferlik gelir olarak (nereye gittiği adında)
+  const gl = gelirYukle(); gl.push({ id: 'g-' + Date.now(), tur: 'tek', ad: a.ad + ' (alacak' + (s.ad ? ' · ' + s.ad : '') + ')', tutar: t, ay: buAyAnahtar(), kaynak: 'alacak' }); manuelListeKaydet(GELIR_KEY, gl);
   _alacakGeldi = null;
   alacakDegisti();
+  ['renderKMH', 'renderKKKartlari', 'renderNakit'].forEach(f => { if(typeof window[f] === 'function') window[f](); });
+  if(s.artan > 0.009) showAlertModal(`₺${fmtNumber(s.uygulanan, 2)} ${s.ad}; borç bu kadardı. Artan ₺${fmtNumber(s.artan, 2)} elde kaldı (bir hesaba eklemek istersen Varlıklarım'dan ekle).`);
 }
 function renderAlacak(){
   const el = document.getElementById('alacakListe'); if(!el) return;
@@ -10279,13 +10326,12 @@ function renderAlacak(){
   istYaz('alacakToplam', list.length ? '₺' + fmtNumber(toplam, 0) : '');
   const yakin = list.find(a => a.tarih && a.tarih >= bugunS), gec = list.filter(a => a.tarih && a.tarih < bugunS).length;
   istYaz('alacakBolumAlt', !list.length ? 'sana borçlu olanlar' : list.length + ' kişi' + (gec ? ' · ' + gec + ' gecikmiş' : yakin ? ' · sıradaki ' + alacakTarihYaz(yakin.tarih) : ''));
-  const nakitler = manuelListeYukle(VARLIK_KEY).filter(v => v.tur === 'Nakit / Mevduat' && (!v.birim || v.birim === 'TL'));
   el.innerHTML = list.length ? list.map(a => {
     if(_alacakGeldi === a.id) return `<div class="satir alacak-geldi-acik">
         <div class="satir-ana"><div class="satir-ad">${escapeHtml(a.ad)}</div><div class="satir-alt">Gelen tutarı yaz; kısmen geldiyse kalan alacak olarak durur</div></div>
         <div class="satir-duzen" style="display:flex;">
           <input type="number" step="0.01" min="0" id="alacakGeldiTutar" value="${Number(a.tutar)}" title="Gelen tutar" placeholder="gelen tutar (₺)" onkeydown="if(event.key==='Enter') alacakGeldiKaydet('${a.id}'); if(event.key==='Escape'){ _alacakGeldi = null; renderAlacak(); }">
-          <select id="alacakGeldiNereye" title="Para nereye girdi? Seçersen o nakit / mevduat varlığına eklenir">${nakitler.map((v, i) => `<option value="${escapeHtml(v.id)}"${i === 0 ? ' selected' : ''}>Hesaba ekle: ${escapeHtml(v.ad)}</option>`).join('')}<option value="">Hiçbir hesaba ekleme</option></select>
+          <select id="alacakGeldiNereye" title="Gelen para nereye gitti? Borca giderse borç düşer, hesaba girerse hesap artar (net servet değişmez)">${alacakHedefSecenekleri()}</select>
           <button class="loan-btn-save" onclick="alacakGeldiKaydet('${a.id}')">Kaydet</button><button class="ikon-btn" title="Vazgeç" onclick="_alacakGeldi = null; renderAlacak();">✕</button>
         </div></div>`;
     const gecikti = a.tarih && a.tarih < bugunS, n = a.tarih ? gunFarkiS(bugunS, a.tarih) : null;
