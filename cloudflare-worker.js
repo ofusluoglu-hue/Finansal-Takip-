@@ -12,6 +12,8 @@
 //     /auth/ai-anahtar (POST: kullanıcının Anthropic anahtarını doğrulayıp şifreli saklar · DELETE: siler)
 //     /auth/passkey/giris-baslat, /auth/passkey/giris (POST, oturumsuz) — parmak izi / Face ID (WebAuthn) ile giriş
 //     /auth/passkey (GET: bu hesabın cihazları) · /auth/passkey/kayit-baslat, /auth/passkey/kayit (POST) · /auth/passkey/:id (DELETE)
+//     /push/durum (GET) · /push/abone (POST, DELETE) · /push/plan (POST: önümüzdeki 14 günün bildirimleri) · /push/dene (POST)
+//       — uygulama gibi bildirim (Web Push); zamanlanmış görev vakti gelenleri gönderir. Secret: VAPID_PUBLIC, VAPID_PRIVATE, VAPID_SUB
 //     /admin/kullanicilar (GET, POST) · /admin/kullanicilar/:id/sifre (POST) · /admin/kullanicilar/:id/durum (POST)
 //     /admin/kullanicilar/:id (DELETE)                                   — yalnız yönetici
 //     /data (GET), /data/:anahtar (PUT)    -> kullanıcının verileri (cihazlar arası senkron)
@@ -76,7 +78,7 @@ const SIFRE_ITER = 20000;            // PBKDF2 tekrar sayısı: ücretsiz plan i
 const SIFRE_MIN = 8;
 const FOTO_MAX = 120000;             // profil fotoğrafı (panel 192×192 JPEG'e küçültür, ~15–30 KB)
 const FOTO_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/;
-const TERCIH_ALANLARI = ['acilis', 'raporModel'];   // users.ayar içinde saklanabilen tercihler
+const TERCIH_ALANLARI = ['acilis', 'raporModel', 'pushSaat'];   // users.ayar içinde saklanabilen tercihler
 
 // İstemciye giden hesap bilgisi (şifre özeti vb. asla)
 function kullaniciCikti(u, ek) {
@@ -231,6 +233,69 @@ async function passkeyIstemciDenetle(env, request, tur, clientDataBayt, authData
   return { bayrak, sayac: ((authData[33] << 24) | (authData[34] << 16) | (authData[35] << 8) | authData[36]) >>> 0 };
 }
 
+// ---------- Web Push (RFC 8291 aes128gcm şifreleme + RFC 8292 VAPID imza), kütüphanesiz ----------
+// Abonelik adresi yalnız bilinen push servislerinden olabilir (sunucu başka adreslere istek atmaya zorlanamasın).
+const PUSH_SERVISLERI = /^https:\/\/([a-z0-9-]+\.)*(fcm\.googleapis\.com|android\.googleapis\.com|push\.apple\.com|push\.services\.mozilla\.com|notify\.windows\.com)\//i;
+const PUSH_PLAN_EN_COK = 60, PUSH_GEC_KALMA_MS = 6 * 3600 * 1000;
+async function hkdfBayt(tuz, ikm, bilgi, uzunluk) {
+  const k = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: tuz, info: bilgi }, k, uzunluk * 8));
+}
+async function pushSifrele(p256dhB64, authB64, metin) {
+  const ua = b64urlCoz(p256dhB64), authSir = b64urlCoz(authB64), enc = x => new TextEncoder().encode(x);
+  const uaAnahtar = await crypto.subtle.importKey('raw', ua, { name: 'ECDH', namedCurve: 'P-256' }, false, []);
+  const gecici = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits']);
+  const asPub = new Uint8Array(await crypto.subtle.exportKey('raw', gecici.publicKey));
+  const ortak = new Uint8Array(await crypto.subtle.deriveBits({ name: 'ECDH', public: uaAnahtar }, gecici.privateKey, 256));
+  const ikm = await hkdfBayt(authSir, ortak, baytBirlestir(baytBirlestir(enc('WebPush: info\0'), ua), asPub), 32);
+  const tuz = crypto.getRandomValues(new Uint8Array(16));
+  const cek = await hkdfBayt(tuz, ikm, enc('Content-Encoding: aes128gcm\0'), 16), nonce = await hkdfBayt(tuz, ikm, enc('Content-Encoding: nonce\0'), 12);
+  const aes = await crypto.subtle.importKey('raw', cek, 'AES-GCM', false, ['encrypt']);
+  const sifreli = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce }, aes, baytBirlestir(enc(metin), new Uint8Array([2]))));
+  const bas = new Uint8Array(16 + 4 + 1 + 65); bas.set(tuz, 0); new DataView(bas.buffer).setUint32(16, 4096); bas[20] = 65; bas.set(asPub, 21);
+  return baytBirlestir(bas, sifreli);
+}
+async function vapidBasligi(env, endpoint) {
+  const pub = b64urlCoz(env.VAPID_PUBLIC);
+  const anahtar = await crypto.subtle.importKey('jwk', { kty: 'EC', crv: 'P-256', d: env.VAPID_PRIVATE, x: b64url(pub.slice(1, 33)), y: b64url(pub.slice(33, 65)), ext: true }, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+  const j = o => b64url(new TextEncoder().encode(JSON.stringify(o)));
+  const govde = j({ typ: 'JWT', alg: 'ES256' }) + '.' + j({ aud: new URL(endpoint).origin, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: env.VAPID_SUB || 'mailto:admin@example.com' });
+  const imza = new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, anahtar, new TextEncoder().encode(govde)));
+  return 'vapid t=' + govde + '.' + b64url(imza) + ', k=' + env.VAPID_PUBLIC;
+}
+// Bir aboneye gönderir; dönen: HTTP durum kodu (404/410 → abonelik geçersiz)
+async function pushGonder(env, abone, yuk) {
+  const res = await fetch(abone.endpoint, { method: 'POST', headers: { 'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: '86400', Urgency: 'normal', Authorization: await vapidBasligi(env, abone.endpoint) },
+    body: await pushSifrele(abone.p256dh, abone.auth, JSON.stringify(yuk)) });
+  return res.status;
+}
+async function pushKullaniciya(env, userId, yuk) {
+  const { results } = await env.DB.prepare('SELECT * FROM push_abone WHERE user_id = ?').bind(userId).all();
+  let ok = 0;
+  for (const a of results || []) {
+    try {
+      const d = await pushGonder(env, a, yuk);
+      if (d === 404 || d === 410) await env.DB.prepare('DELETE FROM push_abone WHERE endpoint = ?').bind(a.endpoint).run();
+      else if (d >= 200 && d < 300) { ok++; await env.DB.prepare('UPDATE push_abone SET last_ok = ? WHERE endpoint = ?').bind(Date.now(), a.endpoint).run(); }
+      else console.log('push gönderilemedi', d, new URL(a.endpoint).host);
+    } catch (e) { console.log('push hata', e.message); }
+  }
+  return { ok, abone: (results || []).length };
+}
+// Zamanlanmış görev: vakti gelen (6 saatten eski olmayan) bildirimleri gönder; çok gecikenleri atla
+async function pushZamanli(env) {
+  if (!env.DB || !env.VAPID_PRIVATE || !env.VAPID_PUBLIC) return;
+  await semaHazirla(env);
+  const simdi = Date.now();
+  await env.DB.prepare('UPDATE push_plan SET gonderildi = 2 WHERE gonderildi = 0 AND zaman < ?').bind(simdi - PUSH_GEC_KALMA_MS).run();
+  const { results } = await env.DB.prepare('SELECT * FROM push_plan WHERE gonderildi = 0 AND zaman <= ? ORDER BY zaman LIMIT 100').bind(simdi).all();
+  for (const p of results || []) {
+    await env.DB.prepare('UPDATE push_plan SET gonderildi = 1 WHERE user_id = ? AND id = ?').bind(p.user_id, p.id).run();   // önce işaretle: iki kez gitmesin
+    await pushKullaniciya(env, p.user_id, { id: p.id, baslik: p.baslik, metin: p.metin, hedef: p.hedef });
+  }
+  await env.DB.prepare('DELETE FROM push_plan WHERE gonderildi != 0 AND zaman < ?').bind(simdi - 30 * 86400000).run();
+}
+
 async function sifreOzeti(sifre, tuzB64, iter) {
   const tuz = Uint8Array.from(atob(tuzB64), c => c.charCodeAt(0));
   const anahtar = await crypto.subtle.importKey('raw', new TextEncoder().encode(sifre), 'PBKDF2', false, ['deriveBits']);
@@ -290,6 +355,11 @@ async function semaHazirla(env) {
     env.DB.prepare('CREATE TABLE IF NOT EXISTS passkeys (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, public_key TEXT NOT NULL, alg INTEGER NOT NULL, sign_count INTEGER NOT NULL DEFAULT 0, ad TEXT, created_at INTEGER NOT NULL, last_used INTEGER)'),
     env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_passkeys_user ON passkeys (user_id)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS webauthn_sinama (sinama TEXT PRIMARY KEY, user_id TEXT, tur TEXT NOT NULL, expires_at INTEGER NOT NULL)'),
+    // Web Push: cihaz abonelikleri ve gönderilecek bildirim planı (gonderildi: 0 bekliyor, 1 gönderildi, 2 süresi geçti)
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS push_abone (endpoint TEXT PRIMARY KEY, user_id TEXT NOT NULL, p256dh TEXT NOT NULL, auth TEXT NOT NULL, cihaz TEXT, created_at INTEGER NOT NULL, last_ok INTEGER)'),
+    env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_push_abone_user ON push_abone (user_id)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS push_plan (user_id TEXT NOT NULL, id TEXT NOT NULL, zaman INTEGER NOT NULL, baslik TEXT NOT NULL, metin TEXT, hedef TEXT, gonderildi INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (user_id, id))'),
+    env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_push_plan_zaman ON push_plan (gonderildi, zaman)'),
   ]);
   // Sonradan eklenen sütunlar (profil fotoğrafı, tercihler)
   const { results: sutunlar } = await env.DB.prepare("SELECT name FROM pragma_table_info('users')").all();
@@ -710,6 +780,7 @@ function raporCikti(r) {
 export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(raporZamanli(env).catch(e => console.log('zamanlı rapor görevi hata', e.message)));
+    ctx.waitUntil(pushZamanli(env).catch(e => console.log('zamanlı push görevi hata', e.message)));
   },
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -833,6 +904,7 @@ export default {
         const temiz = {};
         TERCIH_ALANLARI.forEach(k => { if (typeof g.ayar[k] === 'string' && g.ayar[k].length <= 40) temiz[k] = g.ayar[k]; });
         if (temiz.raporModel && !RAPOR_MODELLER[temiz.raporModel]) delete temiz.raporModel;
+        if (temiz.pushSaat && !(/^\d{1,2}$/.test(temiz.pushSaat) && +temiz.pushSaat <= 23)) delete temiz.pushSaat;
         alanlar.push('ayar = ?'); degerler.push(JSON.stringify(temiz));
       }
       if (!alanlar.length) return json({ error: 'değişiklik yok' }, 400);
@@ -869,6 +941,38 @@ export default {
       await env.DB.prepare("UPDATE raporlar SET durum = 'bekliyor', deneme = 0 WHERE user_id = ? AND durum = 'anahtar_yok'").bind(ben.id).run();
       const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(ben.id).first();
       return json({ ok: true, kullanici: kullaniciCikti(u) });
+    }
+
+    // ---------- Uygulama gibi bildirim (Web Push) ----------
+    if (url.pathname === '/push/durum' && request.method === 'GET') {
+      const r2 = await env.DB.prepare('SELECT COUNT(*) AS n FROM push_abone WHERE user_id = ?').bind(ben.id).first();
+      return json({ anahtar: env.VAPID_PUBLIC || null, abone: (r2 && r2.n) || 0 });
+    }
+    if (url.pathname === '/push/abone' && (request.method === 'POST' || request.method === 'DELETE')) {
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      const endpoint = String(g.endpoint || '');
+      if (request.method === 'DELETE') { await env.DB.prepare('DELETE FROM push_abone WHERE endpoint = ? AND user_id = ?').bind(endpoint, ben.id).run(); return json({ ok: true }); }
+      const yerelTest = env.PUSH_TEST_ADRES && endpoint.startsWith(env.PUSH_TEST_ADRES);   // yalnız yerel testte (.dev.vars); canlıda tanımlı değil
+      if (!(PUSH_SERVISLERI.test(endpoint) || yerelTest) || endpoint.length > 1000) return json({ error: 'tanınmayan bildirim servisi' }, 400);
+      const k = g.keys || {};
+      if (!/^[A-Za-z0-9_-]{80,100}$/.test(String(k.p256dh || '')) || !/^[A-Za-z0-9_-]{16,30}$/.test(String(k.auth || ''))) return json({ error: 'abonelik anahtarları geçersiz' }, 400);
+      await env.DB.prepare('INSERT OR REPLACE INTO push_abone (endpoint, user_id, p256dh, auth, cihaz, created_at) VALUES (?, ?, ?, ?, ?, ?)').bind(endpoint, ben.id, k.p256dh, k.auth, String(g.cihaz || '').slice(0, 60), Date.now()).run();
+      return json({ ok: true });
+    }
+    if (url.pathname === '/push/plan' && request.method === 'POST') {
+      let g; try { g = await request.json(); } catch { return json({ error: 'geçersiz istek' }, 400); }
+      const simdi = Date.now(), liste = (Array.isArray(g.bildirimler) ? g.bildirimler : []).slice(0, PUSH_PLAN_EN_COK)
+        .filter(b => b && typeof b.id === 'string' && b.id.length <= 200 && Number(b.zaman) > simdi - 60000 && Number(b.zaman) < simdi + 31 * 86400000 && typeof b.baslik === 'string');
+      const yaz = [env.DB.prepare('DELETE FROM push_plan WHERE user_id = ? AND gonderildi = 0').bind(ben.id)];   // bekleyen plan yenisiyle değişir; gönderilmişler kalır (tekrar gitmez)
+      liste.forEach(b => yaz.push(env.DB.prepare('INSERT OR IGNORE INTO push_plan (user_id, id, zaman, baslik, metin, hedef) VALUES (?, ?, ?, ?, ?, ?)')
+        .bind(ben.id, b.id, Math.round(Number(b.zaman)), b.baslik.slice(0, 120), String(b.metin || '').slice(0, 300), String(b.hedef || '').slice(0, 30))));
+      await env.DB.batch(yaz);
+      return json({ ok: true, plan: liste.length });
+    }
+    if (url.pathname === '/push/dene' && request.method === 'POST') {
+      if (!env.VAPID_PRIVATE || !env.VAPID_PUBLIC) return json({ error: 'sunucuda bildirim anahtarı kurulmamış' }, 503);
+      const sonuc = await pushKullaniciya(env, ben.id, { id: 'dene-' + Date.now(), baslik: 'Finansal Takip', metin: 'Bildirimler açık ✓ Ödemelerin, gelecek paraların ve aylık raporun böyle gelecek.', hedef: 'gunluk' });
+      return json(sonuc);
     }
 
     // ---------- Biyometrik giriş: cihaz ekle / listele / sil (oturum gerekir) ----------

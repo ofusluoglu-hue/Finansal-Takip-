@@ -2971,6 +2971,8 @@
   .odeme-serit.biyo-teklif b:first-child{color:var(--up);display:inline-flex;align-items:center;gap:6px;}
   .biyo-teklif-ac{margin-left:auto;background:var(--up);color:var(--t-08220f);border:none;border-radius:8px;padding:5px 14px;font-weight:700;font-family:inherit;cursor:pointer;}
   .pf-biyo{align-items:flex-start;}
+  .pf-push-dugmeler{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;}
+  @media (max-width:640px){ .pf-satir.pf-genis{flex-direction:column;align-items:stretch;gap:8px;} .pf-satir.pf-genis > *{flex:none !important;} .pf-satir.pf-genis > div:first-child{width:100%;} .pf-genis .pf-push-dugmeler{align-items:flex-start;} .pf-genis .pf-push-dugmeler{justify-content:flex-start;} .pf-genis > .bolum-ekle{align-self:flex-start;} }   /* telefonda metin tam genişlik, düğmeler altında */
   .pf-biyo-oge{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--border);font-size:12.5px;margin-top:6px;}
   .pf-biyo-oge > span{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;min-width:0;} .pf-biyo-oge svg{width:15px;height:15px;color:var(--up);} .pf-biyo-oge small{flex-basis:100%;color:var(--muted-2);font-size:11.5px;}
   #raporYorumBtn.vurgu{border-color:var(--amber);color:var(--amber);box-shadow:0 0 0 0 color-mix(in srgb, var(--amber) 50%, transparent);animation:rapor-vurgu 1.8s ease-out infinite;}
@@ -4265,7 +4267,7 @@
       <p><b>Örnek:</b> Kartının toplam borcu ₺135.571, ekstre borcu ₺95.000, ödeyeceğin ₺60.000 → takvimde ₺60.000 görünür; kutuda “16 Ekim'de ₺60.000 ödeyeceksin; sonrasında kart borcu ≈ ₺75.571. Ekstrenin ₺35.000'i ödenmezse ona faiz işler.” yazar. <b>Tamamını öde</b>'ye basarsan “Ekstrenin tamamı ödeniyor, faiz yok.” olur.</p>
       <p><b>Takvim:</b> Ödenmemiş ödemelerin noktaları kendi renginde (kredi mor, kart kırmızı, fatura sarı…) LED gibi yanar; ödenenler soluklaşır. Bir günde hem ödenen hem ödenmeyen varsa hücrede kalan tutar belirgin, ödenen tutar üstü çizili ve soluk görünür.</p>
       <p class="kv-ipucu">💡 Ödeme günü geçtiği halde kartın borcunu Borçlarım'da güncellemediysen satırda bir hatırlatma çıkar. Bugünden önceki ödemeler “✓ ödendi” sayılır; kartla ödenen fatura ve abonelikler ise ödeme günü karta yazıldığı anda “✓ ödendi · 💳 kart” görünür, o gün için bildirim ve hatırlatma çıkmaz.</p>
-      <p><b>Bildirimler (🔔):</b> Sağ üstteki zil (telefonda en üstteki satırın sağında) yaklaşan ödemeleri iki kez hatırlatır: son günden <b>bir gün önce</b> (“Yarın ödenecek”, sarı) ve <b>son gün</b> (“Bugün ödenecek”, kırmızı). Örnek: 6 Ekim'deki kira 5 Ekim'de ve 6 Ekim'de bildirim olarak gelir. Uyarılar da buradadır: bütçesi aşılan ya da %90'ı dolan kategori, asgarinin altında planlanan kart ödemesi. Yöneticiden gelen mesajlar zilin solundaki <b>✉ zarfta</b> sayılır (zilde ikinci kez görünmez); zarfa dokununca son mesajların listesi açılır, birine dokununca Profilim › Mesaj kutusu'nda o mesaj açılır. Zildeki kırmızı sayı okunmamış bildirim sayısıdır; bildirime dokununca ilgili sayfa açılır, × ile kaldırırsın, başlıktaki <b>✓✓</b> simgesi hepsini okundu sayar. Ödeme ve uyarıların okundu bilgisi bu cihazda, mesajlarınki hesabında tutulur. Ay bitince geçen ayın <b>raporu hazır</b> bildirimi de burada, “Raporlar” altında çıkar.</p>
+      <p><b>Bildirimler (🔔):</b> Sağ üstteki zil (telefonda en üstteki satırın sağında) yaklaşan ödemeleri iki kez hatırlatır: son günden <b>bir gün önce</b> (“Yarın ödenecek”, sarı) ve <b>son gün</b> (“Bugün ödenecek”, kırmızı). Örnek: 6 Ekim'deki kira 5 Ekim'de ve 6 Ekim'de bildirim olarak gelir. Uyarılar da buradadır: bütçesi aşılan ya da %90'ı dolan kategori, asgarinin altında planlanan kart ödemesi. Yöneticiden gelen mesajlar zilin solundaki <b>✉ zarfta</b> sayılır (zilde ikinci kez görünmez); zarfa dokununca son mesajların listesi açılır, birine dokununca Profilim › Mesaj kutusu'nda o mesaj açılır. Zildeki kırmızı sayı okunmamış bildirim sayısıdır; bildirime dokununca ilgili sayfa açılır, × ile kaldırırsın, başlıktaki <b>✓✓</b> simgesi hepsini okundu sayar. Ödeme ve uyarıların okundu bilgisi bu cihazda, mesajlarınki hesabında tutulur. Ay bitince geçen ayın <b>raporu hazır</b> bildirimi de burada, “Raporlar” altında çıkar. Panel kapalıyken de telefonuna gelmesini istersen zilin altındaki <b>📲 Telefona gelsin</b>'e bas (Profilim › Telefon bildirimleri).</p>
       <button class="bolum-ekle" onclick="switchTab('odeme')">Ödeme Takvimi'ne git →</button>
     </div></details>
 
@@ -4387,6 +4389,7 @@
         <li><b>Tema (açık / koyu):</b> sağ üstteki anahtarla değiştirirsin (telefonda en üstteki satırda): sol taraf ☀ açık tema, sağ taraf ☾ koyu tema. Varsayılan koyu temadır; seçimin bu cihazda hatırlanır.</li>
         <li><b>Açılış sayfası:</b> panel açılınca ilk hangi sayfanın geleceğini seç (ör. her gün harcama giriyorsan Harcama Takibim).</li>
         <li><b>Bay Piyasa (yapay zekâ):</b> kendi Anthropic API anahtarını ekle, değiştir ya da kaldır. Anahtar doğrulanır ve şifreli saklanır; yönetici hesabında gerekmez.</li>
+        <li><b>Telefon bildirimleri (uygulama gibi):</b> <b>📲 Bildirimleri aç</b>'a bas, telefon izin sorar; izin verince bir deneme bildirimi gelir. Bundan sonra panel kapalıyken bile ödemeler (son günden bir gün önce ve o gün), gelecek paralar ve ayın 1'inde aylık rapor telefonuna bildirim olarak düşer; dokununca panel o sayfada açılır. <b>Bildirim saati</b>'nden hangi saatte geleceğini seç (varsayılan 09:00). <b>iPhone</b>'da önce paneli ana ekrana ekle (Safari › Paylaş › Ana Ekrana Ekle) ve oradan aç; Android'de Chrome'da doğrudan çalışır. Plan sen paneli açtıkça önümüzdeki 14 gün için güncellenir; ödemeyi işaretlediysen (ör. Erken öde) o bildirim gelmez. İstemezsen <b>Bu cihazda kapat</b>.</li>
         <li><b>Parmak izi / Face ID ile giriş:</b> Güvenlik bölümünde <b>👆 Bu cihazı ekle</b>'ye bas, telefonun parmak izini ya da yüzünü sorar; bundan sonra giriş ekranında <b>Parmak izi / Face ID ile giriş</b>'e dokunman yeter, şifre gerekmez. Telefonda şifreyle girince bunu bir kez kendiliğinden de önerir (“Aç” ya da ×). Parmak izi ya da yüz verin telefondan hiç çıkmaz; telefon yalnızca şifreli bir imza üretir, sunucu onu doğrular. Eklediğin cihazlar listede görünür; kaybettiğin ya da kullanmadığın cihazı <b>Kaldır</b> ile silebilirsin (o cihazda yine şifrenle girersin). Şifre her zaman çalışmaya devam eder.</li>
         <li><b>Güvenlik:</b> 🔑 <b>Şifremi değiştir</b> (mevcut şifre + en az 8 karakterlik yeni şifre; diğer cihazlardaki oturumlar kapanır), <b>Diğer cihazlardan çıkış yap</b> (ör. iş bilgisayarında açık unuttuysan) ve bu cihazdan <b>Çıkış yap</b>. Kaç cihazda açık olduğun da yazar.</li>
       </ul>
@@ -4475,6 +4478,7 @@
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
 
     <div class="kv-grup-bas">Yatırım ve varlıklar</div>
+    <details class="kv-bolum kv-sss"><summary>Bildirimler telefonuma uygulama gibi gelir mi?</summary><div class="kv-ic"><p>Evet. Profilim › <b>Telefon bildirimleri</b> › <b>Bildirimleri aç</b>'a bas ve izin ver; bir deneme bildirimi gelir. Sonra panel kapalıyken de ödemeler (bir gün önce ve o gün), gelecek paralar ve aylık rapor seçtiğin saatte (varsayılan 09:00) telefonuna düşer, dokununca ilgili sayfa açılır. iPhone'da önce paneli ana ekrana ekle (Safari › Paylaş › Ana Ekrana Ekle) ve oradan açıp bildirimleri aç. Bildirim gelmiyorsa telefonun ayarlarında bu siteye (ya da ana ekrandaki Finansal Takip'e) bildirim izni verildiğini kontrol et.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Parmak izi ya da Face ID ile nasıl giriş yaparım?</summary><div class="kv-ic"><p>Telefonundan bir kez şifrenle gir; çıkan “parmak izi / Face ID ile giriş açılsın mı?” önerisinde <b>Aç</b>'a bas (ya da Profilim › Güvenlik › <b>Bu cihazı ekle</b>). Telefon parmak izini ya da yüzünü sorar, cihaz eklenir. Bundan sonra giriş ekranında en üstteki <b>Parmak izi / Face ID ile giriş</b>'e dokunman yeter. Parmak izi ve yüz verisi telefondan çıkmaz; panel yalnızca telefonun ürettiği imzayı doğrular. Telefonu kaybedersen Profilim › Güvenlik'ten o cihazı <b>Kaldır</b>. Şifren her zaman geçerlidir.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Birine borç verdim, geri ödeyecek; nasıl eklerim?</summary><div class="kv-ic"><p>Finansal Durumum'da <b>Alacaklarım</b> → <b>+ Ekle</b>: kimden, tutar ve ne zaman geleceği. Net servetine sayılır, Ödeme Takvimi'nde o gün yeşil “gelen para” olarak görünür, Nakit Akışı'nda o ayın gelirine girer ve bir gün önce hatırlatılır. Para gelince <b>Geldi</b> de (kısmen geldiyse kalan durur) ve nereye gittiğini seç: KMH borcundan düş, nakit hesabına ekle, kart ya da elden borca öde, ya da elde tuttum. Sana borç veren biri varsa o da Borçlarım › Elden Nakit Borçlar'a girer.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Aylık raporumun hazır olduğunu nasıl anlarım?</summary><div class="kv-ic"><p>Her ay bittiğinde geçen ayın raporu hazır olur ve sana iki yerden haber verilir: sağ üstteki zilde “Raporlar” altında ve Piyasa Özeti'nin üstünde mavi bir şeritte. Bay Piyasa yorumunu henüz çıkarmadıysan hatırlatma “Bay Piyasa yorumunu çıkar” der ve yorumu çıkarana kadar kalır; dokununca rapor yorum bölümünde açılır. Raporda Kurum Raporları'ndan ayın özeti de vardır (portföyündeki hisselerde tavsiye / hedef değişiklikleri, piyasa görüşü, takvim). Bildirim, o ay için harcama girdiysen çıkar.</p></div></details>
@@ -4683,13 +4687,25 @@
       </div>
     </div>
 
+    <div class="bolum" id="pfPushBolum">
+      <div class="bolum-bas"><span class="bolum-baslik">Telefon bildirimleri</span></div>
+      <div class="pf-satir pf-genis">
+        <div style="flex:1;min-width:0;"><div class="pf-baslik">Uygulama gibi bildirim</div><div class="ku-ipucu" style="margin:2px 0 0;" id="pfPushDurum">Kontrol ediliyor…</div></div>
+        <div class="pf-push-dugmeler"><button class="bolum-ekle" id="pfPushAc" onclick="pushAc()" hidden>📲 Bildirimleri aç</button><button class="bolum-ekle" id="pfPushDene" onclick="pushDene()" hidden>Deneme gönder</button><button class="bolum-ekle pf-cikis" id="pfPushKapat" onclick="pushKapat()" hidden>Bu cihazda kapat</button></div>
+      </div>
+      <div class="pf-satir">
+        <div><div class="pf-baslik">Bildirim saati</div><div class="ku-ipucu" style="margin:2px 0 0;">Ödemeler (bir gün önce ve o gün), gelecek paralar ve aylık rapor bu saatte gelir.</div></div>
+        <select class="ai-input" id="pfPushSaat" style="max-width:120px;" onchange="pushSaatSec(this.value)"></select>
+      </div>
+    </div>
+
     <div class="bolum">
       <div class="bolum-bas"><span class="bolum-baslik">Güvenlik</span></div>
       <div class="pf-satir">
         <div><div class="pf-baslik">Şifre</div><div class="ku-ipucu" style="margin:2px 0 0;">En az 8 karakter. Değişince diğer cihazlardaki oturumlar kapanır.</div></div>
         <button class="bolum-ekle" onclick="sifreDegistirAc()">🔑 Şifremi değiştir</button>
       </div>
-      <div class="pf-satir pf-biyo">
+      <div class="pf-satir pf-biyo pf-genis">
         <div style="flex:1;min-width:0;"><div class="pf-baslik">Parmak izi / Face ID ile giriş</div><div class="ku-ipucu" style="margin:2px 0 0;" id="pfBiyoDurum">Kontrol ediliyor…</div><div id="pfBiyoListe"></div></div>
         <button class="bolum-ekle" id="pfBiyoEkle" onclick="biyoCihazEkle()" hidden>👆 Bu cihazı ekle</button>
       </div>
@@ -5363,6 +5379,98 @@ async function biyoTeklifGoster(){
   el.style.display = 'flex';
 }
 function biyoTeklifGizle(kalici){ const el = document.getElementById('biyoTeklif'); if(el) el.style.display = 'none'; if(kalici){ try{ localStorage.setItem(PASSKEY_TEKLIF_KEY, '1'); }catch(e){ /* yok */ } } }
+
+// ---------- Uygulama gibi bildirim (Web Push) ----------
+// Panel açıkken önümüzdeki 14 günün bildirimleri (ödeme yarın / bugün, gelecek para, ayın 1'inde rapor) seçilen saatte sunucuya
+// planlanır; sunucu vakti gelince telefona gönderir (panel kapalıyken de). iPhone'da yalnız ana ekrana eklenmiş panelde çalışır.
+const PUSH_PLAN_IZ_KEY = 'ft_push_plan_iz';   // yalnız bu cihazda: son gönderilen planın izi (her açılışta gereksiz yazma olmasın)
+let _pushDurum = null, _pushPlanZaman = null;
+function pushDestek(){ return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+function iosTarayicida(){ return /iPhone|iPad|iPod/.test(navigator.userAgent) && !(navigator.standalone || matchMedia('(display-mode: standalone)').matches); }
+async function pushDurumGetir(){ try{ const r = await fetch(MY_WORKER + '/push/durum'); if(r.ok) _pushDurum = await r.json(); }catch(e){ /* çevrimdışı */ } return _pushDurum; }
+async function pushBuCihazAbone(){ if(!pushDestek()) return null; try{ const reg = await navigator.serviceWorker.getRegistration(); return reg ? await reg.pushManager.getSubscription() : null; }catch(e){ return null; } }
+function pushSaati(){ const k = kullaniciBilgi(), s = k && k.ayar && k.ayar.pushSaat; return s != null && /^\d{1,2}$/.test(String(s)) ? +s : 9; }
+async function pushSaatSec(v){
+  const k = kullaniciBilgi() || {};
+  if(await profilKaydet({ ayar: Object.assign({}, k.ayar || {}, { pushSaat: String(+v) }) }, 'Bildirim saati: ' + String(+v).padStart(2, '0') + ':00')){ try{ localStorage.removeItem(PUSH_PLAN_IZ_KEY); }catch(e){ /* yok */ } pushPlanGonder(true); }
+}
+async function pushAc(){
+  if(iosTarayicida()){ showAlertModal('iPhone\'da bildirim için paneli ana ekrana eklemen gerekiyor: Safari\'de Paylaş (⬆️) › Ana Ekrana Ekle. Sonra ana ekrandaki “Finansal Takip” simgesinden aç ve Profilim › Telefon bildirimleri › Bildirimleri aç\'a bas.'); return; }
+  if(!pushDestek()){ showAlertModal('Bu tarayıcı bildirimleri desteklemiyor. Telefonunda Chrome (Android) ya da ana ekrana eklenmiş paneli (iPhone) kullan.'); return; }
+  const btn = document.getElementById('pfPushAc'); if(btn) btn.disabled = true;
+  try{
+    const d = await pushDurumGetir();
+    if(!d || !d.anahtar){ showAlertModal('Sunucuda bildirim anahtarı henüz kurulmamış.'); return; }
+    const izin = await Notification.requestPermission();
+    if(izin !== 'granted'){ showAlertModal(izin === 'denied' ? 'Bildirim izni kapalı. Telefonun ayarlarından (ya da tarayıcının site ayarlarından) bu siteye bildirim izni ver, sonra tekrar dene.' : 'Bildirim izni verilmedi.'); return; }
+    await navigator.serviceWorker.register('sw.js');
+    const reg = await navigator.serviceWorker.ready;
+    let abone = await reg.pushManager.getSubscription();
+    if(!abone) abone = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uOku(d.anahtar) });
+    const j = abone.toJSON();
+    const res = await fetch(MY_WORKER + '/push/abone', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: j.endpoint, keys: j.keys, cihaz: biyoCihazAdi() }) });
+    if(!res.ok){ const e = await res.json().catch(() => ({})); showAlertModal('Bildirimler açılamadı: ' + (e.error || res.status)); return; }
+    await pushDurumGetir();
+    try{ localStorage.removeItem(PUSH_PLAN_IZ_KEY); }catch(e){ /* yok */ }
+    await pushPlanGonder(true);
+    fetch(MY_WORKER + '/push/dene', { method: 'POST' }).catch(() => {});
+    showAlertModal('Bildirimler açıldı ✓ Birazdan bir deneme bildirimi gelecek. Ödemeler (bir gün önce ve o gün), gelecek paralar ve aylık rapor her gün ' + String(pushSaati()).padStart(2, '0') + ':00\'da telefonuna düşer; panel kapalıyken de.');
+  }catch(e){ showAlertModal('Bildirimler açılamadı: ' + ((e && e.message) || e)); }
+  finally{ if(btn) btn.disabled = false; pushCiz(); }
+}
+async function pushKapat(){
+  const a = await pushBuCihazAbone();
+  if(a){ await fetch(MY_WORKER + '/push/abone', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: a.endpoint }) }).catch(() => {}); await a.unsubscribe().catch(() => {}); }
+  await pushDurumGetir(); pushCiz();
+}
+async function pushDene(){
+  try{ const r = await fetch(MY_WORKER + '/push/dene', { method: 'POST' }), j = await r.json().catch(() => ({}));
+    showAlertModal(r.ok ? (j.ok ? 'Deneme bildirimi gönderildi (' + j.ok + ' cihaz). Birkaç saniye içinde gelir.' : 'Kayıtlı cihaz bulunamadı; bildirimleri yeniden aç.') : (j.error || 'Gönderilemedi.'));
+  }catch(e){ showAlertModal('Sunucuya ulaşılamadı.'); }
+}
+async function pushCiz(){
+  const durum = document.getElementById('pfPushDurum'); if(!durum) return;
+  const sec = document.getElementById('pfPushSaat');
+  if(sec){ const s = pushSaati(); sec.innerHTML = Array.from({ length: 16 }, (_, i) => i + 7).map(h => `<option value="${h}"${h === s ? ' selected' : ''}>${String(h).padStart(2, '0')}:00</option>`).join(''); }
+  const goster = (ac, dene, kapat) => [['pfPushAc', ac], ['pfPushDene', dene], ['pfPushKapat', kapat]].forEach(([id, v]) => { const e = document.getElementById(id); if(e) e.hidden = !v; });
+  if(iosTarayicida()){ durum.textContent = 'iPhone\'da bildirim için paneli ana ekrana ekle (Safari › Paylaş › Ana Ekrana Ekle) ve oradan aç.'; goster(true, false, false); return; }
+  if(!pushDestek()){ durum.textContent = 'Bu tarayıcı bildirimleri desteklemiyor.'; goster(false, false, false); return; }
+  const [d, a] = await Promise.all([pushDurumGetir(), pushBuCihazAbone()]);
+  const izin = Notification.permission;
+  if(a && izin === 'granted'){ durum.textContent = 'Bu cihazda açık ✓ Panel kapalıyken de ödemeler, gelecek paralar ve aylık rapor bildirim olarak gelir.' + (d && d.abone > 1 ? ' (' + d.abone + ' cihazda açık)' : ''); goster(false, true, true); }
+  else if(izin === 'denied'){ durum.textContent = 'Bildirim izni bu cihazda kapalı; telefonun ya da tarayıcının ayarlarından bu siteye izin ver.'; goster(true, false, false); }
+  else { durum.textContent = 'Kapalı. Aç: panel kapalıyken de ödeme günleri, gelecek paralar ve aylık rapor telefonuna bildirim olarak gelsin.' + (d && d.abone ? ' (Başka ' + d.abone + ' cihazda açık)' : ''); goster(true, false, false); }
+}
+// Önümüzdeki 14 günün bildirimleri: zildeki bildirimlerin aynısı, o gün seçilen saatte (geçmiş saatler atlanır)
+function pushPlaniUret(){
+  const saat = pushSaati(), out = [], gorulen = new Set(), b0 = new Date();
+  for(let i = 0; i < 14; i++){
+    const d = new Date(b0.getFullYear(), b0.getMonth(), b0.getDate() + i), dS = isoGun(d);
+    let l = []; try{ l = bildirimUret(dS); }catch(e){ l = []; }
+    l.filter(b => b.grup === 'odeme' || b.grup === 'alacak' || (b.grup === 'rapor' && d.getDate() === 1)).forEach(b => {
+      const zaman = new Date(d.getFullYear(), d.getMonth(), d.getDate(), saat, 0, 0).getTime();
+      if(zaman < Date.now() - 60000 || gorulen.has(b.id)) return;
+      gorulen.add(b.id);
+      out.push({ id: b.id, zaman, baslik: b.baslik, metin: b.grup === 'rapor' ? 'Geçen ayın özeti hazır; aç ve incele.' : b.metin, hedef: b.hedef || 'gunluk' });
+    });
+  }
+  return out.slice(0, 60);
+}
+function kisaIz(s){ let h = 5381; for(let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return String(h >>> 0); }
+async function pushPlanGonder(zorla){
+  if(!localStorage.getItem(ERISIM_KEY) || !_senkronHazir) return;
+  const d = _pushDurum || await pushDurumGetir();
+  if(!d || !d.abone) return;   // hesabın hiçbir cihazında bildirim açık değil
+  const plan = pushPlaniUret(), iz = kisaIz(JSON.stringify(plan.map(b => [b.id, b.zaman, b.baslik, b.metin])));
+  let onceki = null; try{ onceki = JSON.parse(localStorage.getItem(PUSH_PLAN_IZ_KEY) || 'null'); }catch(e){ /* yok */ }
+  if(!zorla && onceki && onceki.iz === iz && Date.now() - onceki.t < 6 * 3600 * 1000) return;
+  try{
+    const r = await fetch(MY_WORKER + '/push/plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bildirimler: plan }) });
+    if(r.ok) localStorage.setItem(PUSH_PLAN_IZ_KEY, JSON.stringify({ iz, t: Date.now() }));
+  }catch(e){ /* sonraki açılışta */ }
+}
+function pushBolumeGit(){ switchTab('profil'); setTimeout(() => { const b = document.getElementById('pfPushBolum'); if(b) b.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); }
+function pushPlanZamanla(){ clearTimeout(_pushPlanZaman); _pushPlanZaman = setTimeout(() => pushPlanGonder(false), 8000); }
 
 function kullaniciBilgi(){ try{ return JSON.parse(localStorage.getItem(KULLANICI_KEY) || 'null'); }catch(e){ return null; } }
 function benYonetici(){ const k = kullaniciBilgi(); return !!k && k.rol === 'admin'; }
@@ -14143,7 +14251,7 @@ function switchTab(tabId){
   if(tabId === 'kurum') krYukle();
   if(tabId === 'kullanicilar'){ renderKullanicilar(); renderGonderilen(); }
   if(tabId === 'destek') destekHazirla();
-  if(tabId === 'profil'){ renderProfil(); profilYenile(); renderMesajKutusu(); biyoListeCiz(); }
+  if(tabId === 'profil'){ renderProfil(); profilYenile(); renderMesajKutusu(); biyoListeCiz(); pushCiz(); }
   const pk = document.getElementById('profilKutu'); if(pk) pk.classList.toggle('active', tabId === 'profil');
   const kdb = document.getElementById('kartDuzenBtn'); if(kdb) kdb.classList.toggle('gizli', tabId !== 'gunluk');
   bildirimPanelKapat(); bildirimGuncelle();   // veri başka sayfada değişmiş olabilir
@@ -14296,6 +14404,7 @@ function bildirimGuncelle(){
   const p = document.getElementById('bildirimPanel');
   if(p && !p.hidden) bildirimPanelCiz();
   raporSeritGuncelle();
+  if(typeof pushPlanZamanla === 'function') pushPlanZamanla();   // telefon bildirimi açıksa planı tazele (8 sn gecikmeli, değiştiyse)
 }
 function bildirimPanelCiz(){
   const p = document.getElementById('bildirimPanel'); if(!p) return;
@@ -14311,7 +14420,7 @@ function bildirimPanelCiz(){
     <div class="bildirim-liste">${!_bildirimler.length
       ? '<div class="bildirim-bos"><div class="ikon">🔔</div><b>Yeni bildirim yok</b><br>Ödemeler son günden bir gün önce ve son gün; bütçe ve kart uyarıları da oluştuğu anda burada görünür. Mesajlar yandaki ✉ zarftadır.</div>'
       : (od.length ? '<div class="bildirim-grup">Yaklaşan ödemeler</div>' + od.map(oge).join('') : '') + (al.length ? '<div class="bildirim-grup">Gelecek paralar</div>' + al.map(oge).join('') : '') + (rp.length ? '<div class="bildirim-grup">Raporlar</div>' + rp.map(oge).join('') : '') + (uy.length ? '<div class="bildirim-grup">Uyarılar</div>' + uy.map(oge).join('') : '')}</div>
-    <div class="bildirim-alt"><a onclick="bildirimPanelKapat();switchTab('odeme')">Ödeme Takvimi ›</a><a onclick="bildirimPanelKapat();switchTab('butce')">Bütçe ›</a></div>`;
+    <div class="bildirim-alt"><a onclick="bildirimPanelKapat();switchTab('odeme')">Ödeme Takvimi ›</a><a onclick="bildirimPanelKapat();pushBolumeGit()">📲 Telefona gelsin ›</a><a onclick="bildirimPanelKapat();switchTab('butce')">Bütçe ›</a></div>`;
 }
 // Açılır paneli düğmenin altına yerleştir (telefonda tam genişlik)
 function acilirKonumla(p, btn){
@@ -15760,10 +15869,13 @@ setInterval(tickDigitalClock, 1000);
 
 bpBaslat();   // Bay Piyasa: kayıtlı sohbetleri/ayarları yükle
 (function acilisSayfasi(){
-  const k = kullaniciBilgi(), t = k && k.ayar && k.ayar.acilis;
+  // Telefon bildirimine dokunarak açıldıysa o bildirimin sayfası (?sekme=odeme); yoksa kullanıcının seçtiği açılış sayfası
+  let t = null; try{ t = new URLSearchParams(location.search).get('sekme'); if(t) history.replaceState(null, '', location.pathname); }catch(e){ t = null; }
+  if(!t){ const k = kullaniciBilgi(); t = k && k.ayar && k.ayar.acilis; }
   const oge = t && t !== 'gunluk' && document.querySelector(`#navPanel > .nav-item[data-tab="${t}"]`);
   if(oge && !oge.hidden && (t !== 'kullanicilar' || benYonetici())) switchTab(t);
 })();
+if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const t = e.data && e.data.sekme; if(t && document.getElementById('tab-' + t)) switchTab(t); });
 senkronBaslat();   // D1 ile senkron: sunucudaki değişiklikleri çek, bekleyenleri gönder
 // Telefona "uygulama olarak yükle" (sw.js): sayfa her açılışta ağdan taze gelir, API'ye dokunmaz
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
