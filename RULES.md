@@ -48,6 +48,7 @@ Bu projede değişiklik yaparken uyulacak kurallar.
 7c. Kenar menüsüne öğe eklerken 1440×900'de menünün tamamının kaydırmadan görünmesi korunur (öğe yüksekliği ve grup aralıkları büyütülmez); kısa ekran için ayrı kural (`max-height:880px`) ve menü içi kaydırma vardır.
 8. Yeni sayfa menüye kendi grubunun altına eklenir; telefondaki alt çubukta yalnızca `data-alt` işaretli 6 sayfa durur, diğerleri kendiliğinden **Diğer** menüsüne düşer (alt çubuğa yeni sayfa eklenmez).
 8b. Service worker (`sw.js`) yalnız panelin kendi adresindeki dosyalara dokunur ve **önce ağ** çalışır; Worker API'si ya da dış servis isteklerini önbelleğe almaz, araya girmez (oturum ve veri her zaman canlı). Yeni bir statik dosya çevrimdışı da gerekiyorsa `KABUK` listesine eklenir ve `ONBELLEK` sürümü artırılır (`ft-kabuk-v2`…).
+8c. Hesap Araçları'nın indirdiği kredi Excel'i, Kredilerim'in Excel okuyucusuyla (`onLoanExcelSelected`) uyumlu kalır: başlık adları (TAKSİT NO, ÖDEME TARİHİ, ANA PARA TUTARI, FAİZ, KKDF, BSMV, KALAN ANA PARA) ya da okuyucu değişirse "Excel indir → Excel Seç" ile geri yükleme denenir.
 9. Native `confirm`/`alert` yerine panelin kendi pencereleri kullanılır: `showConfirmModal` (onay) ve `showAlertModal` (uyarı).
 
 ## Veri

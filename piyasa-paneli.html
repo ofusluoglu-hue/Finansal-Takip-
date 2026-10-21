@@ -803,6 +803,15 @@
   .as-lejant{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-bottom:10px;}
   .as-lejant i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:0;}
   .arac-hata{color:var(--amber);font-size:13px;}
+  .kr-iki{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+  .kr-iki .ai-input{min-width:0;}   /* iki kutu dar ekranda kartın dışına taşmasın */
+  .kr-plan-arac{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 10px;}
+  .kr-btn{background:transparent;border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;}
+  .kr-btn:hover{border-color:var(--amber);color:var(--amber);}
+  .kr-btn.ana{border-color:var(--amber);color:var(--amber);background:rgba(231,168,59,.08);}
+  .kr-plan-not{flex:1 1 240px;font-size:12px;color:var(--muted);line-height:1.45;}
+  .kr-plan-not.uyari{color:var(--amber);}
+  .ist-tablo td.kr-tarih{white-space:nowrap;}
   /* hesap makinesi */
   .hm-kutu{max-width:520px;width:100%;}
   .hm-ekran{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:right;margin-bottom:10px;min-height:86px;display:flex;flex-direction:column;justify-content:flex-end;}
@@ -838,6 +847,10 @@
     .hm-t{height:50px;}
     .hm-fn{font-size:14px;}
     .hm-gecmis{border-left:none;padding-left:0;border-top:1px solid var(--border);padding-top:10px;max-height:220px;}
+    .kr-plan-arac{display:grid;grid-template-columns:1fr 1fr;}   /* telefonda: üstte Kredilerime ekle, altında Excel | PDF */
+    .kr-btn{padding:9px 8px;}
+    .kr-btn.ana, .kr-plan-not{grid-column:1 / -1;}
+    .kr-btn.ana{order:-1;}
   }
   @media (max-width:640px){ .mesaj-arac .mesaj-arac-sag{gap:10px;} .mesaj-uzun{display:none;} .mesaj-kisa{display:inline;} }   /* telefonda araç çubuğu tek satır */
   .mesaj-ust-not a{color:var(--amber);cursor:pointer;}
@@ -4233,7 +4246,7 @@
 
     <details class="kv-bolum" id="kv-borclar"><summary>💳 Borçlarım <span>krediler, kartlar, KMH, elden borç</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Bütün borçlarının bugünkü toplamını gösterir. Kredi ve KMH borcu her gün işleyen faizle canlı hesaplanır.</p>
-      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; Profilim'de Anthropic anahtarın kayıtlı olmalı) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca satırdaki yeşil <b>Kapattım</b> düğmesine bas.</p>
+      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; Profilim'de Anthropic anahtarın kayıtlı olmalı) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Elinde plan yoksa <b>Hesap Araçları › Kredi Faizi</b>'nde tutar, vade, faiz ve ilk taksit tarihini yazıp <b>＋ Kredilerime ekle</b> de diyebilirsin. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca satırdaki yeşil <b>Kapattım</b> düğmesine bas.</p>
       <p><b>Kredi Kartlarım:</b> Kartın bugünkü toplam borcunu yaz; ekstre gelince satırdaki <b>Güncelle</b> ile güncelle.</p>
       <p><b>Kartla yapılan harcamalar:</b> Harcama Takibim'de ya da Ödeme Takvimi'nde bir kart seçersen tutar o kartın borcuna kendiliğinden eklenir. Kart satırında son güncellemedeki borç ve sonrasında karta yazılanlar ayrı görünür (ör. “₺135.571 + karta yazılan ₺1.500 (2 harcama)”). <b>Güncelle</b> ile bankadaki rakamı yazınca döküm sıfırlanır ve oradan devam eder.</p>
       <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki <b>Faiz</b> düğmesiyle de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
@@ -4356,7 +4369,8 @@
     <details class="kv-bolum" id="kv-araclar"><summary>🧮 Hesap Araçları <span>hesap makinesi, kredi, KMH ve mevduat faizi</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Faiz ve taksit sorularını panelden çıkmadan hesaplarsın. Üstteki düğmelerle aracı seç: <b>Kredi Faizi</b>, <b>KMH / Kart faizi</b>, <b>Vadeli mevduat</b>, <b>Hesap makinesi</b> (telefonda iki satır). Son seçtiğin araç ve yazdığın rakamlar bu cihazda hatırlanır.</p>
       <ul class="kv-liste">
-        <li><b>Kredi Faizi:</b> tür (ihtiyaç, taşıt, konut), tutar, vade ve bankanın yazdığı <b>aylık</b> faizi gir. Aylık taksit, toplam faiz, KKDF + BSMV, toplam geri ödeme ve yıllık maliyet çıkar; “Ödeme planı › Göster” ay ay tabloyu açar. Örnek: ₺100.000, 12 ay, aylık %3,50 ihtiyaç kredisi → taksit ≈ ₺10.998, toplam ≈ ₺131.976.</li>
+        <li><b>Kredi Faizi:</b> tür (ihtiyaç, taşıt, konut), tutar, vade ve bankanın yazdığı <b>aylık</b> faizi gir. Aylık taksit, toplam faiz, KKDF + BSMV, toplam geri ödeme ve yıllık maliyet çıkar; “Ödeme planı › Göster” ay ay tabloyu tarihleriyle açar (tarihler <b>İlk taksit tarihi</b>ne göre; boşsa bugünden bir ay sonra). Örnek: ₺100.000, 12 ay, aylık %3,50 ihtiyaç kredisi → taksit ≈ ₺10.998, toplam ≈ ₺131.976.</li>
+        <li><b>Çektiğin krediyi kaydetmek:</b> ilk taksit tarihini ve <b>Banka / kredi adı</b>nı yaz, Ödeme planı'nda <b>＋ Kredilerime ekle</b>'ye bas → Borçlarım › Kredilerim'de önizleme açılır, <b>Doğru, Kaydet</b> ile eklenir; taksitler Ödeme Takvimi'ne kuruşu kuruşuna aynı gelir. <b>📊 Excel indir</b> planı Excel olarak indirir (Kredilerim › + Ekle › <b>Excel Seç</b> ile aynen geri yüklenir; banka adı dosyada yazdığı için kutuyu boş bırakabilirsin). <b>📄 PDF indir</b> yazdırılabilir sayfayı açar; yazıcı olarak “PDF olarak kaydet”i seç.</li>
         <li><b>KMH / Kart faizi:</b> borç, aylık faiz ve gün sayısı → o sürenin faiz + vergi maliyeti ve günlük maliyet. KMH hesabın kayıtlıysa “Hesabımdan doldur” ile tek dokunuşta gelir. Örnek: ₺20.000, aylık %4,25, 30 gün → ≈ ₺1.105.</li>
         <li><b>Vadeli mevduat:</b> anapara, yıllık brüt faiz, vade (gün) ve stopaj. Vadeli hesapta faiz vade sonunda, günlük kazandıranda her gün eklenir; vadeyi üst üste yenilemeyi de hesaplar. Sonuçta net kazanç, vade sonu tutar ve <b>enflasyona göre reel getiri</b> görünür.</li>
         <li><b>Hesap makinesi (bilimsel):</b> dört işlem, parantez, xʸ ve x², √, 1/x, n!, π, e, sin/cos/tan (<b>DER</b>/<b>RAD</b> düğmesiyle derece ya da radyan), ln ve log, yüzde (“200 + 10 %” = 220). “2π”, “3(4)” gibi yan yana yazımı çarpma sayar; açık kalan parantezi = kendisi kapatır. Klavyeyle de yazabilirsin (Enter = eşittir, Esc = temizle, ^ üs). Son 8 hesap sağdaki <b>Geçmiş</b>'te durur; birine dokunursan sonucu yeniden kullanırsın.</li>
@@ -4497,6 +4511,7 @@
     <details class="kv-bolum kv-sss"><summary>Hedefimi bir yatırıma bağladım, birikim neden kendi kendine değişiyor?</summary><div class="kv-ic"><p>Yatırıma bağlı hedefler yatırımın <b>canlı</b> değerini izler; fiyat düşünce birikim de düşer. Sabit bir tutar izlemek istersen satırdaki <b>Kaynak</b> düğmesiyle kaynağı “Elle gireceğim” ya da “Varlıklarımdan” yap.</p></div></details>
 
     <details class="kv-bolum kv-sss"><summary>Bir kredinin ya da KMH borcumun bana kaça mal olacağını nasıl hesaplarım?</summary><div class="kv-ic"><p>Menüde <b>Planlama › Hesap Araçları</b>'na git. <b>Kredi</b> aracı aylık taksiti, toplam faizi ve vergileri; <b>KMH / Kart faizi</b> aracı borcun seçtiğin gün sayısındaki maliyetini; <b>Vadeli mevduat</b> aracı mevduatın net getirisini ve enflasyona göre reel getirisini hesaplar. Basit hesaplar için aynı sayfada hesap makinesi de var.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bankanın ödeme planı elimde yok; çektiğim krediyi nasıl eklerim?</summary><div class="kv-ic"><p><b>Hesap Araçları › Kredi Faizi</b>'nde tür, tutar, vade, aylık faiz, <b>ilk taksit tarihi</b> ve <b>banka / kredi adı</b>nı yaz. Ödeme planı'nda <b>＋ Kredilerime ekle</b>'ye bas; Borçlarım'da önizlemeyi kontrol edip <b>Doğru, Kaydet</b> de. İstersen planı <b>📊 Excel</b> ya da <b>📄 PDF</b> olarak indirip saklayabilirsin; indirdiğin Excel'i Kredilerim › + Ekle › <b>Excel Seç</b> ile de yükleyebilirsin. Bu hesap eşit taksitlidir; bankanın planı gün sayısına göre birkaç kuruş farklı olabilir, banka planı eline geçince onu yüklemek en doğrusu.</p></div></details>
 
     <div class="kv-grup-bas">Görünüm</div>
     <details class="kv-bolum kv-sss"><summary>Açık temaya nasıl geçerim?</summary><div class="kv-ic"><p>Sağ üstteki (telefonda en üstteki satırdaki) anahtara dokun: sol taraf <b>☀ açık tema</b>, sağ taraf <b>☾ koyu tema</b>. Panel varsayılan olarak koyu temayla açılır; seçimin bu cihazda hatırlanır, öbür cihazlarında ayrı seçersin.</p></div></details>
@@ -4945,11 +4960,21 @@
           <label class="arac-alan"><span>Vade (ay)</span><input id="krVade" class="ai-input arac-sayi" inputmode="numeric" value="12">
             <span class="arac-hizli"><a data-hedef="krVade" data-deger="6">6</a><a data-hedef="krVade" data-deger="12">12</a><a data-hedef="krVade" data-deger="24">24</a><a data-hedef="krVade" data-deger="36">36</a><a data-hedef="krVade" data-deger="120">120</a></span></label>
           <label class="arac-alan"><span>Aylık faiz (%)</span><input id="krFaiz" class="ai-input arac-sayi" inputmode="decimal" value="3,50"><small>Bankanın yazdığı aylık akdi faiz (vergiler hariç)</small></label>
+          <div class="kr-iki">
+            <label class="arac-alan"><span>İlk taksit tarihi</span><input type="date" id="krIlkTarih" class="ai-input arac-metin"></label>
+            <label class="arac-alan"><span>Banka / kredi adı</span><input id="krBanka" class="ai-input arac-metin" maxlength="40" placeholder="ör. Ziraat ihtiyaç"></label>
+          </div>
         </div>
         <div class="arac-sonuc" id="krSonuc"></div>
       </div>
       <div class="bolum" id="krPlanBolum">
         <div class="bolum-bas"><span class="bolum-baslik">Ödeme planı</span><button class="bolum-ekle" style="margin-left:auto;" id="krPlanBtn" onclick="krPlanAcKapa()">Göster</button></div>
+        <div class="kr-plan-arac">
+          <button class="kr-btn" onclick="krPlanExcel()" title="Borçlarım › Kredilerim › Ekle'de Excel Seç ile yüklenebilir">📊 Excel indir</button>
+          <button class="kr-btn" onclick="krPlanPdf()" title="Yazdırma penceresinde PDF olarak kaydet">📄 PDF indir</button>
+          <button class="kr-btn ana" onclick="krKredilerimeEkle()" title="Bu ödeme planıyla Borçlarım › Kredilerim'e ekle">＋ Kredilerime ekle</button>
+          <span class="kr-plan-not" id="krPlanNot"></span>
+        </div>
         <div class="ist-tablo-kap" id="krPlanKap" hidden><table class="ist-tablo" id="krPlan"></table></div>
       </div>
     </div>
@@ -10708,6 +10733,8 @@ function saveExtractedLoan(){
 
   const kaynakMetni = data.kaynak === 'excel'
     ? `Excel ödeme planından işlendi (kullanıcı onayıyla kaydedildi).`
+    : data.kaynak === 'hesap'
+    ? `Hesap Araçları › Kredi ile hesaplanan eşit taksitli plandan eklendi (kullanıcı onayıyla kaydedildi).`
     : `PDF'ten otomatik çıkarıldı (Claude ile okundu, kullanıcı onayıyla kaydedildi).`;
 
   const newLoan = {
@@ -10771,11 +10798,6 @@ async function onLoanExcelSelected(event){
   if(!file){ nameEl.textContent = 'Dosya seçilmedi'; return; }
   nameEl.textContent = file.name;
 
-  if(!bankaInput.value.trim()){
-    statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Önce banka adını gir.</div>';
-    return;
-  }
-
   if(typeof XLSX === 'undefined'){
     statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Excel okuma kütüphanesi yüklenemedi — internet bağlantısını kontrol et.</div>';
     return;
@@ -10816,6 +10838,21 @@ async function onLoanExcelSelected(event){
       return;
     }
 
+    // Tablonun üstündeki bilgi satırları ("Banka | Ziraat", "Kredi tutarı | 100000", "Aylık faiz (%) | 3,5", "Kullandırım tarihi | …")
+    // — Hesap Araçları'ndan indirilen planda bulunur; varsa banka adı kutusu boş bırakılabilir
+    const bilgi = {};
+    for(let i = 0; i < headerIdx; i++){
+      const row = rows[i] || [], ad = normalizeHeaderTR(row[0]);
+      if(ad && row[1] != null && row[1] !== '') bilgi[ad] = row[1];
+    }
+    const bilgiSayi = v => typeof v === 'number' ? v : aracSayiOku(v);
+    const banka = bankaInput.value.trim() || String(bilgi['BANKA'] ?? '').trim();
+    if(!banka){
+      statusEl.innerHTML = '<div style="color:var(--down);font-size:12.5px;">Önce banka adını gir.</div>';
+      bankaInput.focus();
+      return;
+    }
+
     const dataRows = [];
     for(let i = headerIdx + 1; i < rows.length; i++){
       const row = rows[i];
@@ -10841,7 +10878,9 @@ async function onLoanExcelSelected(event){
     let kalan = totalAnapara;
     const schedule = dataRows.map(r => {
       kalan -= r.anapara;
-      return { tarih: r.tarih, kalanAnapara: Math.round(kalan * 100) / 100 };
+      const satir = { tarih: r.tarih, kalanAnapara: Math.round(kalan * 100) / 100 };
+      if(colFaiz !== -1) satir.faiz = Math.round((r.faiz + r.kkdf + r.bsmv) * 100) / 100;   // taksitteki gerçek faiz + vergi
+      return satir;
     });
 
     const ilk = dataRows[0];
@@ -10855,11 +10894,12 @@ async function onLoanExcelSelected(event){
     }
 
     pendingExtractedLoan = {
-      banka: bankaInput.value.trim(),
-      faizOraniAylik,
+      banka,
+      faizOraniAylik: bilgiSayi(bilgi['AYLIK FAIZ (%)']) >= 0 ? Math.round(bilgiSayi(bilgi['AYLIK FAIZ (%)']) * 10000) / 10000 : faizOraniAylik,
       kkdfOrani,
       bsmvOrani,
       orijinalAnapara: Math.round(totalAnapara * 100) / 100,
+      kullandirimTarihi: bilgi['KULLANDIRIM TARIHI'] != null ? excelTarihToISO(bilgi['KULLANDIRIM TARIHI']) : null,
       dogrulamaTarihi: null,
       dogrulamaTutari: null,
       schedule,
@@ -11841,7 +11881,8 @@ function krediTaksitleri(loan){
       oncekiTarih = loan.kullandirimTarihi || (d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'));
     }
     const anapara = Math.max(0, onceki - s.kalanAnapara);
-    const faiz = onceki * r * gunFarki(oncekiTarih, s.tarih) * vergi;
+    // Planda o taksidin faizi (KKDF + BSMV dahil) yazıyorsa o; yoksa günlük faizle tahmin
+    const faiz = s.faiz != null && isFinite(s.faiz) ? Number(s.faiz) : onceki * r * gunFarki(oncekiTarih, s.tarih) * vergi;
     return { tarih: s.tarih, tutar: anapara + faiz, anapara, faiz, kredi: loan.ad, sonMu: i === sch.length - 1 };
   });
 }
@@ -14773,7 +14814,7 @@ function renderAraclar(){
     _aracKuruldu = true;
     // Kayıtlı girdileri geri yükle
     Object.entries(d.girdi || {}).forEach(([id, v]) => { const el = document.getElementById(id); if(el) el.value = v; });
-    document.querySelectorAll('#tab-araclar .arac-sayi, #tab-araclar select').forEach(el => {
+    document.querySelectorAll('#tab-araclar .arac-sayi, #tab-araclar .arac-metin, #tab-araclar select').forEach(el => {
       el.addEventListener('input', aracHesapla);
       if(el.classList.contains('arac-sayi')) el.addEventListener('blur', () => aracBicimle(el));
     });
@@ -14802,7 +14843,7 @@ function aracSec(k, ilk){
 }
 function aracHesapla(){
   const d = aracDurum(); d.girdi = d.girdi || {};
-  document.querySelectorAll('#tab-araclar .arac-sayi, #tab-araclar select:not(#kmhHazir)').forEach(el => { d.girdi[el.id] = el.value; });
+  document.querySelectorAll('#tab-araclar .arac-sayi, #tab-araclar .arac-metin, #tab-araclar select:not(#kmhHazir)').forEach(el => { d.girdi[el.id] = el.value; });
   aracDurumYaz(d);
   document.querySelectorAll('#tab-araclar .arac-hizli a').forEach(a => a.classList.toggle('secili', aracDeger(a.dataset.hedef) === Number(a.dataset.deger)));
   krediHesapla(); kmhFaizHesapla(); mevduatHesapla();
@@ -14810,20 +14851,39 @@ function aracHesapla(){
 const aracHata = (id, m) => { const el = document.getElementById(id); if(el) el.innerHTML = `<div class="arac-hata">${m}</div>`; };
 
 // ---- Kredi: eşit taksit, etkin oran = faiz × (1 + KKDF + BSMV)
-let _krPlanAcik = false;
+let _krPlanAcik = false, _krSon = null;   // _krSon: son hesaplanan plan (Excel / PDF / Kredilerime ekle bunu kullanır)
+// ISO tarihe ay ekle; ayın son gününü aşarsa o ayın son günü (31 Ocak + 1 ay → 28/29 Şubat)
+function krAyEkle(iso, k){
+  const [y, m, g] = iso.split('-').map(Number);
+  const son = new Date(y, m - 1 + k + 1, 0).getDate();
+  return isoGun(new Date(y, m - 1 + k, Math.min(g, son)));
+}
+const krTarihTR = iso => iso.split('-').reverse().join('.');
+const KR_TUR_AD = { ihtiyac: 'İhtiyaç kredisi', tasit: 'Taşıt kredisi', konut: 'Konut kredisi' };
+const KR_NOT_VARSAYILAN = 'Çektiğin krediyi buradan kredilerine ekleyebilir ya da planı indirip saklayabilirsin.';
 function krediHesapla(){
   const tur = document.getElementById('krTur').value, P = aracDeger('krTutar'), n = Math.round(aracDeger('krVade')), i = aracDeger('krFaiz') / 100;
+  _krSon = null;
   if(!(P > 0) || !(n >= 1 && n <= 480) || !(i >= 0 && i < 1)) return aracHata('krSonuc', 'Tutarı, 1–480 ay arası vadeyi ve aylık faizi yaz.');
   const vergi = tur === 'konut' ? 0 : 0.30, r = i * (1 + vergi);
   const taksit = r > 0 ? P * r / (1 - Math.pow(1 + r, -n)) : P / n;
+  // İlk taksit tarihi boşsa: bugünden bir ay sonra (yeni çekilecek kredi gibi)
+  const tEl = document.getElementById('krIlkTarih');
+  const ilkTarih = tEl && /^\d{4}-\d{2}-\d{2}$/.test(tEl.value) ? tEl.value : krAyEkle(isoGun(new Date()), 1);
+  if(tEl && !tEl.value) tEl.value = ilkTarih;
+  // Kuruşa yuvarlanmış plan (bankaların tablosu gibi); son taksit kalan anaparayı sıfırlar
+  const k2 = v => Math.round(v * 100) / 100;
   let kalan = P, topFaiz = 0, topVergi = 0; const plan = [];
   for(let ay = 1; ay <= n; ay++){
-    const faiz = kalan * i, kkdf = tur === 'konut' ? 0 : faiz * 0.15, bsmv = tur === 'konut' ? 0 : faiz * 0.15;
-    let ana = taksit - faiz - kkdf - bsmv; if(ay === n) ana = kalan;
-    kalan = Math.max(0, kalan - ana); topFaiz += faiz; topVergi += kkdf + bsmv;
-    plan.push([ay, ana + faiz + kkdf + bsmv, ana, faiz, kkdf + bsmv, kalan]);
+    const faiz = k2(kalan * i), kkdf = tur === 'konut' ? 0 : k2(faiz * 0.15), bsmv = tur === 'konut' ? 0 : k2(faiz * 0.15);
+    let ana = k2(taksit - faiz - kkdf - bsmv); if(ay === n || ana > kalan) ana = k2(kalan);
+    kalan = k2(Math.max(0, kalan - ana)); topFaiz += faiz; topVergi += kkdf + bsmv;
+    plan.push({ no: ay, tarih: krAyEkle(ilkTarih, ay - 1), taksit: k2(ana + faiz + kkdf + bsmv), ana, faiz, kkdf, bsmv, kalan });
   }
   const toplam = P + topFaiz + topVergi, yillik = (Math.pow(1 + r, 12) - 1) * 100;
+  const banka = (document.getElementById('krBanka') || {}).value || '';
+  krNot(KR_NOT_VARSAYILAN);
+  _krSon = { tur, P, n, faizYuzde: i * 100, vergi, taksit, toplam, topFaiz, topVergi, yillik, plan, ilkTarih, kullandirim: krAyEkle(ilkTarih, -1), banka: banka.trim() };
   const pA = P / toplam * 100, pF = topFaiz / toplam * 100, pV = topVergi / toplam * 100;
   document.getElementById('krSonuc').innerHTML = `
     <div class="as-etiket">Aylık taksit</div>
@@ -14837,10 +14897,110 @@ function krediHesapla(){
     <div class="as-satir"><span>Toplam geri ödeme</span><b>${aracTL(toplam)}</b></div>
     <div class="as-satir"><span>Etkin aylık oran${vergi ? ' (vergiler dahil)' : ''}</span><b>${aracYz(r * 100)}</b></div>
     <div class="as-satir"><span>Yıllık maliyet (bileşik)</span><b>${aracYz(yillik, 1)}</b></div>
+    <div class="as-satir"><span>Taksitler</span><b>${krTarihTR(ilkTarih)} – ${krTarihTR(plan[n - 1].tarih)}</b></div>
     <div class="as-not">Her ₺100 kredi için <b>${aracTL((toplam - P) / P * 100)}</b> faiz${vergi ? ' ve vergi' : ''} ödersin.</div>`;
   const tb = document.getElementById('krPlan');
-  if(tb) tb.innerHTML = '<thead><tr><th>Ay</th><th>Taksit</th><th>Anapara</th><th>Faiz</th>' + (vergi ? '<th>KKDF+BSMV</th>' : '') + '<th>Kalan</th></tr></thead><tbody>'
-    + plan.map(p => `<tr><td>${p[0]}</td><td>${fmtNumber(p[1], 2)}</td><td>${fmtNumber(p[2], 2)}</td><td>${fmtNumber(p[3], 2)}</td>${vergi ? `<td>${fmtNumber(p[4], 2)}</td>` : ''}<td>${fmtNumber(p[5], 2)}</td></tr>`).join('') + '</tbody>';
+  if(tb) tb.innerHTML = '<thead><tr><th>Ay</th><th>Tarih</th><th>Taksit</th><th>Anapara</th><th>Faiz</th>' + (vergi ? '<th>KKDF+BSMV</th>' : '') + '<th>Kalan</th></tr></thead><tbody>'
+    + plan.map(p => `<tr><td>${p.no}</td><td class="kr-tarih">${krTarihTR(p.tarih)}</td><td>${fmtNumber(p.taksit, 2)}</td><td>${fmtNumber(p.ana, 2)}</td><td>${fmtNumber(p.faiz, 2)}</td>${vergi ? `<td>${fmtNumber(p.kkdf + p.bsmv, 2)}</td>` : ''}<td>${fmtNumber(p.kalan, 2)}</td></tr>`).join('') + '</tbody>';
+}
+function krNot(m, uyari){ const el = document.getElementById('krPlanNot'); if(el){ el.innerHTML = m; el.classList.toggle('uyari', !!uyari); } }
+function krDosyaAdi(uzanti){
+  const ad = (_krSon.banka || 'kredi').toLocaleLowerCase('tr-TR').replace(/[çğıöşü]/g, c => ({ ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' })[c]).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'kredi';
+  return 'odeme-plani-' + ad + '-' + _krSon.ilkTarih + '.' + uzanti;
+}
+// Excel: Borçlarım › Kredilerim › "Excel Seç" ile aynen geri okunabilen sütunlar (TAKSİT NO, ÖDEME TARİHİ, ANA PARA TUTARI, FAİZ, KKDF, BSMV)
+function krPlanExcel(){
+  if(!_krSon) return krNot('Önce tutarı, vadeyi ve faizi yaz.', true);
+  if(typeof XLSX === 'undefined') return krNot('Excel kütüphanesi yüklenemedi — internet bağlantısını kontrol et.', true);
+  const k = _krSon, seri = iso => { const [y, m, g] = iso.split('-').map(Number); return (Date.UTC(y, m - 1, g) - Date.UTC(1899, 11, 30)) / 86400000; };
+  const aoa = [
+    ['Banka', k.banka || ''],
+    ['Kredi türü', KR_TUR_AD[k.tur] || k.tur],
+    ['Kredi tutarı', k.P],
+    ['Aylık faiz (%)', k.faizYuzde],
+    ['Vade (ay)', k.n],
+    ['Kullandırım tarihi', seri(k.kullandirim)],
+    [],
+    ['TAKSİT NO', 'ÖDEME TARİHİ', 'TAKSİT TUTARI', 'ANA PARA TUTARI', 'FAİZ', 'KKDF', 'BSMV', 'KALAN ANA PARA'],
+    ...k.plan.map(p => [p.no, seri(p.tarih), p.taksit, p.ana, p.faiz, p.kkdf, p.bsmv, p.kalan]),
+    [],
+    ['TOPLAM', '', k.plan.reduce((t, p) => t + p.taksit, 0), k.P, k.topFaiz, k.plan.reduce((t, p) => t + p.kkdf, 0), k.plan.reduce((t, p) => t + p.bsmv, 0), ''],
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  const tarihBicim = adres => { if(ws[adres]){ ws[adres].t = 'n'; ws[adres].z = 'dd\\.mm\\.yyyy'; } };   // noktalar kaçışlı: her Excel / LibreOffice sürümünde tarih olarak görünsün
+  tarihBicim('B6');
+  const bas = 9;   // ilk veri satırı (Excel'de 1'den sayılır)
+  for(let r = bas; r < bas + k.plan.length; r++){
+    tarihBicim('B' + r);
+    'CDEFGH'.split('').forEach(c => { if(ws[c + r]) ws[c + r].z = '#,##0.00'; });
+  }
+  ['B3'].concat('CDEFG'.split('').map(c => c + (bas + k.plan.length + 1))).forEach(a => { if(ws[a] && ws[a].t === 'n') ws[a].z = '#,##0.00'; });
+  ws['!cols'] = [{ wch: 18 }, { wch: 14 }, { wch: 15 }, { wch: 17 }, { wch: 13 }, { wch: 11 }, { wch: 11 }, { wch: 17 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Ödeme Planı');
+  XLSX.writeFile(wb, krDosyaAdi('xlsx'));
+  krNot('İndirildi. Kredilerine eklemek için <b>Borçlarım › Kredilerim › + Ekle › Excel Seç</b> ile bu dosyayı seç — ya da doğrudan <b>＋ Kredilerime ekle</b>.');
+}
+// PDF: yazdırılabilir sayfa açılır, tarayıcının "PDF olarak kaydet" seçeneğiyle indirilir
+function krPlanPdf(){
+  if(!_krSon) return krNot('Önce tutarı, vadeyi ve faizi yaz.', true);
+  const k = _krSon, f = v => fmtNumber(v, 2), baslik = 'Kredi Ödeme Planı' + (k.banka ? ' — ' + k.banka : '');
+  const bilgi = [['Kredi türü', KR_TUR_AD[k.tur]], ['Kredi tutarı', '₺' + f(k.P)], ['Aylık faiz', '%' + f(k.faizYuzde)], ['Vade', k.n + ' ay'],
+    ['Aylık taksit', '₺' + f(k.taksit)], ['Toplam geri ödeme', '₺' + f(k.toplam)], ['Kullandırım tarihi', krTarihTR(k.kullandirim)], ['İlk taksit', krTarihTR(k.ilkTarih)]];
+  const html = `<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(krDosyaAdi('pdf').replace(/\.pdf$/, ''))}</title>
+<style>
+  @page{size:A4;margin:14mm 12mm;}
+  *{box-sizing:border-box;} body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1d232c;margin:0;padding:16px;background:#fff;font-size:12px;}
+  h1{font-size:19px;margin:0 0 4px;} .alt{color:#667085;font-size:11.5px;margin-bottom:14px;}
+  .bilgi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 14px;border:1px solid #d9dee5;border-radius:8px;padding:10px 12px;margin-bottom:14px;}
+  .bilgi div span{display:block;color:#667085;font-size:10px;text-transform:uppercase;letter-spacing:.04em;} .bilgi div b{font-size:12.5px;}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;} th,td{padding:5px 7px;border-bottom:1px solid #e3e7ec;text-align:right;white-space:nowrap;}
+  th{background:#f2f4f7;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:#475467;} th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left;}
+  tfoot td{font-weight:700;background:#f8f9fb;} tr{page-break-inside:avoid;} thead{display:table-header-group;}
+  .not{margin-top:12px;color:#667085;font-size:10.5px;line-height:1.5;}
+  .yazdir{position:fixed;right:16px;top:16px;background:#e7a83b;color:#1d232c;border:0;border-radius:8px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;}
+  @media print{.yazdir{display:none;} body{padding:0;}}
+  @media (max-width:600px){.bilgi{grid-template-columns:repeat(2,1fr);} .yazdir{position:static;width:100%;margin-bottom:12px;} body{padding:10px;} th,td{padding:4px 4px;font-size:10.5px;}}
+</style></head><body>
+<button class="yazdir" onclick="print()">PDF olarak kaydet / Yazdır</button>
+<h1>${escapeHtml(baslik)}</h1>
+<div class="alt">Finansal Takip Paneli · Hesap Araçları ile hesaplandı · ${krTarihTR(isoGun(new Date()))}</div>
+<div class="bilgi">${bilgi.map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join('')}</div>
+<table><thead><tr><th>Taksit No</th><th>Ödeme Tarihi</th><th>Taksit Tutarı</th><th>Ana Para Tutarı</th><th>Faiz</th>${k.vergi ? '<th>KKDF</th><th>BSMV</th>' : ''}<th>Kalan Ana Para</th></tr></thead>
+<tbody>${k.plan.map(p => `<tr><td>${p.no}</td><td>${krTarihTR(p.tarih)}</td><td>${f(p.taksit)}</td><td>${f(p.ana)}</td><td>${f(p.faiz)}</td>${k.vergi ? `<td>${f(p.kkdf)}</td><td>${f(p.bsmv)}</td>` : ''}<td>${f(p.kalan)}</td></tr>`).join('')}</tbody>
+<tfoot><tr><td>Toplam</td><td></td><td>${f(k.plan.reduce((t, p) => t + p.taksit, 0))}</td><td>${f(k.P)}</td><td>${f(k.topFaiz)}</td>${k.vergi ? `<td>${f(k.plan.reduce((t, p) => t + p.kkdf, 0))}</td><td>${f(k.plan.reduce((t, p) => t + p.bsmv, 0))}</td>` : ''}<td></td></tr></tfoot></table>
+<div class="not">Eşit taksitli hesaplamadır; bankanın planı gün sayısına göre birkaç kuruş farklı olabilir. Tutarlar ₺.</div>
+<script>addEventListener('load', () => setTimeout(() => print(), 300));<\/script>
+</body></html>`;
+  const w = window.open('', '_blank');
+  if(w){ w.document.open(); w.document.write(html); w.document.close(); }
+  else {
+    // Açılır pencere engellendiyse: gizli çerçeveden yazdır
+    const fr = document.createElement('iframe');
+    fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+    document.body.appendChild(fr);
+    fr.contentDocument.open(); fr.contentDocument.write(html.replace(/<script>[\s\S]*?<\/script>/, '')); fr.contentDocument.close();
+    setTimeout(() => { fr.contentWindow.focus(); fr.contentWindow.print(); setTimeout(() => fr.remove(), 60000); }, 300);
+  }
+  krNot('Açılan sayfada yazıcı olarak <b>PDF olarak kaydet</b>i seç. Kredilerine eklemek için <b>＋ Kredilerime ekle</b> daha kısa yol.');
+}
+// Hesaplanan planla Borçlarım › Kredilerim'e ekle: PDF / Excel'deki gibi "kontrol et → kaydet" önizlemesi açılır
+function krKredilerimeEkle(){
+  if(!_krSon) return krNot('Önce tutarı, vadeyi ve faizi yaz.', true);
+  const k = _krSon;
+  if(!k.banka){ krNot('Kredinin adını yaz (ör. <b>Ziraat ihtiyaç</b>) — Kredilerim\'de bu adla görünür.', true); const b = document.getElementById('krBanka'); b.focus(); b.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+  const oran = k.vergi ? 15 : 0;
+  pendingExtractedLoan = {
+    banka: k.banka, faizOraniAylik: Math.round(k.faizYuzde * 10000) / 10000, kkdfOrani: oran, bsmvOrani: oran,
+    orijinalAnapara: k.P, kullandirimTarihi: k.kullandirim,
+    schedule: k.plan.map(p => ({ tarih: p.tarih, kalanAnapara: p.kalan, faiz: Math.round((p.faiz + p.kkdf + p.bsmv) * 100) / 100 })), kaynak: 'hesap',
+  };
+  switchTab('borclar');
+  const form = document.getElementById('krediForm');
+  const kc = form.closest('.katli[data-katla]'); if(kc && borcKatliDurum()[kc.dataset.katla]) borcKatla(kc.dataset.katla);
+  form.classList.add('acik');
+  renderLoanPreview(pendingExtractedLoan);
+  setTimeout(() => document.getElementById('loanPreviewBox').scrollIntoView({ block: 'center', behavior: 'smooth' }), 80);
 }
 function krPlanAcKapa(){
   _krPlanAcik = !_krPlanAcik;
