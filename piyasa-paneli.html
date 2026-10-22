@@ -4363,7 +4363,7 @@
       <p><b>Nasıl kullanılır:</b> <b>+ Ekle</b> (ya da türün çerçevesindeki <b>+</b>) → türü seç → <b>adedi</b> yaz.</p>
       <ul class="kv-liste">
         <li><b>ABD ETF &amp; Hisse:</b> arama kutusuna şirket adını yaz (ör. “tesla”, “coca cola”, “vanguard”) ve listeden seç; kodu bilmen gerekmez, kutuya tıklayınca popüler hisseler de çıkar. ABD borsasındaki bütün hisse ve ETF'ler bulunur; Piyasa Özeti'ne kart olarak eklemen gerekmez, fiyatı yine de takip edilir.</li>
-        <li><b>Kripto:</b> listeden seç (en büyük 30 kripto: Bitcoin, Ethereum, XRP, Solana, BNB, Dogecoin…). Listede yoksa önce Kartları düzenle'de kodunu arayıp ekle.</li>
+        <li><b>Kripto:</b> listeden seç (en büyük 30 kripto ve dolara sabit <b>Tether (USDT)</b>: Bitcoin, Ethereum, USDT, XRP, Solana, BNB, Dogecoin…). USDT dolar gibi ≈ $1'dır; fiyatı Binance'teki USDT/USD kurundan gelir, değeri bugünkü dolar kuruyla TL'ye çevrilir. Listede yoksa önce Kartları düzenle'de kodunu arayıp ekle.</li>
         <li><b>BİST:</b> arama kutusuna şirket adını yaz (ör. “türk hava yolları”, “aselsan”, “tüpraş”, “koç”) ve listeden seç, adedi gir. Türkçe karakterle de karaktersiz de bulur (tüpraş = tupras); kodu biliyorsan kodu da yazabilirsin (THYAO). Fiyat 15 dakika gecikmeli gelir.</li>
         <li><b>Emtia:</b> altın ve gümüş gram olarak girilir.</li>
       </ul>
@@ -6148,6 +6148,8 @@ const CARDS = [
   { key:'nvda',   label:'NVDA',         source:'finnhub', symbol:'NVDA',   fmt:'usd2',    fallback:{price:180.00, chg:0.50} },
   // En büyük 30 kripto (BTC, ETH, SOL, HYPE, AAVE yukarıda): Binance USDT çifti ve CoinGecko yedek kimliği 2026-10-01'de doğrulandı.
   // Kendiliğinden kimsenin ekranına eklenmez; Kartları düzenle ve Yatırımlarım'da seçilir.
+  // Tether: dolara sabit stablecoin; USDT çifti olmadığı için Binance USDTUSD (2026-10-22'de doğrulandı)
+  { key:'usdt',  label:'TETHER (USDT)', source:'kripto', bnSymbol:'USDTUSD', symbol:'tether', fmt:'oto', fallback:{} },
   { key:'bnb',   label:'BNB', source:'kripto', bnSymbol:'BNBUSDT', symbol:'binancecoin', fmt:'oto', fallback:{} },
   { key:'xrp',   label:'XRP', source:'kripto', bnSymbol:'XRPUSDT', symbol:'ripple', fmt:'oto', fallback:{} },
   { key:'doge',  label:'DOGECOIN (DOGE)', source:'kripto', bnSymbol:'DOGEUSDT', symbol:'dogecoin', fmt:'oto', fallback:{} },
@@ -9647,6 +9649,7 @@ const KRIPTO_OPTIONS = [
   { key:'hype', label:'HYPE' },
   { key:'aave', label:'AAVE' },
   { key:'sol',  label:'Solana (SOL)' },
+  { key:'usdt', label:'Tether (USDT)' },
   { key:'bnb',  label:'BNB' },
   { key:'xrp',  label:'XRP' },
   { key:'doge', label:'Dogecoin (DOGE)' },
@@ -10195,7 +10198,8 @@ function yatirimSatirHtml(item, toplamYatirim){
       sonuc.chgPct != null && isFinite(sonuc.chgPct) ? (sonuc.chgPct >= 0 ? '▲' : '▼') + ' %' + fmtNumber(Math.abs(sonuc.chgPct), 2) : null, '15 dk gecikmeli'].filter(Boolean);
     ph = 'yeni adet';
   } else {
-    parcalar = [fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '') + ' adet', '$' + fmtNumber(sonuc.fiyatBirimUSD, 2)];
+    const f = sonuc.fiyatBirimUSD;   // ucuz coin ve stablecoin (USDT $0,9989) kuruş altını da göstersin
+    parcalar = [fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '') + ' adet', '$' + fmtNumber(f, f >= 10 ? 2 : f >= 0.01 ? 4 : 8)];
     ph = 'yeni adet';
   }
   const maliyetliMi = !(item.tur === 'bist' && !item.kod);
