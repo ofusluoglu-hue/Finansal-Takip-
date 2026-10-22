@@ -3680,16 +3680,16 @@
       <div class="ozet-kart" id="istKart">
         <div class="ozet-etiket">Portföy yaşı</div>
         <div class="ozet-deger"><span id="istPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
-        <div class="ozet-alt">Ort. <span id="istOrtYas">—</span></div>
+        <div class="ozet-alt">Ağırlıklı ort. <span id="istOrtYas">—</span></div>
         <div class="ozet-cubuk"><div id="istBar"></div></div>
-        <div class="card-seanslar"><div><span class="s-ad">Ağırlıklı</span><b><span id="istAgirlikliYas">—</span></b></div><div><span class="s-ad">Toplam yaş</span><b><span id="istToplamYas">—</span></b></div></div>
+        <div class="card-seanslar"><div><span class="s-ad">En genç</span><b><span id="istAgirlikliYas">—</span></b></div><div><span class="s-ad">Kapsam</span><b><span id="istToplamYas">—</span></b></div></div>
       </div>
       <div class="ozet-kart" id="istCesKart">
         <div class="ozet-etiket">Çeşitlendirme</div>
         <div class="ozet-deger"><span id="istCesPuan">—</span><span class="ist-puan-ust"> / 100</span></div>
-        <div class="ozet-alt">Etkin <span id="istCesNeff">—</span> varlık <span class="ozet-soluk" id="istCesN"></span></div>
+        <div class="ozet-alt">Etkin <span id="istCesNeff">—</span> risk grubu <span class="ozet-soluk" id="istCesN"></span></div>
         <div class="ozet-cubuk"><div id="istCesBar"></div></div>
-        <div class="card-seanslar"><div><span class="s-ad">En büyük</span><b><span id="istCesEnBuyuk">—</span> <span id="istCesEnBuyukAd"></span></b></div><div><span class="s-ad">Kategori</span><b><span id="istCesKat">—</span> <span id="istCesKatAd"></span></b></div></div>
+        <div class="card-seanslar"><div><span class="s-ad">En büyük</span><b><span id="istCesEnBuyuk">—</span> <span id="istCesEnBuyukAd"></span></b></div><div><span class="s-ad">Tek kalem</span><b><span id="istCesKat">—</span> <span id="istCesKatAd"></span></b></div></div>
       </div>
       <div class="ozet-kart" id="istBorcKart">
         <div class="ozet-etiket">Borç karşılama</div>
@@ -3739,8 +3739,8 @@
     </div>
 
     <div class="footnote"><b>Not:</b> Her kriter 0–100 arası puanlanır; genel puan dördünün basit ortalamasıdır. Derece: 70 ve üzeri <b style="color:var(--up)">İyi</b> · 40–69 <b>Orta</b> · 40 altı <b style="color:var(--down)">Zayıf</b>.
-      <b>Portföy yaşı</b> = ortalama şirket/fon/coin yaşı ÷ 100 yıl × 100; yaşa tıklayıp değiştirebilirsin, yaşı girilmemiş varlıklar ortalamaya katılmaz, aynı varlık birden fazla kayıtsa tek satırda sayılır, sarı dikey çizgi ortalamadır, "ağırlıklı yaş" tutarı büyük varlıklara daha çok ağırlık verir.
-      <b>Çeşitlendirme</b> = (etkin varlık sayısı − 1) ÷ 9 × 100; etkin varlık sayısı = 1 ÷ Σ(pay²) — 10 eşit ağırlıklı varlık 100 puan, tek varlığa yaslanan portföy 0 puan; sarı çizgi, paran bütün varlıklara eşit dağılsaydı her birinin payıdır (çizgiyi geçen varlık fazla ağırlıkta).
+      <b>Portföy yaşı</b> = kalemlerin yaş puanlarının tutara göre ağırlıklı ortalaması; yaş puanı = 100 × ln(1 + yaş) ÷ ln(51) (50 yıl ve üzeri 100). Yaş: şirkette kuruluş, kriptoda ağın başlangıcı, geniş endeks fonunda endeksin yaşı, sektör / tema fonunda fonun yaşı; altın tam puan; elle girilen yaş önce gelir; yaşı bilinmeyen kalem puana katılmaz (kartta "kapsam"). Çubuk kalemin yaş puanı, sarı çizgi portföyün puanıdır.
+      <b>Çeşitlendirme</b> = %60 risk grubu puanı + %40 içerik puanı. Risk grubu: etkin grup sayısı = 1 ÷ Σ(grup payı²), (etkin grup − 1) ÷ 4 × 100 (5 eşit grup tam). İçerik: Σ pay × çeşitlilik (geniş endeks fonu 1, Nasdaq-100 0,8, sektör / tema fonu 0,6, altın 0,7, stablecoin 0,3, tek şirket 0,15, tek coin 0,1). Tek şirket / coin %25'i aşarsa en çok 60, %50'yi aşarsa en çok 40. Sarı çizgi 5 eşit grupta her birinin payıdır (%20).
       <b>Borç karşılama</b> = yatırımlar ÷ toplam borç × 100 (en fazla 100; borç yoksa tam puan); konut/arsa gibi likit olmayan varlıklar puana katılmaz, "tüm varlıkla" oranı onları da sayar; sarı çizgi toplam borçtur (çubuğu çizgiyi geçen kalem borcu tek başına karşılar), ölçek yatırım ve borca göredir, onları katlarca aşan "tüm varlıklar" çubuğu tam dolu çizilir.
       <b>Döviz koruması</b> = dolar bazlı varlık payı × 100; ABD ETF/hisse, kripto ve altın dolar bazlı, BİST hisseleri TL bazlıdır; konut/arsa dahil değildir.</div>
   </div>
@@ -4487,8 +4487,8 @@
     <details class="kv-bolum" id="kv-istatistik"><summary>📶 Portföy İstatistikleri <span>portföyün 100 üzerinden puanı</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Portföyünü dört kritere göre 0–100 arası puanlar; genel puan dördünün ortalamasıdır (70+ İyi, 40–69 Orta, 40 altı Zayıf).</p>
       <ul class="kv-liste">
-        <li><b>Portföy yaşı:</b> Yatırım yaptığın şirket, fon ya da coin'lerin ortalama yaşı (100 yıl = 100 puan). Sayfadaki “Portföy yaşı” listesinde bir yatırımın yaşına tıklayıp değiştirebilirsin; yaşı boş olan ortalamaya katılmaz.</li>
-        <li><b>Çeşitlendirme:</b> Paran kaç varlığa yayılmış. 10 eşit varlık 100 puan, tek varlık 0 puan. Listede sarı çizgi “her şey eşit dağılsaydı” payıdır; çubuğu çizgiyi epey geçen varlık portföyünde fazla ağırlıkta.</li>
+        <li><b>Portföy yaşı:</b> Paranın ne kadar köklü kurumlarda durduğu. Her kalemin yaşı puana çevrilir (ilk yıllar çok fark eder, 50 yıl ve üzeri tam puan: 6 yıl ≈ 50, 17 yıl ≈ 74, 41 yıl ≈ 95), sonra <b>tutara göre</b> ortalanır — küçük bir pozisyon büyük olan kadar etkilemez. Yaş: şirkette kuruluş yılı, kriptoda ağın başladığı yıl, <b>geniş endeks fonunda endeksin yaşı</b> (QQQM'de fonun 6 yılı değil, içindeki şirketlerin bulunduğu Nasdaq-100'ün 41 yılı), sektör / tema fonunda fonun yaşı; altın tam puan. Satırda yaşın nereden geldiği yazar; yaşa tıklayıp değiştirebilirsin (elle girdiğin her zaman geçerli).</li>
+        <li><b>Çeşitlendirme:</b> Kaç kalemin olduğu değil, <b>kaç ayrı risk taşıdığın</b>. %60'ı <b>risk grupları</b>: birlikte hareket edenler tek grup sayılır (URA + NLR → Uranyum / nükleer; BTC + ETH → Kripto; QQQM, S&amp;P 500 fonu ve tek ABD hisseleri → ABD hisseleri); 5 eşit grup tam puan. %40'ı <b>içerik</b>: geniş endeks fonu yüzlerce şirket demektir (tam), sektör fonu orta, tek hisse ya da tek coin tek risktir (düşük). Tek bir şirket / coin portföyün %25'ini aşarsa puan en çok 60, %50'yi aşarsa en çok 40 olur. Listede risk grupların ve payları; sarı çizgi 5 eşit grupta her birinin payı (%20). Bir grup %40'ı geçerse uyarı çıkar.</li>
         <li><b>Borç karşılama:</b> Yatırımların borcunu ne kadar karşılıyor (yatırım ÷ borç). Listede sarı çizgi toplam borçtur: yatırım çubuğu çizgiye ne kadar yakınsa borcun o kadarını karşılıyorsun.</li>
         <li><b>Döviz koruması:</b> Yatırımlarının ne kadarı dolar bazlı (ABD ETF, kripto, altın).</li>
       </ul>
@@ -4644,6 +4644,7 @@
     <details class="kv-bolum kv-sss"><summary>Kartla yaptığım harcama kart borcuma eklenir mi?</summary><div class="kv-ic"><p>Evet, istersen. Harcama Takibim'de harcamayı eklerken <b>Nasıl ödendi?</b> kutusundan kartı seç (yalnız içinde bulunulan ayda çıkar); tutar o kartın borcuna eklenir. Faturalar ve abonelikler için Ödeme Takvimi'nde ödemenin <b>ödeme:</b> seçiminden kartı seç; her ay ödeme günü geldiğinde karta eklenir. Seçmeyi unuttuysan ya da yanlış kartı seçtiysen harcamanın <b>Güncelle</b>'sinden kartı (ve adını) değiştir; eski karttan düşülür, yenisine eklenir. Ekstre gelince kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getir: o rakam önceki harcamaları içerdiği için aynı harcama iki kez sayılmaz. Taksitli alışverişlerde şimdilik tutarın tamamı eklenir (bankanın “toplam borç” rakamıyla aynı).</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Yatırımlarımın kâr / zararını nasıl görürüm?</summary><div class="kv-ic"><p>Yatırımlarım'da satırdaki <b>+ Maliyet</b>'e dokun ve birim başına <b>ortalama alış maliyetini</b> yaz (ABD hisse/ETF ve kripto $/adet, BİST ₺/adet, altın ₺/gram), Enter'a bas. Kâr / zarar tutarı ve yüzdesi satırda görünür; türün toplamı çerçeve başlığında (kapalıyken de), genel toplam Portföyüm başlığında ve Toplam Yatırım kartında. Değiştirmek için <b>Güncelle</b>'nin ikinci kutusunu kullan; 0 yazarsan maliyet silinir. Dolar bazlı yatırımlarda kâr / zarar dolar üzerinden hesaplanır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Hisselerimin KAP bildirimlerini nereden görürüm?</summary><div class="kv-ic"><p>Yatırımlarım sayfasında, portföy listesinin altındaki <b>KAP ve şirket haberleri</b> bölümünde. Yalnız senin portföyündeki BİST hisseleri için son 30 günün bildirimleri listelenir; bildirimler doğrudan KAP'ın kendisinden (kap.org.tr) gelir, ücretsizdir ve satıra dokununca bildirimin KAP sayfası açılır. Şirket haberleri (etiketsiz satırlar) Google Haberler'den eklenir; Google erişimi geçici olarak kısıtlarsa yalnız KAP bildirimleri görünür, bu bir hata değildir. Bölümü başlığındaki okla kapatabilirsin; kapalıyken yer kaplamaz, yeni bildirim gelince başlıkta sayı çıkar. Bir hisse hakkında yorum istersen Bay Piyasa'daki “KAP haberleri” sorusunu kullan.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Portföy yaşı ve çeşitlendirme puanı neye göre hesaplanıyor? Şirket bilgisi önemli mi?</summary><div class="kv-ic"><p>Evet, önemli: puan, elindekinin <b>ne olduğuna</b> bakar. Bir S&amp;P 500 fonu 500 köklü şirket demektir; tek bir hisse tek şirket, tek bir coin tek risk. Bu yüzden <b>yaşta</b> geniş endeks fonunun kendi yaşı değil endeksin yaşı sayılır, puan tutara göre ağırlıklıdır ve 50 yıl ve üzeri tam puandır. <b>Çeşitlendirmede</b> kalem sayısına değil, birlikte hareket eden <b>risk gruplarına</b> (ör. iki nükleer fonu tek grup) ve kalemlerin içinin ne kadar çeşitli olduğuna bakılır; tek şirket ya da coine fazla yaslanan portföyün puanı sınırlanır. Bilinmeyen bir hissenin yaşını Portföy İstatistikleri'nde yaşa tıklayıp girebilirsin.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Dövizim ya da altınım var; Yatırımlarım'a mı, Varlıklarım'a mı girmeliyim?</summary><div class="kv-ic"><p><b>Yatırım amacıyla</b> tuttuğun altın, gümüş, ETF, kripto ve hisseleri <b>Yatırımlarım</b>'a gir; portföy puanına ve yatırım/borç oranına katılır. <b>Gerektiğinde harcamak için</b> kenarda duran parayı (acil durum fonu, mevduat) <b>Finansal Durumum › Varlıklarım</b>'a <b>Nakit / Mevduat</b> türüyle gir; ₺, $, € ya da gram altın seçebilirsin. İkisi de net varlığına girer; aynı parayı iki yere girme.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Piyasa Özeti'nde istemediğim kartlar var / takip ettiğim hisse yok.</summary><div class="kv-ic"><p>Piyasa Özeti'nde en üstte saatin yanındaki <b>Kartları düzenle</b>'ye bas. ✕ ile istemediğini gizle, ↑ ↓ ile sırala. Herhangi bir ABD hissesi, ETF ya da kripto için pencerede arama kutusuna adını ya da kodunu yaz (ör. Tesla, TSM, ASML, XRP) ve listeden seç. Eklediğin hisseyi Yatırımlarım'da da seçebilirsin. BİST hisseleri de aynı kutudan aranır (ör. “aselsan”, “türk hava yolları”); kartta fiyat ₺ olarak ve 15 dakika gecikmeli görünür.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Fiyatlar güncellenmiyor ya da ışık kırmızı yanıyor.</summary><div class="kv-ic"><p>Fiyat kaynağına o an ulaşılamamış olabilir; panel son bilinen fiyatı gösterir ve ışık kırmızı yanar. Sağ üstteki <b>Yenile</b>'ye bas ya da bir dakika bekle. BİST fiyatları zaten yaklaşık 15 dakika gecikmelidir; ABD piyasası kapalıyken ETF fiyatı seans dışı fiyatla gösterilir.</p></div></details>
@@ -7941,8 +7942,6 @@ async function loadNews(){
 // Yatırımlarım'daki varlıklar otomatik listelenir. Her varlığın "yaşı" (şirket/fon/coin kaç yıllık) elle girilir; ilk değerler
 // senin Excel tablonla başlar, istediğinde değiştirirsin. Yaş, varlığın kaydına (yas alanı) yazılır ve D1 ile senkronlanır.
 const PORTFOY_YAS_TAM_PUAN = 100;    // "kabul edilen 100": ortalama yaş 100 yıl ise puan 100
-const YAS_VARSAYILAN = { ndx:6, sp500:16, ura:16, nlr:19, xle:27, remx:16, rexc:1, btc:16, eth:16 };
-const YAS_VARSAYILAN_BIST = [ { ara:['TUPRS','TUPRAS'], yas:43 }, { ara:['BETAE','BETAENERJI'], yas:29 } ];
 const IST_KOD = { ndx:'QQQM', sp500:'VOO', ura:'URA', nlr:'NLR', xle:'XLE', rexc:'REXC', remx:'REMX', nvda:'NVDA', btc:'BTC', eth:'ETH', hype:'HYPE', aave:'AAVE', sol:'SOL' };
 
 function istNormalize(s){
@@ -7958,14 +7957,65 @@ function istKod(item){
   if(item.tur === 'bist') return String(item.ad || '').toLocaleUpperCase('tr');
   return IST_KOD[item.sembol] || String(item.sembol || '').toUpperCase();
 }
-function istVarsayilanYas(item){
-  if(item.tur === 'bist'){
-    const n = istNormalize(item.ad);
-    const b = YAS_VARSAYILAN_BIST.find(x => x.ara.some(a => n.includes(a)));
-    return b ? b.yas : null;
-  }
-  return YAS_VARSAYILAN[item.sembol] != null ? YAS_VARSAYILAN[item.sembol] : null;
+// Varlık bilgisi (puanlama için): tip, risk grubu ve yaşın başladığı yıl.
+//   tip: 'endeks' geniş endeks fonu (yüzlerce şirket) · 'tema' sektör / tema fonu · 'sirket' tek şirket · 'kripto' · 'stabil' dolara sabit coin · 'metal'
+//   grup: birlikte hareket eden risk grubu (çeşitlendirme grupları sayar, kalemleri değil)
+//   yil: yaşın başladığı yıl — geniş endeks fonunda fonun değil endeksin yılı (içindeki şirketler o kadar eski bir endekste),
+//        tema fonunda fonun kuruluşu, şirkette kuruluş, kriptoda ağın başladığı yıl. Elle girilen yaş her zaman önce gelir.
+// Yıllar bilinen kuruluş / başlangıç yıllarıdır (2026-10-22'de derlendi); yanlış ya da eksikse kullanıcı yaşa tıklayıp düzeltir.
+const IST_BILGI = {
+  sp500: { tip: 'endeks', grup: 'abd', yil: 1957, neden: 'S&P 500 endeksi' },
+  ndx:   { tip: 'endeks', grup: 'abd', yil: 1985, neden: 'Nasdaq-100 endeksi', ic: 0.8 },   // 100 şirket ama teknoloji ağırlıklı
+  xle:   { tip: 'tema', grup: 'enerji', yil: 1998, neden: 'fon (enerji sektörü)' },
+  ura:   { tip: 'tema', grup: 'nukleer', yil: 2010, neden: 'fon (uranyum)' },
+  nlr:   { tip: 'tema', grup: 'nukleer', yil: 2007, neden: 'fon (nükleer)' },
+  remx:  { tip: 'tema', grup: 'maden', yil: 2010, neden: 'fon (nadir toprak)' },
+  rexc:  { tip: 'tema', grup: 'maden', yil: 2025, neden: 'fon (nadir toprak)' },
+  nvda:  { tip: 'sirket', grup: 'abd', yil: 1993, neden: 'kuruluş' },
+  btc: { yil: 2009 }, eth: { yil: 2015 }, sol: { yil: 2020 }, hype: { yil: 2024 }, aave: { yil: 2017 }, bnb: { yil: 2017 }, xrp: { yil: 2012 },
+  doge: { yil: 2013 }, ada: { yil: 2017 }, trx: { yil: 2017 }, avax: { yil: 2020 }, link: { yil: 2017 }, sui: { yil: 2023 }, ltc: { yil: 2011 },
+  bch: { yil: 2017 }, xlm: { yil: 2014 }, hbar: { yil: 2019 }, dot: { yil: 2020 }, uni: { yil: 2020 }, near: { yil: 2020 }, pepe: { yil: 2023 },
+  shib: { yil: 2020 }, etc: { yil: 2016 }, apt: { yil: 2022 }, ena: { yil: 2024 }, tao: { yil: 2021 }, wld: { yil: 2023 }, arb: { yil: 2023 }, ondo: { yil: 2024 },
+  usdt: { tip: 'stabil', grup: 'nakit', yil: 2014, neden: 'ilk ihraç' },
+};
+// BİST şirketleri: kuruluş yılı (kod → yıl)
+const IST_BILGI_BIST = { TUPRS: 1983, FROTO: 1959, ENKAI: 1957, ISMEN: 1996, THYAO: 1933, ASELS: 1975, GARAN: 1946, AKBNK: 1948, ISCTR: 1924, YKBNK: 1944,
+  BIMAS: 1995, EREGL: 1960, SISE: 1935, TCELL: 1994, ARCLK: 1955, TOASO: 1968, PETKM: 1965, PGSUS: 1989, SASA: 1966 };
+const YAS_VARSAYILAN_BIST = [ { ara:['BETAE','BETAENERJI'], yas:29 } ];   // yıl bilinmeyen, Excel tablosundan gelen yaş
+const IST_GRUP_AD = { abd: 'ABD hisseleri', enerji: 'Enerji sektörü', nukleer: 'Uranyum / nükleer', maden: 'Madencilik / nadir toprak', kripto: 'Kripto', metal: 'Değerli metal', bist: 'Türkiye hisseleri', nakit: 'Dolar nakit (stablecoin)' };
+const IST_GRUP_KISA = { abd: 'ABD', enerji: 'Enerji', nukleer: 'Nükleer', maden: 'Maden', kripto: 'Kripto', metal: 'Metal', bist: 'BİST', nakit: 'Stablecoin' };   // dar kart için
+const IST_TIP_AD = { endeks: 'geniş endeks fonu', tema: 'sektör / tema fonu', sirket: 'tek şirket', kripto: 'kripto', stabil: 'stablecoin', metal: 'değerli metal' };
+const IST_TIP_IC = { endeks: 1, tema: 0.6, sirket: 0.15, kripto: 0.1, stabil: 0.3, metal: 0.7 };   // içerik çeşitliliği: kalemin içinde kaç ayrı risk var
+const IST_TAM_YAS = 50;          // 50 yıl ve üzeri tam puan (logaritmik: ilk yıllar çok, sonrası az fark eder)
+const IST_HEDEF_GRUP = 5;        // 5 eşit risk grubu = grup çeşitliliğinde tam puan
+// Bilinmeyen ABD sembolü: adından fon mu şirket mi tahmini
+function istTipTahmin(etiket){
+  const a = String(etiket || '').toUpperCase();
+  if(/\bETF\b|\bFUND\b|\bTRUST\b|ISHARES|VANGUARD|SPDR|INVESCO|SCHWAB|PROSHARES|GLOBAL X|\bARK\b|WISDOMTREE|VANECK|SPROTT|FIRST TRUST/.test(a))
+    return /S&P 500|\b500\b|TOTAL (STOCK|MARKET|WORLD)|ALL[- ]WORLD|\bWORLD\b|NASDAQ[- ]100|MSCI|DOW JONES|RUSSELL|\bDIVIDEND\b/.test(a) ? 'endeks' : 'tema';
+  return 'sirket';
 }
+function istBilgi(item){
+  const yilYas = y => new Date().getFullYear() - y;
+  if(item.tur === 'emtia') return { tip: 'metal', grup: 'metal', yas: null, neden: 'binlerce yıllık değer saklama aracı', tamPuan: true };
+  if(item.tur === 'bist'){
+    const n = istNormalize(item.kod || item.ad);
+    const y = IST_BILGI_BIST[n];
+    if(y) return { tip: 'sirket', grup: 'bist', yas: yilYas(y), neden: 'kuruluş ' + y };
+    const b = YAS_VARSAYILAN_BIST.find(x => x.ara.some(a => n.includes(a)));
+    return { tip: 'sirket', grup: 'bist', yas: b ? b.yas : null, neden: b ? 'tablodan' : '' };
+  }
+  const k = IST_BILGI[item.sembol];
+  if(item.tur === 'kripto'){
+    const tip = k && k.tip || 'kripto';
+    return { tip, grup: k && k.grup || 'kripto', yas: k ? yilYas(k.yil) : null, neden: k ? (k.neden || 'ağın başlangıcı') + ' ' + k.yil : '' };
+  }
+  if(k) return { tip: k.tip, grup: k.grup, ic: k.ic, yas: yilYas(k.yil), neden: k.neden + ' ' + k.yil };
+  const kart = CARDS.find(c => c.key === item.sembol);
+  return { tip: istTipTahmin(kart ? kart.label : item.sembol), grup: 'abd', yas: null, neden: '' };
+}
+// Yaş puanı: 100 × ln(1 + yaş) / ln(1 + 50), en çok 100 — 6 yıl ≈ 50, 17 ≈ 74, 41 ≈ 95, 50+ = 100
+function istYasPuani(g){ return g.tamPuan ? 100 : g.yas == null ? null : istSinirla(Math.log(1 + Math.max(0, g.yas)) / Math.log(1 + IST_TAM_YAS) * 100); }
 
 // Aynı varlık birden fazla kayıtsa (ör. QQQM iki kez) tek satırda toplanır
 function istGrupla(){
@@ -7975,13 +8025,13 @@ function istGrupla(){
     if(!k) return;
     const sonuc = yatirimDegerHesapla(item);
     if(!gruplar.has(k)){
-      gruplar.set(k, { anahtar: k, ad: yatirimEtiket(item), kod: istKod(item), tur: item.tur, tl: 0, yas: null, elle: false, ilk: item });
+      gruplar.set(k, Object.assign({ anahtar: k, ad: yatirimEtiket(item), kod: istKod(item), tur: item.tur, tl: 0, elle: false, ilk: item }, istBilgi(item)));
     }
     const g = gruplar.get(k);
     g.tl += sonuc ? sonuc.tutarTL : 0;
-    if(item.yas != null && item.yas !== '' && isFinite(item.yas)){ g.yas = Number(item.yas); g.elle = true; }
+    if(item.yas != null && item.yas !== '' && isFinite(item.yas)){ g.yas = Number(item.yas); g.elle = true; g.tamPuan = false; g.neden = 'elle girildi'; }
   });
-  gruplar.forEach(g => { if(g.yas == null){ const v = istVarsayilanYas(g.ilk); if(v != null) g.yas = v; } });
+  gruplar.forEach(g => { g.yasPuan = istYasPuani(g); });
   return [...gruplar.values()].sort((a, b) => YATIRIM_KATEGORI_SIRA.indexOf(a.tur) - YATIRIM_KATEGORI_SIRA.indexOf(b.tur));
 }
 
@@ -8018,35 +8068,45 @@ function istDerece(p){ return p >= 70 ? 'İyi' : (p >= 40 ? 'Orta' : 'Zayıf'); 
 // Tüm puanları hesaplar (ekrandan bağımsız; Bay Piyasa da bunu okur)
 function istPuanlariHesapla(){
   const gruplar = istGrupla();
-  const yasli = gruplar.filter(g => g.yas != null);
+  const yasli = gruplar.filter(g => g.yasPuan != null);
   const tumTl = gruplar.reduce((t, g) => t + g.tl, 0);
   const sonuc = { gruplar, yasli, tumTl, yas: null, ces: null, borc: null, dov: null, genel: null };
 
-  // 1) Portföy yaşı
+  // 1) Portföy yaşı: kalemlerin yaş puanlarının değer ağırlıklı ortalaması (yaşı bilinmeyen kalem katılmaz)
   if(yasli.length){
-    const toplamYas = yasli.reduce((t, g) => t + g.yas, 0);
-    const ortYas = toplamYas / yasli.length;
-    const tlYasli = yasli.filter(g => g.tl > 0);
-    const tlToplam = tlYasli.reduce((t, g) => t + g.tl, 0);
-    sonuc.yas = {
-      toplamYas, ortYas, n: yasli.length,
-      agirlikli: tlToplam > 0 ? tlYasli.reduce((t, g) => t + g.yas * g.tl, 0) / tlToplam : null,
-      puan: istSinirla(ortYas / PORTFOY_YAS_TAM_PUAN * 100),
-    };
+    const toplamYas = yasli.filter(g => g.yas != null).reduce((t, g) => t + g.yas, 0);
+    const yasSayili = yasli.filter(g => g.yas != null);
+    const ortYas = yasSayili.length ? toplamYas / yasSayili.length : null;
+    const tlYasli = yasli.filter(g => g.tl > 0), tlToplam = tlYasli.reduce((t, g) => t + g.tl, 0);
+    const agirlikliYas = (() => { const l = tlYasli.filter(g => g.yas != null), t = l.reduce((x, g) => x + g.tl, 0); return t > 0 ? l.reduce((x, g) => x + g.yas * g.tl, 0) / t : null; })();
+    const puan = tlToplam > 0 ? tlYasli.reduce((t, g) => t + g.yasPuan * g.tl, 0) / tlToplam : yasli.reduce((t, g) => t + g.yasPuan, 0) / yasli.length;
+    const genc = tlYasli.filter(g => g.yas != null).sort((a, b) => a.yas - b.yas || b.tl - a.tl)[0] || null;   // en genç kalem
+    sonuc.yas = { toplamYas, ortYas: agirlikliYas != null ? agirlikliYas : ortYas, basitOrt: ortYas, n: yasli.length, agirlikli: agirlikliYas, puan: istSinirla(puan),
+      kapsam: tumTl > 0 ? tlToplam / tumTl * 100 : null, genc };
   }
 
-  // 2) Çeşitlendirme: etkin varlık sayısı = 1 / Σ(pay²)
+  // 2) Çeşitlendirme: risk grupları (%60) + içerik çeşitliliği (%40); tek şirkete / tek coine bağımlılıkta tavan
   const pozlar = gruplar.filter(g => g.tl > 0).sort((a, b) => b.tl - a.tl);
   if(pozlar.length && tumTl > 0){
     const hhi = pozlar.reduce((t, g) => t + Math.pow(g.tl / tumTl, 2), 0);
     const neff = 1 / hhi;
+    const grupTl = {};
+    pozlar.forEach(g => { grupTl[g.grup] = (grupTl[g.grup] || 0) + g.tl; });
+    const riskGruplari = Object.keys(grupTl).map(k => ({ grup: k, ad: IST_GRUP_AD[k] || k, tl: grupTl[k], pay: grupTl[k] / tumTl * 100, kalemler: pozlar.filter(g => g.grup === k) })).sort((a, b) => b.tl - a.tl);
+    const grupNeff = 1 / riskGruplari.reduce((t, r) => t + Math.pow(r.tl / tumTl, 2), 0);
+    const grupPuan = istSinirla((grupNeff - 1) / (IST_HEDEF_GRUP - 1) * 100);
+    const icPuan = istSinirla(pozlar.reduce((t, g) => t + (g.tl / tumTl) * (g.ic != null ? g.ic : IST_TIP_IC[g.tip] != null ? IST_TIP_IC[g.tip] : 0.15), 0) * 100);
+    const tekler = pozlar.filter(g => g.tip === 'sirket' || g.tip === 'kripto');
+    const tekEnBuyuk = tekler[0] || null, tekPay = tekEnBuyuk ? tekEnBuyuk.tl / tumTl * 100 : 0;
+    const tavan = tekPay > 50 ? 40 : tekPay > 25 ? 60 : 100;
     const kat = {};
     pozlar.forEach(g => { kat[g.tur] = (kat[g.tur] || 0) + g.tl; });
     const enBuyukKat = Object.keys(kat).sort((a, b) => kat[b] - kat[a])[0];
     sonuc.ces = {
-      neff, n: pozlar.length, pozlar,
-      puan: istSinirla((neff - 1) / (PORTFOY_HEDEF_POZISYON - 1) * 100),
+      neff, n: pozlar.length, pozlar, riskGruplari, grupNeff, grupPuan, icPuan, tekEnBuyuk, tekPay, tavan,
+      puan: Math.min(tavan, 0.6 * grupPuan + 0.4 * icPuan),
       enBuyuk: pozlar[0], enBuyukPay: pozlar[0].tl / tumTl * 100,
+      enBuyukGrup: riskGruplari[0],
       enBuyukKat, enBuyukKatPay: kat[enBuyukKat] / tumTl * 100,
     };
   }
@@ -8133,24 +8193,24 @@ function renderIstatistik(){
 
   // ---- 1) Portföy yaşı ----
   const Y = H.yas;
-  istYaz('istOrtYas', Y ? fmtNumber(Y.ortYas, 1) + ' yıl' : '—');
-  istYaz('istToplamYas', Y ? fmtNumber(Y.toplamYas, 0) : '—');
-  istYaz('istAgirlikliYas', Y && Y.agirlikli != null ? fmtNumber(Y.agirlikli, 1) + ' yıl' : '—');
+  istYaz('istOrtYas', Y && Y.agirlikli != null ? fmtNumber(Y.agirlikli, 1) + ' yıl' : '—');
+  istYaz('istToplamYas', Y && Y.kapsam != null ? '%' + fmtNumber(Y.kapsam, 0) : '—');
+  istYaz('istAgirlikliYas', Y && Y.genc ? Y.genc.kod + ' ' + (Y.genc.yas != null ? fmtNumber(Y.genc.yas, 0) + ' yıl' : '') : '—');
   istYaz('istVarlikSay', Y ? Y.n + ' varlık üzerinden' + (Y.n < gruplar.length ? ' (' + (gruplar.length - Y.n) + ' varlığın yaşı boş)' : '') : '');
   istPuanYaz('ist', Y ? Y.puan : null);
 
   // İnce liste (Çeşitlendirme çubuklarıyla aynı dil): kod · yaş çubuğu (ortalama = sarı dikey çizgi) · yaş · pay.
   // Yaş düz metindir; tıklayınca satır içinde düzenlenir (Enter kaydeder, Esc vazgeçer). Tam ad satırın ipucunda.
   document.getElementById('istGrafikAlan').innerHTML = '';
-  const enBuyuk = yasli.length ? Math.max(...yasli.map(g => g.yas)) : 10;
-  const tepe = Math.max(10, Math.ceil(enBuyuk * 1.1 / 5) * 5);
-  const ortSol = Y ? Math.min(100, Y.ortYas / tepe * 100).toFixed(1) : null;
-  const sirali = [...gruplar].sort((a, b) => (b.yas != null) - (a.yas != null) || (b.yas || 0) - (a.yas || 0));
+  // Çubuk = kalemin yaş puanı (0–100); sarı çizgi = portföyün yaş puanı
+  const ortSol = Y ? Y.puan.toFixed(1) : null;
+  const sirali = [...gruplar].sort((a, b) => (b.yasPuan != null) - (a.yasPuan != null) || (b.yasPuan || 0) - (a.yasPuan || 0) || b.tl - a.tl);
   _yasCiziliyor = true;   // yeniden çizimde odaktaki kutu kaldırılırken gelen "blur" kaydetme sayılmasın
   tabloEl.innerHTML = `
     <div class="yas-ust">
-      ${Y ? `<span><i class="yas-ort-simge"></i>Ortalama <b>${fmtNumber(Y.ortYas, 1)} yıl</b> <span class="ozet-soluk">(${Y.n}/${gruplar.length} varlık)</span></span>` : '<span>Ortalama için en az bir varlığın yaşını gir</span>'}
-      ${Y && Y.agirlikli != null ? `<span>Ağırlıklı <b>${fmtNumber(Y.agirlikli, 1)} yıl</b></span>` : ''}
+      ${Y ? `<span><i class="yas-ort-simge"></i>Portföyün yaş puanı <b>${fmtNumber(Y.puan, 0)}</b> <span class="ozet-soluk">(${Y.n}/${gruplar.length} kalem, tutara göre ağırlıklı)</span></span>` : '<span>Puan için en az bir varlığın yaşını gir</span>'}
+      ${Y && Y.agirlikli != null ? `<span>Ağırlıklı yaş <b>${fmtNumber(Y.agirlikli, 1)} yıl</b></span>` : ''}
+      <span class="ozet-soluk">çubuk: yaş puanı (50 yıl ve üzeri tam)</span>
       <span class="yas-ust-sag">yaş · pay</span>
     </div>
     <div class="yas-liste">${sirali.map(g => {
@@ -8160,10 +8220,11 @@ function renderIstatistik(){
       const deger = duzen
         ? `<input class="yas-girdi" type="number" min="0" max="500" step="1" value="${escapeHtml(_yasDuzen.deger)}" data-anahtar="${g.anahtar}"
              oninput="_yasDuzen.deger = this.value" onkeydown="istYasTus(event, this)" onblur="if(!_yasCiziliyor) istYasBitir(this, true)">`
-        : `<button class="yas-deger${g.yas == null ? ' bos' : ''}" title="Yaşı düzenle" onclick="istYasDuzenle('${g.anahtar}', ${g.yas != null ? g.yas : 'null'})">${g.yas != null ? fmtNumber(g.yas, g.yas % 1 ? 1 : 0) + ' yıl' : '+ yaş gir'}</button>`;
-      return `<div class="yas-satir" title="${escapeHtml(g.ad)} · ${escapeHtml(YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur)}">
-        <div class="yas-kod"><span class="ist-kat-nokta" style="background:${renk};"></span>${escapeHtml(g.kod)}${istNormalize(g.ad) !== istNormalize(g.kod) ? `<span class="yas-ad">${escapeHtml(g.ad)}</span>` : ''}<span class="yas-kat-ad">${escapeHtml(YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur)}</span></div>
-        <div class="yas-cubuk${g.yas == null ? ' bos' : ''}">${g.yas != null ? `<div class="yas-dolgu" style="width:${Math.min(100, g.yas / tepe * 100).toFixed(1)}%;background:${renk};"></div>` : ''}${ortSol != null ? `<div class="yas-ort" style="left:${ortSol}%;"></div>` : ''}</div>
+        : `<button class="yas-deger${g.yasPuan == null ? ' bos' : ''}" title="Yaşı düzenle" onclick="istYasDuzenle('${g.anahtar}', ${g.yas != null ? g.yas : 'null'})">${g.tamPuan ? 'köklü' : g.yas != null ? fmtNumber(g.yas, g.yas % 1 ? 1 : 0) + ' yıl' : '+ yaş gir'}</button>`;
+      const kaynak = [IST_TIP_AD[g.tip], g.neden].filter(Boolean).join(' · ');
+      return `<div class="yas-satir" title="${escapeHtml(g.ad)} · ${escapeHtml(kaynak)}${g.yasPuan != null ? ' · yaş puanı ' + fmtNumber(g.yasPuan, 0) : ''}">
+        <div class="yas-kod"><span class="ist-kat-nokta" style="background:${renk};"></span>${escapeHtml(g.kod)}${istNormalize(g.ad) !== istNormalize(g.kod) ? `<span class="yas-ad">${escapeHtml(g.ad)}</span>` : ''}<span class="yas-kat-ad">${escapeHtml(kaynak || YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur)}</span></div>
+        <div class="yas-cubuk${g.yasPuan == null ? ' bos' : ''}">${g.yasPuan != null ? `<div class="yas-dolgu" style="width:${g.yasPuan.toFixed(1)}%;background:${renk};"></div>` : ''}${ortSol != null ? `<div class="yas-ort" style="left:${ortSol}%;"></div>` : ''}</div>
         <div class="yas-deger-kap">${deger}</div>
         <div class="yas-pay">${pay}</div>
       </div>`;
@@ -8177,23 +8238,26 @@ function renderIstatistik(){
   // ---- 2) Çeşitlendirme ----
   const C = H.ces;
   istPuanYaz('istCes', C ? C.puan : null);
-  istYaz('istCesNeff', C ? fmtNumber(C.neff, 1) : '—');
-  istYaz('istCesN', C ? C.n + ' varlıktan' : '');
-  istYaz('istCesEnBuyuk', C ? '%' + fmtNumber(C.enBuyukPay, 1) : '—');
-  istYaz('istCesEnBuyukAd', C ? C.enBuyuk.kod : '');
-  istYaz('istCesKat', C ? '%' + fmtNumber(C.enBuyukKatPay, 1) : '—');
-  istYaz('istCesKatAd', C ? (YATIRIM_KATEGORI_BASLIK[C.enBuyukKat] || C.enBuyukKat) : '');
-  // çubuk: en büyük paya göre ölçekli; sarı çizgi = herkes eşit olsaydı düşecek pay (üstünde kalan varlık portföyde fazla ağırlıkta)
+  istYaz('istCesNeff', C ? fmtNumber(C.grupNeff, 1) : '—');
+  istYaz('istCesN', '');   // kalem sayısı aşağıdaki listede; dar kartta yer kaplamasın
+  istYaz('istCesEnBuyuk', C ? '%' + fmtNumber(C.enBuyukGrup.pay, 0) : '—');
+  istYaz('istCesEnBuyukAd', C ? IST_GRUP_KISA[C.enBuyukGrup.grup] || C.enBuyukGrup.ad : '');
+  istYaz('istCesKat', C ? (C.tekEnBuyuk ? '%' + fmtNumber(C.tekPay, 1) : 'yok') : '—');
+  istYaz('istCesKatAd', C && C.tekEnBuyuk ? C.tekEnBuyuk.kod : '');
+  // Risk grupları: çubuk = grubun payı; sarı çizgi = 5 eşit grupta her birinin payı (%20). Altta kalemler ve içerik türü.
   if(C){
-    const enBuyukPay = Math.max(...C.pozlar.map(g => g.tl / tumTl * 100)), esit = 100 / C.n;
-    const tepePay = Math.max(enBuyukPay, esit) * 1.05;
+    const tepePay = Math.max(...C.riskGruplari.map(r => r.pay), 100 / IST_HEDEF_GRUP) * 1.05;
+    const tavanNot = C.tavan < 100 ? ` · <b style="color:var(--down);">${escapeHtml(C.tekEnBuyuk.kod)} tek başına %${fmtNumber(C.tekPay, 0)}: puan en çok ${C.tavan}</b>` : '';
     document.getElementById('istCesDetay').innerHTML = istListe({
-      ust: [`<i class="yas-ort-simge"></i>Eşit dağılımda pay <b>%${fmtNumber(esit, 1)}</b> <span class="ozet-soluk">(${C.n} varlık)</span>`,
-            `Etkin <b>${fmtNumber(C.neff, 1)} varlık</b>`, `En büyük <b>${escapeHtml(C.enBuyuk.kod)} %${fmtNumber(C.enBuyukPay, 1)}</b>`],
-      sagBaslik: 'pay · tutar', referans: esit / tepePay * 100,
-      satirlar: C.pozlar.map(g => ({ renk: YATIRIM_KATEGORI_RENK[g.tur] || 'var(--text)', ad: g.kod, aciklama: istNormalize(g.ad) !== istNormalize(g.kod) ? g.ad : '',
-        kat: YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur, oran: (g.tl / tumTl * 100) / tepePay * 100, deger: '%' + fmtNumber(g.tl / tumTl * 100, 1), ikinci: '₺' + fmtNumber(g.tl, 0),
-        ipucu: g.ad + ' · ' + (YATIRIM_KATEGORI_BASLIK[g.tur] || g.tur) })),
+      ust: [`<i class="yas-ort-simge"></i>Risk grupları <b>${fmtNumber(C.grupPuan, 0)}</b> <span class="ozet-soluk">(etkin ${fmtNumber(C.grupNeff, 1)} grup; 5 eşit grup tam puan)</span>`,
+            `İçerik <b>${fmtNumber(C.icPuan, 0)}</b> <span class="ozet-soluk">(endeks fonu çok şirket, tek hisse / coin tek risk)</span>`,
+            `Puan = %60 grup + %40 içerik${tavanNot}`,
+            C.enBuyukGrup.pay > 40 ? `<b style="color:var(--amber);">⚠ Portföyünün %${fmtNumber(C.enBuyukGrup.pay, 0)}'${C.enBuyukGrup.pay >= 100 ? 'ü' : 'i'} tek risk grubunda (${escapeHtml(C.enBuyukGrup.ad)}): o grup kötü giderse portföyün bu kadarı birlikte etkilenir.</b>` : ''].filter(Boolean),
+      sagBaslik: 'pay · tutar', referans: 100 / IST_HEDEF_GRUP / tepePay * 100,
+      satirlar: C.riskGruplari.map(r => ({ renk: YATIRIM_KATEGORI_RENK[r.kalemler[0].tur] || 'var(--text)', ad: r.ad,
+        aciklama: r.kalemler.map(g => g.kod).join(', '),
+        oran: r.pay / tepePay * 100, deger: '%' + fmtNumber(r.pay, 1), ikinci: '₺' + fmtNumber(r.tl, 0),
+        ipucu: r.ad + ': ' + r.kalemler.map(g => g.kod + ' (' + (IST_TIP_AD[g.tip] || g.tip) + ') %' + fmtNumber(g.tl / tumTl * 100, 1)).join(', ') })),
     });
   } else document.getElementById('istCesDetay').innerHTML = '';
 
@@ -8474,7 +8538,7 @@ function bpSnapshotOlustur(paylas, haber){
         const p = (ad, k) => k ? ad + ' ' + fmtNumber(k.puan, 0) : null;
         s.push('Portföy puanları (100 üzerinden): genel ' + fmtNumber(ip.genel, 0) + ' | ' +
           [p('yaş', ip.yas), p('çeşitlendirme', ip.ces), p('borç karşılama', ip.borc), p('döviz koruması', ip.dov)].filter(Boolean).join(', ') +
-          (ip.yas ? ' | ortalama varlık yaşı ' + fmtNumber(ip.yas.ortYas, 1) + ' yıl' : '') +
+          (ip.yas ? ' | ağırlıklı varlık yaşı ' + fmtNumber(ip.yas.ortYas, 1) + ' yıl (yaş puanı ' + fmtNumber(ip.yas.puan, 0) + ')' : '') + (ip.ces ? ' | risk grupları: ' + ip.ces.riskGruplari.map(r => r.ad + ' %' + fmtNumber(r.pay, 0)).join(', ') : '') +
           (ip.ces ? ' | en büyük pozisyon ' + ip.ces.enBuyuk.kod + ' %' + fmtNumber(ip.ces.enBuyukPay, 0) : '') +
           (ip.dov ? ' | dolar bazlı pay %' + fmtNumber(ip.dov.dolarPay, 0) : ''));
       }
@@ -14491,7 +14555,7 @@ function raporMetni(R){
       const kat = {}; H.gruplar.forEach(g => { kat[g.tur] = (kat[g.tur] || 0) + g.tl; });
       s.push('\n## YATIRIMLAR (bugün)');
       s.push(`- Toplam ${tl(H.tumTl)} · ` + Object.keys(kat).map(k => `${YATIRIM_KATEGORI_BASLIK[k] || k} ${yz(kat[k] / H.tumTl * 100)}`).join(', '));
-      if(H.ces) s.push(`- En büyük pozisyon ${H.ces.enBuyuk.kod} ${yz(H.ces.enBuyukPay)} · etkin varlık sayısı ${fmtNumber(H.ces.neff, 1)}`);
+      if(H.ces) s.push(`- En büyük pozisyon ${H.ces.enBuyuk.kod} ${yz(H.ces.enBuyukPay)} · etkin varlık sayısı ${fmtNumber(H.ces.neff, 1)} · risk grupları: ${H.ces.riskGruplari.map(r => r.ad + ' ' + yz(r.pay)).join(', ')}`);
       if(H.dov) s.push(`- Dolar bazlı pay ${yz(H.dov.dolarPay)}`);
     }
   }catch(e){ /* yatırım yok */ }
