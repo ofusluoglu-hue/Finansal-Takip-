@@ -4342,7 +4342,7 @@
 
     <details class="kv-bolum" id="kv-borclar"><summary>💳 Borçlarım <span>krediler, kartlar, KMH, elden borç</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Bütün borçlarının bugünkü toplamını gösterir. Kredi ve KMH borcu her gün işleyen faizle canlı hesaplanır.</p>
-      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; Profilim'de Anthropic anahtarın kayıtlı olmalı) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Elinde plan yoksa <b>Hesap Araçları › Kredi Faizi</b>'nde tutar, vade, faiz ve ilk taksit tarihini yazıp <b>＋ Kredilerime ekle</b> de diyebilirsin. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. Krediyi kapatınca satırdaki yeşil <b>Kapattım</b> düğmesine bas.</p>
+      <p><b>Kredilerim:</b> <b>+ Ekle</b> ile bankanın ödeme planını <b>PDF</b> olarak (yapay zekâ okur; Profilim'de Anthropic anahtarın kayıtlı olmalı) ya da <b>Excel</b> olarak yükle; önizlemeyi kontrol edip kaydet. Elinde plan yoksa <b>Hesap Araçları › Kredi Faizi</b>'nde tutar, vade, faiz ve ilk taksit tarihini yazıp <b>＋ Kredilerime ekle</b> de diyebilirsin. Güncel borç = kalan anapara + son taksitten bugüne işleyen faiz + KKDF + BSMV. İlk taksit gelmeden de faiz kredinin kullanıldığı günden itibaren her gün işler (belgede kullandırım tarihi yoksa ilk taksitten bir ay önce sayılır); satırda “faiz N gündür işliyor · ilk taksit …” yazar. Krediyi kapatınca satırdaki yeşil <b>Kapattım</b> düğmesine bas.</p>
       <p><b>Kredi Kartlarım:</b> Kartın bugünkü toplam borcunu yaz; ekstre gelince satırdaki <b>Güncelle</b> ile güncelle.</p>
       <p><b>Kartla yapılan harcamalar:</b> Harcama Takibim'de ya da Ödeme Takvimi'nde bir kart seçersen tutar o kartın borcuna kendiliğinden eklenir. Kart satırında son güncellemedeki borç ve sonrasında karta yazılanlar ayrı görünür (ör. “₺135.571 + karta yazılan ₺1.500 (2 harcama)”). <b>Güncelle</b> ile bankadaki rakamı yazınca döküm sıfırlanır ve oradan devam eder.</p>
       <p><b>KMH:</b> Eklerken bugünkü borcu, <b>aylık faiz</b>i ve kullandığın <b>anapara</b>yı yaz (sonradan satırdaki <b>Faiz</b> düğmesiyle de değiştirebilirsin). Borç her gün kendiliğinden artar. <b>Örnek:</b> ₺4.000 anapara, %4,25 aylık faiz → günde 4.000 × 0,0425 ÷ 30 × 1,30 ≈ <b>₺7,37</b> (faiz + %15 KKDF + %15 BSMV).</p>
@@ -8896,6 +8896,12 @@ if(!AI_ENDPOINT.includes('SENIN-WORKER-ADRESIN')){
 //  - 'anchor'  : tek bir referans nokta bilinen krediler — taban tarih/anapara sabittir,
 //                bir sonraki ödemeden sonra kullanıcı tarafından elle güncellenmesi gerekir.
 
+// Kullandırım tarihi: kayıtlıysa o, yoksa ilk taksitten bir ay önce (ayın son gününe uyar)
+function krediKullandirim(loan){
+  if(loan.kullandirimTarihi) return loan.kullandirimTarihi;
+  const ilk = loan.schedule && loan.schedule[0];
+  return ilk && /^\d{4}-\d{2}-\d{2}$/.test(ilk.tarih) ? krAyEkle(ilk.tarih, -1) : null;
+}
 function loanGuncelBorc(loan, now = new Date()){
   const bugun = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // saat bilgisini at, sadece takvim günü
   let tabanTarih, kalanAnapara, kalanTaksit, ilkTaksitOncesi = false;
@@ -8912,8 +8918,9 @@ function loanGuncelBorc(loan, now = new Date()){
       const tahmini = sch.length >= 2 ? sch[0].kalanAnapara + (sch[0].kalanAnapara - sch[1].kalanAnapara) : null;
       kalanAnapara = loan.orijinalAnapara != null ? Number(loan.orijinalAnapara) : tahmini;
       if(kalanAnapara == null || !isFinite(kalanAnapara)) return null;
-      // Faiz, kullandırım tarihinden itibaren işler; tarih bilinmiyorsa birikmiş faiz 0 kabul edilir
-      tabanTarih = loan.kullandirimTarihi && new Date(loan.kullandirimTarihi + 'T00:00:00') <= bugun ? loan.kullandirimTarihi : null;
+      // Faiz, kullandırım tarihinden itibaren işler; belgede yoksa ilk taksitten bir ay önce sayılır (taksit hesabıyla aynı varsayım)
+      const kul = krediKullandirim(loan);
+      tabanTarih = kul && new Date(kul + 'T00:00:00') <= bugun ? kul : null;
       kalanTaksit = sch.length;
       ilkTaksitOncesi = true;
     } else {
@@ -9064,7 +9071,7 @@ function updateGarantiLive(){
       '%' + String(loan.faizOraniAylik).replace('.', ',') + ' aylık',
       aySayisi + ' ay',
       'kalan taksit ' + r.kalanTaksit,
-      r.ilkTaksitOncesi ? 'ilk taksit ' + r.ilkTaksitTarihi.split('-').reverse().join('.') : 'faiz ' + r.gun + ' gündür işliyor',
+      r.ilkTaksitOncesi ? (r.tabanTarih ? 'faiz ' + r.gun + ' gündür işliyor · ' : '') + 'ilk taksit ' + r.ilkTaksitTarihi.split('-').reverse().join('.') : 'faiz ' + r.gun + ' gündür işliyor',
     ].join(' · ');
     return satirHtml({
       led: 'green',
@@ -11002,7 +11009,7 @@ async function onLoanExcelSelected(event){
       kkdfOrani,
       bsmvOrani,
       orijinalAnapara: Math.round(totalAnapara * 100) / 100,
-      kullandirimTarihi: bilgi['KULLANDIRIM TARIHI'] != null ? excelTarihToISO(bilgi['KULLANDIRIM TARIHI']) : null,
+      kullandirimTarihi: (bilgi['KULLANDIRIM TARIHI'] != null ? excelTarihToISO(bilgi['KULLANDIRIM TARIHI']) : null) || krAyEkle(schedule[0].tarih, -1),
       dogrulamaTarihi: null,
       dogrulamaTutari: null,
       schedule,
@@ -11981,7 +11988,7 @@ function krediTaksitleri(loan){
     else {
       onceki = loan.orijinalAnapara != null ? Number(loan.orijinalAnapara) : (sch.length >= 2 ? sch[0].kalanAnapara + (sch[0].kalanAnapara - sch[1].kalanAnapara) : sch[0].kalanAnapara);
       const d = new Date(s.tarih + 'T00:00:00'); d.setMonth(d.getMonth() - 1);
-      oncekiTarih = loan.kullandirimTarihi || (d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'));
+      oncekiTarih = krediKullandirim(loan) || (d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'));
     }
     const anapara = Math.max(0, onceki - s.kalanAnapara);
     // Planda o taksidin faizi (KKDF + BSMV dahil) yazıyorsa o; yoksa günlük faizle tahmin
