@@ -1971,6 +1971,32 @@
   .aks-btn.onay{--c:var(--up);}
   .aks-btn.ekle{--c:var(--amber);}
   .aks-btn.ayar, .aks-btn.kaynak{--c:var(--muted);}
+  .aks-btn.sat{--c:var(--amber);}
+  @media (max-width:900px){ .aks-btn.sat{width:auto;padding:0 8px;} .aks-btn.sat span{display:inline;} }   /* telefonda da yazılı */
+  /* Satış penceresi */
+  .satis-perde{position:fixed;inset:0;background:rgba(0,0,0,.62);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px;}
+  .satis-kutu{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px 22px;max-width:420px;width:100%;max-height:calc(100vh - 32px);overflow:auto;}
+  .satis-baslik{font-size:17px;font-weight:800;margin-bottom:2px;}
+  .satis-alt{font-size:12.5px;color:var(--muted);margin-bottom:12px;}
+  .satis-alan{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;}
+  .satis-alan[hidden]{display:none;}
+  .satis-alan > span{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+  .satis-alan small{font-size:11.5px;color:var(--muted-2);}
+  .satis-alan .ai-input{min-width:0;width:100%;max-width:none;font-size:15px;}
+  .satis-alan .ai-input.hatali{border-color:var(--down);}
+  .satis-satir{display:flex;gap:8px;} .satis-satir .ai-input{flex:1;}
+  .satis-tumu{background:transparent;border:1px solid var(--border);color:var(--amber);border-radius:9px;padding:0 14px;font-family:inherit;font-weight:700;cursor:pointer;}
+  .satis-onizle{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;margin:4px 0 14px;}
+  .satis-onizle > div{display:flex;justify-content:space-between;gap:10px;padding:3px 0;}
+  .satis-onizle > div span{color:var(--muted);}
+  .satis-onizle b{font-variant-numeric:tabular-nums;text-align:right;}
+  .satis-onizle .kz-up{color:var(--up);} .satis-onizle .kz-down{color:var(--down);}
+  .satis-dugmeler{display:flex;gap:10px;justify-content:flex-end;}
+  @media (max-width:900px){   /* Satışlarım: üstte ad ve tarih, altta kâr / zarar, tutar, düğmeler */
+    #satisListe .satir{flex-wrap:wrap;row-gap:4px;}
+    #satisListe .satir-ana{flex:1 1 100%;}
+    #satisListe .satir-kz{flex:1 1 auto;justify-content:flex-start;}
+  }
   .satir-aksiyon{display:flex;align-items:center;gap:4px;flex-shrink:0;}
   @media (max-width:900px){ .aks-btn span{display:none;} .aks-btn{width:22px;height:22px;padding:0;justify-content:center;} .aks-btn svg{width:12px;height:12px;flex-basis:12px;}
     .aks-btn{z-index:1;} .aks-btn::after{content:'';position:absolute;inset:-6px;} .satir-aksiyon{gap:8px;} }   /* görünen 22 px, dokunma alanı 34 px */
@@ -1996,6 +2022,8 @@
     #yatirimListContainer .led-dot{grid-area:led;} #yatirimListContainer .satir-ana{grid-area:ana;} #yatirimListContainer .satir-aksiyon{grid-area:aks;} #yatirimListContainer .satir-duzen{grid-area:duz;}
     #yatirimListContainer .satir-tutar{grid-area:tutar;min-width:0;align-self:end;}
     #yatirimListContainer .satir-kz{grid-area:kz;flex-direction:row;align-items:baseline;justify-content:flex-end;gap:5px;align-self:start;}
+    #yatirimListContainer .satir-aksiyon{display:grid;grid-template-columns:auto auto;gap:3px;justify-items:end;}   /* üstte Sattım, altında ✎ ve sil: ad sıkışmasın */
+    #yatirimListContainer .aks-btn.sat{grid-column:1 / -1;width:100%;justify-content:center;}
     .satir-kz b{font-size:11.5px;} .satir-kz small{font-size:10.5px;}
     .kz-ekle{padding:1px 7px;font-size:10.5px;}
     .ikon-btn{width:26px;height:26px;}
@@ -3604,6 +3632,15 @@
       <div id="yatirimListContainer" class="buyuk-harf"></div>
     </div>
 
+    <div class="bolum" id="satisBolum" hidden>
+      <div class="bolum-bas aciklamali">
+        <span class="bolum-baslik">Satışlarım</span>
+        <span class="ozet-soluk baslik-aciklama" id="satisAlt" style="font-size:12px;"></span>
+        <span class="bolum-toplam" id="satisToplam"></span>
+      </div>
+      <div id="satisListe" class="buyuk-harf"></div>
+    </div>
+
     <div class="bolum kap-bolum" id="kapBolum">
       <div class="bolum-bas kap-bas aciklamali" onclick="kapKatla()" role="button" tabindex="0" onkeydown="if(event.key==='Enter') kapKatla()" aria-expanded="true">
         <span class="bolum-baslik">KAP ve şirket haberleri</span>
@@ -4332,6 +4369,8 @@
       </ul>
       <p><b>Örnek:</b> Kripto · Bitcoin · 0,0006983 → o anki fiyat $95.000 ve kur ₺48,90 ise değer ≈ ₺3.244.</p>
       <p><b>Ortalama maliyet ve kâr / zarar:</b> Eklerken <b>Ort. maliyet</b> kutusuna (isteğe bağlı) birim başına ortalama alış fiyatını yaz; sonradan eklemek için satırdaki <b>+ Maliyet</b>'e ya da <b>Güncelle</b>'ye dokun. Para birimi alırken baktığın birimdir: ABD hisse/ETF ve kriptoda <b>$/adet</b>, BİST'te <b>₺/adet</b>, altın ve gümüşte <b>₺/gram</b>. Satırın ortasında kâr / zarar tutarı ve yüzdesi yan yana görünür (kârda yeşil ▲, zararda kırmızı ▼); telefonda tutarın hemen altında. Her türün çerçeve başlığında o türün kâr / zararı (ABD ve kripto $, BİST ve emtia ₺), <b>Portföyüm</b> başlığında ve <b>Toplam Yatırım</b> kartında da toplam kâr / zarar ₺ olarak yazar; çerçeveyi kapatsan da başlıkta görünmeye devam eder. Bilgisayarda başlıklardaki kâr / zarar, satırlardaki kâr / zarar sütununun tam üstünde durur.</p>
+      <p><b>Sattım:</b> Bir yatırımı sattıysan satırdaki <b>Sattım</b>'a bas. Kaç adet sattığını (hepsi hazır gelir; <b>Tümü</b> düğmesi de var) ve gerçekleşen satış fiyatını yaz (şu anki fiyat hazır gelir). <b>Para nereye geçsin?</b> kısmında: yeni bir nakit varlığı (ör. “VOO satışı (takasta)” — ABD hissesi / kriptoda dolar, BİST ve altında TL), aynı birimdeki bir Nakit / Mevduat hesabın ya da hiçbir yer. Kaydedince adet düşer (hepsi satıldıysa satır kalkar), para Finansal Durumum › Varlıklarım'a geçer ve <b>gerçekleşen kâr / zarar</b> hesaplanır. Satışlar portföyün altındaki <b>Satışlarım</b>'da durur; başlıkta bu yılın gerçekleşen kâr / zararı yazar. Yanlışlıkla girdiysen <b>Geri al</b>: adet portföye döner, eklenen para düşülür.</p>
+      <p><b>Örnek:</b> 10 adet VOO, maliyet $400 → 4 adedi $455,50'den sattın → eline $1.822 geçer, gerçekleşen kâr <b>+$222 (%13,9)</b>, portföyde 6 adet kalır, Varlıklarım'da “VOO satışı (takasta)” $1.822 görünür. Takas bitip parayı TL'ye çevirince o varlığı ✎ ile güncellersin.</p>
       <p><b>Güncelle'de iki kutu:</b> <b>yeni adet</b> ve <b>ortalama maliyet</b>. Yalnız değiştirmek istediğini yaz, boş bıraktığın değişmez; maliyeti silmek için 0 yaz. Hisse ekleyip ortalaman değiştiyse aracı kurumunun gösterdiği yeni ortalamayı yaz.</p>
       <p><b>Örnek:</b> 10 adet TUPRS, ortalama maliyet ₺150, bugün ₺182,40 → kâr <b>+₺324 · ▲ %21,6</b>. ABD hissesi ve kriptoda kâr / zarar <b>dolar bazındadır</b> (ör. +$40 · %8,3); toplam kartta bugünkü kurla TL'ye çevrilir, yani alış günündeki kur farkı hesaba katılmaz.</p>
       <p><b>Çerçeveleri kapatma:</b> Her türün (ABD ETF &amp; Hisse, Kripto, BİST, Emtia) ve KAP bölümünün sağındaki (toplamın hemen solundaki) yanıp sönen küçük sarı oka ya da başlığın kendisine dokununca o çerçeve kapanır, yalnız başlık ve toplamı kalır; tekrar dokununca açılır. Hepsi varsayılan olarak açıktır; seçimin bu cihazda hatırlanır. Kapalı çerçevedeki varlıklar toplama ve hesaplara yine dahildir.</p>
@@ -4590,6 +4629,7 @@
 
     <div class="kv-grup-bas">Gelir ve tahminler</div>
     <details class="kv-bolum kv-sss"><summary>Ay sonunda elimde ne kalacağını nasıl görürüm?</summary><div class="kv-ic"><p>Menüde <b>Nakit Akışı</b>'na git (telefonda <b>Diğer</b>'de). Gelir girmediysen üstteki kutuya maaşını yazıp <b>Kaydet</b>'e bas. Sonra ilk kart bu ay sonunda kalanı, <b>Ayın akışı</b> da bunun nasıl çıktığını gösterir: gelir − harcamalar − kredi taksitleri. Önümüzdeki aylar için grafiğe ve <b>Ay ay tablo</b>'ya bak.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Bir hisse / ETF sattım, para takasta bekliyor; nasıl girerim?</summary><div class="kv-ic"><p>Yatırımlarım'da o satırdaki <b>Sattım</b>'a bas; adedi ve satış fiyatını yaz, <b>Para nereye geçsin?</b>'de “Yeni nakit varlığı olarak ekle (takasta)”yı bırak. Hisse portföyden düşer, para Finansal Durumum › Varlıklarım'a dolar (ABD) ya da TL (BİST) olarak geçer; net servetin değişmez, gerçekleşen kâr / zarar Satışlarım'da görünür. Takas bitince o varlığı ✎ ile güncelle; yanlış girdiysen Satışlarım'da <b>Geri al</b>.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Maaşıma zam geldi, nereden değiştiririm?</summary><div class="kv-ic"><p>Nakit Akışı › <b>Gelirlerim</b>'de maaş satırındaki <b>Güncelle</b> düğmesine bas ve yeni tutarı yaz. Yeni tutar bu aydan itibaren geçerli olur; geçmiş aylar eski maaşla kalır. Maaş bittiyse 0 yaz.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Tahminler ne kadar güvenilir?</summary><div class="kv-ic"><p>Nakit Akışı, Borç Kapatma Planı ve Birikim Hedefleri geleceği hesaplar. Bu hesaplar senin geçmiş harcamalarına, kredi ödeme planlarına ve resmi enflasyon verisi ile beklentisine (TÜİK, TCMB) dayanır. Gerçekleşme farklı olabilir. Nakit Akışı › <b>Tahmin ayarları</b>'ndan fiyat artışını ve maaşının ne zaman arttığını kendi durumuna göre değiştirirsen tahmin sana daha çok yaklaşır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
@@ -5327,7 +5367,7 @@ const SENKRON_ANAHTARLARI = new Set([
   'ft_kredi_kartlari_v1', 'ft_kmh_v1', 'ft_elden_nakit_v1', 'ft_sabit_krediler_v1',
   'ft_bay_piyasa_v1', 'ft_haber_ceviri_v1', 'ft_harcamalar_v1',
   'ft_butce_v1', 'ft_gelirler_v1', 'ft_odemeler_v1', 'ft_borc_plan_v1', 'ft_hedefler_v1', 'ft_net_gecmis_v1', 'ft_raporlar_v1',
-  'ft_kartlar_v1', 'ft_alacaklar_v1',
+  'ft_kartlar_v1', 'ft_alacaklar_v1', 'ft_satislar_v1',
 ]);
 
 const _depoSetItem = Storage.prototype.setItem;
@@ -9223,6 +9263,7 @@ const AKS_IKON = {
   ayar: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/>',
   ekle: '<path d="M12 5v14M5 12h14"/>',
   kaynak: '<path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/>',
+  sat: '<path d="M12 3v12"/><path d="M7.5 10.5L12 15l4.5-4.5"/><path d="M5 20h14"/>',
 };
 function aksBtn(tur, etiket, baslik, onclick, ek){
   return `<button type="button" class="aks-btn ${tur}" title="${escapeHtml(baslik)}" aria-label="${escapeHtml(baslik)}" onclick="${onclick}"${ek ? ' ' + ek : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AKS_IKON[tur] || ''}</svg><span>${escapeHtml(etiket)}</span></button>`;
@@ -9897,6 +9938,172 @@ function guncelleYatirim(id){
   renderYatirim();
 }
 
+// ---------- Satış: "Sattım" → portföyden düş, para Nakit / Mevduat'a, gerçekleşen kâr / zarar ----------
+// ft_satislar_v1: [{ id:'s-…', tarih:'YYYY-MM-DD', yatirimId, etiket, tur, adet, fiyat, para:'USD'|'TL', tutar, maliyet?, kz?, kzYuzde?,
+//                    kopya (satıştan önceki kayıt; tamamı satıldıysa geri almak için), varlikId?, varlikYeni?, eklenen? }]
+// fiyat ve maliyet birim başına: ABD ETF / kripto $ (adet), BİST ₺ (adet), altın / gümüş ₺ (gram)
+const SATIS_KEY = 'ft_satislar_v1';
+function satisYukle(){ return manuelListeYukle(SATIS_KEY); }
+const satisPara = tur => yatirimMaliyetUSDmi(tur) ? 'USD' : 'TL';
+const satisTutarYaz = (v, para, d = 2) => (v < 0 ? '−' : '') + (para === 'USD' ? '$' : '₺') + fmtNumber(Math.abs(v), d);
+const satisBirim = tur => tur === 'emtia' ? 'gr' : 'adet';
+// Bugünkü birim fiyat (satış formunda hazır gelir)
+function satisGuncelFiyat(item){
+  const s = yatirimDegerHesapla(item);
+  if(!s || !(item.miktar > 0)) return null;
+  return item.tur === 'bist' ? s.fiyatBirimTL : item.tur === 'emtia' ? s.tutarTL / item.miktar : s.fiyatBirimUSD;
+}
+// Paranın gidebileceği yerler: yeni nakit varlığı, aynı birimdeki Nakit / Mevduat varlıkları, hiçbir yer
+function satisHedefleri(para){
+  const ayni = manuelListeYukle(VARLIK_KEY).filter(v => v.tur === 'Nakit / Mevduat' && (para === 'USD' ? v.birim === 'USD' : !v.birim || v.birim === 'TL'));
+  return [['yeni', 'Yeni nakit varlığı olarak ekle (takasta)']].concat(ayni.map(v => [v.id, 'Ekle: ' + v.ad + ' (' + (para === 'USD' ? '$' + fmtNumber(v.miktar, 0) : '₺' + fmtNumber(v.deger, 0)) + ')']), [['yok', 'Hiçbir yere ekleme']]);
+}
+function satisAc(id){
+  const item = manuelListeYukle(YATIRIM_KEY).find(x => x.id === id);
+  if(!item) return;
+  if(item.tur === 'bist' && !item.kod){ showAlertModal('Bu eski kayıtta adet yok; satışı Güncelle ile yeni değeri yazarak ya da Sil ile kaldırarak işle.'); return; }
+  const para = satisPara(item.tur), fiyat = satisGuncelFiyat(item), etiket = yatirimEtiket(item), b = satisBirim(item.tur);
+  const p = para === 'USD' ? '$' : '₺';
+  const overlay = document.createElement('div');
+  overlay.className = 'satis-perde';
+  overlay.innerHTML = `
+    <div class="satis-kutu" role="dialog" aria-modal="true" aria-label="Satış">
+      <div class="satis-baslik">Sattım: <span lang="${item.tur === 'etf' || item.tur === 'kripto' ? 'en' : 'tr'}">${escapeHtml(etiket)}</span></div>
+      <div class="satis-alt">Elinde ${fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '')} ${b}${item.maliyet > 0 ? ' · ortalama maliyet ' + yatirimMaliyetMetni(item) : ''}</div>
+      <label class="satis-alan"><span>Kaç ${b} sattın?</span>
+        <div class="satis-satir"><input id="satisAdet" class="ai-input" inputmode="decimal" value="${String(item.miktar).replace('.', ',')}"><button type="button" class="satis-tumu" onclick="document.getElementById('satisAdet').value='${String(item.miktar).replace('.', ',')}'; satisOnizle('${id}')">Tümü</button></div></label>
+      <label class="satis-alan"><span>Satış fiyatı (${p}/${b === 'gr' ? 'gr' : 'adet'})</span>
+        <input id="satisFiyat" class="ai-input" inputmode="decimal" value="${fiyat ? fmtNumber(fiyat, fiyat < 1 ? 6 : 2).replace(/\./g, '') : ''}" placeholder="ör. 450,25"><small>${fiyat ? 'Şu anki fiyat hazır geldi; gerçekleşen fiyatı yaz.' : 'Fiyat henüz alınamadı; gerçekleşen fiyatı yaz.'}</small></label>
+      <label class="satis-alan"><span>Para nereye geçsin?</span>
+        <select id="satisHedef" class="ai-input">${satisHedefleri(para).map(([v, e]) => `<option value="${escapeHtml(v)}">${escapeHtml(e)}</option>`).join('')}</select></label>
+      <label class="satis-alan" id="satisAdKap"><span>Varlığın adı</span><input id="satisAd" class="ai-input" maxlength="60" value="${escapeHtml(etiket)} satışı (takasta)"></label>
+      <div class="satis-onizle" id="satisOnizle"></div>
+      <div class="satis-dugmeler"><button class="loan-btn-save" id="satisKaydet">Satışı kaydet</button><button class="loan-btn-cancel" id="satisVazgec">Vazgeç</button></div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const kapat = () => overlay.remove();
+  overlay.addEventListener('click', e => { if(e.target === overlay) kapat(); });
+  overlay.querySelector('#satisVazgec').onclick = kapat;
+  overlay.querySelector('#satisKaydet').onclick = () => { if(satisKaydet(id)) kapat(); };
+  ['satisAdet', 'satisFiyat', 'satisHedef'].forEach(k => overlay.querySelector('#' + k).addEventListener('input', () => satisOnizle(id)));
+  overlay.querySelector('#satisHedef').addEventListener('change', () => satisOnizle(id));
+  overlay.addEventListener('keydown', e => { if(e.key === 'Escape') kapat(); if(e.key === 'Enter' && e.target.tagName === 'INPUT'){ if(satisKaydet(id)) kapat(); } });
+  satisOnizle(id);
+  overlay.querySelector('#satisFiyat').focus();
+}
+// Formun anlık özeti: tutar ve gerçekleşen kâr / zarar
+function satisOnizle(id){
+  const item = manuelListeYukle(YATIRIM_KEY).find(x => x.id === id), el = document.getElementById('satisOnizle');
+  if(!item || !el) return;
+  const adet = aracSayiOku(document.getElementById('satisAdet').value), fiyat = aracSayiOku(document.getElementById('satisFiyat').value);
+  document.getElementById('satisAdKap').hidden = document.getElementById('satisHedef').value !== 'yeni';
+  const para = satisPara(item.tur);
+  if(!(adet > 0) || !(fiyat > 0)){ el.innerHTML = '<span class="ozet-soluk">Adedi ve satış fiyatını yaz.</span>'; return; }
+  if(adet > item.miktar * (1 + 1e-9)){ el.innerHTML = `<span style="color:var(--down);">Elinde ${fmtNumber(item.miktar, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '')} ${satisBirim(item.tur)} var; daha fazlasını satamazsın.</span>`; return; }
+  const tutar = adet * fiyat, kur = _fxRates.USD;
+  let h = `<div><span>Eline geçen</span><b>${satisTutarYaz(tutar, para)}</b></div>`;
+  if(para === 'USD' && kur) h += `<div><span>Bugünkü kurla</span><b>≈ ₺${fmtNumber(tutar * kur, 0)}</b></div>`;
+  if(item.maliyet > 0){
+    const kz = (fiyat - item.maliyet) * adet, y = (fiyat / item.maliyet - 1) * 100, yon = kzYon(y);
+    h += `<div><span>Gerçekleşen ${kz < 0 ? 'zarar' : 'kâr'}</span><b class="kz-${yon}">${kz >= 0 ? '+' : ''}${satisTutarYaz(kz, para)} ${yon === 'up' ? '▲' : yon === 'down' ? '▼' : '–'} %${fmtNumber(Math.abs(y), 2)}</b></div>`;
+  } else h += '<div><span>Gerçekleşen kâr / zarar</span><b class="ozet-soluk">maliyet girilmemiş</b></div>';
+  const kalan = item.miktar - adet;
+  h += `<div><span>Portföyde kalan</span><b>${kalan <= item.miktar * 1e-9 ? 'hepsi satıldı, satır kalkar' : fmtNumber(kalan, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '') + ' ' + satisBirim(item.tur)}</b></div>`;
+  el.innerHTML = h;
+}
+function satisKaydet(id){
+  const yl = manuelListeYukle(YATIRIM_KEY), item = yl.find(x => x.id === id);
+  if(!item) return true;
+  const adet = aracSayiOku(document.getElementById('satisAdet').value), fiyat = aracSayiOku(document.getElementById('satisFiyat').value);
+  const hedef = document.getElementById('satisHedef').value, adYeni = (document.getElementById('satisAd').value || '').trim();
+  if(!(adet > 0) || adet > item.miktar * (1 + 1e-9) || !(fiyat > 0)){ satisOnizle(id); const e = document.getElementById(!(fiyat > 0) ? 'satisFiyat' : 'satisAdet'); e.focus(); e.classList.add('hatali'); setTimeout(() => e.classList.remove('hatali'), 1500); return false; }
+  const para = satisPara(item.tur), tutar = Math.round(adet * fiyat * 100) / 100, etiket = yatirimEtiket(item);
+  const kopya = JSON.parse(JSON.stringify(item));
+  const s = { id: 's-' + Date.now(), tarih: bugunISO(), yatirimId: item.id, etiket, tur: item.tur, adet, fiyat, para, tutar, kopya };
+  if(item.maliyet > 0){ s.maliyet = item.maliyet; s.kz = Math.round((fiyat - item.maliyet) * adet * 100) / 100; s.kzYuzde = (fiyat / item.maliyet - 1) * 100; }
+  // Portföy: kalan adet; hepsi satıldıysa satır kalkar
+  const kalan = item.miktar - adet;
+  if(kalan <= item.miktar * 1e-9) yl.splice(yl.indexOf(item), 1);
+  else { item.miktar = Math.round(kalan * 1e8) / 1e8; item.tarih = new Date().toISOString(); }
+  // Para: yeni nakit varlığı ya da var olan hesaba
+  if(hedef !== 'yok'){
+    const vl = manuelListeYukle(VARLIK_KEY);
+    if(hedef === 'yeni'){
+      const v = { id: 'v-' + Date.now(), tur: 'Nakit / Mevduat', ad: adYeni || etiket + ' satışı (takasta)', tarih: new Date().toISOString() };
+      if(para === 'USD'){ v.birim = 'USD'; v.miktar = tutar; v.deger = Math.round(tutar * (_fxRates.USD || 0)); } else v.deger = tutar;
+      vl.push(v); s.varlikId = v.id; s.varlikYeni = true; s.varlikAd = v.ad;
+    } else {
+      const v = vl.find(x => x.id === hedef);
+      if(v){
+        if(para === 'USD'){ v.miktar = Math.round(((Number(v.miktar) || 0) + tutar) * 100) / 100; v.deger = Math.round(v.miktar * (_fxRates.USD || 0)); }
+        else v.deger = Math.round(((Number(v.deger) || 0) + tutar) * 100) / 100;
+        v.tarih = new Date().toISOString(); s.varlikId = v.id; s.varlikAd = v.ad;
+      }
+    }
+    s.eklenen = s.varlikId ? tutar : 0;
+    manuelListeKaydet(VARLIK_KEY, vl);
+  }
+  const sl = satisYukle(); sl.push(s); manuelListeKaydet(SATIS_KEY, sl);
+  manuelListeKaydet(YATIRIM_KEY, yl);
+  renderYatirim();
+  showAlertModal(`${etiket}: ${fmtNumber(adet, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '')} ${satisBirim(item.tur)} × ${satisTutarYaz(fiyat, para)} = ${satisTutarYaz(tutar, para)} satış kaydedildi.`
+    + (s.kz != null ? ` Gerçekleşen ${s.kz < 0 ? 'zarar' : 'kâr'}: ${s.kz >= 0 ? '+' : ''}${satisTutarYaz(s.kz, para)} (%${fmtNumber(Math.abs(s.kzYuzde), 2)}).` : '')
+    + (s.varlikAd ? ` Para “${s.varlikAd}” olarak Finansal Durumum › Varlıklarım'da.` : ''));
+  return true;
+}
+// Geri al: adet portföye döner (satır kalktıysa eski hâliyle), eklenen para varlıktan düşülür (yeni açılan varlık boşalırsa silinir)
+function satisGeriAl(sid){
+  const s = satisYukle().find(x => x.id === sid);
+  if(!s) return;
+  showConfirmModal(`${s.etiket} satışı geri alınsın mı? ${fmtNumber(s.adet, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '')} ${satisBirim(s.tur)} portföye döner` + (s.varlikAd ? `, ${satisTutarYaz(s.eklenen || 0, s.para)} “${s.varlikAd}”dan düşülür.` : '.'), () => {
+    const yl = manuelListeYukle(YATIRIM_KEY), item = yl.find(x => x.id === s.yatirimId);
+    if(item){ item.miktar = Math.round(((Number(item.miktar) || 0) + s.adet) * 1e8) / 1e8; item.tarih = new Date().toISOString(); }
+    else if(s.kopya){ const k = Object.assign({}, s.kopya, { miktar: s.adet, tarih: new Date().toISOString() }); yl.push(k); }
+    manuelListeKaydet(YATIRIM_KEY, yl);
+    if(s.varlikId && s.eklenen){
+      const vl = manuelListeYukle(VARLIK_KEY), v = vl.find(x => x.id === s.varlikId);
+      if(v){
+        const alan = s.para === 'USD' ? 'miktar' : 'deger', yeni = Math.round(((Number(v[alan]) || 0) - s.eklenen) * 100) / 100;
+        if(s.varlikYeni && yeni <= 0.005) vl.splice(vl.indexOf(v), 1);
+        else { v[alan] = Math.max(0, yeni); if(s.para === 'USD') v.deger = Math.round(v.miktar * (_fxRates.USD || 0)); v.tarih = new Date().toISOString(); }
+        manuelListeKaydet(VARLIK_KEY, vl);
+      }
+    }
+    manuelListeKaydet(SATIS_KEY, satisYukle().filter(x => x.id !== sid));
+    renderYatirim();
+  });
+}
+function satisKaydiSil(sid){
+  showConfirmModal('Bu satış kaydı listeden silinsin mi? Portföy ve varlıkların değişmez (geri almak için Geri al\'ı kullan).', () => {
+    manuelListeKaydet(SATIS_KEY, satisYukle().filter(x => x.id !== sid));
+    renderYatirim();
+  });
+}
+// Satışlarım: bu yılın gerçekleşen kâr / zararı ($ ve ₺ ayrı) ve satış listesi
+function satisCiz(){
+  const bolum = document.getElementById('satisBolum'), kap = document.getElementById('satisListe');
+  if(!bolum || !kap) return;
+  const l = satisYukle().slice().sort((a, b) => String(b.tarih).localeCompare(String(a.tarih)) || String(b.id).localeCompare(String(a.id)));
+  bolum.hidden = !l.length;
+  if(!l.length){ kap.innerHTML = ''; return; }
+  const yil = String(new Date().getFullYear()), top = { USD: 0, TL: 0 }, var_ = { USD: false, TL: false };
+  l.filter(s => String(s.tarih).startsWith(yil) && s.kz != null).forEach(s => { top[s.para] += s.kz; var_[s.para] = true; });
+  const ozet = ['USD', 'TL'].filter(p => var_[p]).map(p => `<span class="kz-bas ${kzYon(top[p])}">${top[p] >= 0 ? '+' : ''}${satisTutarYaz(top[p], p, 0)}</span>`).join(' ');
+  document.getElementById('satisToplam').innerHTML = ozet ? yil + ' gerçekleşen: ' + ozet : '';
+  istYaz('satisAlt', l.length + ' satış');
+  kap.innerHTML = l.map(s => {
+    const yon = s.kz != null ? kzYon(s.kzYuzde) : null;
+    const orta = s.kz != null ? `<div class="satir-kz ${yon}" title="Gerçekleşen ${s.kz < 0 ? 'zarar' : 'kâr'} · maliyet ${satisTutarYaz(s.maliyet, s.para)}"><b>${s.kz >= 0 ? '+' : ''}${satisTutarYaz(s.kz, s.para, Math.abs(s.kz) >= 1000 ? 0 : 2)}</b><small>${yon === 'up' ? '▲' : yon === 'down' ? '▼' : '–'} %${fmtNumber(Math.abs(s.kzYuzde), 2)}</small></div>` : '<div class="satir-kz"><small class="ozet-soluk">maliyet yok</small></div>';
+    return satirHtml({
+      ad: s.etiket, dil: s.tur === 'etf' || s.tur === 'kripto' ? 'en' : null,
+      alt: escapeHtml(s.tarih.split('-').reverse().join('.') + ' · ' + fmtNumber(s.adet, 6).replace(/(,\d*?)0+$/, '$1').replace(/,$/, '') + ' ' + satisBirim(s.tur) + ' × ' + satisTutarYaz(s.fiyat, s.para) + (s.varlikAd ? ' · para: ' + s.varlikAd : '')),
+      orta, tutar: satisTutarYaz(s.tutar, s.para), renk: 'var(--text)',
+      aksiyonOn: aksBtn('kaynak', 'Geri al', 'Satışı geri al: adet portföye döner, eklenen para düşülür', `satisGeriAl('${s.id}')`).replace('class="aks-btn kaynak"', 'class="aks-btn kaynak yazili"'),
+      sil: { onclick: `satisKaydiSil('${s.id}')`, baslik: 'Yalnız kaydı sil', ikon: '✕' },
+    });
+  }).join('');
+}
+
 // Son başarıyla hesaplanan fiyat/tutarlar yalnızca bu cihazda tutulur (senkronlanmaz): fiyat her yenilendiğinde
 // yatırım listesinin sunucuya yeniden yazılmasını ve cihazlar arası çakışmaları önler.
 const YATIRIM_SON_FIYAT_KEY = 'ft_yatirim_son_fiyat_v1';
@@ -10005,6 +10212,7 @@ function yatirimSatirHtml(item, toplamYatirim){
     orta: yatirimKzHtml(item, kz),
     tutar: '₺' + fmtNumber(sonuc.tutarTL, 2),
     renk,
+    aksiyonOn: maliyetliMi ? aksBtn('sat', 'Sattım', 'Sattım: adedi ve fiyatı yaz, para Varlıklarım\'a geçsin', `satisAc('${item.id}')`) : '',
     duzen: { id: 'yatirim-edit-' + item.id, ph, kaydet: `guncelleYatirim('${item.id}')`,
       ekler: maliyetliMi ? [{ id: 'yatirim-maliyet-' + item.id, ph: item.maliyet > 0 ? 'maliyet: ' + yatirimMaliyetMetni(item) : yatirimMaliyetEtiket(item.tur) }] : [] },
     sil,
@@ -10141,6 +10349,7 @@ function renderYatirim(){
   }
 
   _toplamYatirimTL = toplamYatirim;
+  satisCiz();
   if(typeof renderVarlik === 'function') renderVarlik(); // Finansal Durumum'daki Toplam Varlık/pasta grafiği bu toplama bağlı
   if(typeof renderIstatistik === 'function') renderIstatistik();   // Portföy İstatistikleri (yaş, pay) aynı verilere bağlı
 
