@@ -803,6 +803,7 @@
   .as-lejant{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-bottom:10px;}
   .as-lejant i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:0;}
   .arac-hata{color:var(--amber);font-size:13px;}
+  @media (max-width:640px){ #harcamaAyInput{max-width:none !important;flex:1 1 100%;} }   /* "Kasım 2026 (gelecek ay)" kesilmesin */
   .kr-iki{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
   .kr-iki .ai-input{min-width:0;}   /* iki kutu dar ekranda kartın dışına taşmasın */
   .kr-plan-arac{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 10px;}
@@ -4002,7 +4003,7 @@
       <div id="harcamaKayitlar"></div>
     </div>
 
-    <div class="footnote"><b>Not:</b> Harcamaları ay bazında tek kalem olarak girersin (ay, kategori, tutar, not — ör. Eylül 2026 · Market · ₺32.000; form ve liste içinde bulunulan ayla açılır, geçmiş bir ay için ay kutusundan seçersin; listenin ayı ile formun ayı birlikte değişir; aynı ay ve kategorideki kalemler toplanır); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. Aylık tablo yalnızca kayıtlardan hesaplanır ve doğrudan düzenlenmez; eski aylık toplamlar (Excel aktarımı, 2025 ve önceden tablodan yazılanlar) listede "aylık toplam" olarak görünür ve diğer kayıtlarla toplanır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Aylık harcamalar grafiğini ₺ TL, $ Dolar ya da gram Altın olarak görebilirsin (seçim bu cihazda hatırlanır). Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
+    <div class="footnote"><b>Not:</b> Harcamaları ay bazında tek kalem olarak girersin (ay, kategori, tutar, not — ör. Eylül 2026 · Market · ₺32.000; form ve liste içinde bulunulan ayla açılır, geçmiş bir ay ya da önümüzdeki 3 aydan biri için ay kutusundan seçersin — gelecek ayın harcaması o ayın toplamına ve bütçesine sayılır; listenin ayı ile formun ayı birlikte değişir; aynı ay ve kategorideki kalemler toplanır); aylık ve yıllık toplamlar ile ortalamalar otomatik hesaplanır. Aylık tablo yalnızca kayıtlardan hesaplanır ve doğrudan düzenlenmez; eski aylık toplamlar (Excel aktarımı, 2025 ve önceden tablodan yazılanlar) listede "aylık toplam" olarak görünür ve diğer kayıtlarla toplanır. Aylık ortalama, seçili yılda harcama girilmiş tamamlanmış aylar üzerinden hesaplanır (süren ay ortalamaya katılmaz); "tüm dönem" bütün yılların tamamlanmış aylarıdır. Aylık harcamalar grafiğini ₺ TL, $ Dolar ya da gram Altın olarak görebilirsin (seçim bu cihazda hatırlanır). Dolar ve gram altın karşılıkları her ayın kendi ortalama kuruyla hesaplanır (Yahoo günlük USD/TRY ve COMEX altın; gram = ons × kur ÷ 31,1035). 2025 ayları kategori ayrımı olmadan "Kategorisiz" olarak girilmiştir; "yıl sonu tahmini" ortalama × 12'dir. Veriler hesabında saklanır ve tüm cihazlarında senkronlanır.</div>
   </div>
   <!-- ================= /TAB: HARCAMA İSTATİSTİKLERİ ================= -->
 
@@ -4394,9 +4395,9 @@
 
     <details class="kv-bolum" id="kv-harcama"><summary>🧾 Harcama Takibim <span>aylık harcamalar</span></summary><div class="kv-ic">
       <p><b>Ne işe yarar:</b> Harcamalarını ay ve kategori bazında toplar: aylık grafik, kategoriler, aylık tablo, aylık ve yıllık ortalamalar.</p>
-      <p><b>Nasıl kullanılır:</b> Harcama kayıtları bölümünde <b>+ Ekle</b> → <b>ay</b>, <b>kategori</b>, <b>tutar</b> ve istersen bir not. Form ve liste her zaman içinde bulunduğun ayla açılır; geçen ayın harcamasını girmek istersen ay kutusundan o ayı seç. Listenin üstündeki ay seçicisi ile formdaki ay hep aynıdır: birini değiştirince diğeri de o aya geçer, böylece girdiğin kayıt baktığın listede hemen görünür.</p>
+      <p><b>Nasıl kullanılır:</b> Harcama kayıtları bölümünde <b>+ Ekle</b> → <b>ay</b>, <b>kategori</b>, <b>tutar</b> ve istersen bir not. Form ve liste her zaman içinde bulunduğun ayla açılır; geçen ayın harcamasını girmek istersen ay kutusundan o ayı seç. <b>Gelecek ay</b> için de girebilirsin (önümüzdeki 3 ay listenin en üstünde): ör. Kasım'ın market parasını şimdiden ayırdıysan “Kasım 2026 (gelecek ay) · Market · ₺10.000” — bu ayın değil Kasım'ın harcamasına ve bütçesine sayılır, Nakit Akışı'nda da Kasım'a girer. Listenin üstündeki ay seçicisi ile formdaki ay hep aynıdır: birini değiştirince diğeri de o aya geçer, böylece girdiğin kayıt baktığın listede hemen görünür.</p>
       <p><b>Örnek:</b> “Eylül 2026 · Market · ₺26.985 · not: Migros”. Aynı ay ve kategoriye birden çok kayıt girebilirsin; tabloda toplanır.</p>
-      <p><b>Kartla ödediysen:</b> İçinde bulunduğun ayda formda <b>Nasıl ödendi?</b> kutusu çıkar (kayıtlı kredi kartın varsa). Kartı seçersen tutar o kartın borcuna eklenir (Borçlarım); harcama satırında <b>💳 kart adı</b> yazar. Sonradan satırdaki <b>Güncelle</b> ile <b>tutarı</b> (boş bırakırsan değişmez), <b>adı</b> ve <b>hangi kartla ödendiğini</b> değiştirebilirsin: kartı değiştirince eski kartın borcundan düşülür, yenisine eklenir; “Nakit / hesaptan” seçersen karttan düşülür. Harcamayı düzeltir ya da silersen kart borcu da aynı farkla düzelir. Kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getirdiğinde o rakam önceki harcamaları zaten içerir; bu yüzden güncellemeden önce girilmiş harcamaları düzeltmek ya da silmek karta dokunmaz. Geçmiş aylarda kart seçilmez (o harcama bankanın rakamında zaten var).</p>
+      <p><b>Kartla ödediysen:</b> İçinde bulunduğun ay ve gelecek aylar için formda <b>Nasıl ödendi?</b> kutusu çıkar (gelecek ayın harcamasını bugün kartla ödediysen borç bugün artar) (kayıtlı kredi kartın varsa). Kartı seçersen tutar o kartın borcuna eklenir (Borçlarım); harcama satırında <b>💳 kart adı</b> yazar. Sonradan satırdaki <b>Güncelle</b> ile <b>tutarı</b> (boş bırakırsan değişmez), <b>adı</b> ve <b>hangi kartla ödendiğini</b> değiştirebilirsin: kartı değiştirince eski kartın borcundan düşülür, yenisine eklenir; “Nakit / hesaptan” seçersen karttan düşülür. Harcamayı düzeltir ya da silersen kart borcu da aynı farkla düzelir. Kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getirdiğinde o rakam önceki harcamaları zaten içerir; bu yüzden güncellemeden önce girilmiş harcamaları düzeltmek ya da silmek karta dokunmaz. Geçmiş aylarda kart seçilmez (o harcama bankanın rakamında zaten var).</p>
       <p><b>Örnek:</b> Akbank borcun ₺135.571 → Market ₺1.000, “💳 Akbank” → borç ₺136.571; Borçlarım'da “₺135.571 + karta yazılan ₺1.000 (1 harcama)” yazar. Ekstre gelince kartı bankadaki rakamla güncelle, döküm sıfırlanır.</p>
       <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan <b>Güncelle</b> ile düzeltir ya da <b>Sil</b> ile silersin. Tabloyu başlığındaki küçük sarı okla (ya da başlığa dokunarak) kapatabilirsin; kapalıyken yalnız başlık ve yıllık toplam kalır. Varsayılan olarak açıktır, seçimin bu cihazda hatırlanır.</p>
       <p><b>₺ TL / $ Dolar / Altın:</b> Grafiğin başlığındaki seçiciyle harcamalarını dolar ya da gram altın olarak da görürsün. Her ay <b>o ayın</b> ortalama kuruyla çevrilir; böylece enflasyonun etkisini ayırırsın.</p>
@@ -9532,7 +9533,7 @@ function harcamaKartUyarla(x, yeni){
   return false;
 }
 // Kart seçimi: içinde bulunulan ayın kaydında ya da zaten bir kartla işaretli kayıtta (değiştirip kaldırabilsin)
-function harcamaKartSecilebilir(x){ return kkKartlari().length > 0 && x.tur !== 'aylik' && (String(x.tarih).slice(0, 7) === buAyAnahtar() || !!x.kartEk); }
+function harcamaKartSecilebilir(x){ const ay = String(x.tarih).slice(0, 7), b = buAyAnahtar(); return kkKartlari().length > 0 && x.tur !== 'aylik' && (ay === b || (ay > b && x.kaynak !== 'odeme') || !!x.kartEk); }   // gelecek ayın elle girilen harcaması da kartla ödenmiş olabilir
 function harcamaKartDegistir(x, yeniId){
   // Sabit ödemeden gelen kayıt: kart seçimi ödemenin kendisine yazılır (sonraki aylar da); karta yalnız ödeme günü gelince yazılır
   if(x.kaynak === 'odeme'){
@@ -11683,8 +11684,9 @@ function renderHarcama(){
   if(ayInput && !ayInput.options.length){
     const simdi2 = new Date();
     const varsayilan = _harcamaVarsayilanAy;   // ay başında girilen harcama çoğunlukla önceki aya ait
-    ayInput.innerHTML = Array.from({ length: 18 }, (_, i) => new Date(simdi2.getFullYear(), simdi2.getMonth() - i, 1))
-      .map(d => { const k = ayAnahtar(d.getFullYear(), d.getMonth()); return `<option value="${k}"${d.getTime() === varsayilan.getTime() ? ' selected' : ''}>${AY_UZUN[d.getMonth()]} ${d.getFullYear()}</option>`; }).join('');
+    // Önümüzdeki 3 ay da seçilebilir (ör. gelecek ayın market parasını şimdiden ayırmak); en üstte, "gelecek ay" etiketli
+    ayInput.innerHTML = Array.from({ length: 21 }, (_, i) => new Date(simdi2.getFullYear(), simdi2.getMonth() + 3 - i, 1))
+      .map((d, i) => { const k = ayAnahtar(d.getFullYear(), d.getMonth()); return `<option value="${k}"${d.getTime() === varsayilan.getTime() ? ' selected' : ''}>${AY_UZUN[d.getMonth()]} ${d.getFullYear()}${i < 3 ? (i === 2 ? ' (gelecek ay)' : ' (ileride)') : ''}</option>`; }).join('');
   }
   // Form ayı = listenin ayı (liste "Tüm yıl"dayken ya da ay formun aralığında değilse form olduğu gibi kalır)
   if(ayInput && _harcamaAy !== -1){ const k = ayAnahtar(_harcamaYil, _harcamaAy); if([...ayInput.options].some(o => o.value === k)) ayInput.value = k; }
@@ -11693,7 +11695,7 @@ function renderHarcama(){
   if(kartIn){
     const onceki = kartIn.value, kartlar = kkKartlari();
     kartIn.innerHTML = kartSecenekleri(kartlar.some(k => k.id === onceki) ? onceki : '', 'Nakit / hesaptan');
-    kartIn.style.display = kartlar.length && ayInput && ayInput.value === buAyAnahtar() ? '' : 'none';
+    kartIn.style.display = kartlar.length && ayInput && ayInput.value >= buAyAnahtar() ? '' : 'none';   // bu ay ve gelecek aylar: para bugün çıkar
   }
 }
 
@@ -11729,9 +11731,9 @@ function addHarcama(){
   const not = document.getElementById('harcamaNotInput').value.trim();
   if(!/^\d{4}-\d\d-\d\d$/.test(tarih)){ showAlertModal('Lütfen bir ay seç.'); return; }
   if(!(tutar > 0)){ showAlertModal('Lütfen geçerli bir tutar gir.'); return; }
-  // Kart yalnız içinde bulunulan ayda seçilir (geçmiş ayın harcaması bankanın rakamında zaten vardır)
+  // Kart bu ay ve gelecek aylar için seçilir (gelecek ayın parası bugün kartla ödenir); geçmiş ayın harcaması bankanın rakamında zaten vardır
   const kartSec = document.getElementById('harcamaKartInput');
-  const kartId = kartSec && kartSec.style.display !== 'none' && ay === buAyAnahtar() ? kartSec.value : '';
+  const kartId = kartSec && kartSec.style.display !== 'none' && ay >= buAyAnahtar() ? kartSec.value : '';
   const list = harcamaYukle(), simdi = Date.now();
   const kayit = { id: 'h-' + simdi, tur: 'kayit', tarih, kat, tutar, not };
   if(kartId && kartaYaz(kartId, tutar)) kayit.kartEk = { kartId, tutar, ts: simdi };
