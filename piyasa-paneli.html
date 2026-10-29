@@ -2391,12 +2391,21 @@
 
   /* Portföy İstatistikleri: genel puan öne çıkan kart (2 sütun, büyük puan, derece rozeti, puan renginde hafif zemin) */
   .ozet-grid.ist-grid{grid-template-columns:repeat(6, minmax(0,1fr));}
-  #tab-istatistik > .ozet-grid.ist-grid{grid-template-columns:repeat(6, minmax(0,1fr));gap:8px;}   /* genel + 5 kriter tek satırda */
+  #tab-istatistik > .ozet-grid.ist-grid{grid-template-columns:minmax(0,1.45fr) repeat(5, minmax(0,1fr));gap:8px;padding:4px;margin:-4px -4px 12px;}   /* genel (bir tık geniş) + 5 kriter tek satırda; padding: nabız ışığı kesilmesin */
+  /* Genel puan: ana puan olduğu belli olsun — büyük puan, puanın renginde yavaş nabız gibi yanıp sönen çerçeve ışığı */
+  #istGenelKart{animation:genelNabiz 2.6s ease-in-out infinite;border-width:1.5px;}
+  #tab-istatistik > .ozet-grid.ist-grid #istGenelKart .ozet-deger{font-size:32px;}
+  #tab-istatistik > .ozet-grid.ist-grid #istGenelKart .ozet-etiket{font-weight:800;}
+  @keyframes genelNabiz{
+    0%, 100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--vurgu-renk, var(--amber)) 0%, transparent);border-color:color-mix(in srgb, var(--vurgu-renk, var(--amber)) 40%, var(--border));}
+    50%{box-shadow:0 0 0 4px color-mix(in srgb, var(--vurgu-renk, var(--amber)) 30%, transparent), 0 0 20px 3px color-mix(in srgb, var(--vurgu-renk, var(--amber)) 50%, transparent);border-color:var(--vurgu-renk, var(--amber));}
+  }
+  @media (prefers-reduced-motion:reduce){ #istGenelKart{animation:none;border-color:var(--vurgu-renk, var(--amber));} }
   #tab-istatistik > .ozet-grid.ist-grid .ozet-kart{padding:10px 11px 9px;min-width:0;}
   #tab-istatistik > .ozet-grid.ist-grid .ozet-deger{font-size:22px;}
   #tab-istatistik > .ozet-grid.ist-grid .ozet-alt, #tab-istatistik > .ozet-grid.ist-grid .card-seanslar{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   #tab-istatistik > .ozet-grid.ist-grid .card-seanslar > div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  @media (max-width:1180px) and (min-width:981px){ #tab-istatistik > .ozet-grid.ist-grid{grid-template-columns:repeat(3, minmax(0,1fr));} }   /* dar dizüstü: 3 × 2 */
+  @media (max-width:1180px) and (min-width:981px){ #tab-istatistik > .ozet-grid.ist-grid{grid-template-columns:minmax(0,1.3fr) repeat(2, minmax(0,1fr));} }   /* dar dizüstü: 3 × 2, genel yine geniş */
   .kriz-ayrac{height:1px;background:var(--border);margin:14px 0 10px;}
   .kriz-liste .yas-kod, .kriz-liste .yas-kod *, .kriz-liste .yas-pay{white-space:normal !important;overflow:visible !important;text-overflow:clip !important;}   /* senaryo adı ve açıklaması kesilmesin */
   #tab-istatistik > .ozet-grid.ist-grid .ozet-kart.vurgu{grid-column:auto;}
@@ -2447,7 +2456,7 @@
     .ozet-grid.ist-grid{grid-template-columns:repeat(2, minmax(0,1fr));}
     .ozet-kart.vurgu{grid-column:1 / -1;}
     /* Telefon / tablet: puan kartları tek satır, yana kaydırılır (genel puan başta) */
-    #tab-istatistik > .ozet-grid.ist-grid{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(168px, 44%);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+    #tab-istatistik > .ozet-grid.ist-grid{display:grid;grid-template-columns:minmax(224px, 60%);grid-auto-flow:column;grid-auto-columns:minmax(168px, 44%);overflow-x:auto;scroll-snap-type:x mandatory;padding:10px;margin:-10px -10px 6px;scroll-padding:10px;-webkit-overflow-scrolling:touch;}   /* iç boşluk: genel kartın ışığı kesilmesin */
     #tab-istatistik > .ozet-grid.ist-grid .ozet-kart, #tab-istatistik > .ozet-grid.ist-grid .ozet-kart.vurgu{grid-column:auto;scroll-snap-align:start;}
   }
 
@@ -4522,7 +4531,7 @@
     </div></details>
 
     <details class="kv-bolum" id="kv-istatistik"><summary>📶 Portföy İstatistikleri <span>portföyün 100 üzerinden puanı</span></summary><div class="kv-ic">
-      <p><b>Ne işe yarar:</b> Portföyünü beş kritere göre 0–100 arası puanlar; genel puan beşinin ortalamasıdır (70+ İyi, 40–69 Orta, 40 altı Zayıf).</p>
+      <p><b>Ne işe yarar:</b> Portföyünü beş kritere göre 0–100 arası puanlar; genel puan beşinin ortalamasıdır (70+ İyi, 40–69 Orta, 40 altı Zayıf). Üstte altı kart tek satırdadır (telefonda yana kaydırılır); en baştaki biraz daha geniş <b>Genel puan</b> kartı, puanının renginde (yeşil İyi, sarı Orta, kırmızı Zayıf) yavaşça yanıp söner. Cihazında “hareketi azalt” açıksa yanıp sönmez.</p>
       <ul class="kv-liste">
         <li><b>Portföy yaşı:</b> Paranın ne kadar köklü kurumlarda durduğu. Her kalemin yaşı puana çevrilir (ilk yıllar çok fark eder, 50 yıl ve üzeri tam puan: 6 yıl ≈ 50, 17 yıl ≈ 74, 41 yıl ≈ 95), sonra <b>tutara göre</b> ortalanır — küçük bir pozisyon büyük olan kadar etkilemez. Yaş: şirkette kuruluş yılı, kriptoda ağın başladığı yıl, <b>geniş endeks fonunda endeksin yaşı</b> (QQQM'de fonun 6 yılı değil, içindeki şirketlerin bulunduğu Nasdaq-100'ün 41 yılı), sektör / tema fonunda fonun yaşı; altın tam puan. Satırda yaşın nereden geldiği yazar; yaşa tıklayıp değiştirebilirsin (elle girdiğin her zaman geçerli).</li>
         <li><b>Çeşitlendirme:</b> Kaç kalemin olduğu değil, <b>kaç ayrı risk taşıdığın</b>. %60'ı <b>risk grupları</b>: birlikte hareket edenler tek grup sayılır (URA + NLR → Uranyum / nükleer; BTC + ETH → Kripto; QQQM, S&amp;P 500 fonu ve tek ABD hisseleri → ABD hisseleri); 5 eşit grup tam puan. %40'ı <b>içerik</b>: geniş endeks fonu yüzlerce şirket demektir (tam), sektör fonu orta, tek hisse ya da tek coin tek risktir (düşük). Tek bir şirket / coin portföyün %25'ini aşarsa puan en çok 60, %50'yi aşarsa en çok 40 olur. Listede risk grupların ve payları; sarı çizgi 5 eşit grupta her birinin payı (%20). Bir grup %40'ı geçerse uyarı çıkar.</li>
