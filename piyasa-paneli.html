@@ -1993,6 +1993,8 @@
   .satis-onizle b{font-variant-numeric:tabular-nums;text-align:right;}
   .satis-onizle .kz-up{color:var(--up);} .satis-onizle .kz-down{color:var(--down);}
   .satis-dugmeler{display:flex;gap:10px;justify-content:flex-end;}
+  .hr-tur{margin-bottom:12px;}
+  .hr-dugme{margin-left:auto;}
   @media (max-width:900px){   /* Satışlarım: üstte ad ve tarih, altta kâr / zarar, tutar, düğmeler */
     #satisListe .satir{flex-wrap:wrap;row-gap:4px;}
     #satisListe .satir-ana{flex:1 1 100%;}
@@ -4004,6 +4006,7 @@
             <button class="period-btn" data-birim="ALTIN" onclick="harcamaBirimSec('ALTIN')" title="Her ay o ayın ortalama gram 24 ayar altın fiyatıyla">Altın</button>
           </div>
           <span class="bolum-toplam" id="harcamaGrafikAlt" style="color:var(--amber);"></span>
+          <button class="bolum-ekle hr-dugme" onclick="harcamaRaporAc()" title="Aylık ya da yıllık harcama raporunu grafik ve tablolarla PDF olarak indir">📄 PDF rapor</button>
         </div>
         <div class="harcama-grafik" id="harcamaGrafik"></div>
       </div>
@@ -4445,6 +4448,7 @@
       <p><b>Kartla ödediysen:</b> İçinde bulunduğun ay ve gelecek aylar için formda <b>Nasıl ödendi?</b> kutusu çıkar (gelecek ayın harcamasını bugün kartla ödediysen borç bugün artar) (kayıtlı kredi kartın varsa). Kartı seçersen tutar o kartın borcuna eklenir (Borçlarım); harcama satırında <b>💳 kart adı</b> yazar. Sonradan satırdaki <b>Güncelle</b> ile <b>tutarı</b> (boş bırakırsan değişmez), <b>adı</b> ve <b>hangi kartla ödendiğini</b> değiştirebilirsin: kartı değiştirince eski kartın borcundan düşülür, yenisine eklenir; “Nakit / hesaptan” seçersen karttan düşülür. Harcamayı düzeltir ya da silersen kart borcu da aynı farkla düzelir. Kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getirdiğinde o rakam önceki harcamaları zaten içerir; bu yüzden güncellemeden önce girilmiş harcamaları düzeltmek ya da silmek karta dokunmaz. Geçmiş aylarda kart seçilmez (o harcama bankanın rakamında zaten var).</p>
       <p><b>Örnek:</b> Akbank borcun ₺135.571 → Market ₺1.000, “💳 Akbank” → borç ₺136.571; Borçlarım'da “₺135.571 + karta yazılan ₺1.000 (1 harcama)” yazar. Ekstre gelince kartı bankadaki rakamla güncelle, döküm sıfırlanır.</p>
       <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan <b>Güncelle</b> ile düzeltir ya da <b>Sil</b> ile silersin. Tabloyu başlığındaki küçük sarı okla (ya da başlığa dokunarak) kapatabilirsin; kapalıyken yalnız başlık ve yıllık toplam kalır. Varsayılan olarak açıktır, seçimin bu cihazda hatırlanır.</p>
+      <p><b>📄 PDF rapor:</b> Aylık harcamalar başlığındaki <b>📄 PDF rapor</b>'a bas, <b>Aylık</b> ya da <b>Yıllık</b> seç, ayı / yılı seç ve <b>PDF oluştur</b>. Açılan sayfada yazıcı olarak “PDF olarak kaydet”i seç. <b>Aylık raporda</b>: toplam, önceki aya ve son 6 ayın ortalamasına göre fark, bütçe kullanımı (ya da dolar / altın karşılığı), kategorilerin <b>halka (pasta) grafiği</b>, her kategorinin bu ay ile ortalaması / bütçesi çubukları, son 12 ay grafiği, kategori tablosu ve kategori kategori <b>tüm harcama kalemleri</b>. <b>Yıllık raporda</b>: yıl toplamı, aylık ortalama, en yüksek / düşük ay, geçen yılın aynı aylarıyla kıyas, ay ay çubuk grafik, halka grafik, kategori özeti ve kategori × ay tablosu.</p>
       <p><b>₺ TL / $ Dolar / Altın:</b> Grafiğin başlığındaki seçiciyle harcamalarını dolar ya da gram altın olarak da görürsün. Her ay <b>o ayın</b> ortalama kuruyla çevrilir; böylece enflasyonun etkisini ayırırsın.</p>
       <p class="kv-ipucu">💡 ↻ işaretli kayıtlar Ödeme Takvimi'ndeki düzenli ödemelerden kendiliğinden gelir (bu ay ve gelecek ay). İstemediğini silebilirsin; silinen ay tekrar eklenmez.</p>
       <button class="bolum-ekle" onclick="switchTab('harcama')">Harcama Takibim'e git →</button>
@@ -4678,6 +4682,7 @@
     <div class="kv-grup-bas">Gelir ve tahminler</div>
     <details class="kv-bolum kv-sss"><summary>Ay sonunda elimde ne kalacağını nasıl görürüm?</summary><div class="kv-ic"><p>Menüde <b>Nakit Akışı</b>'na git (telefonda <b>Diğer</b>'de). Gelir girmediysen üstteki kutuya maaşını yazıp <b>Kaydet</b>'e bas. Sonra ilk kart bu ay sonunda kalanı, <b>Ayın akışı</b> da bunun nasıl çıktığını gösterir: gelir − harcamalar − kredi taksitleri. Önümüzdeki aylar için grafiğe ve <b>Ay ay tablo</b>'ya bak.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Bir hisse / ETF sattım, para takasta bekliyor; nasıl girerim?</summary><div class="kv-ic"><p>Yatırımlarım'da o satırdaki <b>Sattım</b>'a bas; adedi ve satış fiyatını yaz, <b>Para nereye geçsin?</b>'de “Yeni nakit varlığı olarak ekle (takasta)”yı bırak. Hisse portföyden düşer, para Finansal Durumum › Varlıklarım'a dolar (ABD) ya da TL (BİST) olarak geçer; net servetin değişmez, gerçekleşen kâr / zarar Satışlarım'da görünür. Takas bitince o varlığı ✎ ile güncelle; yanlış girdiysen Satışlarım'da <b>Geri al</b>.</p></div></details>
+    <details class="kv-bolum kv-sss"><summary>Harcamalarımı PDF olarak indirebilir miyim?</summary><div class="kv-ic"><p>Evet. Harcama Takibim › Aylık harcamalar başlığındaki <b>📄 PDF rapor</b>'a bas; <b>Aylık</b> (ör. Ekim 2026) ya da <b>Yıllık</b> (ör. 2026) seç ve <b>PDF oluştur</b>'a bas. Açılan sayfada yazıcı olarak “PDF olarak kaydet”i seçersen dosya iner. Raporda halka grafikle kategori payları, ortalama ve bütçeyle karşılaştırma, aylar grafiği, tablolar ve (aylıkta) tüm harcama kalemleri var.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Maaşıma zam geldi, nereden değiştiririm?</summary><div class="kv-ic"><p>Nakit Akışı › <b>Gelirlerim</b>'de maaş satırındaki <b>Güncelle</b> düğmesine bas ve yeni tutarı yaz. Yeni tutar bu aydan itibaren geçerli olur; geçmiş aylar eski maaşla kalır. Maaş bittiyse 0 yaz.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>Tahminler ne kadar güvenilir?</summary><div class="kv-ic"><p>Nakit Akışı, Borç Kapatma Planı ve Birikim Hedefleri geleceği hesaplar. Bu hesaplar senin geçmiş harcamalarına, kredi ödeme planlarına ve resmi enflasyon verisi ile beklentisine (TÜİK, TCMB) dayanır. Gerçekleşme farklı olabilir. Nakit Akışı › <b>Tahmin ayarları</b>'ndan fiyat artışını ve maaşının ne zaman arttığını kendi durumuna göre değiştirirsen tahmin sana daha çok yaklaşır.</p></div></details>
     <details class="kv-bolum kv-sss"><summary>“Bugünün parasıyla” ne demek?</summary><div class="kv-ic"><p>Gelecekteki bir tutarın bugünkü alım gücü. Örnek: 12 ay sonra ₺117.450 harcayacağın tahmin ediliyorsa, fiyatlar %23,7 artacağı için bu bugünün parasıyla ≈ ₺95.000 eder. Böylece enflasyon yüzünden büyüyen rakamlar seni yanıltmaz.</p></div></details>
@@ -11709,6 +11714,236 @@ function guzelAdim(x){
 }
 function kisaTL(v){ return v >= 1e6 ? '₺' + fmtNumber(v / 1e6, 1) + ' mn' : v >= 1e3 ? '₺' + fmtNumber(v / 1e3, v >= 1e4 ? 0 : 1) + ' bin' : '₺' + fmtNumber(v, 0); }
 
+// ---------- Harcama raporu (PDF): aylık ya da yıllık, grafikli ve tablolu yazdırılabilir sayfa ----------
+// Sayfa yeni pencerede açılır, tarayıcının "PDF olarak kaydet"iyle indirilir. Grafikler SVG (baskıda net); renkler sabit, açık zeminli.
+const HR_RENK = ['#2f6fdf', '#e39b22', '#2e9e57', '#d64545', '#8e5bd8', '#13a0a0', '#c2410c', '#be185d', '#64748b', '#a16207', '#0f766e', '#4b5563', '#94a3b8'];
+let _hrTur = 'ay';
+// Yazdırılabilir sayfayı aç (açılır pencere engellenirse gizli çerçeveden yazdır)
+function pdfSayfasiAc(html){
+  const w = window.open('', '_blank');
+  if(w){ w.document.open(); w.document.write(html); w.document.close(); return true; }
+  const fr = document.createElement('iframe');
+  fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  document.body.appendChild(fr);
+  fr.contentDocument.open(); fr.contentDocument.write(html.replace(/<script>[\s\S]*?<\/script>/, '')); fr.contentDocument.close();
+  setTimeout(() => { fr.contentWindow.focus(); fr.contentWindow.print(); setTimeout(() => fr.remove(), 60000); }, 300);
+  return false;
+}
+// Harcaması olan aylar (en yeni önce) ve yıllar
+function hrAylar(){
+  const s = new Set();
+  harcamaYukle().forEach(x => { const a = harcamaKalemAyi(x); if(a && (Number(x.tutar) || 0) > 0) s.add(a); });
+  return [...s].sort().reverse();
+}
+function harcamaRaporAc(){
+  const aylar = hrAylar();
+  if(!aylar.length){ showAlertModal('Henüz harcama kaydı yok; önce harcama ekle.'); return; }
+  const yillar = [...new Set(aylar.map(a => +a.slice(0, 4)))].sort((a, b) => b - a);
+  const seciliAy = _harcamaAy !== -1 ? ayAnahtar(_harcamaYil, _harcamaAy) : buAyAnahtar();
+  const varsAy = aylar.includes(seciliAy) ? seciliAy : aylar.find(a => a <= buAyAnahtar()) || aylar[0];
+  const overlay = document.createElement('div');
+  overlay.className = 'satis-perde';
+  overlay.innerHTML = `
+    <div class="satis-kutu" role="dialog" aria-modal="true" aria-label="Harcama raporu">
+      <div class="satis-baslik">📄 Harcama raporu (PDF)</div>
+      <div class="satis-alt">Grafikli ve tablolu rapor; açılan sayfada yazıcı olarak “PDF olarak kaydet”i seç.</div>
+      <div class="period-toggle hr-tur" role="group" aria-label="Rapor türü">
+        <button class="period-btn${_hrTur === 'ay' ? ' active' : ''}" data-tur="ay">Aylık</button>
+        <button class="period-btn${_hrTur === 'yil' ? ' active' : ''}" data-tur="yil">Yıllık</button>
+      </div>
+      <label class="satis-alan" id="hrAyKap"><span>Hangi ay?</span>
+        <select id="hrAy" class="ai-input">${aylar.map(a => `<option value="${a}"${a === varsAy ? ' selected' : ''}>${ayAdi(a)}${a === buAyAnahtar() ? ' (bu ay, sürüyor)' : a > buAyAnahtar() ? ' (gelecek ay)' : ''}</option>`).join('')}</select></label>
+      <label class="satis-alan" id="hrYilKap"><span>Hangi yıl?</span>
+        <select id="hrYil" class="ai-input">${yillar.map(y => `<option value="${y}"${y === _harcamaYil ? ' selected' : ''}>${y}</option>`).join('')}</select></label>
+      <div class="satis-onizle" id="hrOzet"></div>
+      <div class="satis-dugmeler"><button class="loan-btn-save" id="hrOlustur">PDF oluştur</button><button class="loan-btn-cancel" id="hrVazgec">Vazgeç</button></div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const kapat = () => overlay.remove();
+  const ciz = () => {
+    overlay.querySelectorAll('.hr-tur .period-btn').forEach(b => b.classList.toggle('active', b.dataset.tur === _hrTur));
+    overlay.querySelector('#hrAyKap').hidden = _hrTur !== 'ay';
+    overlay.querySelector('#hrYilKap').hidden = _hrTur !== 'yil';
+    const L = harcamaYukle(), d = _hrTur === 'ay' ? overlay.querySelector('#hrAy').value : overlay.querySelector('#hrYil').value + '-';
+    const k = L.filter(x => { const a = harcamaKalemAyi(x); return a && a.startsWith(d); }), top = k.reduce((t, x) => t + (Number(x.tutar) || 0), 0);
+    overlay.querySelector('#hrOzet').innerHTML = `<div><span>${_hrTur === 'ay' ? ayAdi(d) : d.slice(0, 4) + ' yılı'}</span><b>₺${fmtNumber(top, 0)}</b></div><div><span>Kalem</span><b>${k.length}</b></div>`;
+  };
+  overlay.querySelectorAll('.hr-tur .period-btn').forEach(b => b.addEventListener('click', () => { _hrTur = b.dataset.tur; ciz(); }));
+  overlay.querySelector('#hrAy').addEventListener('change', ciz);
+  overlay.querySelector('#hrYil').addEventListener('change', ciz);
+  overlay.addEventListener('click', e => { if(e.target === overlay) kapat(); });
+  overlay.addEventListener('keydown', e => { if(e.key === 'Escape') kapat(); });
+  overlay.querySelector('#hrVazgec').onclick = kapat;
+  overlay.querySelector('#hrOlustur').onclick = async () => {
+    const tur = _hrTur, ay = overlay.querySelector('#hrAy').value, yil = +overlay.querySelector('#hrYil').value;
+    // Pencere tıklama anında açılır (sonra açılırsa tarayıcı engeller); dolar / altın karşılıkları için o ayların kurları beklenir (en çok 5 sn)
+    const w = window.open('', '_blank');
+    if(w) w.document.write('<p style="font-family:sans-serif;padding:24px;color:#475467">Rapor hazırlanıyor…</p>');
+    kapat();
+    try{ await Promise.race([aylikKurlariGuncelle(), new Promise(r => setTimeout(r, 5000))]); }catch(e){ /* kursuz da olur */ }
+    const html = tur === 'ay' ? harcamaRaporAylik(ay) : harcamaRaporYillik(yil);
+    if(w && !w.closed){ w.document.open(); w.document.write(html); w.document.close(); } else pdfSayfasiAc(html);
+  };
+  ciz();
+}
+
+// ---- SVG grafikler (rapor sayfası için, sabit renkler)
+const hrTL = (v, d = 0) => '₺' + fmtNumber(v, d);
+const hrYz = v => '%' + fmtNumber(v, v < 10 ? 1 : 0);
+function hrHalka(dilimler, toplam, merkezUst, merkezAlt){
+  const R = 78, r = 50, cx = 92, cy = 92;
+  let a0 = -Math.PI / 2, yol = '';
+  const tek = dilimler.length === 1;
+  dilimler.forEach((d, i) => {
+    const a1 = a0 + d.v / toplam * Math.PI * 2, buyuk = a1 - a0 > Math.PI ? 1 : 0;
+    const p = (rr, a) => (cx + rr * Math.cos(a)).toFixed(2) + ' ' + (cy + rr * Math.sin(a)).toFixed(2);
+    yol += tek ? `<circle cx="${cx}" cy="${cy}" r="${(R + r) / 2}" fill="none" stroke="${d.renk}" stroke-width="${R - r}"/>`
+      : `<path d="M ${p(R, a0)} A ${R} ${R} 0 ${buyuk} 1 ${p(R, a1)} L ${p(r, a1)} A ${r} ${r} 0 ${buyuk} 0 ${p(r, a0)} Z" fill="${d.renk}" stroke="#fff" stroke-width="1.5"/>`;
+    a0 = a1;
+  });
+  return `<svg viewBox="0 0 184 184" width="184" height="184" role="img" aria-label="Kategori payları">${yol}
+    <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="15" font-weight="800" fill="#1d232c">${escapeHtml(merkezUst)}</text>
+    <text x="${cx}" y="${cy + 14}" text-anchor="middle" font-size="9.5" fill="#667085">${escapeHtml(merkezAlt)}</text></svg>`;
+}
+// Dikey çubuklar (aylar): seçili çubuk koyu, ortalama kesikli çizgi
+function hrCubuk(degerler, etiketler, { secili = -1, ort = null, W = 680, H = 170 } = {}){
+  const PL = 46, PR = 8, PT = 14, PB = 22, tepeHam = Math.max(1, ...degerler.map(v => v || 0), ort || 0);
+  const adim = guzelAdim(tepeHam / 4), tepe = Math.ceil(tepeHam / adim) * adim;
+  const y = v => PT + (1 - v / tepe) * (H - PT - PB), bant = (W - PL - PR) / degerler.length, bw = Math.min(30, bant * 0.62);
+  let s = '';
+  for(let v = 0; v <= tepe + 1e-9; v += adim) s += `<line x1="${PL}" x2="${W - PR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="#e5e8ec"/><text x="${PL - 6}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end" font-size="9" fill="#667085">${kisaTL(v)}</text>`;
+  degerler.forEach((v, i) => {
+    const x = PL + i * bant + (bant - bw) / 2;
+    if(v > 0) s += `<rect x="${x.toFixed(1)}" y="${y(v).toFixed(1)}" width="${bw.toFixed(1)}" height="${(y(0) - y(v)).toFixed(1)}" rx="2" fill="${i === secili ? '#e39b22' : '#9db8e8'}"/>`;
+    if(v > 0 && (i === secili || degerler.length <= 12)) s += `<text x="${(x + bw / 2).toFixed(1)}" y="${(y(v) - 3).toFixed(1)}" text-anchor="middle" font-size="8.5" fill="#1d232c"${i === secili ? ' font-weight="700"' : ''}>${kisaTL(v).replace('₺', '')}</text>`;
+    s += `<text x="${(PL + i * bant + bant / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle" font-size="9" fill="${i === secili ? '#1d232c' : '#667085'}"${i === secili ? ' font-weight="700"' : ''}>${escapeHtml(etiketler[i])}</text>`;
+  });
+  if(ort) s += `<line x1="${PL}" x2="${W - PR}" y1="${y(ort).toFixed(1)}" y2="${y(ort).toFixed(1)}" stroke="#d64545" stroke-dasharray="4 3"/><text x="${PL + 4}" y="${(y(ort) - 3).toFixed(1)}" text-anchor="start" font-size="8.5" fill="#d64545" stroke="#fff" stroke-width="3" paint-order="stroke">ortalama ${kisaTL(ort)}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">${s}</svg>`;
+}
+// Yatay çubuklar (kategoriler): bu dönem dolu çubuk, karşılaştırma (ortalama / bütçe) ince işaret
+function hrYatay(satirlar, isaretAd){
+  const tepe = Math.max(1, ...satirlar.map(s => Math.max(s.v, s.kiyas || 0)));
+  return `<div class="hy">${satirlar.map(s => `<div class="hy-s"><div class="hy-ad"><i style="background:${s.renk}"></i>${escapeHtml(s.ad)}</div>
+    <div class="hy-c"><b style="width:${(s.v / tepe * 100).toFixed(1)}%;background:${s.renk}"></b>${s.kiyas ? `<u style="left:${(s.kiyas / tepe * 100).toFixed(1)}%" title="${escapeHtml(isaretAd)}"></u>` : ''}</div>
+    <div class="hy-d">${hrTL(s.v)}${s.kiyas ? `<small>${escapeHtml(isaretAd)} ${hrTL(s.kiyas)}${s.fark != null ? ` · <span style="color:${s.fark > 0 ? '#d64545' : '#2e9e57'}">${s.fark > 0 ? '+' : '−'}${hrTL(Math.abs(s.fark))}</span>` : ''}</small>` : ''}</div></div>`).join('')}</div>`;
+}
+// Kategoriler: payı büyükten küçüğe, en çok 8 dilim (gerisi "Diğer kategoriler")
+function hrDilimler(katTutar){
+  const s = HARCAMA_KATEGORILER.map(({ k, ad }) => ({ k, ad, v: katTutar[k] || 0 })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+  const ana = s.slice(0, s.length > 8 ? 7 : 8), kalan = s.slice(ana.length);
+  if(kalan.length) ana.push({ k: '_', ad: 'Diğer kategoriler (' + kalan.length + ')', v: kalan.reduce((t, x) => t + x.v, 0) });
+  const renk = {}; s.forEach((x, i) => { renk[x.k] = HR_RENK[i % HR_RENK.length]; });
+  return { dilim: ana.map((x, i) => Object.assign(x, { renk: x.k === '_' ? '#94a3b8' : HR_RENK[i] })), renk, sirali: s };
+}
+function hrKullanici(){ try{ const k = JSON.parse(localStorage.getItem('ft_kullanici') || '{}'); return k.ad || ''; }catch(e){ return ''; } }
+function hrSayfa(baslik, altBaslik, govde){
+  return `<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(baslik.replace(/\s+/g, '-'))}</title>
+<style>
+  @page{size:A4;margin:12mm 11mm;}
+  *{box-sizing:border-box;} body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1d232c;margin:0;padding:18px;background:#fff;font-size:11.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  h1{font-size:21px;margin:0 0 3px;} h2{font-size:13.5px;margin:18px 0 8px;padding-bottom:4px;border-bottom:2px solid #e39b22;} .alt{color:#667085;font-size:11px;margin-bottom:14px;}
+  .kutular{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px;} .kutu{border:1px solid #dfe3e8;border-radius:8px;padding:8px 10px;} .kutu span{display:block;color:#667085;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;} .kutu b{font-size:16px;display:block;margin-top:2px;} .kutu small{color:#667085;font-size:9.5px;}
+  .iki{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center;} .lejant div{display:grid;grid-template-columns:12px 1fr auto auto;gap:6px;align-items:center;padding:3px 0;border-bottom:1px solid #f0f2f5;font-variant-numeric:tabular-nums;} .lejant i{width:10px;height:10px;border-radius:2px;display:block;} .lejant em{font-style:normal;color:#667085;min-width:42px;text-align:right;} .lejant b{min-width:70px;text-align:right;}
+  .hy-s{display:grid;grid-template-columns:150px 1fr 150px;gap:10px;align-items:center;padding:4px 0;} .hy-ad{display:flex;align-items:center;gap:6px;} .hy-ad i{width:9px;height:9px;border-radius:2px;flex:0 0 9px;} .hy-c{position:relative;height:11px;background:#f0f2f5;border-radius:6px;} .hy-c b{display:block;height:100%;border-radius:6px;} .hy-c u{position:absolute;top:-3px;width:2px;height:17px;background:#1d232c;}
+  .hy-d{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;} .hy-d small{display:block;font-weight:400;color:#667085;font-size:9.5px;}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;} th,td{padding:4px 6px;border-bottom:1px solid #e8ebef;text-align:right;white-space:nowrap;} th{background:#f2f4f7;font-size:9.5px;text-transform:uppercase;letter-spacing:.03em;color:#475467;} th:first-child,td:first-child{text-align:left;}
+  td.not{text-align:left;white-space:normal;color:#344054;} tr.ara td{background:#fafbfc;font-weight:700;} tfoot td{font-weight:800;background:#f2f4f7;} tr{page-break-inside:avoid;} thead{display:table-header-group;}
+  .ay-tablo th,.ay-tablo td{padding:3px 4px;font-size:9px;} .kucuk{font-size:10px;color:#667085;line-height:1.5;margin-top:8px;} .blok{page-break-inside:avoid;}
+  .yazdir{position:fixed;right:16px;top:16px;background:#e39b22;color:#1d232c;border:0;border-radius:8px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;}
+  @media print{.yazdir{display:none;} body{padding:0;}}
+  @media (max-width:640px){ body{padding:10px;} .kutular{grid-template-columns:repeat(2,1fr);} .iki{grid-template-columns:1fr;justify-items:center;} .iki .lejant{width:100%;} .hy-s{grid-template-columns:1fr auto;gap:2px 8px;} .hy-c{grid-column:1 / -1;grid-row:2;} .hy-d small{display:inline;margin-left:6px;} .yazdir{position:static;width:100%;margin-bottom:12px;} .tablo-kap{overflow-x:auto;} }
+</style></head><body>
+<button class="yazdir" onclick="print()">PDF olarak kaydet / Yazdır</button>
+<h1>${escapeHtml(baslik)}</h1>
+<div class="alt">${altBaslik}</div>
+${govde}
+<div class="kucuk">Finansal Takip Paneli · Harcama Takibim kayıtlarından ${krTarihTR(isoGun(new Date()))} tarihinde oluşturuldu. Dolar ve altın karşılıkları o ayın ortalama kuru ve gram altın fiyatıyla.</div>
+<script>addEventListener('load', () => setTimeout(() => print(), 400));<\/script>
+</body></html>`;
+}
+function hrFark(v, onceki){ if(!(onceki > 0)) return ''; const d = (v / onceki - 1) * 100; return `<small style="color:${d > 0 ? '#d64545' : '#2e9e57'}">${d > 0 ? '▲' : '▼'} %${fmtNumber(Math.abs(d), 1)}</small>`; }
+
+// ---- Aylık rapor
+function harcamaRaporAylik(anahtar){
+  const yil = +anahtar.slice(0, 4), ay = +anahtar.slice(5, 7) - 1, onb = {};
+  const A = butceAyHarcama(onb, anahtar), toplam = A.toplam;
+  const oncekiK = ayKaydir(anahtar, -1), onceki = butceAyHarcama(onb, oncekiK).toplam;
+  // Önceki 6 dolu ayın ortalaması (toplam ve kategori)
+  const gecmis = [];
+  for(let i = 1, k = oncekiK; i <= 24 && gecmis.length < 6; i++, k = ayKaydir(k, -1)){ const v = butceAyHarcama(onb, k); if(v.toplam > 0) gecmis.push(v); }
+  const ort = gecmis.length ? gecmis.reduce((t, v) => t + v.toplam, 0) / gecmis.length : null;
+  const katOrt = k => gecmis.length ? gecmis.reduce((t, v) => t + (v.kat[k] || 0), 0) / gecmis.length : null;
+  const butce = butceLimitleri(anahtar), butceTop = Object.values(butce).reduce((t, v) => t + v, 0);
+  const kar = toplam > 0 ? ayKarsilik(yil, ay, toplam) : null;
+  const D = hrDilimler(A.kat);
+  const kalemler = harcamaYukle().filter(x => harcamaKalemAyi(x) === anahtar && (Number(x.tutar) || 0) > 0);
+  const suren = anahtar === buAyAnahtar(), gelecek = anahtar > buAyAnahtar();
+  const kutu = (et, v, alt) => `<div class="kutu"><span>${et}</span><b>${v}</b>${alt ? `<small>${alt}</small>` : ''}</div>`;
+  let g = `<div class="kutular">
+    ${kutu('Toplam harcama', hrTL(toplam), kalemler.length + ' kalem' + (suren ? ' · ay sürüyor' : gelecek ? ' · gelecek ay' : ''))}
+    ${kutu(AY_UZUN[+oncekiK.slice(5, 7) - 1] + ' ayına göre', onceki > 0 ? (toplam >= onceki ? '+' : '−') + hrTL(Math.abs(toplam - onceki)) : '—', onceki > 0 ? hrFark(toplam, onceki) + ' ' + hrTL(onceki) : 'önceki ay kaydı yok')}
+    ${kutu('Son ' + gecmis.length + ' ay ortalaması', ort ? hrTL(ort) : '—', ort ? hrFark(toplam, ort) + ' bu ay' : '')}
+    ${butceTop > 0 ? kutu('Bütçe', '%' + fmtNumber(toplam / butceTop * 100, 0), hrTL(butceTop) + ' bütçenin ' + (toplam > butceTop ? '<b style="color:#d64545;font-size:inherit;display:inline">' + hrTL(toplam - butceTop) + ' üstünde</b>' : hrTL(butceTop - toplam) + ' altında')) : kutu('Dolar / altın', kar && kar.usd != null ? '$' + fmtNumber(kar.usd, 0) : '—', kar && kar.gr != null ? fmtGr(kar.gr) + ' gram altın' : 'kur bekleniyor')}
+  </div>`;
+  if(toplam > 0){
+    g += `<div class="blok"><h2>Kategorilere göre dağılım</h2><div class="iki">${hrHalka(D.dilim, toplam, hrTL(toplam), AY_UZUN[ay] + ' ' + yil)}
+      <div class="lejant">${D.dilim.map(d => `<div><i style="background:${d.renk}"></i><span>${escapeHtml(d.ad)}</span><em>${hrYz(d.v / toplam * 100)}</em><b>${hrTL(d.v)}</b></div>`).join('')}</div></div></div>`;
+    const kiyasBut = butceTop > 0, isaret = kiyasBut ? 'bütçe' : 'ortalama';
+    g += `<div class="blok"><h2>Kategoriler: bu ay ve ${kiyasBut ? 'bütçe' : 'son ' + gecmis.length + ' ay ortalaması'}</h2>${hrYatay(D.sirali.map(x => { const kv = kiyasBut ? butce[x.k] : katOrt(x.k); return { ad: x.ad, v: x.v, renk: D.renk[x.k], kiyas: kv || null, fark: kv ? x.v - kv : null }; }), isaret)}
+      <div class="kucuk">Siyah ince çizgi ${kiyasBut ? 'o kategorinin bütçesi' : 'önceki ayların ortalaması'}; kırmızı fark ${kiyasBut ? 'bütçeyi aştığını' : 'ortalamanın üstünde olduğunu'} gösterir.</div></div>`;
+  }
+  // Son 12 ay
+  const son12 = Array.from({ length: 12 }, (_, i) => ayKaydir(anahtar, i - 11));
+  const deg = son12.map(k => butceAyHarcama(onb, k).toplam), dolu = deg.filter(v => v > 0);
+  g += `<div class="blok"><h2>Son 12 ay</h2>${hrCubuk(deg, son12.map(k => AY_KISA[+k.slice(5, 7) - 1] + (k.slice(5, 7) === '01' ? ' ' + k.slice(2, 4) : '')), { secili: 11, ort: dolu.length > 1 ? dolu.reduce((t, v) => t + v, 0) / dolu.length : null })}</div>`;
+  // Ayrıntılı kategori tablosu
+  if(toplam > 0){
+    g += `<div class="blok"><h2>Kategori tablosu</h2><div class="tablo-kap"><table><thead><tr><th>Kategori</th><th>Tutar</th><th>Pay</th><th>${AY_UZUN[+oncekiK.slice(5, 7) - 1]}</th><th>Son ${gecmis.length} ay ort.</th>${butceTop > 0 ? '<th>Bütçe</th><th>Kalan / aşım</th>' : ''}</tr></thead><tbody>
+      ${D.sirali.map(x => { const b = butce[x.k], o = katOrt(x.k), on = butceAyHarcama(onb, oncekiK).kat[x.k] || 0;
+        return `<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${D.renk[x.k]};margin-right:6px"></span>${escapeHtml(x.ad)}</td><td><b>${hrTL(x.v)}</b></td><td>${hrYz(x.v / toplam * 100)}</td><td>${on ? hrTL(on) : '—'}</td><td>${o ? hrTL(o) : '—'}</td>${butceTop > 0 ? `<td>${b ? hrTL(b) : '—'}</td><td style="color:${b && x.v > b ? '#d64545' : '#2e9e57'}">${b ? (x.v > b ? '−' : '') + hrTL(Math.abs(b - x.v)) : '—'}</td>` : ''}</tr>`; }).join('')}
+      </tbody><tfoot><tr><td>Toplam</td><td>${hrTL(toplam)}</td><td>%100</td><td>${onceki ? hrTL(onceki) : '—'}</td><td>${ort ? hrTL(ort) : '—'}</td>${butceTop > 0 ? `<td>${hrTL(butceTop)}</td><td>${(toplam > butceTop ? '−' : '') + hrTL(Math.abs(butceTop - toplam))}</td>` : ''}</tr></tfoot></table></div></div>`;
+    // Kalemler (kategori sırasıyla, ara toplamlı)
+    const satir = x => { const kart = x.kartEk ? kartAdi(x.kartEk.kartId) : null; const ad = x.not ? String(x.not).split(' — ')[0] : (x.tur === 'aylik' ? 'Aylık toplam (tek kalem)' : '');
+      return `<tr><td class="not">${escapeHtml(ad || '—')}${x.kaynak === 'odeme' ? ' <span style="color:#667085">(düzenli ödeme)</span>' : ''}</td><td class="not" style="color:#667085">${kart ? '💳 ' + escapeHtml(kart) : x.tur === 'aylik' ? '—' : 'nakit / hesap'}</td><td>${hrTL(Number(x.tutar) || 0, 2)}</td></tr>`; };
+    g += `<h2>Tüm harcama kalemleri (${kalemler.length})</h2><div class="tablo-kap"><table><thead><tr><th>Kalem</th><th style="text-align:left">Nasıl ödendi</th><th>Tutar</th></tr></thead><tbody>
+      ${D.sirali.map(x => { const l = kalemler.filter(k => k.kat === x.k).sort((a, b) => b.tutar - a.tutar); return `<tr class="ara"><td colspan="2"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${D.renk[x.k]};margin-right:6px"></span>${escapeHtml(x.ad)} · ${l.length} kalem</td><td>${hrTL(x.v, 2)}</td></tr>` + l.map(satir).join(''); }).join('')}
+      </tbody><tfoot><tr><td colspan="2">Toplam</td><td>${hrTL(toplam, 2)}</td></tr></tfoot></table></div>`;
+  } else g += '<div class="kucuk">Bu ayda harcama kaydı yok.</div>';
+  const kul = hrKullanici();
+  return hrSayfa(AY_UZUN[ay] + ' ' + yil + ' Harcama Raporu', (kul ? escapeHtml(kul) + ' · ' : '') + 'Aylık harcama raporu' + (suren ? ' · ay henüz bitmedi, ' + new Date().getDate() + '. güne kadar' : ''), g);
+}
+
+// ---- Yıllık rapor
+function harcamaRaporYillik(yil){
+  const T = harcamaTablosu(yil), toplam = T.yilToplam, D = hrDilimler(T.katToplam);
+  const dolu = T.veriliAylar, enY = dolu.length ? dolu.reduce((a, i) => T.ayToplam[i] > T.ayToplam[a] ? i : a, dolu[0]) : -1, enD = dolu.length ? dolu.reduce((a, i) => T.ayToplam[i] < T.ayToplam[a] ? i : a, dolu[0]) : -1;
+  const O = harcamaTablosu(yil - 1), oncekiAyni = dolu.reduce((t, i) => t + O.ayToplam[i], 0);
+  const oncekiKat = HARCAMA_KATEGORILER.some(({ k }) => k !== 'genel' && O.katToplam[k] > 0);   // geçen yıl kategorisiz (eski aylık toplam) ise kategori kıyası yok
+  const kutu = (et, v, alt) => `<div class="kutu"><span>${et}</span><b>${v}</b>${alt ? `<small>${alt}</small>` : ''}</div>`;
+  let g = `<div class="kutular">
+    ${kutu(yil + ' toplamı', hrTL(toplam), dolu.length + ' ay' + (T.surenAy >= 0 ? ' · yıl sürüyor' : ''))}
+    ${kutu('Aylık ortalama', hrTL(T.ortalama), T.ortAylar.length + ' tamamlanmış ay')}
+    ${kutu('En yüksek / düşük ay', enY >= 0 ? AY_UZUN[enY] + ' ' + kisaTL(T.ayToplam[enY]) : '—', enD >= 0 ? AY_UZUN[enD] + ' ' + kisaTL(T.ayToplam[enD]) : '')}
+    ${oncekiAyni > 0 ? kutu((yil - 1) + ' aynı aylar', hrTL(oncekiAyni), hrFark(toplam, oncekiAyni) + ' bu yıl') : kutu('Dolar / altın', T.yilUSD != null ? '$' + fmtNumber(T.yilUSD, 0) : '—', T.yilGr != null ? fmtGr(T.yilGr) + ' gram altın' : 'kur bekleniyor')}
+  </div>`;
+  g += `<div class="blok"><h2>Aylara göre</h2>${hrCubuk(T.ayToplam, AY_KISA, { ort: T.ortalama || null })}</div>`;
+  if(toplam > 0){
+    g += `<div class="blok"><h2>Kategorilere göre dağılım</h2><div class="iki">${hrHalka(D.dilim, toplam, kisaTL(toplam), yil + ' yılı')}
+      <div class="lejant">${D.dilim.map(d => `<div><i style="background:${d.renk}"></i><span>${escapeHtml(d.ad)}</span><em>${hrYz(d.v / toplam * 100)}</em><b>${hrTL(d.v)}</b></div>`).join('')}</div></div></div>`;
+    g += `<div class="blok"><h2>Kategori özeti</h2><div class="tablo-kap"><table><thead><tr><th>Kategori</th><th>Toplam</th><th>Pay</th><th>Aylık ort.</th><th>En yüksek ay</th>${oncekiKat ? '<th>' + (yil - 1) + ' aynı aylar</th>' : ''}</tr></thead><tbody>
+      ${D.sirali.map(x => { const h = T.hucre[x.k], m = h.reduce((a, c, i) => c.tutar > h[a].tutar ? i : a, 0), on = dolu.reduce((t, i) => t + O.hucre[x.k][i].tutar, 0);
+        return `<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${D.renk[x.k]};margin-right:6px"></span>${escapeHtml(x.ad)}</td><td><b>${hrTL(x.v)}</b></td><td>${hrYz(x.v / toplam * 100)}</td><td>${hrTL(T.katOrtalama[x.k])}</td><td>${AY_UZUN[m]} ${hrTL(h[m].tutar)}</td>${oncekiKat ? `<td>${on ? hrTL(on) + ' ' + hrFark(x.v, on) : '—'}</td>` : ''}</tr>`; }).join('')}
+      </tbody><tfoot><tr><td>Toplam</td><td>${hrTL(toplam)}</td><td>%100</td><td>${hrTL(T.ortalama)}</td><td></td>${oncekiKat ? `<td>${hrTL(oncekiAyni)}</td>` : ''}</tr></tfoot></table></div></div>`;
+    g += `<div class="blok"><h2>Kategori × ay tablosu (₺)</h2><div class="tablo-kap"><table class="ay-tablo"><thead><tr><th>Kategori</th>${AY_KISA.map(a => `<th>${a}</th>`).join('')}<th>Toplam</th></tr></thead><tbody>
+      ${D.sirali.map(x => `<tr><td>${escapeHtml(x.ad)}</td>${T.hucre[x.k].map(h => `<td>${h.tutar ? fmtNumber(h.tutar, 0) : '—'}</td>`).join('')}<td><b>${fmtNumber(x.v, 0)}</b></td></tr>`).join('')}
+      </tbody><tfoot><tr><td>Toplam</td>${T.ayToplam.map(v => `<td>${v ? fmtNumber(v, 0) : '—'}</td>`).join('')}<td>${fmtNumber(toplam, 0)}</td></tr>
+      ${T.ayUSD.some(u => u != null) ? `<tr><td>Dolar $</td>${T.ayUSD.map(u => `<td>${u != null ? fmtNumber(u, 0) : '—'}</td>`).join('')}<td>${T.yilUSD != null ? fmtNumber(T.yilUSD, 0) : '—'}</td></tr>` : ''}</tfoot></table></div></div>`;
+  } else g += '<div class="kucuk">Bu yılda harcama kaydı yok.</div>';
+  const kul = hrKullanici();
+  return hrSayfa(yil + ' Yıllık Harcama Raporu', (kul ? escapeHtml(kul) + ' · ' : '') + 'Yıllık harcama raporu' + (T.surenAy >= 0 && dolu.length ? ' · yıl henüz bitmedi, ' + AY_UZUN[dolu[dolu.length - 1]] + ' ayına kadar kayıt var' : ''), g);
+}
+
 const HARCAMA_GRAFIK_H = 165;   // grafik yüksekliği (px) — Kategoriler listesiyle aynı boyda
 // Grafik birimi: ₺ TL | $ Dolar | gram altın — her ay O AYIN ortalama kuru / gram altın fiyatıyla (ft_aylik_kur_v1). Tercih bu cihazda hatırlanır.
 let _harcamaBirim = 'TL';
@@ -15714,16 +15949,7 @@ function krPlanPdf(){
 <div class="not">Eşit taksitli hesaplamadır; bankanın planı gün sayısına göre birkaç kuruş farklı olabilir. Tutarlar ₺.</div>
 <script>addEventListener('load', () => setTimeout(() => print(), 300));<\/script>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if(w){ w.document.open(); w.document.write(html); w.document.close(); }
-  else {
-    // Açılır pencere engellendiyse: gizli çerçeveden yazdır
-    const fr = document.createElement('iframe');
-    fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
-    document.body.appendChild(fr);
-    fr.contentDocument.open(); fr.contentDocument.write(html.replace(/<script>[\s\S]*?<\/script>/, '')); fr.contentDocument.close();
-    setTimeout(() => { fr.contentWindow.focus(); fr.contentWindow.print(); setTimeout(() => fr.remove(), 60000); }, 300);
-  }
+  pdfSayfasiAc(html);
   krNot('Açılan sayfada yazıcı olarak <b>PDF olarak kaydet</b>i seç. Kredilerine eklemek için <b>＋ Kredilerime ekle</b> daha kısa yol.');
 }
 // Hesaplanan planla Borçlarım › Kredilerim'e ekle: PDF / Excel'deki gibi "kontrol et → kaydet" önizlemesi açılır
