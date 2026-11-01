@@ -4445,6 +4445,7 @@
       <p><b>Ne işe yarar:</b> Harcamalarını ay ve kategori bazında toplar: aylık grafik, kategoriler, aylık tablo, aylık ve yıllık ortalamalar.</p>
       <p><b>Nasıl kullanılır:</b> Harcama kayıtları bölümünde <b>+ Ekle</b> → <b>ay</b>, <b>kategori</b>, <b>tutar</b> ve istersen bir not. Form ve liste her zaman içinde bulunduğun ayla açılır; geçen ayın harcamasını girmek istersen ay kutusundan o ayı seç. <b>Gelecek ay</b> için de girebilirsin (önümüzdeki 3 ay listenin en üstünde): ör. Kasım'ın market parasını şimdiden ayırdıysan “Kasım 2026 (gelecek ay) · Market · ₺10.000” — bu ayın değil Kasım'ın harcamasına ve bütçesine sayılır, Nakit Akışı'nda da Kasım'a girer. Listenin üstündeki ay seçicisi ile formdaki ay hep aynıdır: birini değiştirince diğeri de o aya geçer, böylece girdiğin kayıt baktığın listede hemen görünür.</p>
       <p><b>Örnek:</b> “Eylül 2026 · Market · ₺26.985 · not: Migros”. Aynı ay ve kategoriye birden çok kayıt girebilirsin; tabloda toplanır.</p>
+      <p><b>Otomobil:</b> Arabanın bakım, tamir, MTV ve kasko / trafik sigortası harcamaları bu kategoriye girer (eski adı “Araç bakım”; önceki kayıtların burada). Benzin / mazot ayrı, <b>Akaryakıt</b>'ta kalır; böylece arabanın yakıt dışı masrafını ayrıca görürsün. Formdaki kategori listesinde her kategorinin yanında neyin girdiği yazar.</p>
       <p><b>Kartla ödediysen:</b> İçinde bulunduğun ay ve gelecek aylar için formda <b>Nasıl ödendi?</b> kutusu çıkar (gelecek ayın harcamasını bugün kartla ödediysen borç bugün artar) (kayıtlı kredi kartın varsa). Kartı seçersen tutar o kartın borcuna eklenir (Borçlarım); harcama satırında <b>💳 kart adı</b> yazar. Sonradan satırdaki <b>Güncelle</b> ile <b>tutarı</b> (boş bırakırsan değişmez), <b>adı</b> ve <b>hangi kartla ödendiğini</b> değiştirebilirsin: kartı değiştirince eski kartın borcundan düşülür, yenisine eklenir; “Nakit / hesaptan” seçersen karttan düşülür. Harcamayı düzeltir ya da silersen kart borcu da aynı farkla düzelir. Kartı Borçlarım'da <b>Güncelle</b> ile bankadaki rakama getirdiğinde o rakam önceki harcamaları zaten içerir; bu yüzden güncellemeden önce girilmiş harcamaları düzeltmek ya da silmek karta dokunmaz. Geçmiş aylarda kart seçilmez (o harcama bankanın rakamında zaten var).</p>
       <p><b>Örnek:</b> Akbank borcun ₺135.571 → Market ₺1.000, “💳 Akbank” → borç ₺136.571; Borçlarım'da “₺135.571 + karta yazılan ₺1.000 (1 harcama)” yazar. Ekstre gelince kartı bankadaki rakamla güncelle, döküm sıfırlanır.</p>
       <p><b>Aylık tablo:</b> Elle düzenlenmez; yalnızca kayıtlardan oluşur. Bir hücreye tıklarsan o ayın o kategorideki kayıtları aşağıda açılır, oradan <b>Güncelle</b> ile düzeltir ya da <b>Sil</b> ile silersin. Tabloyu başlığındaki küçük sarı okla (ya da başlığa dokunarak) kapatabilirsin; kapalıyken yalnız başlık ve yıllık toplam kalır. Varsayılan olarak açıktır, seçimin bu cihazda hatırlanır.</p>
@@ -11571,15 +11572,15 @@ const HARCAMA_KEY = 'ft_harcamalar_v1';
 const HARCAMA_KATEGORILER = [
   { k:'market',    ad:'Market' },
   { k:'akaryakit', ad:'Akaryakıt' },
-  { k:'aracbakim', ad:'Araç bakım' },
+  { k:'aracbakim', ad:'Otomobil', ipucu:'bakım, tamir, MTV, kasko / trafik sigortası' },   // eski adı "Araç bakım" (anahtar aynı: kayıtlar ve bütçe korunur)
   { k:'kisisel',   ad:'Kişisel' },
   { k:'fatura',    ad:'Fatura ve aidat' },
   { k:'ev',        ad:'Ev giderleri' },
   { k:'yemeicme',  ad:'Yeme-içme ve eğlence' },
   { k:'saglik',    ad:'Sağlık' },
   { k:'egitim',    ad:'Eğitim' },
-  { k:'sigorta',   ad:'Sigorta' },
-  { k:'vergi',     ad:'Vergi' },
+  { k:'sigorta',   ad:'Sigorta', ipucu:'sağlık, konut, hayat (araç sigortası → Otomobil)' },
+  { k:'vergi',     ad:'Vergi', ipucu:'gelir, emlak vb. (MTV → Otomobil)' },
   { k:'diger',     ad:'Diğer' },
   { k:'genel',     ad:'Kategorisiz', gizli:true },   // kategori ayrımı olmayan eski aylık toplamlar (ör. 2025); formda seçilmez
 ];
@@ -12171,7 +12172,7 @@ function renderHarcama(){
 
   // Form varsayılanları
   const katInput = document.getElementById('harcamaKatInput');
-  if(katInput && !katInput.options.length) katInput.innerHTML = HARCAMA_KATEGORILER.filter(x => !x.gizli).map(({ k, ad }) => `<option value="${k}">${escapeHtml(ad)}</option>`).join('');
+  if(katInput && !katInput.options.length) katInput.innerHTML = HARCAMA_KATEGORILER.filter(x => !x.gizli).map(({ k, ad, ipucu }) => `<option value="${k}"${ipucu ? ` title="${escapeHtml(ipucu)}"` : ''}>${escapeHtml(ad)}${ipucu ? ' — ' + escapeHtml(ipucu) : ''}</option>`).join('');   // ipucu: neyin hangi kategoriye girdiği
   const ayInput = document.getElementById('harcamaAyInput');
   if(ayInput && !ayInput.options.length){
     const simdi2 = new Date();
