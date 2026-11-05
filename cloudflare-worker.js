@@ -78,7 +78,7 @@ const SIFRE_ITER = 20000;            // PBKDF2 tekrar sayısı: ücretsiz plan i
 const SIFRE_MIN = 8;
 const FOTO_MAX = 120000;             // profil fotoğrafı (panel 192×192 JPEG'e küçültür, ~15–30 KB)
 const FOTO_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/;
-const TERCIH_ALANLARI = ['acilis', 'raporModel', 'pushSaat'];   // users.ayar içinde saklanabilen tercihler
+const TERCIH_ALANLARI = ['acilis', 'raporModel', 'pushSaat', 'akOtomatik', 'akOtomatikTs'];   // users.ayar içinde saklanabilen tercihler
 
 // İstemciye giden hesap bilgisi (şifre özeti vb. asla)
 function kullaniciCikti(u, ek) {
@@ -616,11 +616,14 @@ async function raporOzetle(env, id) {
 // Zamanlanmış görev: bekleyen raporları özetle, eski PDF'leri sil
 async function raporZamanli(env) {
   await semaHazirla(env);
-  // Ortak raporlar: saatte bir yokla, bekleyenlerden en fazla 2'sini özetle (yıllık strateji raporu tek başına uzun sürebilir)
-  try { await akYokla(env, false, 'cron'); } catch (e) { console.log('ak yoklama hata', e.message); }
-  const { results: ortak } = await env.DB.prepare("SELECT id FROM ortak_raporlar WHERE (durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?) ORDER BY tarih DESC LIMIT 2")
-    .bind(Date.now() - 15 * 60 * 1000).all();
-  for (const r of ortak || []) console.log('ortak özet', r.id, JSON.stringify(await ortakOzetle(env, r.id)).slice(0, 200));
+  // Ortak raporlar (yalnız açıksa): saatte bir yokla, bekleyenlerden en fazla 2'sini özetle (yıllık strateji raporu tek başına uzun sürebilir)
+  const ak = await akOtomatik(env);
+  if (ak.acik) {
+    try { await akYokla(env, false, 'cron'); } catch (e) { console.log('ak yoklama hata', e.message); }
+    const { results: ortak } = await env.DB.prepare("SELECT id FROM ortak_raporlar WHERE ((durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?)) AND tarih >= ? ORDER BY tarih DESC LIMIT 2")
+      .bind(Date.now() - 15 * 60 * 1000, ak.sinir).all();
+    for (const r of ortak || []) console.log('ortak özet', r.id, JSON.stringify(await ortakOzetle(env, r.id)).slice(0, 200));
+  }
   const { results } = await env.DB.prepare("SELECT id FROM raporlar WHERE (durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?) ORDER BY alindi LIMIT 4")
     .bind(Date.now() - 10 * 60 * 1000).all();
   for (const r of results || []) {
@@ -662,6 +665,15 @@ function akTeaserOzet(x, tur) {
   const ilk = (satir[0] || x.title || '').replace(/^[^:]{0,30}:\s*/, '');
   return { kategori: tur.kategori, konu: tur.konu, baslik: x.title || tur.konu, tarih: isoGun(x.contentDate), tek_cumle: (ilk.match(/^.*?[.!?](\s|$)/) || [ilk])[0].trim(),
     maddeler: satir.map(m => ({ metin: m, sayfa: 1 })), kurum_gorusu: '', hisseler: [], piyasa: [], takvim: [], portfoy: [], kurum_ozeti: true };
+}
+
+// Ak Yatırım ortak raporları: otomatik yoklama + özet yalnız bir yönetici açtıysa (ücret sunucu anahtarından; varsayılan KAPALI).
+// Açıldığı andan en çok 1 gün önceki raporlar otomatik özetlenir; daha eskiler "özetsiz" kalır, istenirse tek tek özetlenir.
+async function akOtomatik(env) {
+  const { results } = await env.DB.prepare("SELECT ayar FROM users WHERE role = 'admin' AND disabled = 0").all();
+  let acik = false, ts = 0;
+  for (const u of results || []) { try { const a = JSON.parse(u.ayar || '{}'); if (a.akOtomatik === '1') { acik = true; ts = Math.max(ts, +a.akOtomatikTs || 0); } } catch { /* bozuk */ } }
+  return { acik, sinir: acik ? (ts || Date.now()) - 864e5 : Infinity };
 }
 
 // Listeyi yokla (saatte bir); yeni raporları ekle
@@ -905,6 +917,8 @@ export default {
         TERCIH_ALANLARI.forEach(k => { if (typeof g.ayar[k] === 'string' && g.ayar[k].length <= 40) temiz[k] = g.ayar[k]; });
         if (temiz.raporModel && !RAPOR_MODELLER[temiz.raporModel]) delete temiz.raporModel;
         if (temiz.pushSaat && !(/^\d{1,2}$/.test(temiz.pushSaat) && +temiz.pushSaat <= 23)) delete temiz.pushSaat;
+        if (temiz.akOtomatik && !['0', '1'].includes(temiz.akOtomatik)) delete temiz.akOtomatik;
+        if (temiz.akOtomatikTs && !/^\d{13}$/.test(temiz.akOtomatikTs)) delete temiz.akOtomatikTs;
         alanlar.push('ayar = ?'); degerler.push(JSON.stringify(temiz));
       }
       if (!alanlar.length) return json({ error: 'değişiklik yok' }, 400);
@@ -1309,7 +1323,12 @@ export default {
     if (url.pathname === '/raporlar' && request.method === 'GET') {
       const { results } = await env.DB.prepare('SELECT id, kurum, konu, dosya, alindi, eposta_tarih, boyut, pdf_var, durum, hata, kategori, alt_konu, baslik, rapor_tarih, ozet FROM raporlar WHERE user_id = ? ORDER BY COALESCE(eposta_tarih, alindi) DESC LIMIT 300').bind(ben.id).all();
       const { results: ortak } = await env.DB.prepare('SELECT id, kurum, kategori, konu, baslik, tarih, pdf_url, durum, hata, ozet, alindi FROM ortak_raporlar ORDER BY tarih DESC LIMIT 200').all();
-      const cikti = { raporlar: (results || []).map(raporCikti).concat((ortak || []).map(ortakCikti)) };
+      const ak = await akOtomatik(env);
+      const cikti = { raporlar: (results || []).map(raporCikti).concat((ortak || []).map(r => {
+        const o = ortakCikti(r);
+        if (o.durum === 'bekliyor' && !(r.tarih >= ak.sinir)) o.durum = 'ozetsiz';   // kapalıyken / açılmadan önce yayımlanan: otomatik özetlenmez
+        return o;
+      })), akOtomatik: ak.acik };
       if (yonetici) {   // bu ay sunucu anahtarıyla yapılan özetlerin token toplamı (ortak + yöneticinin kendi raporları)
         const ay = new Date(); const bas = Date.UTC(ay.getUTCFullYear(), ay.getUTCMonth(), 1) - 3 * 3600e3;
         const { results: k1 } = await env.DB.prepare('SELECT kullanim FROM ortak_raporlar WHERE ozet_ts >= ? AND kullanim IS NOT NULL').bind(bas).all();
@@ -1333,10 +1352,12 @@ export default {
     // Sayfa açılınca panel çağırır (Türkiye'deki noktadan): saatte bir yoklar (boş döndüyse 5 dk), sonra bekleyen en fazla 1 raporu özetler.
     // Her rapor bir kez özetlenir (kilitli); maliyet yönetici anahtarından, rapor sayısıyla sınırlı.
     if (url.pathname === '/raporlar/ortak/yokla' && request.method === 'POST') {
+      const ak = await akOtomatik(env);
+      if (!ak.acik) return json({ kapali: true });   // otomatik Ak Yatırım kapalı: yoklama ve özet yok
       const colo = (request.cf && request.cf.colo) || '?';
       let y; try { y = await akYokla(env, yonetici && url.searchParams.get('zorla') === '1', 'istek:' + colo); } catch (e) { y = { hata: e.message }; }
       let isl = null;
-      const bek = await env.DB.prepare("SELECT id FROM ortak_raporlar WHERE (durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?) ORDER BY tarih DESC LIMIT 1").bind(Date.now() - 15 * 60 * 1000).first();
+      const bek = await env.DB.prepare("SELECT id FROM ortak_raporlar WHERE ((durum = 'bekliyor' AND deneme < 3) OR (durum = 'isleniyor' AND islem_ts < ?)) AND tarih >= ? ORDER BY tarih DESC LIMIT 1").bind(Date.now() - 15 * 60 * 1000, ak.sinir).first();
       if (bek) isl = await ortakOzetle(env, bek.id);
       return json({ yoklama: y, islenen: bek ? bek.id : null, sonuc: isl });
     }
